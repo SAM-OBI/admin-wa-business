@@ -4,7 +4,7 @@ import { adminService, VendorDetails as VendorDetailsType } from '../api/admin.s
 import { 
   FiArrowLeft, FiShield, FiPackage, FiShoppingCart, FiDollarSign, 
   FiCheckCircle, FiXCircle, FiAlertCircle, FiUser, FiMail, FiPhone,
-  FiCalendar, FiAlertTriangle
+  FiCalendar, FiAlertTriangle, FiExternalLink
 } from 'react-icons/fi';
 
 export default function VendorDetails() {
