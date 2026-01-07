@@ -2,7 +2,8 @@
 import axios from "axios";
 
 const getBaseUrl = () => {
-  return import.meta.env.VITE_API_URL;
+  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
+  return import.meta.env.PROD ? 'https://whatsapp-b2b.onrender.com/api' : 'http://localhost:5000/api';
 };
 
 const api = axios.create({
