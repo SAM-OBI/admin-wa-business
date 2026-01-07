@@ -1,7 +1,12 @@
+/// <reference types="vite/client" />
 import axios from 'axios';
 
+const getBaseUrl = () => {
+  return import.meta.env.VITE_API_URL;
+};
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: getBaseUrl() || 'http://localhost:5000/api',
   withCredentials: true, // Important for cookies!
   headers: {
     'Content-Type': 'application/json'

@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '../store/authStore';
-import { FiBell, FiLogOut, FiAlertCircle } from 'react-icons/fi';
+import { FiBell, FiAlertCircle } from 'react-icons/fi';
 import { adminService } from '../api/admin.service';
 import { Link } from 'react-router-dom';
+import { UserProfileDropdown } from './UserProfileDropdown';
 
 export default function Header() {
   const { admin, logout } = useAuthStore();
@@ -108,19 +109,7 @@ export default function Header() {
 
           <div className="h-8 w-px bg-gray-300" />
 
-          <div className="flex items-center gap-3">
-            <div className="text-right">
-              <p className="text-sm font-medium text-gray-800">{admin?.name}</p>
-              <p className="text-xs text-gray-500">{admin?.email}</p>
-            </div>
-            <button
-              onClick={logout}
-              className="p-2 hover:bg-red-50 rounded-lg transition text-red-600"
-              title="Logout"
-            >
-              <FiLogOut className="text-xl" />
-            </button>
-          </div>
+          <UserProfileDropdown user={admin} logout={logout} settingsPath="/settings" />
         </div>
       </div>
     </header>
