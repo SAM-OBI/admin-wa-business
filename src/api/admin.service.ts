@@ -336,6 +336,20 @@ export const adminService = {
     return response.data;
   },
 
+  // Notifications
+  getNotifications: async (params?: any) => {
+    const response = await api.get('/notifications', { params });
+    return response.data;
+  },
+  markNotificationRead: async (id: string) => {
+    const response = await api.patch(`/notifications/${id}/read`);
+    return response.data;
+  },
+  markAllNotificationsRead: async () => {
+    const response = await api.patch('/notifications/all/read');
+    return response.data;
+  },
+
   // Audit Logs
   getAuditLogs: async (params?: any) => {
     const response = await api.get('/admin/audit-logs', { params });

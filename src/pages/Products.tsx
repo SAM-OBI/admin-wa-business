@@ -21,18 +21,25 @@ export default function Products() {
   const fetchProducts = useCallback(async (page = 1) => {
     setLoading(true);
     try {
+      console.log('Fetching products with filters:', { search: searchTerm, status: filters.status, page, limit: pagination.limit });
       const data = await adminService.getProducts({
         search: searchTerm,
         status: filters.status,
         page,
         limit: pagination.limit
       });
+      
+      console.log('Products API response:', data);
+
       if (data.data?.products) {
+         console.log('Products found:', data.data.products.length);
          setProducts(data.data.products);
          setPagination(data.data.pagination);
       } else if (Array.isArray(data.data)) {
+         console.log('Products array found directly:', data.data.length);
          setProducts(data.data);
       } else {
+         console.warn('Unexpected products data structure:', data);
          setProducts([]);
       }
     } catch (error) {
