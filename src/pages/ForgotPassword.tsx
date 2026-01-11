@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { FiMail, FiArrowLeft } from 'react-icons/fi';
@@ -7,7 +7,13 @@ const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
-  const forgotPassword = useAuthStore((state) => state.forgotPassword);
+  const { forgotPassword, checkAuth } = useAuthStore();
+  
+  // Prefetch CSRF token on mount
+  useEffect(() => {
+    checkAuth().catch(() => {}); // Ignore errors, just want the cookie
+  }, [checkAuth]);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,7 +54,7 @@ const ForgotPassword = () => {
                     <p>Check your email inbox for the reset link.</p>
                   </div>
                   <div className="mt-4">
-                    <Link to="/login" className="text-sm font-medium text-green-600 hover:text-green-500">
+                    <Link to="/" className="text-sm font-medium text-green-600 hover:text-green-500">
                       Back to login &rarr;
                     </Link>
                   </div>
@@ -101,7 +107,7 @@ const ForgotPassword = () => {
               </div>
 
               <div className="flex items-center justify-center">
-                 <Link to="/login" className="flex items-center text-sm font-medium text-gray-600 hover:text-gray-900">
+                 <Link to="/" className="flex items-center text-sm font-medium text-gray-600 hover:text-gray-900">
                     <FiArrowLeft className="mr-2" /> Back to Login
                  </Link>
               </div>
