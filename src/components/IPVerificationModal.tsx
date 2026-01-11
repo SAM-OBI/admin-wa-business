@@ -94,27 +94,27 @@ export default function IPVerificationModal({ userId, onSuccess, onCancel }: IPV
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-gray-100 flex items-center justify-center z-50 p-4">
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6"
+                className="bg-white rounded-2xl shadow-xl max-w-md w-full p-8"
             >
                 {/* Header */}
-                <div className="text-center mb-6">
-                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span className="text-3xl">🔐</span>
+                <div className="text-center mb-8">
+                    <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span className="text-4xl">🛡️</span>
                     </div>
-                    <h2 className="text-2xl font-bold text-gray-900">New IP Detected</h2>
-                    <p className="text-sm text-gray-600 mt-2">
-                        For your security, we've sent a 4-digit verification code to your email
+                    <h2 className="text-2xl font-bold text-gray-900">Security Verification</h2>
+                    <p className="text-gray-600 mt-2">
+                        We detected a login from a new IP address. Please enter the verification code sent to your email.
                     </p>
                 </div>
 
                 {/* Code Input */}
-                <div className="mb-6">
+                <div className="mb-8">
                     <label className="block text-sm font-medium text-gray-700 mb-2 text-center">
-                        Enter Verification Code
+                        Verification Code
                     </label>
                     <input
                         type="text"
@@ -125,13 +125,13 @@ export default function IPVerificationModal({ userId, onSuccess, onCancel }: IPV
                         onKeyPress={handleKeyPress}
                         placeholder="0000"
                         maxLength={4}
-                        className="w-full px-4 py-3 text-center text-2xl font-bold tracking-widest rounded-lg border-2 border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-600 outline-none transition"
+                        className="w-full px-4 py-4 text-center text-3xl font-bold tracking-[1em] rounded-xl border-2 border-gray-200 focus:border-blue-600 focus:ring-4 focus:ring-blue-50 outline-none transition-all placeholder:tracking-normal"
                         autoFocus
                         disabled={loading}
                     />
                     
                     {attemptsLeft !== null && (
-                        <p className="text-sm text-orange-600 mt-2 text-center">
+                        <p className="text-sm text-orange-600 mt-3 text-center font-medium">
                             {attemptsLeft} attempt{attemptsLeft === 1 ? '' : 's'} remaining
                         </p>
                     )}
@@ -139,42 +139,45 @@ export default function IPVerificationModal({ userId, onSuccess, onCancel }: IPV
 
                 {/* Error Message */}
                 {error && (
-                    <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                        <p className="text-sm text-red-600 text-center">{error}</p>
+                    <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
+                        <span className="text-red-500">⚠️</span>
+                        <p className="text-sm text-red-600 font-medium">{error}</p>
                     </div>
                 )}
 
                 {/* Action Buttons */}
-                <div className="space-y-3">
+                <div className="space-y-4">
                     <button
                         onClick={handleVerify}
                         disabled={loading || code.length !== 4}
-                        className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full py-4 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition transform active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-600/20"
                     >
-                        {loading ? 'Verifying...' : 'Verify Code'}
+                        {loading ? 'Verifying...' : 'Verify Access'}
                     </button>
 
-                    <button
-                        onClick={handleResendCode}
-                        disabled={loading}
-                        className="w-full py-2 text-blue-600 font-medium hover:underline transition disabled:opacity-50"
-                    >
-                        Resend Code
-                    </button>
+                    <div className="grid grid-cols-2 gap-4">
+                        <button
+                            onClick={handleResendCode}
+                            disabled={loading}
+                            className="w-full py-3 text-sm text-gray-600 font-medium bg-gray-50 rounded-lg hover:bg-gray-100 transition disabled:opacity-50"
+                        >
+                            Resend Code
+                        </button>
 
-                    <button
-                        onClick={onCancel}
-                        disabled={loading}
-                        className="w-full py-2 text-gray-600 font-medium hover:text-gray-900 transition"
-                    >
-                        Cancel
-                    </button>
+                        <button
+                            onClick={onCancel}
+                            disabled={loading}
+                            className="w-full py-3 text-sm text-gray-600 font-medium bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+                        >
+                            Back to Login
+                        </button>
+                    </div>
                 </div>
 
                 {/* Info */}
-                <div className="mt-6 p-3 bg-gray-50 rounded-lg">
-                    <p className="text-xs text-gray-600 text-center">
-                        💡 Didn't receive the email? Check your spam folder or click "Resend Code"
+                <div className="mt-8 text-center">
+                     <p className="text-xs text-gray-500">
+                        Secure logic powered by WhatsApp Vendors
                     </p>
                 </div>
             </motion.div>
