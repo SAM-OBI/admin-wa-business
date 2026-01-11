@@ -46,12 +46,17 @@ function App() {
       }}
     >
       <Routes>
-        <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/" replace />} />
-        <Route path="/signup" element={!isAuthenticated ? <Signup /> : <Navigate to="/" replace />} />
-        <Route path="/forgot-password" element={!isAuthenticated ? <ForgotPassword /> : <Navigate to="/" replace />} />
-        <Route path="/reset-password/:token" element={!isAuthenticated ? <ResetPassword /> : <Navigate to="/" replace />} />
+        <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/dashboard" replace />} />
+        <Route path="/signup" element={!isAuthenticated ? <Signup /> : <Navigate to="/dashboard" replace />} />
+        <Route path="/forgot-password" element={!isAuthenticated ? <ForgotPassword /> : <Navigate to="/dashboard" replace />} />
+        <Route path="/reset-password/:token" element={!isAuthenticated ? <ResetPassword /> : <Navigate to="/dashboard" replace />} />
         
-        <Route path="/" element={isAuthenticated ? <Layout /> : <Navigate to="/login" replace />}>
+        {/* Redirect root to dashboard (if authenticated) or login (if not) */}
+        {/* Actually, for better UX: if auth, go to dashboard. If not, go to login. */}
+        <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />} />
+
+        {/* Protected Dashboard Routes */}
+        <Route path="/dashboard" element={isAuthenticated ? <Layout /> : <Navigate to="/login" replace />}>
           <Route index element={<Dashboard />} />
           <Route path="products" element={<Products />} />
           <Route path="products/:id" element={<ProductDetails />} />
