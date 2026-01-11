@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '../store/authStore';
 import api from '../api/axios';
-import { FiClock, FiMonitor } from 'react-icons/fi';
+import { adminService } from '../api/admin.service';
+import { FiClock, FiMonitor, FiShield } from 'react-icons/fi';
 
-// Login History Component
+// Login History Component ... (unchanged)
 const LoginHistory = () => {
     const [logins, setLogins] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -61,6 +62,57 @@ export default function SettingsPage() {
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+
+  // 2FA State
+  const [show2FASetup, setShow2FASetup] = useState(false);
+  const [qrCode, setQrCode] = useState('');
+  const [totpCode, setTotpCode] = useState('');
+
+  const handleSetup2FA = async () => {
+    setLoading(true);
+    try {
+      const data = await adminService.setup2FA();
+      if (data.data?.qrCodeUrl) {
+        setQrCode(data.data.qrCodeUrl);
+        setShow2FASetup(true);
+      }
+    } catch (error: any) {
+      setMessage({ type: 'error', text: error.response?.data?.message || 'Failed to setup 2FA' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerify2FA = async () => {
+    setLoading(true);
+    try {
+      await adminService.verify2FA(totpCode);
+      setMessage({ type: 'success', text: 'Two-Factor Authentication Enabled!' });
+      setShow2FASetup(false);
+      setQrCode('');
+      setTotpCode('');
+      await checkAuth(); // Refresh user state (isTwoFactorEnabled)
+    } catch (error: any) {
+      setMessage({ type: 'error', text: error.response?.data?.message || 'Invalid code' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDisable2FA = async () => {
+    setLoading(true);
+    try {
+      await adminService.disable2FA(totpCode);
+      setMessage({ type: 'success', text: 'Two-Factor Authentication Disabled' });
+      setShow2FASetup(false);
+      setTotpCode('');
+      await checkAuth(); // Refresh user state
+    } catch (error: any) {
+      setMessage({ type: 'error', text: error.response?.data?.message || 'Invalid code' });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -177,8 +229,119 @@ export default function SettingsPage() {
             </form>
           </div>
 
-          {/* Login History */}
+{/* Login History */}
           <div className="space-y-6">
+              {/* 2FA Section */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                  <FiShield /> Two-Factor Authentication
+                </h2>
+                
+                {admin?.isTwoFactorEnabled ? (
+                   <div>
+                     <div className="flex items-center gap-2 text-green-600 mb-4">
+                       <span className="font-bold">✓ 2FA is Enabled</span>
+                     </div>
+                     <p className="text-gray-600 text-sm mb-4">
+                       Your account is secured with two-factor authentication. You will be required to enter a code from your authenticator app when logging in.
+                     </p>
+                     
+                     {!show2FASetup ? (
+                        <button
+                          onClick={() => setShow2FASetup(true)}
+                          className="px-4 py-2 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 text-sm font-medium transition"
+                        >
+                          Disable 2FA
+                        </button>
+                     ) : (
+                       <div className="bg-gray-50 p-4 rounded-lg border border-gray-100">
+                         <p className="text-sm font-medium text-gray-700 mb-2">Confirm to Disable</p>
+                         <p className="text-xs text-gray-500 mb-3">Enter the code from your app to confirm disabling 2FA.</p>
+                         <div className="flex gap-2">
+                           <input
+                             type="text"
+                             placeholder="000 000"
+                             value={totpCode}
+                             onChange={(e) => setTotpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                             className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-center tracking-widest font-mono"
+                             maxLength={6}
+                           />
+                           <button
+                             onClick={handleDisable2FA}
+                             disabled={loading || totpCode.length !== 6}
+                             className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 text-sm font-medium"
+                           >
+                             {loading ? '...' : 'Disable'}
+                           </button>
+                           <button
+                             onClick={() => { setShow2FASetup(false); setTotpCode(''); }}
+                             className="px-3 py-2 text-gray-500 hover:text-gray-700"
+                           >
+                             Cancel
+                           </button>
+                         </div>
+                       </div>
+                     )}
+                   </div>
+                ) : (
+                  <div>
+                    <p className="text-gray-600 text-sm mb-4">
+                      Add an extra layer of security to your account by enabling two-factor authentication.
+                    </p>
+                    
+                    {!show2FASetup ? (
+                      <button
+                        onClick={handleSetup2FA}
+                        disabled={loading}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                      >
+                         {loading ? 'Loading...' : 'Enable 2FA'}
+                      </button>
+                    ) : (
+                      <div className="space-y-4">
+                         {qrCode && (
+                           <div className="flex flex-col items-center p-4 bg-gray-50 rounded-lg border border-gray-100">
+                             <p className="text-sm font-semibold text-gray-800 mb-2">Scan QR Code</p>
+                             <img src={qrCode} alt="2FA QR Code" className="w-40 h-40 mb-4 border border-white shadow-sm" />
+                             <p className="text-xs text-gray-500 text-center max-w-xs mb-4">
+                               Use Google Authenticator or Authy App to scan this code.
+                             </p>
+                             
+                             <div className="w-full max-w-xs">
+                               <label className="block text-xs font-medium text-gray-700 mb-1">Enter 6-digit Code</label>
+                               <div className="flex gap-2">
+                                 <input
+                                   type="text"
+                                   placeholder="000 000"
+                                   value={totpCode}
+                                   onChange={(e) => setTotpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                                   className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-center tracking-widest font-mono focus:ring-2 focus:ring-blue-500 outline-none"
+                                   maxLength={6}
+                                 />
+                                 <button
+                                   onClick={handleVerify2FA}
+                                   disabled={loading || totpCode.length !== 6}
+                                   className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 text-sm font-medium"
+                                 >
+                                   {loading ? '...' : 'Verify'}
+                                 </button>
+                               </div>
+                             </div>
+                           </div>
+                         )}
+                         
+                         <button
+                           onClick={() => { setShow2FASetup(false); setQrCode(''); setTotpCode(''); }}
+                           className="text-gray-500 text-sm hover:underline"
+                         >
+                           Cancel Setup
+                         </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
               <LoginHistory />
           </div>
       </div>

@@ -370,4 +370,20 @@ export const adminService = {
     const response = await api.get('/admin/marketing/discount-codes', { params });
     return response.data;
   },
+
+  // 2FA
+  setup2FA: async () => {
+    const response = await api.post('/auth/2fa/setup');
+    return response.data;
+  },
+
+  verify2FA: async (token: string) => {
+    const response = await api.post('/auth/2fa/verify', { token });
+    return response.data;
+  },
+
+  disable2FA: async (token: string) => {
+    const response = await api.post('/auth/2fa/disable', { token });
+    return response.data;
+  },
 };

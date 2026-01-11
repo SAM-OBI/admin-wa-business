@@ -10,6 +10,7 @@ interface AdminUser {
     plan: 'free' | 'basic' | 'premium' | 'gold';
     status: 'active' | 'inactive';
   };
+  isTwoFactorEnabled?: boolean;
 }
 
 interface AuthState {
