@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from './store/authStore';
 import { FiMail } from 'react-icons/fi';
@@ -10,8 +10,15 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [showIPVerification, setShowIPVerification] = useState(false);
   const [pendingUserId, setPendingUserId] = useState<string | null>(null);
-  const { login } = useAuthStore();
+  const { login, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
+
+  // Redirect once authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSuccessfulLogin = () => {
     closeLoading();
