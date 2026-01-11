@@ -148,7 +148,9 @@ export default function Orders() {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
                       <FiShoppingBag className="text-gray-400" />
-                      <span className="font-medium text-gray-900">#{order._id.slice(-6)}</span>
+                      <span className="font-medium text-gray-900">
+                        {order.orderId ? `#${order.orderId}` : `#${order._id.slice(-6)}`}
+                      </span>
                     </div>
                   </td>
                   <td className="px-6 py-4">

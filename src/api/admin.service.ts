@@ -197,6 +197,7 @@ export interface OrderProduct {
 // Type for orders in list view - user data might be partial
 export interface OrderListItem {
   _id: string;
+  orderId?: string; // Human readable ID
   user?: {
     name?: string;
     email?: string;
@@ -215,6 +216,7 @@ export interface OrderListItem {
 // Type for full order details - all required data is present
 export interface Order {
   _id: string;
+  orderId?: string; // Human readable ID
   user: {
     name: string;
     email: string;
