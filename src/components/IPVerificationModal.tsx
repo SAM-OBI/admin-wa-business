@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import api from '../api/axios';
 import { showError, showSuccess } from '../utils/swal';
@@ -22,6 +22,25 @@ export default function IPVerificationModal({ userId, onSuccess, onCancel }: IPV
         setError('');
     };
 
+    // Helper to get cookie by name
+    const getCookie = (name: string) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop()?.split(';').shift();
+    };
+
+    // Warm up CSRF token on mount
+    useEffect(() => {
+        const warmUp = async () => {
+             try {
+                 await api.get('/auth/me');
+             } catch (e) {
+                 // Ignore error, we just want the cookie
+             }
+        };
+        warmUp();
+    }, []);
+
     const handleVerify = async () => {
         setError('');
 
@@ -32,9 +51,16 @@ export default function IPVerificationModal({ userId, onSuccess, onCancel }: IPV
 
         setLoading(true);
         try {
+            // Manually get token to ensure it's fresh
+            const xsrfToken = getCookie('XSRF-TOKEN');
+            
             const response = await api.post('/auth/verify-ip', {
                 userId,
                 code
+            }, {
+                headers: {
+                    'X-XSRF-TOKEN': xsrfToken // Force explicit header
+                }
             });
 
             if (response.data.success) {
