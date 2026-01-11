@@ -10,7 +10,7 @@ const api = axios.create({
   baseURL: getBaseUrl() || "http://localhost:5000/api",
   withCredentials: true,
   xsrfCookieName: 'XSRF-TOKEN', // The name of the cookie to use as a value for xsrf token
-  xsrfHeaderName: 'X-XSRF-TOKEN', // The name of the http header that carries the xsrf token value
+  xsrfHeaderName: 'x-xsrf-token', // The name of the http header that carries the xsrf token value
   headers: {
     "Content-Type": "application/json",
   },
