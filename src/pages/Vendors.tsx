@@ -244,7 +244,7 @@ export default function Vendors() {
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <Link
-                        to={`/vendors/${vendor._id}`}
+                        to={`/dashboard/vendors/${vendor._id}`}
                         className="text-blue-600 hover:text-blue-800 flex items-center gap-1 text-sm"
                       >
                         Details <FiExternalLink />

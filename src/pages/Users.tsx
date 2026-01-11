@@ -213,7 +213,7 @@ export default function Users() {
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <Link
-                        to={`/users/${user._id}`}
+                        to={`/dashboard/users/${user._id}`}
                         className="text-blue-600 hover:text-blue-800 flex items-center gap-1 text-sm"
                       >
                         Details <FiExternalLink />

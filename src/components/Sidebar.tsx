@@ -64,6 +64,7 @@ export default function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
             <NavLink
               key={item.name}
               to={item.to}
+              end={item.to === '/dashboard'} // Only exact match for dashboard home
               onClick={(e) => {
                 if (isLocked) {
                   e.preventDefault();
