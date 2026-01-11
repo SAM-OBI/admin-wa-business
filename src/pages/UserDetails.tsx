@@ -23,6 +23,17 @@ export default function UserDetails() {
     }
   }, [id]);
 
+  const handleVerificationUpdate = async (type: 'bvn' | 'nin' | 'voters', status: boolean) => {
+    if (!user) return;
+    try {
+      const updateData = { [type]: status };
+      const updatedUser = await adminService.updateUserVerification(user._id, updateData);
+      setUser(prev => prev ? { ...prev, verification: updatedUser.verification } : null);
+    } catch (error) {
+      console.error('Failed to update verification:', error);
+    }
+  };
+
   useEffect(() => {
     if (id) {
       fetchUserDetails();
@@ -312,21 +323,75 @@ export default function UserDetails() {
                 <>
                   <div className="flex justify-between items-center pt-2 border-t border-gray-100">
                     <span className="text-gray-600 text-sm">BVN</span>
-                    <span className={`text-xs ${user.verification.bvnVerified ? 'text-green-600' : 'text-gray-400'}`}>
-                      {user.verification.bvnVerified ? '✓ Verified' : 'Not verified'}
-                    </span>
+                    <div className="flex items-center gap-2">
+                       <span className={`text-xs ${user.verification.bvnVerified ? 'text-green-600' : 'text-gray-400'}`}>
+                        {user.verification.bvnVerified ? '✓ Verified' : 'Not verified'}
+                      </span>
+                      {!user.verification.bvnVerified && (
+                        <button 
+                          onClick={() => handleVerificationUpdate('bvn', true)}
+                          className="text-xs px-2 py-1 bg-green-50 text-green-600 rounded hover:bg-green-100"
+                        >
+                          Verify
+                        </button>
+                      )}
+                      {user.verification.bvnVerified && (
+                        <button 
+                          onClick={() => handleVerificationUpdate('bvn', false)}
+                          className="text-xs text-red-500 hover:underline"
+                        >
+                          Revoke
+                        </button>
+                      )}
+                    </div>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600 text-sm">NIN</span>
-                    <span className={`text-xs ${user.verification.ninVerified ? 'text-green-600' : 'text-gray-400'}`}>
-                      {user.verification.ninVerified ? '✓ Verified' : 'Not verified'}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-xs ${user.verification.ninVerified ? 'text-green-600' : 'text-gray-400'}`}>
+                        {user.verification.ninVerified ? '✓ Verified' : 'Not verified'}
+                      </span>
+                      {!user.verification.ninVerified && (
+                        <button 
+                          onClick={() => handleVerificationUpdate('nin', true)}
+                          className="text-xs px-2 py-1 bg-green-50 text-green-600 rounded hover:bg-green-100"
+                        >
+                          Verify
+                        </button>
+                      )}
+                       {user.verification.ninVerified && (
+                        <button 
+                          onClick={() => handleVerificationUpdate('nin', false)}
+                          className="text-xs text-red-500 hover:underline"
+                        >
+                          Revoke
+                        </button>
+                      )}
+                    </div>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600 text-sm">Voter's Card</span>
-                    <span className={`text-xs ${user.verification.votersVerified ? 'text-green-600' : 'text-gray-400'}`}>
-                      {user.verification.votersVerified ? '✓ Verified' : 'Not verified'}
-                    </span>
+                     <div className="flex items-center gap-2">
+                      <span className={`text-xs ${user.verification.votersVerified ? 'text-green-600' : 'text-gray-400'}`}>
+                        {user.verification.votersVerified ? '✓ Verified' : 'Not verified'}
+                      </span>
+                      {!user.verification.votersVerified && (
+                        <button 
+                          onClick={() => handleVerificationUpdate('voters', true)}
+                          className="text-xs px-2 py-1 bg-green-50 text-green-600 rounded hover:bg-green-100"
+                        >
+                          Verify
+                        </button>
+                      )}
+                       {user.verification.votersVerified && (
+                        <button 
+                          onClick={() => handleVerificationUpdate('voters', false)}
+                          className="text-xs text-red-500 hover:underline"
+                        >
+                          Revoke
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </>
               )}
