@@ -7,6 +7,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Dashboard from './pages/Dashboard';
 import Layout from './components/Layout';
+import Home from './pages/Home';
 
 import Products from './pages/Products';
 import Users from './pages/Users';
@@ -51,12 +52,12 @@ function App() {
         <Route path="/forgot-password" element={!isAuthenticated ? <ForgotPassword /> : <Navigate to="/dashboard" replace />} />
         <Route path="/reset-password/:token" element={!isAuthenticated ? <ResetPassword /> : <Navigate to="/dashboard" replace />} />
         
-        {/* Redirect root to dashboard (if authenticated) or login (if not) */}
-        {/* Actually, for better UX: if auth, go to dashboard. If not, go to login. */}
-        <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />} />
+        {/* Root is now Home (Login) for unauthenticated users */}
+        {/* Authenticated users are redirected to dashboard */}
+        <Route path="/" element={!isAuthenticated ? <Home /> : <Navigate to="/dashboard" replace />} />
 
         {/* Protected Dashboard Routes */}
-        <Route path="/dashboard" element={isAuthenticated ? <Layout /> : <Navigate to="/login" replace />}>
+        <Route path="/dashboard" element={isAuthenticated ? <Layout /> : <Navigate to="/" replace />}>
           <Route index element={<Dashboard />} />
           <Route path="products" element={<Products />} />
           <Route path="products/:id" element={<ProductDetails />} />
