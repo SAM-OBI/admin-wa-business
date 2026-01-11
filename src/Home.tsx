@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../store/authStore';
+import { useAuthStore } from './store/authStore';
 import { FiMail } from 'react-icons/fi';
-import { showError, showSuccess, showLoading, closeLoading } from '../utils/swal';
-import IPVerificationModal from '../components/IPVerificationModal';
+import { showError, showSuccess, showLoading, closeLoading } from './utils/swal';
+import IPVerificationModal from './components/IPVerificationModal';
 
-export default function Home() {
+export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showIPVerification, setShowIPVerification] = useState(false);
@@ -16,7 +16,7 @@ export default function Home() {
   const handleSuccessfulLogin = () => {
     closeLoading();
     showSuccess('Welcome back!', 'Login Successful');
-    setTimeout(() => navigate('/dashboard'), 1000); // Navigate to /dashboard after login
+    setTimeout(() => navigate('/'), 1000);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -79,6 +79,8 @@ export default function Home() {
           <h1 className="text-3xl font-bold text-[#4A3728] mb-2">Welcome Back</h1>
           <p className="text-[#4A3728]/70 text-sm">ADMIN LOGIN</p>
         </div>
+
+
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-1.5">
