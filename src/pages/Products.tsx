@@ -146,7 +146,12 @@ export default function Products() {
                       )}
                       <div>
                         <div className="font-medium text-gray-900">{product.name}</div>
-                        <div className="text-sm text-gray-500">{product.category}</div>
+                        <div className="text-sm text-gray-500">
+                          {typeof product.category === 'object' && product.category !== null 
+                            // @ts-ignore - handling populated category
+                            ? product.category.name 
+                            : product.category}
+                        </div>
                       </div>
                     </div>
                   </td>
