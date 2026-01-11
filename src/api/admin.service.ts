@@ -364,4 +364,10 @@ export const adminService = {
     const response = await api.get('/admin/audit-logs', { params });
     return response.data;
   },
+
+  // Marketing
+  getMarketingDiscountCodes: async (params?: any) => {
+    const response = await api.get('/admin/marketing/discount-codes', { params });
+    return response.data;
+  },
 };
