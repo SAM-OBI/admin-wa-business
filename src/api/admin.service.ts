@@ -270,6 +270,10 @@ export const adminService = {
     const response = await api.patch(`/admin/users/${id}/status`, { isActive: !currentStatus });
     return response.data;
   },
+  updateUserVerification: async (id: string, data: { bvn?: boolean; nin?: boolean; voters?: boolean }) => {
+    const response = await api.patch(`/admin/users/${id}/verification`, data);
+    return response.data;
+  },
 
   // Vendors
   getVendors: async (params?: any) => {
