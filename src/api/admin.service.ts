@@ -15,6 +15,11 @@ export interface User {
     ninVerified: boolean;
     votersVerified: boolean;
   };
+  governmentId?: {
+    nin?: string;
+    votersCard?: string;
+    bvn?: string;
+  };
   subscription?: {
     plan: 'free' | 'basic' | 'premium' | 'gold';
     status: 'active' | 'inactive';

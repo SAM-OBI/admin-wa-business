@@ -322,15 +322,20 @@ export default function UserDetails() {
               {user.verification && (
                 <>
                   <div className="flex justify-between items-center pt-2 border-t border-gray-100">
-                    <span className="text-gray-600 text-sm">BVN</span>
+                    <div>
+                      <span className="text-gray-600 text-sm block">BVN</span>
+                      <span className="font-medium text-gray-800 text-sm">
+                        {user.governmentId?.bvn || 'Not Provided'}
+                      </span>
+                    </div>
                     <div className="flex items-center gap-2">
                        <span className={`text-xs ${user.verification.bvnVerified ? 'text-green-600' : 'text-gray-400'}`}>
-                        {user.verification.bvnVerified ? '✓ Verified' : 'Not verified'}
+                        {user.verification.bvnVerified && '✓ Verified'}
                       </span>
-                      {!user.verification.bvnVerified && (
+                      {!user.verification.bvnVerified && user.governmentId?.bvn && (
                         <button 
                           onClick={() => handleVerificationUpdate('bvn', true)}
-                          className="text-xs px-2 py-1 bg-green-50 text-green-600 rounded hover:bg-green-100"
+                          className="text-xs px-2 py-1 bg-green-50 text-green-600 rounded hover:bg-green-100 border border-green-200"
                         >
                           Verify
                         </button>
@@ -345,16 +350,22 @@ export default function UserDetails() {
                       )}
                     </div>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600 text-sm">NIN</span>
+
+                  <div className="flex justify-between items-center pt-2 border-t border-gray-100">
+                    <div>
+                      <span className="text-gray-600 text-sm block">NIN</span>
+                      <span className="font-medium text-gray-800 text-sm">
+                        {user.governmentId?.nin || 'Not Provided'}
+                      </span>
+                    </div>
                     <div className="flex items-center gap-2">
                       <span className={`text-xs ${user.verification.ninVerified ? 'text-green-600' : 'text-gray-400'}`}>
-                        {user.verification.ninVerified ? '✓ Verified' : 'Not verified'}
+                         {user.verification.ninVerified && '✓ Verified'}
                       </span>
-                      {!user.verification.ninVerified && (
+                      {!user.verification.ninVerified && user.governmentId?.nin && (
                         <button 
                           onClick={() => handleVerificationUpdate('nin', true)}
-                          className="text-xs px-2 py-1 bg-green-50 text-green-600 rounded hover:bg-green-100"
+                          className="text-xs px-2 py-1 bg-green-50 text-green-600 rounded hover:bg-green-100 border border-green-200"
                         >
                           Verify
                         </button>
@@ -369,16 +380,22 @@ export default function UserDetails() {
                       )}
                     </div>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600 text-sm">Voter's Card</span>
+
+                  <div className="flex justify-between items-center pt-2 border-t border-gray-100">
+                    <div>
+                      <span className="text-gray-600 text-sm block">Voter's Card</span>
+                      <span className="font-medium text-gray-800 text-sm">
+                        {user.governmentId?.votersCard || 'Not Provided'}
+                      </span>
+                    </div>
                      <div className="flex items-center gap-2">
                       <span className={`text-xs ${user.verification.votersVerified ? 'text-green-600' : 'text-gray-400'}`}>
-                        {user.verification.votersVerified ? '✓ Verified' : 'Not verified'}
+                        {user.verification.votersVerified && '✓ Verified'}
                       </span>
-                      {!user.verification.votersVerified && (
+                      {!user.verification.votersVerified && user.governmentId?.votersCard && (
                         <button 
                           onClick={() => handleVerificationUpdate('voters', true)}
-                          className="text-xs px-2 py-1 bg-green-50 text-green-600 rounded hover:bg-green-100"
+                          className="text-xs px-2 py-1 bg-green-50 text-green-600 rounded hover:bg-green-100 border border-green-200"
                         >
                           Verify
                         </button>
