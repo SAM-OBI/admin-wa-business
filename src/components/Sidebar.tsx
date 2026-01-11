@@ -10,17 +10,17 @@ import { useState } from 'react';
 import UpgradeModal from './UpgradeModal';
 
 const navigation = [
-  { name: 'Dashboard', to: '/', icon: FiHome },
-  { name: 'Products', to: '/products', icon: FiPackage },
-  { name: 'Users', to: '/users', icon: FiUsers },
-  { name: 'Vendors', to: '/vendors', icon: FiShoppingBag },
-  { name: 'Orders', to: '/orders', icon: FiShoppingBag },
-  { name: 'Complaints', to: '/complaints', icon: FiAlertCircle },
-  { name: 'Court Cases', to: '/court-cases', icon: FiMessageSquare },
-  { name: 'Reviews', to: '/reviews', icon: FiStar },
-  { name: 'Risk Management', to: '/risk-management', icon: FiShield },
-  { name: 'Audit Logs', to: '/audit-logs', icon: FiFileText },
-  { name: 'Marketing', to: '/marketing', icon: FiTrendingUp },
+  { name: 'Dashboard', to: '/dashboard', icon: FiHome },
+  { name: 'Products', to: '/dashboard/products', icon: FiPackage },
+  { name: 'Users', to: '/dashboard/users', icon: FiUsers },
+  { name: 'Vendors', to: '/dashboard/vendors', icon: FiShoppingBag },
+  { name: 'Orders', to: '/dashboard/orders', icon: FiShoppingBag },
+  { name: 'Complaints', to: '/dashboard/complaints', icon: FiAlertCircle },
+  { name: 'Court Cases', to: '/dashboard/court-cases', icon: FiMessageSquare },
+  { name: 'Reviews', to: '/dashboard/reviews', icon: FiStar },
+  { name: 'Risk Management', to: '/dashboard/risk-management', icon: FiShield },
+  { name: 'Audit Logs', to: '/dashboard/audit-logs', icon: FiFileText },
+  { name: 'Marketing', to: '/dashboard/marketing', icon: FiTrendingUp },
 ];
 
 interface SidebarProps {
@@ -100,7 +100,7 @@ export default function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
       {/* Footer */}
       <div className="p-4 border-t border-gray-200">
         <NavLink 
-          to="/settings"
+          to="/dashboard/settings"
           className={({ isActive }) =>
             `flex items-center gap-3 px-3 py-3 rounded-lg transition w-full ${
               isActive
