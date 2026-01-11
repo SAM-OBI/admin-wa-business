@@ -71,7 +71,12 @@ export default function ProductDetails() {
         <div className="flex justify-between items-start">
           <div>
             <h1 className="text-3xl font-bold text-gray-800">{product.name}</h1>
-            <p className="text-gray-500 mt-1">{product.category}</p>
+            <p className="text-gray-500 mt-1">
+              {typeof product.category === 'object' && product.category !== null 
+                // @ts-ignore
+                ? product.category.name 
+                : product.category}
+            </p>
           </div>
           
           <div>
@@ -163,7 +168,12 @@ export default function ProductDetails() {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Category</span>
-                <span className="text-gray-800">{product.category}</span>
+                <span className="text-gray-800">
+                  {typeof product.category === 'object' && product.category !== null 
+                    // @ts-ignore
+                    ? product.category.name 
+                    : product.category}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Status</span>
