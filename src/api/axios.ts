@@ -19,11 +19,20 @@ api.interceptors.request.use((config) => config);
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401 || error.response?.status === 403) {
-      if (window.location.pathname !== "/login") {
-        window.location.href = "/login";
-      }
+    // Don't redirect if:
+    // 1. It's an IP verification request (403 with requiresIPVerification flag)
+    // 2. It's the auth/me check endpoint
+    // 3. We're already on the login page
+    const isIPVerification = error.response?.status === 403 && error.response?.data?.requiresIPVerification;
+    const isAuthCheck = error.config?.url?.includes('/auth/me');
+    const isOnLoginPage = window.location.pathname === "/login";
+
+    if (!isIPVerification && !isAuthCheck && !isOnLoginPage && 
+        (error.response?.status === 401)) {
+      // Only redirect on 401 (Unauthorized), not 403 (Forbidden)
+      window.location.href = "/login";
     }
+    
     return Promise.reject(error);
   }
 );
