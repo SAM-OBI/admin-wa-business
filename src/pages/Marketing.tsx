@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { adminService } from '../api/admin.service';
-import { FiTrendingUp, FiTag, FiSearch } from 'react-icons/fi';
+import { FiTag, FiSearch } from 'react-icons/fi';
 
 interface DiscountCode {
   _id: string;
