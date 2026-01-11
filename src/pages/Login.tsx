@@ -3,12 +3,21 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { FiMail } from 'react-icons/fi';
 import { showError, showSuccess, showLoading, closeLoading } from '../utils/swal';
+import IPVerificationModal from '../components/IPVerificationModal';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showIPVerification, setShowIPVerification] = useState(false);
+  const [pendingUserId, setPendingUserId] = useState<string | null>(null);
   const { login } = useAuthStore();
   const navigate = useNavigate();
+
+  const handleSuccessfulLogin = () => {
+    closeLoading();
+    showSuccess('Welcome back!', 'Login Successful');
+    setTimeout(() => navigate('/'), 1000);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,17 +32,40 @@ export default function Login() {
 
     try {
       await login({ email, password });
-      closeLoading();
-      showSuccess('Welcome back!', 'Login Successful');
-      setTimeout(() => navigate('/'), 1000);
+      handleSuccessfulLogin();
     } catch (err: any) {
       closeLoading();
+      
+      // Check for IP verification required (status 403)
+      if (err.response?.status === 403 && err.response.data?.requiresIPVerification) {
+        setPendingUserId(err.response.data.userId);
+        setShowIPVerification(true);
+        return; // Don't show error, show modal instead
+      }
+
       let errorMessage = err.response?.data?.message || 'Failed to login. Check credentials.';
       if (err.response?.data?.data?.attemptsLeft !== undefined) {
          errorMessage += ` (${err.response.data.data.attemptsLeft} attempts remaining)`;
       }
       showError(errorMessage, 'Login Failed');
     }
+  };
+
+  const handleIPVerificationSuccess = (user: any) => {
+    setShowIPVerification(false);
+    setPendingUserId(null);
+    // Update auth store with verified user
+    useAuthStore.setState({ 
+      admin: user, 
+      isAuthenticated: true,
+      isLoading: false  
+    });
+    handleSuccessfulLogin();
+  };
+
+  const handleIPVerificationCancel = () => {
+    setShowIPVerification(false);
+    setPendingUserId(null);
   };
 
   return (
@@ -101,6 +133,15 @@ export default function Login() {
           </p>
         </div>
       </div>
+
+      {/* IP Verification Modal */}
+      {showIPVerification && pendingUserId && (
+        <IPVerificationModal
+          userId={pendingUserId}
+          onSuccess={handleIPVerificationSuccess}
+          onCancel={handleIPVerificationCancel}
+        />
+      )}
     </div>
   );
 }
