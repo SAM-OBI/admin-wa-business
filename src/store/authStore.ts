@@ -68,8 +68,9 @@ export const useAuthStore = create<AuthState>((set) => ({
       const response = await api.get('/auth/me');
       const admin = response.data.data;
 
-      // Verify role is admin
-      if (admin.role !== 'admin' && admin.role !== 'superadmin') {
+      // Verify role is admin (case-insensitive)
+      const role = admin.role?.toUpperCase();
+      if (role !== 'ADMIN' && role !== 'SUPERADMIN') {
          await api.get('/auth/logout'); // Force backend logout
          set({ admin: null, isAuthenticated: false, isLoading: false });
          return;
