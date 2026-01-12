@@ -66,7 +66,7 @@ export default function IPVerificationModal({ userId, onSuccess, onCancel }: IPV
             if (response.data.success) {
                 // Store token and user data
                 if (response.data.token) {
-                    localStorage.setItem('auth_token', response.data.token);
+                    // Token handled by cookie
                     localStorage.setItem('is_logged_in', 'true');
                 }
 
