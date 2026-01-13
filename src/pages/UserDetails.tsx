@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { adminService, UserDetails as UserDetailsType } from '../api/admin.service';
 import { 
   FiArrowLeft, FiShoppingCart, FiDollarSign, FiStar, FiCalendar,
-  FiCheckCircle, FiXCircle, FiUser, FiMail, FiPhone, FiMapPin
+  FiCheckCircle, FiXCircle, FiUser, FiMail, FiPhone, FiMapPin, FiShield
 } from 'react-icons/fi';
 
 export default function UserDetails() {
@@ -33,6 +33,20 @@ export default function UserDetails() {
       console.error('Failed to update verification:', error);
     }
   };
+
+  const handleUnlock = async () => {
+    if (!user) return;
+    if (confirm('Are you sure you want to unlock this user? This will reset their verification attempts.')) {
+        try {
+            const updatedUser = await adminService.updateUserVerification(user._id, { status: 'unverified' });
+            setUser(prev => prev ? { ...prev, verification: updatedUser.verification } : null);
+        } catch (error) {
+            console.error('Failed to unlock user:', error);
+        }
+    }
+  };
+
+
 
   useEffect(() => {
     if (id) {
@@ -80,6 +94,14 @@ export default function UserDetails() {
             <h1 className="text-3xl font-bold text-gray-800">{user.name}</h1>
             <p className="text-gray-500 mt-1">{user.email}</p>
           </div>
+          {user.verification?.status === 'locked' && (
+              <button
+                onClick={handleUnlock}
+                className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition flex items-center gap-2"
+              >
+                <FiShield /> Unlock Account
+              </button>
+          )}
         </div>
       </div>
 
@@ -316,6 +338,40 @@ export default function UserDetails() {
                 }`}>
                   {user.isVerified ? <FiCheckCircle className="mr-1" /> : <FiXCircle className="mr-1" />}
                   {user.isVerified ? 'Verified' : 'Unverified'}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Verification Status</span>
+                <span className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full ${
+                  user.verification?.status === 'verified' ? 'bg-green-100 text-green-700' :
+                  user.verification?.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                  user.verification?.status === 'rejected' ? 'bg-red-100 text-red-700' :
+                  user.verification?.status === 'locked' ? 'bg-orange-100 text-orange-800' :
+                  'bg-gray-100 text-gray-700'
+                }`}>
+                  {user.verification?.status === 'verified' && <FiCheckCircle className="mr-1" />}
+                  {user.verification?.status === 'pending' && <FiCheckCircle className="mr-1" />} 
+                  {user.verification?.status === 'rejected' && <FiXCircle className="mr-1" />}
+                  {user.verification?.status === 'locked' && <FiShield className="mr-1" />}
+                  {user.verification?.status || 'unverified'}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Verification Status</span>
+                <span className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full ${
+                  user.verification?.status === 'verified' ? 'bg-green-100 text-green-700' :
+                  user.verification?.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                  user.verification?.status === 'rejected' ? 'bg-red-100 text-red-700' :
+                  user.verification?.status === 'locked' ? 'bg-orange-100 text-orange-800' :
+                  'bg-gray-100 text-gray-700'
+                }`}>
+                  {user.verification?.status === 'verified' && <FiCheckCircle className="mr-1" />}
+                  {user.verification?.status === 'pending' && <FiCheckCircle className="mr-1" />} 
+                  {user.verification?.status === 'rejected' && <FiXCircle className="mr-1" />}
+                  {user.verification?.status === 'locked' && <FiShield className="mr-1" />}
+                  {user.verification?.status || 'unverified'}
                 </span>
               </div>
 

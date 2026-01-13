@@ -51,7 +51,7 @@ export default function VendorDetails() {
     }
   };
 
-  const handleVerification = async (status: 'verified' | 'rejected') => {
+  const handleVerification = async (status: 'verified' | 'rejected' | 'unverified') => {
     let reason;
     if (status === 'rejected') {
       reason = prompt('Enter reason for rejection:');
@@ -135,6 +135,14 @@ export default function VendorDetails() {
                   Reject Verification
                 </button>
               </>
+            )}
+            {vendor.verification?.status === 'locked' && (
+              <button
+                onClick={() => handleVerification('unverified')}
+                className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition flex items-center gap-2"
+              >
+                <FiShield /> Unlock Account
+              </button>
             )}
             {vendor.isActive ? (
               <button
@@ -365,11 +373,13 @@ export default function VendorDetails() {
                   vendor.verification?.status === 'verified' ? 'bg-green-100 text-green-700' :
                   vendor.verification?.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
                   vendor.verification?.status === 'rejected' ? 'bg-red-100 text-red-700' :
+                  vendor.verification?.status === 'locked' ? 'bg-orange-100 text-orange-800' :
                   'bg-gray-100 text-gray-700'
                 }`}>
                   {vendor.verification?.status === 'verified' && <FiCheckCircle className="mr-1" />}
                   {vendor.verification?.status === 'pending' && <FiAlertCircle className="mr-1" />}
                   {vendor.verification?.status === 'rejected' && <FiXCircle className="mr-1" />}
+                  {vendor.verification?.status === 'locked' && <FiShield className="mr-1" />}
                   {vendor.verification?.status || 'unverified'}
                 </span>
               </div>

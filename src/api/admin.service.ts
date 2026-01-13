@@ -10,7 +10,7 @@ export interface User {
   isActive: boolean;
   lastLogin?: string;
   verification?: {
-    status: 'unverified' | 'pending' | 'verified' | 'rejected';
+    status: 'unverified' | 'pending' | 'verified' | 'rejected' | 'locked';
     bvnVerified: boolean;
     ninVerified: boolean;
     votersVerified: boolean;
@@ -68,7 +68,7 @@ export interface Vendor {
   storeName?: string;
   storeId?: string;
   verification?: {
-    status: 'unverified' | 'pending' | 'verified' | 'rejected';
+    status: 'unverified' | 'pending' | 'verified' | 'rejected' | 'locked';
     rejectionReason?: string;
     verifiedAt?: string;
     method?: string;
@@ -275,7 +275,7 @@ export const adminService = {
     const response = await api.patch(`/admin/users/${id}/status`, { isActive: !currentStatus });
     return response.data;
   },
-  updateUserVerification: async (id: string, data: { bvn?: boolean; nin?: boolean; voters?: boolean }) => {
+  updateUserVerification: async (id: string, data: { bvn?: boolean; nin?: boolean; voters?: boolean; status?: string }) => {
     const response = await api.patch(`/admin/users/${id}/verification`, data);
     return response.data;
   },
