@@ -105,9 +105,9 @@ export default function Dashboard() {
   ];
 
   const revenueCards = [
-    { title: "Today's Revenue", value: stats?.revenue.today || 0, icon: FiDollarSign, color: 'bg-emerald-500' },
-    { title: "Week's Revenue", value: stats?.revenue.week || 0, icon: FiDollarSign, color: 'bg-teal-500' },
-    { title: "Month's Revenue", value: stats?.revenue.month || 0, icon: FiDollarSign, color: 'bg-cyan-500' },
+    { title: "Today's Revenue", value: stats?.revenue?.today || 0, icon: FiDollarSign, color: 'bg-emerald-500' },
+    { title: "Week's Revenue", value: stats?.revenue?.week || 0, icon: FiDollarSign, color: 'bg-teal-500' },
+    { title: "Month's Revenue", value: stats?.revenue?.month || 0, icon: FiDollarSign, color: 'bg-cyan-500' },
   ];
 
   const alerts = [
