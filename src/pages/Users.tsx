@@ -87,14 +87,16 @@ export default function Users() {
       verified: 'bg-green-100 text-green-700',
       pending: 'bg-yellow-100 text-yellow-700',
       rejected: 'bg-red-100 text-red-700',
-      unverified: 'bg-gray-100 text-gray-700'
+      unverified: 'bg-gray-100 text-gray-700',
+      locked: 'bg-orange-100 text-orange-700'
     };
 
     const icons = {
       verified: <FiCheckCircle className="mr-1" />,
       pending: <FiAlertCircle className="mr-1" />,
       rejected: <FiXCircle className="mr-1" />,
-      unverified: <FiXCircle className="mr-1" />
+      unverified: <FiXCircle className="mr-1" />,
+      locked: <FiAlertCircle className="mr-1" />
     };
 
     const displayStatus = isAnyVerified ? 'verified' : status;
