@@ -65,17 +65,18 @@ export default function Dashboard() {
   };
 
   const getActivityText = (activity: Activity) => {
+    const data = activity.data || {};
     switch (activity.type) {
       case 'user':
-        return `${activity.data.name} registered`;
+        return `${data.name || 'User'} registered`;
       case 'vendor':
-        return `${activity.data.name} joined as vendor`;
+        return `${data.name || 'Vendor'} joined as vendor`;
       case 'product':
-        return `${activity.data.name} added by ${activity.data.store}`;
+        return `${data.name || 'Product'} added by ${data.store || 'store'}`;
       case 'order':
-        return `Order #${String(activity.data.orderId).slice(-6)} placed - ₦${activity.data.amount.toLocaleString()}`;
+        return `Order #${String(data.orderId || '').slice(-6)} placed - ₦${(data.amount || 0).toLocaleString()}`;
       case 'complaint':
-        return `Complaint filed: ${activity.data.title}`;
+        return `Complaint filed: ${data.title || 'Complaint'}`;
       default:
         return 'Activity recorded';
     }
