@@ -112,21 +112,21 @@ export default function Dashboard() {
   ];
 
   const alerts = [
-    ...(stats?.pendingComplaints && stats.pendingComplaints > 0 ? [{
+    ...((stats?.pendingComplaints || 0) > 0 ? [{
       title: 'Pending Complaints',
-      count: stats.pendingComplaints,
+      count: stats?.pendingComplaints,
       link: '/complaints',
       color: 'red'
     }] : []),
-    ...((stats?.unverifiedVendors && stats.unverifiedVendors > 0 ? [{
+    ...((stats?.unverifiedVendors || 0) > 0 ? [{
       title: 'Unverified Vendors',
-      count: stats.unverifiedVendors,
+      count: stats?.unverifiedVendors,
       link: '/vendors',
       color: 'yellow'
-    }] : [])),
-    ...(stats?.activeCourtCases && stats.activeCourtCases > 0 ? [{
+    }] : []),
+    ...((stats?.activeCourtCases || 0) > 0 ? [{
       title: 'Active Court Cases',
-      count: stats.activeCourtCases,
+      count: stats?.activeCourtCases,
       link: '/court-cases',
       color: 'orange'
     }] : [])
