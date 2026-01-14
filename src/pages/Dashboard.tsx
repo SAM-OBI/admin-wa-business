@@ -44,10 +44,12 @@ export default function Dashboard() {
         api.get('/admin/dashboard-stats'),
         api.get('/admin/recent-activity')
       ]);
-      setStats(statsRes.data.data);
-      setActivities(activitiesRes.data.data);
+      setStats(statsRes.data.data || {});
+      setActivities(activitiesRes.data.data || []);
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
+      setStats({} as Stats);
+      setActivities([]);
     } finally {
       setLoading(false);
     }
@@ -187,7 +189,7 @@ export default function Dashboard() {
             </div>
             <div className="p-6">
               <div className="space-y-4">
-                {activities.slice(0, 10).map((activity, index) => (
+                {(activities || []).slice(0, 10).map((activity, index) => (
                   <div key={index} className="flex items-start gap-4 p-3 rounded-lg hover:bg-gray-50">
                     <div className="p-2 bg-gray-100 rounded-lg">
                       {getActivityIcon(activity.type)}
