@@ -73,7 +73,7 @@ export default function ProductDetails() {
             <h1 className="text-3xl font-bold text-gray-800">{product.name}</h1>
             <p className="text-gray-500 mt-1">
               {typeof product.category === 'object' && product.category !== null 
-                // @ts-ignore
+                // @ts-expect-error
                 ? product.category.name 
                 : product.category}
             </p>
@@ -170,7 +170,7 @@ export default function ProductDetails() {
                 <span className="text-gray-600">Category</span>
                 <span className="text-gray-800">
                   {typeof product.category === 'object' && product.category !== null 
-                    // @ts-ignore
+                    // @ts-expect-error
                     ? product.category.name 
                     : product.category}
                 </span>
