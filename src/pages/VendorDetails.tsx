@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { adminService, VendorDetails as VendorDetailsType } from '../api/admin.service';
 import { 
   FiArrowLeft, FiShield, FiPackage, FiShoppingCart, FiDollarSign, 
-  FiCheckCircle, FiXCircle, FiAlertCircle, FiUser, FiMail, FiPhone,
+  FiCheckCircle, FiXCircle, FiUser, FiMail, FiPhone,
   FiCalendar, FiAlertTriangle, FiExternalLink
 } from 'react-icons/fi';
 
@@ -374,15 +374,38 @@ export default function VendorDetails() {
                   vendor.verification?.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
                   vendor.verification?.status === 'rejected' ? 'bg-red-100 text-red-700' :
                   vendor.verification?.status === 'locked' ? 'bg-orange-100 text-orange-800' :
+                  vendor.verification?.status === 'failed' ? 'bg-red-100 text-red-700' :
                   'bg-gray-100 text-gray-700'
                 }`}>
                   {vendor.verification?.status === 'verified' && <FiCheckCircle className="mr-1" />}
-                  {vendor.verification?.status === 'pending' && <FiAlertCircle className="mr-1" />}
-                  {vendor.verification?.status === 'rejected' && <FiXCircle className="mr-1" />}
-                  {vendor.verification?.status === 'locked' && <FiShield className="mr-1" />}
+                  {(vendor.verification?.status === 'pending' || vendor.verification?.status === 'locked') && <FiShield className="mr-1" />}
+                  {(vendor.verification?.status === 'rejected' || vendor.verification?.status === 'failed') && <FiXCircle className="mr-1" />}
                   {vendor.verification?.status || 'unverified'}
                 </span>
               </div>
+
+              {/* Enhanced Locked/Failed messages */}
+              {vendor.verification?.status === 'locked' && (
+                <div className="mt-2 p-3 bg-orange-50 border border-orange-100 rounded-lg">
+                  <p className="text-sm font-semibold text-orange-800">Account Locked</p>
+                  <p className="text-sm text-orange-700 mt-1">
+                    This account was automatically locked after {vendor.verification.attempts || 5} failed verification attempts.
+                  </p>
+                  <p className="text-xs text-orange-600 mt-2 font-medium">0 attempts remaining</p>
+                </div>
+              )}
+
+              {vendor.verification?.status === 'failed' && (
+                <div className="mt-2 p-3 bg-red-50 border border-red-100 rounded-lg">
+                  <p className="text-sm font-semibold text-red-800">Verification Failed</p>
+                  {vendor.verification.failureReason && (
+                    <p className="text-sm text-red-700 mt-1">{vendor.verification.failureReason}</p>
+                  )}
+                  <p className="text-xs text-red-600 mt-2 font-medium">
+                    {Math.max(0, 5 - (vendor.verification.attempts || 0))} attempt(s) remaining before account lockout.
+                  </p>
+                </div>
+              )}
 
               {/* Government ID Section */}
               {vendor.verification?.status !== 'unverified' && (

@@ -10,10 +10,12 @@ export interface User {
   isActive: boolean;
   lastLogin?: string;
   verification?: {
-    status: 'unverified' | 'pending' | 'verified' | 'rejected' | 'locked';
+    status: 'unverified' | 'pending' | 'verified' | 'rejected' | 'locked' | 'failed';
     bvnVerified: boolean;
     ninVerified: boolean;
     votersVerified: boolean;
+    attempts?: number;
+    failureReason?: string;
   };
   governmentId?: {
     nin?: string;
@@ -68,12 +70,14 @@ export interface Vendor {
   storeName?: string;
   storeId?: string;
   verification?: {
-    status: 'unverified' | 'pending' | 'verified' | 'rejected' | 'locked';
+    status: 'unverified' | 'pending' | 'verified' | 'rejected' | 'locked' | 'failed';
     rejectionReason?: string;
+    failureReason?: string;
     verifiedAt?: string;
     method?: string;
     idNumber?: string;
     documentUrl?: string;
+    attempts?: number;
     governmentIdNumber?: string; // Legacy/Alternative
     governmentIdType?: string; // Legacy/Alternative
   };
