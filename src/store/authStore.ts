@@ -60,10 +60,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   logout: async () => {
     try {
       await api.get('/auth/logout'); // Clears cookie on server
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('is_logged_in');
       set({ admin: null, isAuthenticated: false });
     } catch (error) {
       console.error('Logout failed:', error);
       // Still clear state even if logout API fails
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('is_logged_in');
       set({ admin: null, isAuthenticated: false });
     }
   },
