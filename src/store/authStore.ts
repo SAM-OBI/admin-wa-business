@@ -27,7 +27,7 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>((set, get) => ({
   admin: null,
-  isAuthenticated: false,
+  isAuthenticated: !!(sessionStorage.getItem('token') || sessionStorage.getItem('is_logged_in')),
   isLoading: true,
 
   register: async (credentials) => {
