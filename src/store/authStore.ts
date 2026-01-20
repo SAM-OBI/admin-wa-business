@@ -25,7 +25,7 @@ interface AuthState {
   resetPassword: (token: string, password: string) => Promise<void>;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
   admin: null,
   isAuthenticated: false,
   isLoading: true,
@@ -64,7 +64,11 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   checkAuth: async () => {
-    // Rely on cookie being present
+    // Prevent multiple simultaneous auth checks
+    if (get().isLoading) return;
+    
+    set({ isLoading: true });
+    
     try {
       const response = await api.get('/auth/me');
       const admin = response.data.data;
@@ -72,15 +76,20 @@ export const useAuthStore = create<AuthState>((set) => ({
       // Verify role is admin (case-insensitive)
       const role = admin.role?.toUpperCase();
       if (role !== 'ADMIN' && role !== 'SUPERADMIN') {
+         console.warn('[AuthStore Admin] Access denied: User is not an admin');
          await api.get('/auth/logout'); // Force backend logout
          set({ admin: null, isAuthenticated: false, isLoading: false });
          return;
       }
 
       set({ admin, isAuthenticated: true, isLoading: false });
-    } catch {
-      // console.error("Check auth failed", error);
-      set({ admin: null, isAuthenticated: false, isLoading: false });
+    } catch (error: any) {
+      // Clear state on 401, but keep it on other errors (like network timeout)
+      if (error.response?.status === 401) {
+        set({ admin: null, isAuthenticated: false, isLoading: false });
+      } else {
+        set({ isLoading: false });
+      }
     }
   },
 
