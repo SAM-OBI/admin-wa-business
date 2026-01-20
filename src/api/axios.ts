@@ -54,16 +54,16 @@ api.interceptors.response.use(
 
     const status = error.response?.status;
     const data = error.response?.data as any;
+    const isAuthCheck = originalRequest.url?.includes('/auth/me');
+    const isOnLoginPage = window.location.pathname === "/login";
 
     // Handle 401 Unauthorized - Attempt silent token refresh
     if (status === 401 && !originalRequest._retry) {
       // Don't refresh if:
       // 1. It's the auth/me check endpoint on initial load (avoid loops)
       // 2. We're already on the login page
-      const isAuthCheck = originalRequest.url?.includes('/auth/me');
-      const isOnLoginPage = window.location.pathname === "/login";
       
-      if (isOnLoginPage) {
+      if (isOnLoginPage || isAuthCheck) {
         return Promise.reject(error);
       }
 
@@ -119,8 +119,6 @@ api.interceptors.response.use(
 
     // Original redirection logic for other cases (like 403 or 401 where retry failed)
     const isIPVerification = status === 403 && data?.requiresIPVerification;
-    const isAuthCheck = originalRequest.url?.includes('/auth/me');
-    const isOnLoginPage = window.location.pathname === "/login";
 
     if (!isIPVerification && !isAuthCheck && !isOnLoginPage && status === 401) {
        // This handles the case where the refresh itself failed or it wasn't a refreshable 401
