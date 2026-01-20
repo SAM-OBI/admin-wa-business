@@ -72,7 +72,7 @@ api.interceptors.response.use(
       // 1. It's the auth/me check endpoint on initial load (avoid loops)
       // 2. We're already on the login page
       
-      if (isOnLoginPage || isAuthCheck) {
+      if (isOnLoginPage) {
         return Promise.reject(error);
       }
 
