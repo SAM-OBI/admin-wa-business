@@ -91,6 +91,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       const response = await api.get('/auth/me');
       const admin = response.data.data;
+      const token = response.data.accessToken || response.data.data?.accessToken;
+      if (token) {
+        sessionStorage.setItem('token', token);
+      }
 
       // Verify role is admin (case-insensitive)
       const role = admin.role?.toUpperCase();
