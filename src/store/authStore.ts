@@ -64,11 +64,21 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   checkAuth: async () => {
-    // Prevent multiple simultaneous auth checks
-    if (get().isLoading) return;
-    
+    // Rely on cookie being present
+    // If authenticated already, just verify in background
+    if (get().isAuthenticated) {
+      try {
+        const response = await api.get('/auth/me');
+        set({ admin: response.data.data, isAuthenticated: true });
+      } catch (error: any) {
+        if (error.response?.status === 401) {
+          set({ admin: null, isAuthenticated: false });
+        }
+      }
+      return;
+    }
+
     set({ isLoading: true });
-    
     try {
       const response = await api.get('/auth/me');
       const admin = response.data.data;
@@ -86,10 +96,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     } catch (error: any) {
       // Clear state on 401, but keep it on other errors (like network timeout)
       if (error.response?.status === 401) {
-        set({ admin: null, isAuthenticated: false, isLoading: false });
-      } else {
-        set({ isLoading: false });
+        set({ admin: null, isAuthenticated: false });
       }
+      console.error('[AuthStore Admin] Auth check failed:', error);
+    } finally {
+      set({ isLoading: false });
     }
   },
 
