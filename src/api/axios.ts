@@ -33,6 +33,15 @@ const processQueue = (error: any, token: string | null = null) => {
 };
 
 api.interceptors.request.use((config) => {
+  // CLEANUP: Ensure no sensitive data remains in localStorage (Legacy check)
+  const legacyKeys = ['token', 'auth_token', 'is_logged', 'is_logged_in'];
+  legacyKeys.forEach(key => {
+    if (localStorage.getItem(key)) {
+      console.warn(`[Axios Admin] Security: Removing legacy ${key} from localStorage`);
+      localStorage.removeItem(key);
+    }
+  });
+
   // If we had a token in sessionStorage, we would attach it here
   // But admin seems to rely primarily on cookies.
   // However, we'll check for it just in case some parts of the system use it.
