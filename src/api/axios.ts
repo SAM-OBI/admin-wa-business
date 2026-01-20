@@ -43,10 +43,10 @@ api.interceptors.request.use((config) => {
   });
 
   // If we had a token in sessionStorage, we would attach it here
-  // But admin seems to rely primarily on cookies.
-  // However, we'll check for it just in case some parts of the system use it.
   const token = sessionStorage.getItem('token');
-  if (token && config.headers) {
+  const isRefreshRequest = config.url?.includes('/auth/refresh');
+
+  if (token && config.headers && !isRefreshRequest) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
