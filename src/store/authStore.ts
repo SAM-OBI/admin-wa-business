@@ -83,6 +83,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         if (error.response?.status === 401) {
           set({ admin: null, isAuthenticated: false });
         }
+      } finally {
+        set({ isLoading: false });
       }
       return;
     }
