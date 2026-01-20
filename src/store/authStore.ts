@@ -42,7 +42,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   login: async (credentials) => {
     try {
       const response = await api.post('/auth/login', credentials);
-      const { data } = response.data; // Backend sets HttpOnly cookie
+      const { data, accessToken } = response.data; // Backend sets HttpOnly cookie and sends accessToken
+      
+      const token = accessToken || response.data.data?.accessToken;
+      if (token) {
+        sessionStorage.setItem('token', token);
+      }
 
       // Allow any authenticated user to access the admin dashboard
       set({ admin: data, isAuthenticated: true });

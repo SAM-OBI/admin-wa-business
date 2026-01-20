@@ -65,8 +65,9 @@ export default function IPVerificationModal({ userId, onSuccess, onCancel }: IPV
 
             if (response.data.success) {
                 // Store token and user data
-                if (response.data.token) {
-                    // Token handled by cookie
+                const token = response.data.token || response.data.data?.accessToken;
+                if (token) {
+                    sessionStorage.setItem('token', token);
                     sessionStorage.setItem('is_logged_in', 'true');
                 }
 
