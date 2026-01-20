@@ -24,101 +24,136 @@ const navigation = [
 ];
 
 interface SidebarProps {
-  isCollapsed: boolean;
-  toggleSidebar: () => void;
+  isDesktopCollapsed: boolean;
+  toggleDesktop: () => void;
+  isMobileOpen: boolean;
+  closeMobile: () => void;
 }
 
-export default function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
+export default function Sidebar({ isDesktopCollapsed, toggleDesktop, isMobileOpen, closeMobile }: SidebarProps) {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-  // const { admin } = useAuthStore();
 
   return (
-    <div 
-      className={`bg-white border-r border-gray-200 flex flex-col transition-all duration-300 ${
-        isCollapsed ? 'w-20' : 'w-64'
-      }`}
-    >
-      {/* Header / Logo */}
-      <div className="p-4 border-b border-gray-200 flex items-center justify-between h-20">
-        {!isCollapsed && (
-          <div>
-            <h1 className="text-xl font-bold text-blue-600 whitespace-nowrap">Admin Panel</h1>
-            <p className="text-[10px] text-gray-500 mt-1 whitespace-nowrap">Wa Vendors</p>
-          </div>
-        )}
-        <button 
-          onClick={toggleSidebar}
-          className={`p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition ${isCollapsed ? 'mx-auto' : ''}`}
-        >
-          {isCollapsed ? <FiMenu size={20} /> : <FiChevronLeft size={20} />}
-        </button>
-      </div>
+    <>
+      {/* Mobile Backdrop */}
+      {isMobileOpen && (
+        <div 
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden"
+          onClick={closeMobile}
+        />
+      )}
 
-      {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto p-4 space-y-1">
-        {navigation.map((item) => {
-          // Marketing is now available for all plans on Admin Panel
-          const isLocked = false;
+      {/* Sidebar Container */}
+      <div 
+        className={`bg-white border-r border-gray-100 flex flex-col fixed lg:static inset-y-0 left-0 z-50 transition-all duration-300 ease-in-out shadow-xl lg:shadow-none h-full
+          ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+          ${isDesktopCollapsed ? 'lg:w-20' : 'lg:w-64'}
+          w-64
+        `}
+      >
+        {/* Header / Logo */}
+        <div className={`p-4 border-b border-gray-100 flex items-center h-20 shrink-0 ${isDesktopCollapsed ? 'justify-center' : 'justify-between'}`}>
+          {/* Logo - Hidden on collapsed desktop */}
+          <div className={`${isDesktopCollapsed ? 'hidden lg:hidden' : 'block'} flex flex-col overflow-hidden`}>
+            <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent whitespace-nowrap">Admin Panel</h1>
+            <p className="text-[10px] text-gray-500 font-medium whitespace-nowrap tracking-wide">Wa Vendors</p>
+          </div>
+
+          {/* Fallback Icon for Collapsed State */}
+          {isDesktopCollapsed && (
+             <div className="hidden lg:flex items-center justify-center text-blue-600 font-bold text-xl">
+               A
+             </div>
+          )}
+
+          {/* Toggle Buttons */}
+          <button 
+            onClick={toggleDesktop}
+            className="hidden lg:flex p-1.5 rounded-lg hover:bg-gray-50 text-gray-400 hover:text-gray-600 transition"
+          >
+             {isDesktopCollapsed ? <FiMenu size={20} /> : <FiChevronLeft size={20} />}
+          </button>
           
-          return (
-            <NavLink
-              key={item.name}
-              to={item.to}
-              end={item.to === '/dashboard'} // Only exact match for dashboard home
-              onClick={(e) => {
-                if (isLocked) {
-                  e.preventDefault();
-                  setShowUpgradeModal(true);
+          {/* Close button for Mobile */}
+          <button 
+            onClick={closeMobile}
+            className="lg:hidden p-1.5 rounded-lg hover:bg-gray-50 text-gray-500"
+          >
+            <FiChevronLeft size={24} />
+          </button>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 overflow-y-auto p-4 space-y-1 scrollbar-thin scrollbar-thumb-gray-200">
+          {navigation.map((item) => {
+            const isLocked = false;
+            
+            return (
+              <NavLink
+                key={item.name}
+                to={item.to}
+                end={item.to === '/dashboard'}
+                onClick={(e) => {
+                  if (isLocked) {
+                    e.preventDefault();
+                    setShowUpgradeModal(true);
+                  } else {
+                    // Close mobile sidebar on navigation
+                    if (window.innerWidth < 1024) closeMobile();
+                  }
+                }}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group relative ${
+                    isActive && !isLocked
+                      ? 'bg-blue-50 text-blue-600 font-semibold shadow-sm'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  } ${isDesktopCollapsed ? 'lg:justify-center' : ''}`
                 }
-              }}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-3 rounded-lg transition group relative ${
-                  isActive && !isLocked
-                    ? 'bg-blue-50 text-blue-600 font-semibold'
-                    : 'text-gray-700 hover:bg-gray-50'
-                } ${isCollapsed ? 'justify-center' : ''}`
-              }
-              title={isCollapsed ? item.name : ''}
-            >
-              <item.icon className={`text-lg shrink-0 ${isLocked ? 'text-gray-400' : ''}`} />
-              
-              {!isCollapsed && (
-                <span className={`whitespace-nowrap overflow-hidden transition-all duration-200 ${isLocked ? 'text-gray-500' : ''}`}>
+                title={isDesktopCollapsed ? item.name : ''}
+              >
+                <item.icon className={`text-lg shrink-0 transition-colors ${
+                    isLocked ? 'text-gray-400' : ''
+                  }`} />
+                
+                <span className={`whitespace-nowrap overflow-hidden transition-all duration-200 ${
+                  isDesktopCollapsed ? 'lg:w-0 lg:opacity-0 hidden' : 'block'
+                } ${isLocked ? 'text-gray-500' : ''}`}>
                   {item.name}
                 </span>
-              )}
-              
-              {!isCollapsed && isLocked && (
-                <span className="ml-auto bg-gradient-to-r from-amber-200 to-yellow-400 text-yellow-800 text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1">
-                  PRO
-                </span>
-              )}
-            </NavLink>
-          );
-        })}
-      </nav>
+                
+                {!isDesktopCollapsed && isLocked && (
+                  <span className="ml-auto bg-gradient-to-r from-amber-200 to-yellow-400 text-yellow-800 text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">
+                    PRO
+                  </span>
+                )}
+              </NavLink>
+            );
+          })}
+        </nav>
 
-      {/* Footer */}
-      <div className="p-4 border-t border-gray-200">
-        <NavLink 
-          to="/dashboard/settings"
-          className={({ isActive }) =>
-            `flex items-center gap-3 px-3 py-3 rounded-lg transition w-full ${
-              isActive
-                ? 'bg-blue-50 text-blue-600 font-semibold'
-                : 'text-gray-700 hover:bg-gray-50'
-            } ${isCollapsed ? 'justify-center' : ''}`
-          }
-          title={isCollapsed ? 'Settings' : ''}
-        >
-          <FiSettings className="text-lg shrink-0" />
-          {!isCollapsed && <span>Settings</span>}
-        </NavLink>
+        {/* Footer */}
+        <div className="p-4 border-t border-gray-100 shrink-0">
+          <NavLink 
+            to="/dashboard/settings"
+            onClick={() => window.innerWidth < 1024 && closeMobile()}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-3 rounded-xl transition w-full ${
+                isActive
+                  ? 'bg-blue-50 text-blue-600 font-semibold'
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+              } ${isDesktopCollapsed ? 'lg:justify-center' : ''}`
+            }
+            title={isDesktopCollapsed ? 'Settings' : ''}
+          >
+            <FiSettings className="text-lg shrink-0" />
+            <span className={`${isDesktopCollapsed ? 'lg:hidden' : 'block'}`}>Settings</span>
+          </NavLink>
+        </div>
+        <UpgradeModal 
+          isOpen={showUpgradeModal} 
+          onClose={() => setShowUpgradeModal(false)} 
+        />
       </div>
-      <UpgradeModal 
-        isOpen={showUpgradeModal} 
-        onClose={() => setShowUpgradeModal(false)} 
-      />
-    </div>
+    </>
   );
 }

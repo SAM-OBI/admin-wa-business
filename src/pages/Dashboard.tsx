@@ -135,18 +135,18 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="p-6">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">Dashboard Overview</h1>
-        <p className="text-gray-500 mt-1">Real-time platform analytics and insights</p>
+      <div>
+        <h1 className="text-2xl lg:text-3xl font-bold text-gray-800 tracking-tight">Dashboard Overview</h1>
+        <p className="text-gray-500 mt-1 text-sm lg:text-base">Real-time platform analytics and insights</p>
       </div>
 
       {/* Main Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
         {statCards.map((stat) => (
-          <Link key={stat.title} to={stat.link} className="block">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+          <Link key={stat.title} to={stat.link} className="block group">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:shadow-lg hover:border-blue-100 transition-all duration-300">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-500">{stat.title}</p>
@@ -162,15 +162,15 @@ export default function Dashboard() {
       </div>
 
       {/* Revenue Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 lg:gap-6">
         {revenueCards.map((card) => (
-          <div key={card.title} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div key={card.title} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-500">{card.title}</p>
-                <h3 className="text-2xl font-bold text-gray-800 mt-2">₦{card.value.toLocaleString()}</h3>
+                <h3 className="text-xl lg:text-2xl font-bold text-gray-800 mt-2 tracking-tight">₦{card.value.toLocaleString()}</h3>
               </div>
-              <div className={`${card.color} p-3 rounded-lg`}>
+              <div className={`${card.color} p-3 rounded-xl shadow-lg shadow-black/5 transform rotate-3`}>
                 <card.icon className="text-xl text-white" />
               </div>
             </div>
@@ -179,24 +179,24 @@ export default function Dashboard() {
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         {/* Recent Activity */}
-        <div className="lg:col-span-2">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-800">Recent Activity</h2>
+        <div className="lg:col-span-2 space-y-6">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="p-5 lg:p-6 border-b border-gray-100 bg-gray-50/50">
+              <h2 className="text-lg lg:text-xl font-bold text-gray-800">Recent Activity</h2>
               <p className="text-sm text-gray-500 mt-1">Latest platform events</p>
             </div>
-            <div className="p-6">
+            <div className="p-4 lg:p-6">
               <div className="space-y-4">
                 {(activities || []).slice(0, 10).map((activity, index) => (
-                  <div key={index} className="flex items-start gap-4 p-3 rounded-lg hover:bg-gray-50">
-                    <div className="p-2 bg-gray-100 rounded-lg">
+                  <div key={index} className="flex items-start gap-4 p-3 rounded-xl hover:bg-blue-50/30 transition border-b border-gray-50 last:border-0 last:pb-0">
+                    <div className="p-2.5 bg-gray-100 rounded-xl shrink-0">
                       {getActivityIcon(activity.type)}
                     </div>
-                    <div className="flex-1">
-                      <p className="text-sm text-gray-800">{getActivityText(activity)}</p>
-                      <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-gray-800 font-medium truncate">{getActivityText(activity)}</p>
+                      <div className="flex items-center gap-2 mt-1.5 text-xs text-gray-400 font-medium">
                         <FiClock size={12} />
                         {getRelativeTime(activity.createdAt)}
                       </div>
@@ -211,20 +211,20 @@ export default function Dashboard() {
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Quick Actions */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 lg:p-6">
             <h3 className="text-lg font-bold text-gray-800 mb-4">Quick Actions</h3>
             <div className="space-y-3">
               {stats?.unverifiedVendors && stats.unverifiedVendors > 0 && (
                 <Link 
                   to="/vendors?status=pending"
-                  className="flex items-center justify-between p-3 bg-yellow-50 border border-yellow-200 rounded-lg hover:bg-yellow-100 transition"
+                  className="flex items-center justify-between p-3.5 bg-yellow-50/50 border border-yellow-200/50 rounded-xl hover:bg-yellow-100 hover:border-yellow-300 transition-all group"
                 >
-                  <span className="text-sm font-medium text-yellow-800">Verify Vendors</span>
+                  <span className="text-sm font-semibold text-yellow-800">Verify Vendors</span>
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-1 bg-yellow-200 text-yellow-800 text-xs font-bold rounded-full">
+                    <span className="px-2 py-0.5 bg-yellow-200/80 text-yellow-900 text-xs font-bold rounded-full">
                       {stats.unverifiedVendors}
                     </span>
-                    <FiArrowRight className="text-yellow-600" />
+                    <FiArrowRight className="text-yellow-600 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </Link>
               )}
@@ -232,64 +232,64 @@ export default function Dashboard() {
               {stats?.pendingComplaints && stats.pendingComplaints > 0 && (
                 <Link 
                   to="/complaints"
-                  className="flex items-center justify-between p-3 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition"
+                  className="flex items-center justify-between p-3.5 bg-red-50/50 border border-red-200/50 rounded-xl hover:bg-red-100 hover:border-red-300 transition-all group"
                 >
-                  <span className="text-sm font-medium text-red-800">Review Complaints</span>
+                  <span className="text-sm font-semibold text-red-800">Review Complaints</span>
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-1 bg-red-200 text-red-800 text-xs font-bold rounded-full">
+                    <span className="px-2 py-0.5 bg-red-200/80 text-red-900 text-xs font-bold rounded-full">
                       {stats.pendingComplaints}
                     </span>
-                    <FiArrowRight className="text-red-600" />
+                    <FiArrowRight className="text-red-600 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </Link>
               )}
 
               <Link 
                 to="/products"
-                className="flex items-center justify-between p-3 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition"
+                className="flex items-center justify-between p-3.5 bg-blue-50/50 border border-blue-100 rounded-xl hover:bg-blue-100 transition-all group"
               >
-                <span className="text-sm font-medium text-blue-800">Manage Products</span>
-                <FiArrowRight className="text-blue-600" />
+                <span className="text-sm font-semibold text-blue-800">Manage Products</span>
+                <FiArrowRight className="text-blue-600 group-hover:translate-x-1 transition-transform" />
               </Link>
 
               <Link 
                 to="/orders"
-                className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition"
+                className="flex items-center justify-between p-3.5 bg-green-50/50 border border-green-100 rounded-xl hover:bg-green-100 transition-all group"
               >
-                <span className="text-sm font-medium text-green-800">View Orders</span>
-                <FiArrowRight className="text-green-600" />
+                <span className="text-sm font-semibold text-green-800">View Orders</span>
+                <FiArrowRight className="text-green-600 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
           </div>
 
           {/* Alerts */}
           {alerts.length > 0 && (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 lg:p-6">
               <h3 className="text-lg font-bold text-gray-800 mb-4">Alerts</h3>
               <div className="space-y-3">
                 {alerts.map((alert, index) => (
                   <Link
                     key={index}
                     to={alert.link}
-                    className={`block p-4 rounded-lg border ${
-                      alert.color === 'red' ? 'bg-red-50 border-red-200' :
-                      alert.color === 'yellow' ? 'bg-yellow-50 border-yellow-200' :
-                      'bg-orange-50 border-orange-200'
+                    className={`block p-4 rounded-xl border transition-all hover:-translate-y-0.5 ${
+                      alert.color === 'red' ? 'bg-red-50/50 border-red-100 hover:border-red-200' :
+                      alert.color === 'yellow' ? 'bg-yellow-50/50 border-yellow-100 hover:border-yellow-200' :
+                      'bg-orange-50/50 border-orange-100 hover:border-orange-200'
                     }`}
                   >
                     <div className="flex items-start gap-3">
-                      <FiAlertCircle className={`mt-0.5 ${
+                      <FiAlertCircle className={`mt-0.5 text-lg ${
                         alert.color === 'red' ? 'text-red-600' :
                         alert.color === 'yellow' ? 'text-yellow-600' :
                         'text-orange-600'
                       }`} />
                       <div>
-                        <h4 className={`font-semibold ${
-                          alert.color === 'red' ? 'text-red-800' :
-                          alert.color === 'yellow' ? 'text-yellow-800' :
-                          'text-orange-800'
+                        <h4 className={`font-semibold text-sm ${
+                          alert.color === 'red' ? 'text-red-900' :
+                          alert.color === 'yellow' ? 'text-yellow-900' :
+                          'text-orange-900'
                         }`}>{alert.title}</h4>
-                        <p className={`text-sm mt-1 ${
+                        <p className={`text-xs mt-1 font-medium ${
                           alert.color === 'red' ? 'text-red-700' :
                           alert.color === 'yellow' ? 'text-yellow-700' :
                           'text-orange-700'
