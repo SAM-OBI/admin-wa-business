@@ -349,6 +349,18 @@ export const adminService = {
     return response.data;
   },
 
+  // Feedback (App Reviews)
+  getFeedbacks: async (params?: any) => {
+    // Determine if admin path or generic path. 
+    // The backend route is /api/v1/feedback (admin restricted for GET /)
+    const response = await api.get('/feedback', { params });
+    return response.data;
+  },
+  updateFeedbackStatus: async (id: string, status: string, adminNotes?: string) => {
+    const response = await api.patch(`/feedback/${id}`, { status, adminNotes });
+    return response.data;
+  },
+
   // Notifications
   getNotifications: async (params?: any) => {
     const response = await api.get('/notifications', { params });

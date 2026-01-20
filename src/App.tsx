@@ -24,6 +24,7 @@ import VendorDetails from './pages/VendorDetails';
 import UserDetails from './pages/UserDetails';
 import ProductDetails from './pages/ProductDetails';
 import Marketing from './pages/Marketing';
+import PlatformFeedback from './pages/PlatformFeedback';
 
 function App() {
   const { isLoading, checkAuth } = useAuthStore();
@@ -77,6 +78,7 @@ function App() {
           <Route path="complaints" element={<Complaints />} />
           <Route path="court-cases" element={<CourtCases />} />
           <Route path="reviews" element={<Reviews />} />
+          <Route path="feedback" element={<PlatformFeedback />} />
           <Route path="risk-management" element={<RiskManagement />} />
           <Route path="audit-logs" element={<AuditLogs />} />
           <Route path="marketing" element={<Marketing />} />
