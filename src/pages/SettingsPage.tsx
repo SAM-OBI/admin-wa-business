@@ -6,48 +6,91 @@ import { FiClock, FiMonitor, FiShield, FiCheckCircle } from 'react-icons/fi';
 import SecurityQuestionModal from '../components/SecurityQuestionModal';
 
 // Login History Component ... (unchanged)
+// Enhanced Session & Login History Component
 const LoginHistory = () => {
-    const [logins, setLogins] = useState<any[]>([]);
+    const [data, setData] = useState<{ attempts: any[], sessions: any[] }>({ attempts: [], sessions: [] });
     const [loading, setLoading] = useState(true);
 
+    const fetchLoginHistory = async () => {
+        try {
+            const res = await api.get('/auth/login-history');
+            setData(res.data.data || { attempts: [], sessions: [] });
+        } catch (error) {
+            console.error('Failed to fetch login history:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchLoginHistory = async () => {
-            try {
-                const res = await api.get('/auth/login-history');
-                setLogins(res.data.data || []);
-            } catch (error) {
-                console.error('Failed to fetch login history:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchLoginHistory();
     }, []);
 
-    if (loading) return <div className="p-4 text-center text-gray-500">Loading history...</div>;
+    const handleRevokeSession = async (sessionId: string) => {
+        try {
+            await api.post(`/auth/sessions/${sessionId}/revoke`);
+            fetchLoginHistory();
+        } catch (error) {
+            console.error('Failed to logout device');
+        }
+    };
+
+    if (loading) return <div className="p-4 text-center text-gray-500">Loading security data...</div>;
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                <FiClock /> Login History
-            </h2>
-            <div className="space-y-4">
-                {logins.map((login: any) => (
-                    <div key={login.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100">
-                        <div className="flex items-center gap-3">
-                            <FiMonitor className={login.isCurrent ? "text-green-600" : "text-gray-400"} />
-                            <div>
-                                <p className="text-sm font-medium text-gray-700">
-                                    {login.device}
-                                    {login.isCurrent && <span className="ml-2 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Current</span>}
-                                </p>
-                                <p className="text-xs text-gray-500">{new Date(login.loginTime).toLocaleString()}</p>
+        <div className="space-y-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                    <FiMonitor className="text-blue-600" /> Active Devices
+                </h2>
+                <div className="space-y-3">
+                    {data.sessions.map((session: any) => (
+                        <div key={session.id} className="flex items-center justify-between p-4 bg-blue-50/30 rounded-lg border border-blue-100">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-blue-100 rounded-full text-blue-600">
+                                    <FiMonitor />
+                                </div>
+                                <div>
+                                    <p className="text-sm font-bold text-gray-800">
+                                        {session.device}
+                                        {session.isActive && <span className="ml-2 text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full uppercase tracking-wider">Active Now</span>}
+                                    </p>
+                                    <p className="text-xs text-gray-500">{session.ipAddress} • {new Date(session.loginTime).toLocaleString()}</p>
+                                </div>
                             </div>
+                            <button 
+                                onClick={() => handleRevokeSession(session.id)}
+                                className="text-xs font-semibold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition"
+                            >
+                                Logout
+                            </button>
                         </div>
-                        <span className="text-xs text-mono text-gray-400">{login.ipAddress}</span>
-                    </div>
-                ))}
-                {logins.length === 0 && <p className="text-sm text-gray-500">No login history found.</p>}
+                    ))}
+                    {data.sessions.length === 0 && <p className="text-sm text-gray-500 text-center py-4 italic">No active sessions found.</p>}
+                </div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                    <FiClock className="text-gray-600" /> Recent Activity
+                </h2>
+                <div className="space-y-3">
+                    {data.attempts.map((login: any) => (
+                        <div key={login.id} className="flex items-center justify-between p-3 bg-gray-50/50 rounded-lg border border-gray-100">
+                            <div className="flex items-center gap-3">
+                                <div className="text-gray-400">
+                                    <FiMonitor />
+                                </div>
+                                <div>
+                                    <p className="text-xs font-semibold text-gray-700">{login.device}</p>
+                                    <p className="text-[10px] text-gray-400">{new Date(login.loginTime).toLocaleString()}</p>
+                                </div>
+                            </div>
+                            <span className="text-[10px] font-mono text-gray-300">{login.ipAddress}</span>
+                        </div>
+                    ))}
+                    {data.attempts.length === 0 && <p className="text-sm text-gray-500 text-center py-4 italic">No recent activity detected.</p>}
+                </div>
             </div>
         </div>
     );

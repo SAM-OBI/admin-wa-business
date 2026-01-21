@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar.tsx';
 import Header from './Header.tsx';
+import TwoFactorBanner from './TwoFactorBanner.tsx';
 
 export default function Layout() {
   const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(false);
@@ -21,6 +22,7 @@ export default function Layout() {
       />
       
       <div className="flex-1 flex flex-col overflow-hidden w-full transition-all duration-300">
+        <TwoFactorBanner />
         <Header 
           toggleMobileSidebar={() => setIsMobileOpen(!isMobileOpen)} 
         />
