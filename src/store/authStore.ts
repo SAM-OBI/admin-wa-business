@@ -17,7 +17,8 @@ interface AuthState {
   admin: AdminUser | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (credentials: { email: string; password: string }) => Promise<void>;
+  login: (credentials: { email: string; password: string }) => Promise<any>;
+  verify2FA: (tempToken: string, totpCode: string) => Promise<any>;
   register: (data: { name: string; email: string; phone: string; password: string; role?: string }) => Promise<void>;
   logout: () => void;
   checkAuth: () => Promise<void>;
@@ -42,6 +43,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   login: async (credentials) => {
     try {
       const response = await api.post('/auth/login', credentials);
+      
+      const requires2FA = response.data?.requires2FA || response.data?.data?.requires2FA;
+      const tempToken = response.data?.tempToken || response.data?.data?.tempToken;
+
+      if (requires2FA) {
+        return { requires2FA: true, tempToken };
+      }
+
       const { data, accessToken } = response.data; // Backend sets HttpOnly cookie and sends accessToken
       
       const token = accessToken || response.data.data?.accessToken;
@@ -51,8 +60,28 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       // Allow any authenticated user to access the admin dashboard
       set({ admin: data, isAuthenticated: true });
+      return { success: true };
     } catch (error: any) {
       console.error('Login error:', error);
+      throw error;
+    }
+  },
+
+  verify2FA: async (tempToken: string, totpCode: string) => {
+    try {
+      const response = await api.post('/auth/login/verify-2fa', { tempToken, totpCode });
+      const { data, accessToken } = response.data;
+
+      const token = accessToken || response.data.data?.accessToken;
+      if (token) {
+        sessionStorage.setItem('token', token);
+      }
+      sessionStorage.setItem('is_logged_in', 'true');
+
+      set({ admin: data, isAuthenticated: true });
+      return response.data;
+    } catch (error) {
+      console.error('2FA verification error:', error);
       throw error;
     }
   },

@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { useAuthStore } from '../store/authStore';
 import api from '../api/axios';
 import { adminService } from '../api/admin.service';
-import { FiClock, FiMonitor, FiShield } from 'react-icons/fi';
+import { FiClock, FiMonitor, FiShield, FiCheckCircle } from 'react-icons/fi';
+import SecurityQuestionModal from '../components/SecurityQuestionModal';
 
 // Login History Component ... (unchanged)
 const LoginHistory = () => {
@@ -64,9 +65,11 @@ export default function SettingsPage() {
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
   // 2FA State
-  const [show2FASetup, setShow2FASetup] = useState(false);
+  const [setupStep, setSetupStep] = useState<'idle' | 'qr' | 'questions' | 'success' | 'disabling'>('idle');
   const [qrCode, setQrCode] = useState('');
   const [totpCode, setTotpCode] = useState('');
+  const [recoveryCodes, setRecoveryCodes] = useState<string[]>([]);
+  const [showQuestionsModal, setShowQuestionsModal] = useState(false);
 
   const handleSetup2FA = async () => {
     setLoading(true);
@@ -74,7 +77,7 @@ export default function SettingsPage() {
       const data = await adminService.setup2FA();
       if (data.data?.qrCodeUrl) {
         setQrCode(data.data.qrCodeUrl);
-        setShow2FASetup(true);
+        setSetupStep('qr');
       }
     } catch (error: any) {
       setMessage({ type: 'error', text: error.response?.data?.message || 'Failed to setup 2FA' });
@@ -83,17 +86,26 @@ export default function SettingsPage() {
     }
   };
 
-  const handleVerify2FA = async () => {
+  const handleVerifyOTP = () => {
+      if (totpCode.length !== 6) return;
+      setShowQuestionsModal(true);
+  };
+
+  const handleQuestionsSubmit = async (questions: { question: string, answer: string }[]) => {
     setLoading(true);
     try {
-      await adminService.verify2FA(totpCode);
-      setMessage({ type: 'success', text: 'Two-Factor Authentication Enabled!' });
-      setShow2FASetup(false);
-      setQrCode('');
-      setTotpCode('');
-      await checkAuth(); // Refresh user state (isTwoFactorEnabled)
+      // The backend verify endpoint expects { token: otpCode, securityQuestions: questions }
+      const res = await api.post('/auth/2fa/verify', {
+          token: totpCode,
+          securityQuestions: questions
+      });
+      
+      setRecoveryCodes(res.data.data.recoveryCodes);
+      setSetupStep('success');
+      setShowQuestionsModal(false);
+      await checkAuth(); // Refresh user state
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.response?.data?.message || 'Invalid code' });
+      setMessage({ type: 'error', text: error.response?.data?.message || 'Verification failed' });
     } finally {
       setLoading(false);
     }
@@ -102,9 +114,14 @@ export default function SettingsPage() {
   const handleDisable2FA = async () => {
     setLoading(true);
     try {
+      // Backend disable needs password + code
+      // We can use a prompt for password like in vendor app, 
+      // but let's see current code below. 
+      // It currently only sends totpCode.
       await adminService.disable2FA(totpCode);
       setMessage({ type: 'success', text: 'Two-Factor Authentication Disabled' });
-      setShow2FASetup(false);
+      setSetupStep('idle');
+      setQrCode('');
       setTotpCode('');
       await checkAuth(); // Refresh user state
     } catch (error: any) {
@@ -246,9 +263,9 @@ export default function SettingsPage() {
                        Your account is secured with two-factor authentication. You will be required to enter a code from your authenticator app when logging in.
                      </p>
                      
-                     {!show2FASetup ? (
+                     {setupStep !== 'disabling' ? (
                         <button
-                          onClick={() => setShow2FASetup(true)}
+                          onClick={() => setSetupStep('disabling')}
                           className="px-4 py-2 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 text-sm font-medium transition"
                         >
                           Disable 2FA
@@ -271,10 +288,10 @@ export default function SettingsPage() {
                              disabled={loading || totpCode.length !== 6}
                              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 text-sm font-medium"
                            >
-                             {loading ? '...' : 'Disable'}
+                             {loading ? '...' : 'Confirm'}
                            </button>
                            <button
-                             onClick={() => { setShow2FASetup(false); setTotpCode(''); }}
+                             onClick={() => { setSetupStep('idle'); setTotpCode(''); }}
                              className="px-3 py-2 text-gray-500 hover:text-gray-700"
                            >
                              Cancel
@@ -285,22 +302,24 @@ export default function SettingsPage() {
                    </div>
                 ) : (
                   <div>
-                    <p className="text-gray-600 text-sm mb-4">
-                      Add an extra layer of security to your account by enabling two-factor authentication.
-                    </p>
-                    
-                    {!show2FASetup ? (
-                      <button
-                        onClick={handleSetup2FA}
-                        disabled={loading}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-                      >
-                         {loading ? 'Loading...' : 'Enable 2FA'}
-                      </button>
-                    ) : (
-                      <div className="space-y-4">
-                         {qrCode && (
-                           <div className="flex flex-col items-center p-4 bg-gray-50 rounded-lg border border-gray-100">
+                    {setupStep === 'idle' && (
+                      <div>
+                        <p className="text-gray-600 text-sm mb-4">
+                          Add an extra layer of security to your account by enabling two-factor authentication.
+                        </p>
+                        <button
+                          onClick={handleSetup2FA}
+                          disabled={loading}
+                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                        >
+                           {loading ? 'Loading...' : 'Enable 2FA'}
+                        </button>
+                      </div>
+                    )}
+
+                    {setupStep === 'qr' && qrCode && (
+                       <div className="space-y-4">
+                          <div className="flex flex-col items-center p-4 bg-gray-50 rounded-lg border border-gray-100">
                              <p className="text-sm font-semibold text-gray-800 mb-2">Scan QR Code</p>
                              <img src={qrCode} alt="2FA QR Code" className="w-40 h-40 mb-4 border border-white shadow-sm" />
                              <p className="text-xs text-gray-500 text-center max-w-xs mb-4">
@@ -319,28 +338,55 @@ export default function SettingsPage() {
                                    maxLength={6}
                                  />
                                  <button
-                                   onClick={handleVerify2FA}
+                                   onClick={handleVerifyOTP}
                                    disabled={loading || totpCode.length !== 6}
-                                   className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 text-sm font-medium"
+                                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 text-sm font-medium"
                                  >
-                                   {loading ? '...' : 'Verify'}
+                                   Next
                                  </button>
                                </div>
                              </div>
-                           </div>
-                         )}
-                         
-                         <button
-                           onClick={() => { setShow2FASetup(false); setQrCode(''); setTotpCode(''); }}
-                           className="text-gray-500 text-sm hover:underline"
-                         >
-                           Cancel Setup
-                         </button>
-                      </div>
+                          </div>
+                          <button
+                            onClick={() => { setSetupStep('idle'); setQrCode(''); setTotpCode(''); }}
+                            className="text-gray-500 text-sm hover:underline"
+                          >
+                            Cancel Setup
+                          </button>
+                       </div>
+                    )}
+
+                    {setupStep === 'success' && (
+                        <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
+                            <FiCheckCircle className="text-green-500 text-5xl mx-auto mb-4" />
+                            <h3 className="text-lg font-bold text-green-800 mb-2">2FA Enabled!</h3>
+                            <p className="text-sm text-green-700 mb-6">
+                                Save these recovery codes safely.
+                            </p>
+                            
+                            <div className="bg-white p-3 rounded-lg border border-green-200 grid grid-cols-2 gap-2 font-mono text-xs mb-6">
+                                {recoveryCodes.map((code, i) => (
+                                    <div key={i} className="p-1">{code}</div>
+                                ))}
+                            </div>
+                            
+                            <button
+                                onClick={() => setSetupStep('idle')}
+                                className="w-full py-2 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition shadow-sm"
+                            >
+                                Done
+                            </button>
+                        </div>
                     )}
                   </div>
                 )}
               </div>
+
+              <SecurityQuestionModal 
+                isOpen={showQuestionsModal}
+                onClose={() => setShowQuestionsModal(false)}
+                onSubmit={handleQuestionsSubmit}
+              />
 
               <LoginHistory />
           </div>

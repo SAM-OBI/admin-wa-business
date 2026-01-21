@@ -4,6 +4,7 @@ import { useAuthStore } from './store/authStore';
 import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import TwoFactorAuth from './pages/TwoFactorAuth';
 import Dashboard from './pages/Dashboard';
 import Layout from './components/Layout';
 // Import Home from current directory (src/Home.tsx)
@@ -54,6 +55,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/auth/2fa" element={<TwoFactorAuth />} />
         
         {/* Root should redirect to login explicitly */}
         <Route path="/" element={<Navigate to="/login" replace />} />

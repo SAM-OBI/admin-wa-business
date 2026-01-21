@@ -38,7 +38,14 @@ export default function Login() {
     showLoading('Logging in...');
 
     try {
-      await login({ email, password });
+      const result = await login({ email, password });
+      
+      if (result && result.requires2FA) {
+        closeLoading();
+        navigate('/auth/2fa', { state: { tempToken: result.tempToken } });
+        return;
+      }
+
       handleSuccessfulLogin();
     } catch (err: any) {
       closeLoading();
