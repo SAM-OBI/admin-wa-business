@@ -30,7 +30,7 @@ const LoginHistory = () => {
         try {
             await api.post(`/auth/sessions/${sessionId}/revoke`);
             fetchLoginHistory();
-        } catch (error) {
+        } catch {
             console.error('Failed to logout device');
         }
     };

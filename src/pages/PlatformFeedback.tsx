@@ -12,14 +12,12 @@ export default function PlatformFeedback() {
 
     useEffect(() => {
         fetchFeedbacks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page, filterCategory]);
 
     const fetchFeedbacks = async () => {
         setLoading(true);
         try {
-            // Assuming adminService.getFeedbacks exists or using raw axios
-            // I'll assume we need to add getFeedbacks to adminService, or use a direct call if service not updated
-            // For now, I'll use the service pattern but I might need to update the service file.
             const response = await adminService.getFeedbacks({ 
                 page, 
                 limit: 10,
@@ -29,8 +27,8 @@ export default function PlatformFeedback() {
                 setFeedbacks(response.data.feedbacks);
                 setTotalPages(response.data.pagination.pages);
             }
-        } catch (error) {
-            console.error('Failed to fetch feedback', error);
+        } catch {
+            console.error('Failed to fetch feedback details');
         } finally {
             setLoading(false);
         }
@@ -47,7 +45,7 @@ export default function PlatformFeedback() {
                 timer: 1500,
                 showConfirmButton: false
             });
-        } catch (error) {
+        } catch {
             Swal.fire('Error', 'Failed to update status', 'error');
         }
     };

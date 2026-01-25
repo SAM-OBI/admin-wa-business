@@ -17,7 +17,7 @@ export default function ProductDetails() {
       const response = await adminService.getProductById(id!);
       setProduct(response.data);
     } catch (error) {
-      console.error('Failed to fetch product details:', error);
+      console.error('Failed to logout device product details:', error);
     } finally {
       setLoading(false);
     }
@@ -73,7 +73,7 @@ export default function ProductDetails() {
             <h1 className="text-3xl font-bold text-gray-800">{product.name}</h1>
             <p className="text-gray-500 mt-1">
               {typeof product.category === 'object' && product.category !== null 
-                // @ts-expect-error
+                // @ts-expect-error: Category object has name property not in basic type
                 ? product.category.name 
                 : product.category}
             </p>
@@ -169,10 +169,10 @@ export default function ProductDetails() {
               <div className="flex justify-between">
                 <span className="text-gray-600">Category</span>
                 <span className="text-gray-800">
-                  {typeof product.category === 'object' && product.category !== null 
-                    // @ts-expect-error
-                    ? product.category.name 
-                    : product.category}
+              {typeof product.category === 'object' && product.category !== null 
+                // @ts-expect-error: Category object has name property not in basic type
+                ? product.category.name 
+                : product.category}
                 </span>
               </div>
               <div className="flex justify-between">

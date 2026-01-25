@@ -34,7 +34,7 @@ export default function IPVerificationModal({ userId, onSuccess, onCancel }: IPV
         const warmUp = async () => {
              try {
                  await api.get('/auth/me');
-             } catch (_e) {
+             } catch {
                  // Ignore error, we just want the cookie
              }
         };
