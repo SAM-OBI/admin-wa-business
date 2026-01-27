@@ -283,6 +283,18 @@ export const adminService = {
     const response = await api.patch(`/admin/users/${id}/verification`, data);
     return response.data;
   },
+  setLegalHold: async (id: string, reason: string) => {
+    const response = await api.post(`/admin/users/${id}/legal-hold`, { reason });
+    return response.data;
+  },
+  removeLegalHold: async (id: string, justification: string) => {
+    const response = await api.delete(`/admin/users/${id}/legal-hold`, { data: { justification } });
+    return response.data;
+  },
+  getSecurityStats: async () => {
+    const response = await api.get('/admin/security-dashboard');
+    return response.data;
+  },
 
   // Vendors
   getVendors: async (params?: any) => {

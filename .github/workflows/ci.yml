@@ -26,5 +26,11 @@ jobs:
           rm -rf node_modules package-lock.json
           npm install
 
+      - name: Run Lint
+        run: npm run lint
+
+      - name: Security Audit
+        run: npm audit --audit-level=high
+
       - name: Run Build
         run: npm run build

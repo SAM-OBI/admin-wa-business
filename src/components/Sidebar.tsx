@@ -19,6 +19,7 @@ const navigation = [
   { name: 'Court Cases', to: '/dashboard/court-cases', icon: FiMessageSquare },
   { name: 'Reviews', to: '/dashboard/reviews', icon: FiStar },
   { name: 'Risk Management', to: '/dashboard/risk-management', icon: FiShield },
+  { name: 'Security SOC', to: '/dashboard/security', icon: FiShield },
   { name: 'Audit Logs', to: '/dashboard/audit-logs', icon: FiFileText },
   { name: 'App Feedback', to: '/dashboard/feedback', icon: FiMessageSquare },
   { name: 'Marketing', to: '/dashboard/marketing', icon: FiTrendingUp },

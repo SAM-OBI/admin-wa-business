@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Vendor } from '../api/admin.service';
 import { FiShield, FiAlertTriangle } from 'react-icons/fi';
 import api from '../api/axios';
@@ -58,7 +59,12 @@ export default function RiskManagement() {
       <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Risk Management</h1>
-          <p className="text-gray-500 text-sm mt-1">Monitor high-risk accounts and anomalies</p>
+          <p className="text-gray-500 text-sm mt-1 flex items-center gap-2">
+            Monitor high-risk accounts and anomalies | 
+            <Link to="/dashboard/security" className="text-blue-600 hover:underline flex items-center gap-1 font-bold">
+              <FiShield /> Open Security SOC
+            </Link>
+          </p>
         </div>
 
         <div>

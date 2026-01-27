@@ -3,8 +3,9 @@ import { useParams, Link } from 'react-router-dom';
 import { adminService, UserDetails as UserDetailsType } from '../api/admin.service';
 import { 
   FiArrowLeft, FiShoppingCart, FiDollarSign, FiStar, FiCalendar,
-  FiCheckCircle, FiXCircle, FiUser, FiMail, FiPhone, FiMapPin, FiShield
+  FiCheckCircle, FiXCircle, FiUser, FiMail, FiPhone, FiMapPin, FiShield, FiLock, FiUnlock
 } from 'react-icons/fi';
+import Swal from 'sweetalert2';
 
 export default function UserDetails() {
   const { id } = useParams<{ id: string }>();
@@ -43,6 +44,55 @@ export default function UserDetails() {
         } catch (error) {
             console.error('Failed to unlock user:', error);
         }
+    }
+  };
+
+  const handleLegalHoldToggle = async () => {
+    if (!user) return;
+    
+    if ((user as any).legalHold) {
+       const { value: justification } = await Swal.fire({
+          title: 'Remove Legal Hold',
+          input: 'textarea',
+          inputLabel: 'Justification for removing legal hold',
+          inputPlaceholder: 'Mandatory NDPR justification...',
+          showCancelButton: true,
+          inputValidator: (value) => {
+            if (!value || value.length < 5) return 'Justification must be at least 5 characters!'
+          }
+       });
+
+       if (justification) {
+          try {
+             await adminService.removeLegalHold(user._id, justification);
+             Swal.fire('Success', 'Legal hold removed.', 'success');
+             fetchUserDetails();
+          } catch (err: any) { 
+             Swal.fire('Error', err.response?.data?.message || 'Failed to remove legal hold', 'error');
+          }
+       }
+    } else {
+       const { value: reason } = await Swal.fire({
+          title: 'Active Legal Hold',
+          text: 'This will prevent the user from deleting their account or data.',
+          input: 'textarea',
+          inputLabel: 'Reason for legal hold',
+          inputPlaceholder: 'Law enforcement request, internal investigation, etc.',
+          showCancelButton: true,
+          inputValidator: (value) => {
+            if (!value || value.length < 5) return 'Reason must be at least 5 characters!'
+          }
+       });
+
+       if (reason) {
+          try {
+             await adminService.setLegalHold(user._id, reason);
+             Swal.fire('Success', 'Account placed under legal hold.', 'success');
+             fetchUserDetails();
+          } catch (err: any) { 
+             Swal.fire('Error', err.response?.data?.message || 'Failed to set legal hold', 'error');
+          }
+       }
     }
   };
 
@@ -94,14 +144,32 @@ export default function UserDetails() {
             <h1 className="text-3xl font-bold text-gray-800">{user.name}</h1>
             <p className="text-gray-500 mt-1">{user.email}</p>
           </div>
-          {user.verification?.status === 'locked' && (
-              <button
-                onClick={handleUnlock}
-                className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition flex items-center gap-2"
-              >
-                <FiShield /> Unlock Account
-              </button>
-          )}
+          <div className="flex gap-2">
+            {(user as any).legalHold && (
+               <div className="flex items-center gap-1 bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold">
+                  <FiLock /> Legal Hold Active
+               </div>
+            )}
+            {user.verification?.status === 'locked' && (
+                <button
+                  onClick={handleUnlock}
+                  className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition flex items-center gap-2 text-sm"
+                >
+                  <FiUnlock /> Unlock Account
+                </button>
+            )}
+            <button
+               onClick={handleLegalHoldToggle}
+               className={`px-4 py-2 rounded-lg transition flex items-center gap-2 text-sm font-medium ${
+                  (user as any).legalHold 
+                  ? 'bg-gray-200 text-gray-700 hover:bg-gray-300' 
+                  : 'bg-red-50 text-red-600 hover:bg-red-100 border border-red-200'
+               }`}
+            >
+               {(user as any).legalHold ? <FiUnlock /> : <FiLock />}
+               {(user as any).legalHold ? 'Remove Legal Hold' : 'Place Legal Hold'}
+            </button>
+          </div>
         </div>
       </div>
 

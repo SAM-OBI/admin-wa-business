@@ -26,6 +26,7 @@ import UserDetails from './pages/UserDetails';
 import ProductDetails from './pages/ProductDetails';
 import Marketing from './pages/Marketing';
 import PlatformFeedback from './pages/PlatformFeedback';
+import SecurityDashboard from './pages/SecurityDashboard';
 
 function App() {
   const { isLoading, checkAuth } = useAuthStore();
@@ -82,6 +83,7 @@ function App() {
           <Route path="reviews" element={<Reviews />} />
           <Route path="feedback" element={<PlatformFeedback />} />
           <Route path="risk-management" element={<RiskManagement />} />
+          <Route path="security" element={<SecurityDashboard />} />
           <Route path="audit-logs" element={<AuditLogs />} />
           <Route path="marketing" element={<Marketing />} />
           <Route path="settings" element={<SettingsPage />} />
