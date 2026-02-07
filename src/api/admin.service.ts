@@ -192,6 +192,24 @@ export interface Review {
   createdAt: string;
 }
 
+export interface StoreDomain {
+  _id: string;
+  name: string;
+  slug: string;
+  owner: {
+    _id: string;
+    name: string;
+    email: string;
+  };
+  customDomain: {
+    domain: string;
+    status: 'verified' | 'pending' | 'rejected' | 'failed';
+    errorMessage?: string;
+    dnsCheckedAt?: string;
+    configuredAt?: string;
+  };
+}
+
 export interface OrderProduct {
   product: {
     _id: string;
@@ -412,6 +430,16 @@ export const adminService = {
 
   disable2FA: async (token: string) => {
     const response = await api.post('/auth/2fa/disable', { token });
+    return response.data;
+  },
+
+  // Domains
+  getDomains: async (params?: any) => {
+    const response = await api.get('/admin/domains', { params });
+    return response.data;
+  },
+  manageDomain: async (id: string, data: { status: string; reason?: string; justification: string }) => {
+    const response = await api.patch(`/admin/domains/${id}/manage`, data);
     return response.data;
   },
 };
