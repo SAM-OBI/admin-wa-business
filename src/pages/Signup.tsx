@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuthStore } from '../store/authStore';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { showError, showSuccess, showLoading, closeLoading } from '../utils/swal';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -59,7 +59,6 @@ export default function Signup() {
       <div className="bg-white rounded-3xl shadow-xl w-full max-w-md px-8 py-10 relative z-10 mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-[#4A3728] mb-1">Create Account</h1>
-          <p className="text-[#4A3728]/70 text-sm">Admin WhatsApp Vendors Stores</p>
         </div>
 
 
@@ -159,14 +158,7 @@ export default function Signup() {
           </button>
         </form>
 
-        <div className="mt-8 text-center">
-          <p className="text-sm text-[#4A3728]/70 font-medium">
-            Already have an account?{' '}
-            <Link to="/login" className="font-bold text-[#D8C3A5] hover:text-[#D4AF37] transition-colors">
-              Sign In
-            </Link>
-          </p>
-        </div>
+
       </div>
     </div>
   );

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from './store/authStore';
-import { FiMail } from 'react-icons/fi';
 import { showError, showSuccess, showLoading, closeLoading } from './utils/swal';
 import IPVerificationModal from './components/IPVerificationModal';
 
@@ -86,15 +85,9 @@ export default function Login() {
     <div className="min-h-screen bg-[#F5F5DC] flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl shadow-xl w-full max-w-md px-8 py-10 relative z-10 mx-auto">
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#D8C3A5]/20 mb-4">
-             {/* Using a chat-like icon to match the image's whatsapp feel, or keep generic */}
-             <FiMail className="text-3xl text-[#D4AF37]" /> 
-          </div>
           <h1 className="text-3xl font-bold text-[#4A3728] mb-2">Welcome Back</h1>
           <p className="text-[#4A3728]/70 text-sm">ADMIN LOGIN</p>
         </div>
-
-
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-1.5">
@@ -116,7 +109,7 @@ export default function Login() {
               <label className="block text-sm font-semibold text-[#4A3728]">
                 Password
               </label>
-              <Link to="/forgot-password" className="text-sm font-medium text-[#D4AF37] hover:text-[#B3902E] transition-colors">
+              <Link to="/forgot-password" title="Forgot Password?" className="text-sm font-medium text-[#D4AF37] hover:text-[#B3902E] transition-colors">
                 Forgot Password?
               </Link>
             </div>
@@ -137,15 +130,6 @@ export default function Login() {
             Sign In
           </button>
         </form>
-
-        <div className="mt-8 text-center">
-          <p className="text-sm text-[#4A3728]/70 font-medium">
-            Don't have an account?{' '}
-            <Link to="/signup" className="font-bold text-[#D8C3A5] hover:text-[#D4AF37] transition-colors">
-              Sign Up
-            </Link>
-          </p>
-        </div>
       </div>
 
       {/* IP Verification Modal */}

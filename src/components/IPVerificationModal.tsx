@@ -201,12 +201,7 @@ export default function IPVerificationModal({ userId, onSuccess, onCancel }: IPV
                     </div>
                 </div>
 
-                {/* Info */}
-                <div className="mt-8 text-center">
-                     <p className="text-xs text-gray-500">
-                        Secure logic powered by WhatsApp Vendors
-                    </p>
-                </div>
+
             </motion.div>
         </div>
     );
