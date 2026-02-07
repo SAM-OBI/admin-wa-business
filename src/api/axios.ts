@@ -16,6 +16,19 @@ const api = axios.create({
   },
 });
 
+interface ApiError {
+  status: number;
+  message: string;
+  code: string;
+  referenceId?: string;
+}
+
+export interface NormalizedAxiosError extends AxiosError {
+  normalized: ApiError;
+  errorMessage: string;
+  errorCode: string;
+}
+
 // Refresh token state management
 let isRefreshing = false;
 let failedQueue: any[] = [];
@@ -61,8 +74,21 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    const status = error.response?.status;
+    const status = error.response?.status ?? 0;
     const data = error.response?.data as any;
+    
+    // Normalize error shape
+    const message = data?.message || data?.error || (status === 413 ? "File size too large" : error.message) || "Network error";
+    const code = data?.code || "UNKNOWN";
+
+    (error as NormalizedAxiosError).normalized = {
+      status,
+      message,
+      code
+    };
+
+    (error as NormalizedAxiosError).errorMessage = message;
+
     const isAuthCheck = originalRequest.url?.includes('/auth/me');
     const isOnLoginPage = window.location.pathname === "/login";
 

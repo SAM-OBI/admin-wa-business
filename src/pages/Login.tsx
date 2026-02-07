@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuthStore } from './store/authStore';
-import { showError, showSuccess, showLoading, closeLoading } from './utils/swal';
-import IPVerificationModal from './components/IPVerificationModal';
+import { useAuthStore } from '../store/authStore';
+import { showError, showSuccess, showLoading, closeLoading } from '../utils/swal';
+import IPVerificationModal from '../components/IPVerificationModal';
 
 export default function Login() {
   const [email, setEmail] = useState('');

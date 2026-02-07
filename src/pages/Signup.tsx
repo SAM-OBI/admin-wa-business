@@ -88,7 +88,7 @@ export default function Signup() {
               onChange={(e) => setEmail(e.target.value)}
               required
               className="block w-full px-4 py-3.5 bg-[#F5F5DC]/50 border border-transparent focus:bg-white focus:border-[#D4AF37] rounded-xl focus:ring-2 focus:ring-[#D4AF37]/20 transition-all outline-none text-[#4A3728] placeholder-gray-400 font-medium"
-              placeholder="admin@wavendors.com"
+              placeholder="admin@shopvia.ng"
             />
           </div>
 

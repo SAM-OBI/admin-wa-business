@@ -8,7 +8,7 @@ import TwoFactorAuth from './pages/TwoFactorAuth';
 import Dashboard from './pages/Dashboard';
 import Layout from './components/Layout';
 // Import Home from current directory (src/Home.tsx)
-import Home from './Home';
+import Login from './pages/Login';
 import PrivateRoute from './components/PrivateRoute';
 
 import Products from './pages/Products';
@@ -52,7 +52,7 @@ function App() {
     >
       <Routes>
         {/* Public routes */}
-        <Route path="/login" element={<Home />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
