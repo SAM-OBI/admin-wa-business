@@ -22,7 +22,7 @@ export default function Products() {
     setLoading(true);
     try {
       console.log('Fetching products with filters:', { search: searchTerm, status: filters.status, page, limit: pagination.limit });
-      const data = await adminService.getProducts({
+      const data = await adminService.getProducts<any>({
         search: searchTerm,
         status: filters.status,
         page,
@@ -148,7 +148,6 @@ export default function Products() {
                         <div className="font-medium text-gray-900">{product.name}</div>
                         <div className="text-sm text-gray-500">
                           {typeof product.category === 'object' && product.category !== null 
-                            // @ts-expect-error - handling populated category
                             ? product.category.name 
                             : product.category}
                         </div>

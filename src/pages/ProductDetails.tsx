@@ -17,7 +17,7 @@ export default function ProductDetails() {
       const response = await adminService.getProductById(id!);
       setProduct(response.data);
     } catch (error) {
-      console.error('Failed to logout device product details:', error);
+      console.error('Failed to fetch product details:', error);
     } finally {
       setLoading(false);
     }
@@ -73,7 +73,6 @@ export default function ProductDetails() {
             <h1 className="text-3xl font-bold text-gray-800">{product.name}</h1>
             <p className="text-gray-500 mt-1">
               {typeof product.category === 'object' && product.category !== null 
-                // @ts-expect-error: Category object has name property not in basic type
                 ? product.category.name 
                 : product.category}
             </p>
@@ -146,7 +145,7 @@ export default function ProductDetails() {
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
               <h2 className="text-xl font-bold text-gray-800 mb-4">Product Images</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {product.images.map((image, index) => (
+                {product.images.map((image: string, index: number) => (
                   <img
                     key={index}
                     src={image}
@@ -170,7 +169,6 @@ export default function ProductDetails() {
                 <span className="text-gray-600">Category</span>
                 <span className="text-gray-800">
               {typeof product.category === 'object' && product.category !== null 
-                // @ts-expect-error: Category object has name property not in basic type
                 ? product.category.name 
                 : product.category}
                 </span>
@@ -203,7 +201,7 @@ export default function ProductDetails() {
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
               <h2 className="text-xl font-bold text-gray-800 mb-4">Customer Reviews ({product.reviewCount})</h2>
               <div className="space-y-3">
-                {product.reviews.map((review) => (
+                {product.reviews.map((review: any) => (
                   <div key={review._id} className="p-3 border border-gray-200 rounded-lg">
                     <div className="flex items-start gap-2">
                       <FiStar className="text-yellow-500 mt-1" />

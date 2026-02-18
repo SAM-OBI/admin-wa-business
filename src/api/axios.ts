@@ -14,6 +14,7 @@ const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  timeout: 10000, // 10 seconds global timeout
 });
 
 interface ApiError {
@@ -45,6 +46,22 @@ const processQueue = (error: any, token: string | null = null) => {
   failedQueue = [];
 };
 
+// Map HTTP Status to Actionable User Messages
+const getErrorMessage = (status: number, data: any): string => {
+  if (data?.message) return data.message;
+  
+  switch (status) {
+    case 400: return "The request was invalid. Please check your input.";
+    case 401: return "Your session has expired. Please log in again.";
+    case 403: return "Access Denied: You do not have permission for this action.";
+    case 404: return "The requested resource was not found.";
+    case 429: return "Too many requests. Please wait a moment.";
+    case 500: return "Internal Server Error. Our team has been notified.";
+    case 502: case 503: case 504: return "The server is temporarily unavailable. Retrying...";
+    default: return "An unexpected error occurred. Please try again.";
+  }
+};
+
 api.interceptors.request.use((config) => {
   // CLEANUP: Ensure no sensitive data remains in localStorage (Legacy check)
   const legacyKeys = ['token', 'auth_token', 'is_logged', 'is_logged_in'];
@@ -55,20 +72,23 @@ api.interceptors.request.use((config) => {
     }
   });
 
-  // If we had a token in sessionStorage, we would attach it here
   const token = sessionStorage.getItem('token');
   const isRefreshRequest = config.url?.includes('/auth/refresh');
 
   if (token && config.headers && !isRefreshRequest) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
+  // Diagnostic context for all requests
+  config.headers['X-Request-Timestamp'] = new Date().toISOString();
+  
   return config;
 });
 
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+    const originalRequest = error.config as InternalAxiosRequestConfig & { _retryCount?: number };
     
     if (!originalRequest) {
       return Promise.reject(error);
@@ -77,89 +97,66 @@ api.interceptors.response.use(
     const status = error.response?.status ?? 0;
     const data = error.response?.data as any;
     
-    // Normalize error shape
-    const message = data?.message || data?.error || (status === 413 ? "File size too large" : error.message) || "Network error";
-    const code = data?.code || "UNKNOWN";
+    // Standardize error message
+    const errorMessage = getErrorMessage(status, data);
+    const errorCode = data?.code || "UNKNOWN_ERROR";
 
     (error as NormalizedAxiosError).normalized = {
       status,
-      message,
-      code
+      message: errorMessage,
+      code: errorCode,
+      referenceId: data?.referenceId || `REQ-${Math.random().toString(36).slice(2, 9).toUpperCase()}`
     };
 
-    (error as NormalizedAxiosError).errorMessage = message;
+    (error as NormalizedAxiosError).errorMessage = errorMessage;
+
+    // Retry Strategy for Transient Errors (503, 504)
+    const isTransient = [502, 503, 504].includes(status);
+    const maxRetries = 2;
+    originalRequest._retryCount = originalRequest._retryCount ?? 0;
+
+    if (isTransient && originalRequest._retryCount < maxRetries) {
+      originalRequest._retryCount++;
+      const delay = originalRequest._retryCount * 1000;
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return api(originalRequest);
+    }
 
     const isAuthCheck = originalRequest.url?.includes('/auth/me');
     const isOnLoginPage = window.location.pathname === "/login";
 
-    // Handle 401 Unauthorized - Attempt silent token refresh
-    if (status === 401 && !originalRequest._retry) {
-      // Don't refresh if:
-      // 1. It's the auth/me check endpoint on initial load (avoid loops)
-      // 2. We're already on the login page
-      
-      if (isOnLoginPage) {
-        return Promise.reject(error);
-      }
-
+    // Handle 401 Unauthorized with token rotation
+    if (status === 401 && !isAuthCheck && !isOnLoginPage) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
-          .then((token) => {
-            if (token && originalRequest.headers) {
-              originalRequest.headers.Authorization = `Bearer ${token}`;
-            }
-            return api(originalRequest);
-          })
-          .catch((err) => Promise.reject(err));
+        .then(token => {
+          originalRequest.headers['Authorization'] = 'Bearer ' + token;
+          return api(originalRequest);
+        });
       }
 
-      originalRequest._retry = true;
       isRefreshing = true;
 
-      console.log('[Axios Admin] Session expired. Attempting silent refresh...');
-
-      return new Promise((resolve, reject) => {
-        api.post('/auth/refresh')
-          .then((response) => {
-            console.log('[Axios Admin] Refresh successful');
-            const newToken = response.data?.data?.accessToken || response.data?.accessToken;
-            if (newToken) {
-              sessionStorage.setItem('token', newToken);
-            }
-            processQueue(null, newToken);
-            resolve(api(originalRequest));
-          })
-          .catch((err) => {
-            console.error('[Axios Admin] Refresh failed:', err);
-            processQueue(err, null);
-            
-            // Clear logical session
-            sessionStorage.removeItem('is_logged_in');
-            sessionStorage.removeItem('token');
-            
-            // Redirect to login if not already there
-            if (window.location.pathname !== "/login") {
-              window.location.href = "/login?expired=true";
-            }
-            
-            reject(err);
-          })
-          .finally(() => {
-            isRefreshing = false;
-          });
-      });
+      try {
+        const { data } = await axios.post(`${api.defaults.baseURL}/auth/refresh`, {}, { withCredentials: true });
+        const newToken = data.accessToken;
+        sessionStorage.setItem('token', newToken);
+        
+        processQueue(null, newToken);
+        originalRequest.headers['Authorization'] = 'Bearer ' + newToken;
+        return api(originalRequest);
+      } catch (refreshError) {
+        processQueue(refreshError, null);
+        sessionStorage.removeItem('token');
+        if (!isOnLoginPage) window.location.href = '/login';
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
     }
 
-    // Original redirection logic for other cases (like 403 or 401 where retry failed)
-    const isIPVerification = status === 403 && data?.requiresIPVerification;
-
-    if (!isIPVerification && !isAuthCheck && !isOnLoginPage && status === 401) {
-       // This handles the case where the refresh itself failed or it wasn't a refreshable 401
-       window.location.href = "/login";
-    }
-    
     return Promise.reject(error);
   }
 );

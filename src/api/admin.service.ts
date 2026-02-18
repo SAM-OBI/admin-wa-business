@@ -1,445 +1,212 @@
 import api from './axios';
-
-export interface User {
-  _id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  role: string;
-  isVerified: boolean;
-  isActive: boolean;
-  lastLogin?: string;
-  verification?: {
-    status: 'unverified' | 'pending' | 'verified' | 'rejected' | 'locked' | 'failed';
-    bvnVerified: boolean;
-    ninVerified: boolean;
-    votersVerified: boolean;
-    attempts?: number;
-    failureReason?: string;
-  };
-  governmentId?: {
-    nin?: string;
-    votersCard?: string;
-    bvn?: string;
-  };
-  subscription?: {
-    plan: 'free' | 'basic' | 'premium' | 'gold';
-    status: 'active' | 'inactive';
-    productUsage: number;
-    startDate?: string;
-    endDate?: string;
-  };
-  accountStatus?: {
-    status: 'active' | 'restricted' | 'suspended' | 'banned';
-    reason?: string;
-  };
-  addresses?: Array<{
-    street: string;
-    city: string;
-    state: string;
-    country: string;
-    isDefault: boolean;
-  }>;
-  createdAt: string;
-}
-
-export interface UserDetails extends User {
-  accountAge: number;
-  orderStats?: {
-    totalOrders: number;
-    totalSpent: number;
-    completedOrders: number;
-  };
-  recentOrders?: any[];
-  reviewStats?: {
-    totalReviews: number;
-    averageRating: number;
-  };
-  recentReviews?: any[];
-  complaints?: any[];
-}
-
-export interface Vendor {
-  _id: string;
-  name: string;
-  email: string;
-  phone: string;
-  role: string;
-  isActive: boolean;
-  isVerified: boolean;
-  storeName?: string;
-  storeId?: string;
-  verification?: {
-    status: 'unverified' | 'pending' | 'verified' | 'rejected' | 'locked' | 'failed';
-    rejectionReason?: string;
-    failureReason?: string;
-    verifiedAt?: string;
-    method?: string;
-    idNumber?: string;
-    documentUrl?: string;
-    attempts?: number;
-    governmentIdNumber?: string; // Legacy/Alternative
-    governmentIdType?: string; // Legacy/Alternative
-  };
-  governmentIdUrl?: string; // Root level fallback
-  accountStatus?: {
-    status: 'active' | 'restricted' | 'suspended' | 'banned';
-    reason?: string;
-    suspendedAt?: string;
-  };
-  riskProfile?: {
-    score: number;
-    level: 'low' | 'medium' | 'high' | 'critical';
-    flags: Array<{
-      type: string;
-      date: string;
-      description: string;
-      resolved: boolean;
-    }>;
-  };
-  subscription?: {
-    plan: 'free' | 'basic' | 'premium' | 'gold';
-    status: 'active' | 'inactive';
-    productUsage: number;
-    startDate?: string;
-    endDate?: string;
-    autoRenew?: boolean;
-    rolloverLimit?: number;
-  };
-  createdAt: string;
-}
-
-export interface VendorDetails extends Vendor {
-  store?: any;
-  productCount?: number;
-  orderStats?: {
-    totalOrders: number;
-    totalRevenue: number;
-    completedOrders: number;
-  };
-  recentComplaints?: any[];
-}
-
-export interface Product {
-  _id: string;
-  name: string;
-  price: number;
-  category: string;
-  storeName: string;
-  status: 'active' | 'inactive';
-  stock: number;
-  images?: string[];
-  description?: string;
-  longDescription?: string;
-  rating: number;
-  reviewCount: number;
-  soldCount: number;
-  createdAt: string;
-}
-
-export interface ProductDetails extends Product {
-  vendor?: {
-    _id: string;
-    name: string;
-    email: string;
-    phone: string;
-  };
-  store?: {
-    _id: string;
-    name: string;
-  };
-  reviews?: Array<{
-    _id: string;
-    user: { name: string };
-    rating: number;
-    comment: string;
-    createdAt: string;
-  }>;
-  averageRating: number;
-  salesStats?: {
-    totalSold: number;
-    totalRevenue: number;
-  };
-  recentOrders?: any[];
-}
-
-export interface Complaint {
-  _id: string;
-  title: string;
-  description: string;
-  status: 'pending' | 'resolved' | 'escalated';
-  priority: 'low' | 'medium' | 'high';
-  createdAt: string;
-  user: User;
-}
-
-export interface CourtCase {
-  _id: string;
-  caseNumber: string;
-  status: 'open' | 'closed';
-  plaintiff: string;
-  defendant: string;
-  filingDate: string;
-}
-
-export interface Review {
-  _id: string;
-  rating: number;
-  comment: string;
-  productName: string;
-  userName: string;
-  status: 'published' | 'hidden';
-  createdAt: string;
-}
-
-export interface StoreDomain {
-  _id: string;
-  name: string;
-  slug: string;
-  owner: {
-    _id: string;
-    name: string;
-    email: string;
-  };
-  customDomain: {
-    domain: string;
-    status: 'verified' | 'pending' | 'rejected' | 'failed';
-    errorMessage?: string;
-    dnsCheckedAt?: string;
-    configuredAt?: string;
-  };
-}
-
-export interface OrderProduct {
-  product: {
-    _id: string;
-    name: string;
-    images?: string[];
-    price: number;
-  };
-  quantity: number;
-  price: number;
-}
-
-// Type for orders in list view - user data might be partial
-export interface OrderListItem {
-  _id: string;
-  orderId?: string; // Human readable ID
-  user?: {
-    name?: string;
-    email?: string;
-    phone?: string;
-  };
-  store: {
-    name?: string;
-    storeName?: string;
-  };
-  products?: OrderProduct[];
-  totalAmount: number;
-  status: string;
-  createdAt: string;
-}
-
-// Type for full order details - all required data is present
-export interface Order {
-  _id: string;
-  orderId?: string; // Human readable ID
-  user: {
-    name: string;
-    email: string;
-    phone: string;
-  };
-  store: {
-    name: string;
-    storeName?: string;
-  } | {
-    name?: string;
-    storeName: string;
-  };
-  products: OrderProduct[];
-  totalAmount: number;
-  status: string;
-  paymentInfo?: {
-    status: string;
-    method?: string;
-  };
-  shippingAddress?: {
-    street: string;
-    city: string;
-    state: string;
-    zipCode?: string;
-  };
-  createdAt: string;
-  timeline?: Array<{
-    status: string;
-    timestamp: string | Date;
-    description: string;
-  }>;
-}
+export * from '../types';
+import { 
+  ApiResponse,
+  TreasuryHealth 
+} from '../types';
+import { 
+  TreasuryHealthSchema, 
+  DashboardStatsSchema,
+  ActivityListSchema 
+} from '../schemas/admin.schema';
 
 export const adminService = {
   // Stats
-  getDashboardStats: async () => {
+  getDashboardStats: async (): Promise<ApiResponse<any>> => {
     const response = await api.get('/admin/dashboard-stats');
-    return response.data;
+    const validated = DashboardStatsSchema.parse(response.data.data);
+    return { ...response.data, data: validated };
+  },
+
+  getRecentActivity: async (): Promise<ApiResponse<any>> => {
+    const response = await api.get('/admin/recent-activity');
+    const validated = ActivityListSchema.parse(response.data.data);
+    return { ...response.data, data: validated };
+  },
+
+  getTreasuryHealth: async (): Promise<ApiResponse<TreasuryHealth>> => {
+    const response = await api.get('/admin/treasury-health');
+    const validated = TreasuryHealthSchema.parse(response.data.data);
+    return { ...response.data, data: validated };
   },
 
   // Users
-  getUsers: async (params?: any) => {
+  getUsers: async <T = any>(params?: any): Promise<ApiResponse<T>> => {
     const response = await api.get('/admin/users', { params });
     return response.data;
   },
-  getUserById: async (id: string) => {
+  
+  getUserById: async (id: string): Promise<ApiResponse<any>> => {
     const response = await api.get(`/admin/users/${id}`);
     return response.data;
   },
-  toggleUserStatus: async (id: string, currentStatus: boolean) => {
+
+  toggleUserStatus: async (id: string, currentStatus: boolean): Promise<ApiResponse<any>> => {
     const response = await api.patch(`/admin/users/${id}/status`, { isActive: !currentStatus });
     return response.data;
   },
-  updateUserVerification: async (id: string, data: { bvn?: boolean; nin?: boolean; voters?: boolean; status?: string }) => {
+
+  updateUserVerification: async (id: string, data: any): Promise<ApiResponse<any>> => {
     const response = await api.patch(`/admin/users/${id}/verification`, data);
     return response.data;
   },
-  setLegalHold: async (id: string, reason: string) => {
+
+  setLegalHold: async (id: string, reason: string): Promise<ApiResponse<any>> => {
     const response = await api.post(`/admin/users/${id}/legal-hold`, { reason });
     return response.data;
   },
-  removeLegalHold: async (id: string, justification: string) => {
+
+  removeLegalHold: async (id: string, justification: string): Promise<ApiResponse<any>> => {
     const response = await api.delete(`/admin/users/${id}/legal-hold`, { data: { justification } });
-    return response.data;
-  },
-  getSecurityStats: async () => {
-    const response = await api.get('/admin/security-dashboard');
     return response.data;
   },
 
   // Vendors
-  getVendors: async (params?: any) => {
+  getVendors: async <T = any>(params?: any): Promise<ApiResponse<T>> => {
     const response = await api.get('/admin/vendors', { params });
     return response.data;
   },
-  getVendorById: async (id: string) => {
+
+  getVendorById: async (id: string): Promise<ApiResponse<any>> => {
     const response = await api.get(`/admin/vendors/${id}`);
     return response.data;
   },
-  updateVendorVerification: async (id: string, status: string, reason?: string) => {
+
+  updateVendorVerification: async (id: string, status: string, reason?: string): Promise<ApiResponse<any>> => {
     const response = await api.patch(`/admin/vendors/${id}/verification`, { status, reason });
     return response.data;
   },
-  suspendVendor: async (id: string, reason: string) => {
+
+  suspendVendor: async (id: string, reason: string): Promise<ApiResponse<any>> => {
     const response = await api.patch(`/admin/vendors/${id}/suspend`, { reason });
     return response.data;
   },
-  activateVendor: async (id: string) => {
+
+  activateVendor: async (id: string): Promise<ApiResponse<any>> => {
     const response = await api.patch(`/admin/vendors/${id}/activate`);
     return response.data;
   },
 
   // Products
-  getProducts: async (params?: any) => {
+  getProducts: async <T = any>(params?: any): Promise<ApiResponse<T>> => {
     const response = await api.get('/admin/products', { params });
     return response.data;
   },
-  getProductById: async (id: string) => {
+
+  getProductById: async (id: string): Promise<ApiResponse<any>> => {
     const response = await api.get(`/admin/products/${id}`);
     return response.data;
   },
-  toggleProductStatus: async (id: string, currentStatus: string) => {
+
+  toggleProductStatus: async (id: string, currentStatus: string): Promise<ApiResponse<any>> => {
     const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
     const response = await api.patch(`/admin/products/${id}/status`, { status: newStatus });
     return response.data;
   },
 
   // Orders
-  getOrders: async (params?: any) => {
+  getOrders: async <T = any>(params?: any): Promise<ApiResponse<T>> => {
     const response = await api.get('/admin/orders', { params });
     return response.data;
   },
 
   // Complaints
-  getComplaints: async (params?: any) => {
+  getComplaints: async (params?: any): Promise<ApiResponse<any>> => {
     const response = await api.get('/admin/complaints', { params });
     return response.data;
   },
-  resolveComplaint: async (id: string) => {
+
+  resolveComplaint: async (id: string): Promise<ApiResponse<any>> => {
     const response = await api.patch(`/admin/complaints/${id}/resolve`);
     return response.data;
   },
 
-  // Court Cases
-  getCourtCases: async (params?: any) => {
-    const response = await api.get('/admin/court-cases', { params });
-    return response.data;
-  },
-
-  // Reviews
-  getReviews: async (params?: any) => {
-    const response = await api.get('/admin/reviews', { params });
-    return response.data;
-  },
-
-  // Feedback (App Reviews)
-  getFeedbacks: async (params?: any) => {
-    // Determine if admin path or generic path. 
-    // The backend route is /api/v1/feedback (admin restricted for GET /)
+  // Feedback
+  getFeedbacks: async (params?: any): Promise<ApiResponse<any>> => {
     const response = await api.get('/feedback', { params });
     return response.data;
   },
-  updateFeedbackStatus: async (id: string, status: string, adminNotes?: string) => {
+
+  updateFeedbackStatus: async (id: string, status: string, adminNotes?: string): Promise<ApiResponse<any>> => {
     const response = await api.patch(`/feedback/${id}`, { status, adminNotes });
     return response.data;
   },
 
-  // Notifications
-  getNotifications: async (params?: any) => {
-    const response = await api.get('/notifications', { params });
-    return response.data;
-  },
-  markNotificationRead: async (id: string) => {
-    const response = await api.patch(`/notifications/${id}/read`);
-    return response.data;
-  },
-  markAllNotificationsRead: async () => {
-    const response = await api.patch('/notifications/all/read');
-    return response.data;
-  },
-
   // Audit Logs
-  getAuditLogs: async (params?: any) => {
+  getAuditLogs: async (params?: any): Promise<ApiResponse<any>> => {
     const response = await api.get('/admin/audit-logs', { params });
     return response.data;
   },
 
-  // Marketing
-  getMarketingDiscountCodes: async (params?: any) => {
-    const response = await api.get('/admin/marketing/discount-codes', { params });
+  // Security
+  getSecurityMetrics: async (): Promise<ApiResponse<any>> => {
+    const response = await api.get('/admin/security/metrics');
+    return response.data;
+  },
+
+  getSecurityStats: async (): Promise<ApiResponse<any>> => {
+    const response = await api.get('/admin/security/stats');
     return response.data;
   },
 
   // 2FA
-  setup2FA: async () => {
-    const response = await api.post('/auth/2fa/setup');
+  setup2FA: async (): Promise<ApiResponse<any>> => {
+    const response = await api.post('/admin/security/2fa/setup');
     return response.data;
   },
 
-  verify2FA: async (token: string) => {
-    const response = await api.post('/auth/2fa/verify', { token });
+  verify2FA: async (token: string): Promise<ApiResponse<any>> => {
+    const response = await api.post('/admin/security/2fa/verify', { token });
     return response.data;
   },
 
-  disable2FA: async (token: string) => {
-    const response = await api.post('/auth/2fa/disable', { token });
+  disable2FA: async (password: string): Promise<ApiResponse<any>> => {
+    const response = await api.post('/admin/security/2fa/disable', { password });
+    return response.data;
+  },
+
+  // Reviews
+  getReviews: async (params?: any): Promise<ApiResponse<any>> => {
+    const response = await api.get('/admin/reviews', { params });
+    return response.data;
+  },
+
+  // Notifications
+  getNotifications: async (params?: any): Promise<ApiResponse<any>> => {
+    const response = await api.get('/admin/notifications', { params });
+    return response.data;
+  },
+
+  markNotificationRead: async (id: string): Promise<ApiResponse<any>> => {
+    const response = await api.patch(`/admin/notifications/${id}/read`);
+    return response.data;
+  },
+
+  markAllNotificationsRead: async (): Promise<ApiResponse<any>> => {
+    const response = await api.patch('/admin/notifications/read-all');
+    return response.data;
+  },
+
+  // Marketing
+  getMarketingDiscountCodes: async (params?: any): Promise<ApiResponse<any>> => {
+    const response = await api.get('/admin/marketing/discount-codes', { params });
     return response.data;
   },
 
   // Domains
-  getDomains: async (params?: any) => {
+  getDomains: async (params?: any): Promise<ApiResponse<any>> => {
     const response = await api.get('/admin/domains', { params });
     return response.data;
   },
-  manageDomain: async (id: string, data: { status: string; reason?: string; justification: string }) => {
-    const response = await api.patch(`/admin/domains/${id}/manage`, data);
+
+  manageDomain: async (id: string, action: string): Promise<ApiResponse<any>> => {
+    const response = await api.post(`/admin/domains/${id}/${action}`);
+    return response.data;
+  },
+
+  // Court Cases
+  getCourtCases: async (params?: any): Promise<ApiResponse<any>> => {
+    const response = await api.get('/admin/court-cases', { params });
     return response.data;
   },
 };

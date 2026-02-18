@@ -6,6 +6,7 @@ import {
   FiCheckCircle, FiXCircle, FiUser, FiMail, FiPhone, FiMapPin, FiShield, FiLock, FiUnlock
 } from 'react-icons/fi';
 import Swal from 'sweetalert2';
+import { Address } from '../api/admin.service';
 
 export default function UserDetails() {
   const { id } = useParams<{ id: string }>();
@@ -28,8 +29,8 @@ export default function UserDetails() {
     if (!user) return;
     try {
       const updateData = { [type]: status };
-      const updatedUser = await adminService.updateUserVerification(user._id, updateData);
-      setUser(prev => prev ? { ...prev, verification: updatedUser.verification } : null);
+      const response = await adminService.updateUserVerification(user._id, updateData);
+      setUser(prev => prev ? { ...prev, verification: response.data.verification } : null);
     } catch (error) {
       console.error('Failed to update verification:', error);
     }
@@ -39,8 +40,8 @@ export default function UserDetails() {
     if (!user) return;
     if (confirm('Are you sure you want to unlock this user? This will reset their verification attempts.')) {
         try {
-            const updatedUser = await adminService.updateUserVerification(user._id, { status: 'unverified' });
-            setUser(prev => prev ? { ...prev, verification: updatedUser.verification } : null);
+            const response = await adminService.updateUserVerification(user._id, { status: 'unverified' });
+            setUser(prev => prev ? { ...prev, verification: response.data.verification } : null);
         } catch (error) {
             console.error('Failed to unlock user:', error);
         }
@@ -583,7 +584,7 @@ export default function UserDetails() {
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
               <h2 className="text-xl font-bold text-gray-800 mb-4">Saved Addresses</h2>
               <div className="space-y-3">
-                {user.addresses.map((address, index) => (
+                {user.addresses.map((address: Address, index: number) => (
                   <div 
                     key={index} 
                     className={`p-3 rounded-lg ${

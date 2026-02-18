@@ -3,7 +3,7 @@ import {
   FiHome, FiPackage, FiUsers, FiShoppingBag, 
   FiAlertCircle, FiMessageSquare, FiStar, 
   FiShield, FiFileText, FiSettings, FiTrendingUp,
-  FiMenu, FiChevronLeft
+  FiMenu, FiChevronLeft, FiLock, FiTerminal, FiHash, FiSend, FiGitPullRequest
 } from 'react-icons/fi';
 import { useState } from 'react';
 // useState imported above
@@ -21,8 +21,16 @@ const navigation = [
   { name: 'Risk Management', to: '/dashboard/risk-management', icon: FiShield },
   { name: 'Security SOC', to: '/dashboard/security', icon: FiShield },
   { name: 'Audit Logs', to: '/dashboard/audit-logs', icon: FiFileText },
+  { name: 'Account Consolidations', to: '/dashboard/consolidations', icon: FiGitPullRequest },
   { name: 'App Feedback', to: '/dashboard/feedback', icon: FiMessageSquare },
   { name: 'Marketing', to: '/dashboard/marketing', icon: FiTrendingUp },
+  { name: 'Promo Hub', to: '/dashboard/promo-hub', icon: FiTrendingUp },
+  { name: 'Product Moderation', to: '/dashboard/product-moderation', icon: FiPackage },
+  { name: 'Newsletter', to: '/dashboard/newsletter', icon: FiSend },
+  { name: 'Financial Audit', to: '/dashboard/financial-audit', icon: FiTrendingUp },
+  { name: 'Escrow', to: '/dashboard/escrow', icon: FiLock },
+  { name: 'Error Logs', to: '/dashboard/error-logs', icon: FiTerminal },
+  { name: 'DLQ', to: '/dashboard/dlq', icon: FiHash },
 ];
 
 interface SidebarProps {

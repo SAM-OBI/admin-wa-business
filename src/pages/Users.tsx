@@ -22,7 +22,7 @@ export default function Users() {
   const fetchUsers = useCallback(async (page = 1) => {
     setLoading(true);
     try {
-      const data = await adminService.getUsers({
+      const data = await adminService.getUsers<any>({
         search: searchTerm,
         role: filters.role,
         status: filters.status,

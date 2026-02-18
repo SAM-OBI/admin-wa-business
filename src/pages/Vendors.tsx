@@ -23,7 +23,7 @@ export default function Vendors() {
   const fetchVendors = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await adminService.getVendors({
+      const response = await adminService.getVendors<any>({
          page: pagination.page,
          limit: pagination.limit,
          search: searchTerm,
