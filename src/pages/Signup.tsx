@@ -114,7 +114,7 @@ export default function Signup() {
               value={role}
               onChange={(e) => setRole(e.target.value as 'ADMIN' | 'VENDORS' | 'CUSTOMERS')}
               required
-              className="block w-full px-4 py-3.5 bg-[#F5F5DC]/50 border border-transparent focus:bg-white focus:border-[#D4AF37] rounded-xl focus:ring-2 focus:ring-[#D4AF37]/20 transition-all outline-none text-[#4A3728] font-medium"
+              className="block w-full px-4 py-3.5 bg-white border border-gray-100 focus:border-[#D4AF37] rounded-xl focus:ring-2 focus:ring-[#D4AF37]/20 transition-all outline-none !text-slate-950 font-medium"
             >
               <option value="ADMIN">Admin</option>
               <option value="VENDORS">Vendor</option>
