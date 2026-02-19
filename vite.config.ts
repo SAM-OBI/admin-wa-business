@@ -12,6 +12,21 @@ export default defineConfig({
       brotliSize: true,
     })
   ],
+  build: {
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('framer-motion')) return 'vendor-motion';
+            if (id.includes('react-icons')) return 'vendor-icons';
+            if (id.includes('sweetalert2')) return 'vendor-ui';
+            return 'vendor'; // All other dependencies
+          }
+        }
+      }
+    }
+  },
   server: {
     port: 3001,
     proxy: {
