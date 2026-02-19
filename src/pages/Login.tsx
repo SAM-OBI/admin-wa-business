@@ -83,13 +83,13 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-[#F5F5DC] flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl shadow-xl w-full max-w-md px-8 py-8 relative z-10 mx-auto">
-        <div className="text-center mb-6">
+      <div className="bg-white rounded-3xl shadow-xl w-full max-w-md px-8 py-6 relative z-10 mx-auto border border-gray-100">
+        <div className="text-center mb-4">
           <h1 className="text-3xl font-bold text-[#4A3728] mb-2">Welcome Back</h1>
           <p className="text-[#4A3728]/70 text-sm">ADMIN LOGIN</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-3">
           <div className="space-y-1.5">
             <label className="block text-sm font-semibold text-[#4A3728]">
               Email Address
@@ -99,7 +99,7 @@ export default function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="block w-full px-4 py-3.5 bg-[#F5F5DC]/50 border border-transparent focus:bg-white focus:border-[#D4AF37] rounded-xl focus:ring-2 focus:ring-[#D4AF37]/20 transition-all outline-none text-[#4A3728] placeholder-gray-700 font-medium"
+              className="block w-full px-4 py-3 bg-[#F5F5DC]/50 border border-transparent focus:bg-white focus:border-[#D4AF37] rounded-xl focus:ring-2 focus:ring-[#D4AF37]/20 transition-all outline-none text-gray-900 placeholder-gray-700 font-medium"
               placeholder="name@example.com"
             />
           </div>
@@ -118,7 +118,7 @@ export default function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="block w-full px-4 py-3.5 bg-[#F5F5DC]/50 border border-transparent focus:bg-white focus:border-[#D4AF37] rounded-xl focus:ring-2 focus:ring-[#D4AF37]/20 transition-all outline-none text-[#4A3728] placeholder-gray-700 font-medium"
+              className="block w-full px-4 py-3 bg-[#F5F5DC]/50 border border-transparent focus:bg-white focus:border-[#D4AF37] rounded-xl focus:ring-2 focus:ring-[#D4AF37]/20 transition-all outline-none text-gray-900 placeholder-gray-700 font-medium"
               placeholder="••••••••"
             />
           </div>
