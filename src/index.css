@@ -19,3 +19,14 @@ body {
 #root {
   min-height: 100vh;
 }
+
+/* 💎 NUCLEAR CONTRAST FIX (v5.4) - Forces DARK text on ALL inputs */
+input, select, textarea {
+  color: #0f172a !important; 
+}
+
+/* Placeholder contrast force */
+::placeholder {
+  color: #4b5563 !important;
+  opacity: 1 !important;
+}
