@@ -3,6 +3,9 @@ import { adminService } from '../api/admin.service';
 import { 
   FiShield, FiLock, FiActivity, FiCheckCircle
 } from 'react-icons/fi';
+import FraudInvestigationPanel from '../components/FraudInvestigationPanel';
+import ForensicAuditPanel from '../components/ForensicAuditPanel';
+import AutonomousAIControl from '../components/AutonomousAIControl';
 
 interface SecurityAlert {
   _id: string;
@@ -36,12 +39,16 @@ export default function SecurityDashboard() {
   const [retryCount, setRetryCount] = useState(0);
   const [lastSync, setLastSync] = useState<Date | null>(null);
   const [criticalAlert, setCriticalAlert] = useState<string | null>(null);
+  const [fraudIncidents, setFraudIncidents] = useState<any[]>([]);
+  const [selectedIncident, setSelectedIncident] = useState<any | null>(null);
+  const [activeTab, setActiveTab] = useState<'alerts' | 'fraud' | 'forensics' | 'intelligence'>('alerts');
 
   const fetchData = async () => {
     try {
-      const [statsRes, metricsRes] = await Promise.all([
+      const [statsRes, metricsRes, fraudRes] = await Promise.all([
         adminService.getSecurityStats(),
-        adminService.getSecurityMetrics()
+        adminService.getSecurityMetrics(),
+        adminService.getFraudIncidents({ resolved: false })
       ]);
       
       // Handle versioned API envelope (v1.1)
@@ -49,6 +56,7 @@ export default function SecurityDashboard() {
       
       // Use functional updates to maintain "Last Known Good" on partial failure if needed
       if (statsRes?.data) setStats(statsRes.data);
+      if (fraudRes?.data?.incidents) setFraudIncidents(fraudRes.data.incidents);
       if (metricsData) {
         setMetrics(metricsData);
         setLastSync(new Date());
@@ -224,116 +232,169 @@ export default function SecurityDashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Recent Alerts & Mismatches */}
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="p-6 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
-              <h2 className="font-bold text-gray-800">RBAC Parity Stream</h2>
-              <span className="bg-red-100 text-red-700 text-[10px] font-black uppercase px-2 py-0.5 rounded">Shadow Mode</span>
+              <div className="flex gap-4">
+                <button 
+                  onClick={() => setActiveTab('alerts')}
+                  className={`font-bold transition-colors ${activeTab === 'alerts' ? 'text-slate-900 border-b-2 border-slate-900 pb-1' : 'text-slate-400'}`}
+                >
+                  Threat Intelligence
+                </button>
+                <button 
+                  onClick={() => setActiveTab('fraud')}
+                  className={`font-bold transition-colors ${activeTab === 'fraud' ? 'text-slate-900 border-b-2 border-slate-900 pb-1' : 'text-slate-400'} flex items-center gap-2`}
+                >
+                  Fraud Incidents
+                  {fraudIncidents.length > 0 && (
+                    <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">
+                      {fraudIncidents.length}
+                    </span>
+                  )}
+                </button>
+                <button 
+                  onClick={() => setActiveTab('forensics')}
+                  className={`font-bold transition-colors ${activeTab === 'forensics' ? 'text-slate-900 border-b-2 border-slate-900 pb-1' : 'text-slate-400'} flex items-center gap-2`}
+                >
+                  Forensic Integrity
+                </button>
+                <button 
+                  onClick={() => setActiveTab('intelligence')}
+                  className={`font-bold transition-colors ${activeTab === 'intelligence' ? 'text-slate-900 border-b-2 border-slate-900 pb-1' : 'text-slate-400'} flex items-center gap-2`}
+                >
+                  Autonomous AI
+                </button>
+              </div>
+              <span className="bg-red-100 text-red-700 text-[10px] font-black uppercase px-2 py-0.5 rounded">Real-time Stream</span>
             </div>
-            <div className="overflow-x-auto">
-                <table className="w-full">
-                    <thead className="bg-gray-50 text-[10px] font-black uppercase text-gray-400">
-                        <tr>
-                            <th className="px-6 py-4 text-left">Resource</th>
-                            <th className="px-6 py-4 text-left">Mismatch</th>
-                            <th className="px-6 py-4 text-left">User</th>
-                            <th className="px-6 py-4 text-left">Time</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-50">
-                        {metrics?.rbac.recent.length === 0 ? (
-                            <tr><td colSpan={4} className="px-6 py-10 text-center text-gray-400 text-sm">No mismatches detected in last 50 events</td></tr>
-                        ) : (
-                            metrics?.rbac.recent.map((item: any, idx: number) => (
-                                <tr key={idx} className="hover:bg-gray-50/50 transition-colors">
-                                    <td className="px-6 py-4">
-                                        <p className="text-sm font-bold text-gray-800">{item.path}</p>
-                                        <p className="text-[10px] text-gray-400 font-mono">{item.method}</p>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <span className="text-[10px] font-black bg-orange-100 text-orange-700 px-2 py-1 rounded">
-                                            {item.mismatchType}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4 text-xs font-mono text-gray-500">
-                                        {item.userId || 'System'}
-                                    </td>
-                                    <td className="px-6 py-4 text-xs text-gray-400">
-                                        {new Date(item.createdAt).toLocaleTimeString()}
-                                    </td>
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
-            </div>
-          </div>
 
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="p-6 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
-              <h2 className="font-bold text-gray-800">Threat Alerts Stream</h2>
-              <span className="bg-red-100 text-red-700 text-[10px] font-black uppercase px-2 py-0.5 rounded">Live Detection</span>
-            </div>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 text-[10px] font-black uppercase text-gray-400">
-                <tr>
-                  <th className="px-6 py-4 text-left">Level</th>
-                  <th className="px-6 py-4 text-left">Event</th>
-                  <th className="px-6 py-4 text-left">Entity</th>
-                  <th className="px-6 py-4 text-left">Time</th>
-                  <th className="px-6 py-4 text-left">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-50">
-                {stats?.recentAlerts.length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="px-6 py-20 text-center">
-                      <div className="flex flex-col items-center text-gray-400">
-                        <FiCheckCircle size={40} className="mb-4 text-green-400" />
-                        <p className="font-medium">All systems normal. No active threats detected.</p>
-                      </div>
-                    </td>
-                  </tr>
-                ) : (
-                  stats?.recentAlerts.map((alert) => (
-                    <tr key={alert._id} className="hover:bg-gray-50/50 transition-colors">
-                      <td className="px-6 py-4">
-                        <span className={`text-[10px] font-black uppercase px-2 py-1 rounded ${getSeverityColor(alert.severity)}`}>
-                          {alert.severity}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <p className="text-sm font-bold text-gray-800">{alert.type.replace(/_/g, ' ')}</p>
-                        <p className="text-xs text-gray-500 mt-0.5">{alert.message}</p>
-                      </td>
-                      <td className="px-6 py-4">
-                        {alert.userId ? (
-                          <div className="text-xs">
-                            <p className="font-bold text-gray-800">{alert.userId.name}</p>
-                            <p className="text-gray-400">{alert.userId.email}</p>
-                          </div>
-                        ) : (
-                          <span className="text-xs text-gray-400">System/Unknown</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 text-xs text-gray-500">
-                        {new Date(alert.createdAt).toLocaleString()}
-                      </td>
-                      <td className="px-6 py-4">
-                        <button className="text-primary hover:underline text-xs font-bold">Investigate</button>
-                      </td>
+            <div className="overflow-x-auto">
+              {activeTab === 'alerts' ? (
+                <table className="w-full">
+                  <thead className="bg-gray-50 text-[10px] font-black uppercase text-gray-400">
+                    <tr>
+                      <th className="px-6 py-4 text-left">Level</th>
+                      <th className="px-6 py-4 text-left">Event</th>
+                      <th className="px-6 py-4 text-left">Entity</th>
+                      <th className="px-6 py-4 text-left">Time</th>
+                      <th className="px-6 py-4 text-left">Action</th>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {stats?.recentAlerts.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="px-6 py-20 text-center text-gray-400">
+                          <FiCheckCircle size={40} className="mx-auto mb-4 opacity-20" />
+                          <p>All systems normal. No active threats detected.</p>
+                        </td>
+                      </tr>
+                    ) : (
+                      stats?.recentAlerts.map((alert) => (
+                        <tr key={alert._id} className="hover:bg-gray-50/50 transition-colors">
+                          <td className="px-6 py-4">
+                            <span className={`text-[10px] font-black uppercase px-2 py-1 rounded ${getSeverityColor(alert.severity)}`}>
+                              {alert.severity}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <p className="text-sm font-bold text-gray-800">{alert.type.replace(/_/g, ' ')}</p>
+                            <p className="text-xs text-gray-500 mt-0.5">{alert.message}</p>
+                          </td>
+                          <td className="px-6 py-4">
+                            {alert.userId ? (
+                              <div className="text-xs">
+                                <p className="font-bold text-gray-800">{alert.userId.name}</p>
+                                <p className="text-gray-400">{alert.userId.email}</p>
+                              </div>
+                            ) : (
+                              <span className="text-xs text-gray-400">System/Unknown</span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 text-xs text-gray-500">
+                            {new Date(alert.createdAt).toLocaleString()}
+                          </td>
+                          <td className="px-6 py-4">
+                            <button className="text-primary hover:underline text-xs font-bold">Investigate</button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              ) : activeTab === 'fraud' ? (
+                <table className="w-full">
+                  <thead className="bg-gray-50 text-[10px] font-black uppercase text-gray-400">
+                    <tr>
+                      <th className="px-6 py-4 text-left">Severity</th>
+                      <th className="px-6 py-4 text-left">Incident</th>
+                      <th className="px-6 py-4 text-left">Risk Score</th>
+                      <th className="px-6 py-4 text-left">Last Seen</th>
+                      <th className="px-6 py-4 text-left">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {fraudIncidents.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="px-6 py-20 text-center text-gray-400">
+                          <FiShield size={32} className="mx-auto mb-3 opacity-20" />
+                          <p>No unresolved fraud incidents found.</p>
+                        </td>
+                      </tr>
+                    ) : (
+                      fraudIncidents.map((incident) => (
+                        <tr key={incident._id} className="hover:bg-red-50/30 transition-colors">
+                          <td className="px-6 py-4">
+                             <span className={`text-[10px] font-black uppercase px-2 py-1 rounded ${getSeverityColor(incident.severity.toLowerCase())}`}>
+                              {incident.severity}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <p className="text-sm font-bold text-gray-800">{incident.incidentType}</p>
+                            <div className="flex gap-1 mt-1">
+                              {incident.triggeredSignals.slice(0, 2).map((s: string, i: number) => (
+                                <span key={i} className="text-[9px] bg-slate-100 text-slate-500 border border-slate-200 px-1 rounded uppercase font-bold">{s}</span>
+                              ))}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-2">
+                              <span className={`text-sm font-black ${incident.riskScore >= 60 ? 'text-red-600' : 'text-slate-800'}`}>
+                                {incident.riskScore}
+                              </span>
+                              <div className="w-12 h-1 bg-gray-100 rounded-full overflow-hidden">
+                                <div className={`h-full ${incident.riskScore >= 60 ? 'bg-red-500' : 'bg-blue-500'}`} style={{ width: `${incident.riskScore}%` }}></div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-xs text-gray-400 font-medium">
+                            {new Date(incident.lastOccurred).toLocaleTimeString()}
+                          </td>
+                          <td className="px-6 py-4">
+                            <button 
+                              onClick={() => setSelectedIncident(incident)}
+                              className="px-3 py-1.5 bg-slate-900 text-white text-[10px] font-black uppercase rounded-lg hover:bg-black transition-colors"
+                            >
+                              Investigate
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              ) : activeTab === 'forensics' ? (
+                <ForensicAuditPanel />
+              ) : (
+                <div className="p-6">
+                  <AutonomousAIControl />
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
-        {/* Security Health & Compliance */}
+        {/* Security Health & Compliance Column */}
         <div className="space-y-6">
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
@@ -379,6 +440,20 @@ export default function SecurityDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Modal Overlay for Investigation */}
+      {selectedIncident && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <FraudInvestigationPanel 
+            incident={selectedIncident}
+            onClose={() => setSelectedIncident(null)}
+            onResolved={() => {
+              setSelectedIncident(null);
+              fetchData();
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }

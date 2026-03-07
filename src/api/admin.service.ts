@@ -209,4 +209,62 @@ export const adminService = {
     const response = await api.get('/admin/court-cases', { params });
     return response.data;
   },
+  
+  // Fraud Incidents (Phase 14)
+  getFraudIncidents: async (params?: any): Promise<ApiResponse<any>> => {
+    const response = await api.get('/admin/security/incidents', { params });
+    return response.data;
+  },
+
+  resolveFraudIncident: async (id: string, action: string, note: string, justification?: string): Promise<ApiResponse<any>> => {
+    const response = await api.patch(`/admin/security/incidents/${id}/resolve`, { 
+        action, 
+        note,
+        justification // Required by mandate
+    });
+    return response.data;
+  },
+
+  // Trust & Reputation (Phase 15)
+  getVendorTrustHistory: async (id: string): Promise<ApiResponse<any>> => {
+    const response = await api.get(`/admin/trust/vendors/${id}/history`);
+    return response.data;
+  },
+
+  overrideVendorTrust: async (id: string, data: { newScore: number; reason: string; justification: string }): Promise<ApiResponse<any>> => {
+    const response = await api.patch(`/admin/trust/vendors/${id}/override`, data);
+    return response.data;
+  },
+
+  // Forensic Integrity (Phase 16)
+  getForensicIncidents: async (params?: any): Promise<ApiResponse<any>> => {
+    const response = await api.get('/admin/security/forensic-incidents', { params });
+    return response.data;
+  },
+
+  resolveForensicIncident: async (id: string, data: { status: string; note: string }): Promise<ApiResponse<any>> => {
+    const response = await api.patch(`/admin/security/forensic-incidents/${id}/resolve`, data);
+    return response.data;
+  },
+
+  // Autonomous Intelligence (Phase 17)
+  getIntelligenceSettings: async (): Promise<ApiResponse<any>> => {
+    const response = await api.get('/admin/intelligence/settings');
+    return response.data;
+  },
+
+  updateIntelligenceSettings: async (data: any): Promise<ApiResponse<any>> => {
+    const response = await api.patch('/admin/intelligence/settings', data);
+    return response.data;
+  },
+
+  getIntelligenceHistory: async (): Promise<ApiResponse<any>> => {
+    const response = await api.get('/admin/intelligence/history');
+    return response.data;
+  },
+
+  rollbackIntelligence: async (data: { version: number; password?: string }): Promise<ApiResponse<any>> => {
+    const response = await api.post('/admin/intelligence/rollback', data);
+    return response.data;
+  },
 };

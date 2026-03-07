@@ -2,6 +2,13 @@ export type SubscriptionPlan = 'free' | 'basic' | 'premium' | 'gold';
 export type AccountStatus = 'active' | 'restricted' | 'suspended' | 'banned';
 export type VerificationStatus = 'unverified' | 'pending' | 'verified' | 'rejected' | 'locked' | 'failed';
 
+export interface Reputation {
+  score: number;
+  level: 'new' | 'low' | 'medium' | 'high' | 'excellent';
+  lastRecalculated: string;
+  isProvisional: boolean;
+}
+
 export interface Address {
   street: string;
   city: string;
@@ -27,6 +34,7 @@ export interface User {
     attempts?: number;
     failureReason?: string;
   };
+  reputation?: Reputation;
   accountStatus?: {
     status: AccountStatus;
     reason?: string;
@@ -77,6 +85,7 @@ export interface Vendor {
     attempts?: number;
     failureReason?: string;
   };
+  reputation?: Reputation;
   accountStatus?: {
     status: AccountStatus;
     reason?: string;
@@ -234,6 +243,37 @@ export interface TreasuryHealth {
   totalEscrowValue: number;
   totalWalletLiability: number;
   exposureRatio: number;
+}
+
+export interface IntelligenceSettings {
+  aiRankingEnabled: boolean;
+  aiRiskEnabled: boolean;
+  aiSentimentEnabled: boolean;
+  aiTunerEnabled: boolean;
+  riskDialFactor: number;
+}
+
+export interface EconomicStabilitySettings {
+  priceWarDetectionEnabled: boolean;
+  collusionDetectionEnabled: boolean;
+  shortageDetectionEnabled: boolean;
+}
+
+export interface IntelligenceHistoryItem {
+  _id: string;
+  version: number;
+  updatedBy: {
+    _id: string;
+    name: string;
+    email: string;
+  };
+  settings: {
+    intelligence: IntelligenceSettings;
+    stability: EconomicStabilitySettings;
+  };
+  changeReason?: string;
+  ipAddress?: string;
+  createdAt: string;
 }
 
 export type PaginatedResponse<T, Key extends string> = {

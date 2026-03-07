@@ -79,11 +79,8 @@ export default function Vendors() {
 
   const handleVerification = async (vendorId: string, status: 'verified' | 'rejected') => {
     try {
-      let reason;
-      if (status === 'rejected') {
-        reason = prompt('Enter reason for rejection:');
-        if (!reason) return;
-      }
+      const reason = status === 'rejected' ? (prompt('Enter reason for rejection:') || undefined) : undefined;
+      if (status === 'rejected' && !reason) return;
       await adminService.updateVendorVerification(vendorId, status, reason);
       fetchVendors();
     } catch (error) {

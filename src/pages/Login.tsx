@@ -59,7 +59,7 @@ export default function Login() {
         return; 
       }
 
-      let errorMessage = err.response?.data?.message || 'Authorization failed.';
+      const errorMessage = err.response?.data?.message || 'Authorization failed.';
       showError(errorMessage, 'Security Alert');
     }
   };

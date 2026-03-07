@@ -12,6 +12,8 @@ export default function VendorDetails() {
   const [vendor, setVendor] = useState<VendorDetailsType | null>(null);
   const [loading, setLoading] = useState(true);
   const [showId, setShowId] = useState(false);
+  const [trustHistory, setTrustHistory] = useState<any[]>([]);
+  const [trustLoading, setTrustLoading] = useState(false);
 
   const fetchVendorDetails = useCallback(async () => {
     setLoading(true);
@@ -25,11 +27,46 @@ export default function VendorDetails() {
     }
   }, [id]);
 
+  const fetchTrustHistory = useCallback(async () => {
+    setTrustLoading(true);
+    try {
+      const response = await adminService.getVendorTrustHistory(id!);
+      setTrustHistory(response.data);
+    } catch (error) {
+      console.error('Failed to fetch trust history:', error);
+    } finally {
+      setTrustLoading(false);
+    }
+  }, [id]);
+
   useEffect(() => {
     if (id) {
       fetchVendorDetails();
+      fetchTrustHistory();
     }
-  }, [id, fetchVendorDetails]);
+  }, [id, fetchVendorDetails, fetchTrustHistory]);
+
+  const handleTrustOverride = async () => {
+    const newScoreStr = prompt('Enter new trust score (0-100):');
+    if (newScoreStr === null) return;
+    const newScore = parseInt(newScoreStr);
+    if (isNaN(newScore) || newScore < 0 || newScore > 100) {
+      alert('Invalid score');
+      return;
+    }
+    const reason = prompt('Enter reason for internal history:');
+    if (!reason) return;
+    const justification = prompt('Enter mandatory justification for policy audit:');
+    if (!justification) return;
+
+    try {
+      await adminService.overrideVendorTrust(id!, { newScore, reason, justification });
+      fetchVendorDetails();
+      fetchTrustHistory();
+    } catch (error) {
+      console.error('Trust override failed:', error);
+    }
+  };
 
   const handleSuspend = async () => {
     const reason = prompt('Enter reason for suspension:');
@@ -52,11 +89,8 @@ export default function VendorDetails() {
   };
 
   const handleVerification = async (status: 'verified' | 'rejected' | 'unverified') => {
-    let reason;
-    if (status === 'rejected') {
-      reason = prompt('Enter reason for rejection:');
-      if (!reason) return;
-    }
+    const reason = status === 'rejected' ? (prompt('Enter reason for rejection:') || undefined) : undefined;
+    if (status === 'rejected' && !reason) return;
     try {
       await adminService.updateVendorVerification(id!, status, reason);
       fetchVendorDetails();
@@ -319,6 +353,69 @@ export default function VendorDetails() {
                 </div>
               </div>
             )}
+          </div>
+
+          {/* Trust & Reputation Oversight (Phase 15) */}
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-gray-800">Trust & Reputation</h2>
+              <button 
+                onClick={handleTrustOverride}
+                className="text-xs px-3 py-1 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded transition font-medium"
+              >
+                Manual Override
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="p-4 bg-blue-50 rounded-lg">
+                <p className="text-xs text-blue-600 font-bold uppercase tracking-wider mb-1">Current Score</p>
+                <div className="flex items-end gap-2">
+                  <span className="text-3xl font-black text-blue-900">{vendor.reputation?.score ?? 50}</span>
+                  <span className="text-sm font-bold text-blue-700 mb-1">/ 100</span>
+                </div>
+              </div>
+              <div className="p-4 bg-purple-50 rounded-lg">
+                <p className="text-xs text-purple-600 font-bold uppercase tracking-wider mb-1">Trust Grade</p>
+                <div className="flex items-center gap-2">
+                  <span className="text-3xl font-black text-purple-900">
+                    {vendor.reputation?.level === 'excellent' ? 'A+' : 
+                     vendor.reputation?.level === 'high' ? 'A' :
+                     vendor.reputation?.level === 'medium' ? 'B' :
+                     vendor.reputation?.level === 'low' ? 'C' : 'N'}
+                  </span>
+                  <span className="text-xs font-bold text-purple-700 uppercase">
+                    {vendor.reputation?.level || 'NEW'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <h3 className="font-semibold text-gray-800 mb-3 text-sm">Trust Audit Trail</h3>
+            <div className="space-y-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+              {trustLoading ? (
+                <div className="text-center py-4 text-gray-400 text-sm italic">Loading history...</div>
+              ) : trustHistory.length > 0 ? (
+                trustHistory.map((log: any, idx: number) => (
+                  <div key={idx} className="p-3 bg-gray-50 border border-gray-100 rounded-lg text-xs">
+                    <div className="flex justify-between mb-1">
+                      <span className="font-bold text-gray-700">{log.triggerEvent?.replace(/_/g, ' ') || 'RECALCULATION'}</span>
+                      <span className="text-gray-400">{new Date(log.createdAt).toLocaleString()}</span>
+                    </div>
+                    <p className="text-gray-600 mb-2">{log.reason}</p>
+                    <div className="flex items-center gap-2">
+                      <span className="px-1.5 py-0.5 bg-gray-200 text-gray-500 rounded">{log.previousScore}</span>
+                      <span className="text-gray-400">→</span>
+                      <span className={`px-1.5 py-0.5 rounded font-bold ${log.newScore > log.previousScore ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                        {log.newScore}
+                      </span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-4 text-gray-400 text-sm italic">No trust history recorded yet.</div>
+              )}
+            </div>
           </div>
 
           {/* Recent Complaints */}
