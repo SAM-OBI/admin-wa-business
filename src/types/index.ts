@@ -101,6 +101,9 @@ export interface Vendor {
       resolved: boolean;
     }>;
   };
+  activityScore?: number;
+  sellerLevel?: number;
+  isFeatured?: boolean;
   createdAt: string;
 }
 
@@ -122,6 +125,9 @@ export interface VendorDetails extends Vendor {
   };
   recentComplaints?: any[];
   governmentIdUrl?: string;
+  blogCount?: number;
+  flaggedBlogReports?: number;
+  recentBlogs?: any[];
 }
 
 export interface Product {

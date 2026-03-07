@@ -14,7 +14,7 @@ interface MetricValueProps {
 }
 
 export const MetricValue: React.FC<MetricValueProps> = memo(({ 
-    value, prefix = '', suffix = '', label, trend, color = 'text-gray-900' 
+    value, prefix = '', suffix = '', label, trend, color = 'text-white' 
 }) => {
     return (
         <div className="flex flex-col" aria-label={`${label}: ${prefix}${value}${suffix}`}>
@@ -23,7 +23,7 @@ export const MetricValue: React.FC<MetricValueProps> = memo(({
             </span>
             {trend && (
                 <span className={`text-[10px] font-black uppercase tracking-widest mt-1 ${
-                    trend === 'up' ? 'text-green-500' : trend === 'down' ? 'text-red-500' : 'text-gray-400'
+                    trend === 'up' ? 'text-emerald-500' : trend === 'down' ? 'text-red-500' : 'text-zinc-500'
                 }`}>
                     {trend === 'up' ? '↑' : trend === 'down' ? '↓' : '→'} Baseline
                 </span>
@@ -46,16 +46,16 @@ export const StatusBadge: React.FC<StatusBadgeProps> = memo(({ status, label }) 
         switch (status) {
             case 'NORMAL':
             case 'SUCCESS':
-                return 'bg-green-100 text-green-700 border-green-200';
+                return 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20';
             case 'WARNING':
             case 'PENDING':
-                return 'bg-amber-100 text-amber-700 border-amber-200';
+                return 'bg-amber-500/10 text-amber-500 border-amber-500/20';
             case 'CRITICAL':
-                return 'bg-red-100 text-red-700 border-red-200';
+                return 'bg-red-500/10 text-red-500 border-red-500/20';
             case 'EMERGENCY':
                 return 'bg-red-600 text-white border-red-700 animate-pulse';
             default:
-                return 'bg-gray-100 text-gray-700 border-gray-200';
+                return 'bg-zinc-800 text-zinc-500 border-white/5';
         }
     };
 

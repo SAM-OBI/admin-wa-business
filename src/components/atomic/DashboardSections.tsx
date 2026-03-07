@@ -15,44 +15,44 @@ interface TreasuryProps {
 }
 
 export const TreasuryMetrics: React.FC<TreasuryProps> = memo(({ data }) => (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 transition-all hover:shadow-md">
-        <div className="flex items-center justify-between mb-8">
-            <h2 className="font-black text-gray-800 uppercase tracking-widest flex items-center gap-3">
-                <div className="p-2 bg-green-50 rounded-lg">
-                    <FiDollarSign className="text-green-600" />
+    <div className="bg-zinc-900/50 rounded-2xl border border-zinc-800/40 p-8 backdrop-blur-sm shadow-[0_0_50px_rgba(0,0,0,0.5)] transition-all hover:bg-zinc-900/70 group">
+        <div className="flex items-center justify-between mb-10">
+            <h2 className="font-black text-white uppercase tracking-[0.2em] flex items-center gap-4 text-xs">
+                <div className="p-2.5 bg-white shadow-sm border border-zinc-800/40 rounded-xl shrink-0 group-hover:scale-110 transition-transform">
+                    <FiDollarSign className="text-zinc-400 group-hover:text-emerald-400 transition-colors" />
                 </div>
-                Treasury Health
+                Infrastructure Treasury Health (Live)
             </h2>
             <StatusBadge status={data.status} />
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
             <div>
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Liquidity Score</p>
-                <div className="flex items-center gap-3">
-                    <MetricValue value={data.liquidityScore} suffix="%" label="Liquidity Score" color={data.liquidityScore > 80 ? 'text-green-600' : 'text-amber-600'} />
-                    <div className="h-1.5 w-16 bg-gray-100 rounded-full overflow-hidden shrink-0">
-                        <div className={`h-full ${data.liquidityScore > 80 ? 'bg-green-500' : 'bg-amber-500'}`} style={{ width: `${data.liquidityScore}%` }} />
+                <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] mb-3">Liquidity Score</p>
+                <div className="flex items-center gap-4">
+                    <MetricValue value={data.liquidityScore} suffix="%" label="Liquidity Score" color={data.liquidityScore > 80 ? 'text-emerald-500' : 'text-amber-500'} />
+                    <div className="h-1.5 w-16 bg-zinc-800 rounded-full overflow-hidden shrink-0 border border-white/5">
+                        <div className={`h-full ${data.liquidityScore > 80 ? 'bg-emerald-500' : 'bg-amber-500'}`} style={{ width: `${data.liquidityScore}%` }} />
                     </div>
                 </div>
             </div>
             
             <div>
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Escrow Value</p>
-                <MetricValue value={formatCurrency(data.totalEscrowValue)} label="Total Escrow" />
+                <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] mb-3">Escrow Value</p>
+                <MetricValue value={formatCurrency(data.totalEscrowValue)} label="Total Escrow" color="text-white" />
             </div>
 
             <div>
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Wallet Liability</p>
-                <MetricValue value={formatCurrency(data.totalWalletLiability)} label="Wallet Liability" />
+                <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] mb-3">Wallet Liability</p>
+                <MetricValue value={formatCurrency(data.totalWalletLiability)} label="Wallet Liability" color="text-zinc-400" />
             </div>
 
             <div>
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Exposure Ratio</p>
+                <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] mb-3">Exposure Ratio</p>
                 <MetricValue 
                     value={data.exposureRatio.toFixed(3)} 
                     label="Exposure Ratio" 
-                    color={data.exposureRatio > 1 ? 'text-red-600' : 'text-green-600'} 
+                    color={data.exposureRatio > 1 ? 'text-red-500' : 'text-emerald-500'} 
                     trend={data.exposureRatio > 1 ? 'up' : 'down'}
                 />
             </div>
@@ -67,31 +67,31 @@ interface ActivityProps {
 }
 
 export const RecentActivityFeed: React.FC<ActivityProps> = memo(({ activities, getActivityIcon, getActivityText }) => (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full">
-        <div className="p-6 border-b border-gray-100 bg-gray-50/30 flex items-center justify-between">
+    <div className="bg-zinc-900/50 rounded-2xl border border-zinc-800/40 backdrop-blur-sm overflow-hidden flex flex-col h-full shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+        <div className="p-8 border-b border-zinc-800/60 bg-white/[0.02] flex items-center justify-between">
             <div>
-                <h2 className="text-sm font-black text-gray-900 uppercase tracking-widest">Recent Activity</h2>
-                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tight mt-0.5">Live platform telemetry</p>
+                <h2 className="text-xs font-black text-white uppercase tracking-[0.2em]">Activity Registry</h2>
+                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1.5">Live infrastructure telemetry</p>
             </div>
-            <Link to="/dashboard/audit-logs" className="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:text-blue-700 transition-colors">
-                View Logs
+            <Link to="/dashboard/audit-logs" className="text-[10px] font-black text-white uppercase tracking-widest hover:text-zinc-300 transition-colors border border-white/5 px-3 py-1.5 rounded-lg bg-white/[0.03]">
+                Analyze Logs
             </Link>
         </div>
-        <div className="p-2 flex-1 overflow-y-auto max-h-[500px]">
-            <div className="space-y-1">
+        <div className="p-4 flex-1 overflow-y-auto max-h-[500px] custom-scrollbar">
+            <div className="space-y-2">
                 {activities.slice(0, 8).map((activity, index) => (
-                    <div key={index} className="flex items-center gap-4 p-3.5 rounded-xl hover:bg-gray-50 transition-all border border-transparent hover:border-gray-100 group">
-                        <div className="p-2.5 bg-white shadow-sm border border-gray-100 rounded-xl shrink-0 group-hover:scale-110 transition-transform">
+                    <div key={index} className="flex items-center gap-5 p-4 rounded-xl hover:bg-white/[0.03] transition-all border border-transparent hover:border-white/5 group">
+                        <div className="p-2.5 bg-zinc-800 shadow-sm border border-white/5 rounded-xl shrink-0 group-hover:scale-110 transition-transform">
                             {getActivityIcon(activity.type)}
                         </div>
                         <div className="flex-1 min-w-0">
-                            <p className="text-xs text-gray-800 font-bold truncate leading-relaxed">{getActivityText(activity)}</p>
-                            <div className="flex items-center gap-2 mt-1 text-[10px] text-gray-400 font-black uppercase tracking-widest">
-                                <FiClock size={10} />
+                            <p className="text-sm text-zinc-200 font-bold truncate tracking-tight">{getActivityText(activity)}</p>
+                            <div className="flex items-center gap-2 mt-1.5 text-[9px] text-zinc-500 font-black uppercase tracking-widest">
+                                <FiClock size={10} className="text-zinc-600" />
                                 {formatDate(activity.createdAt)}
                             </div>
                         </div>
-                        <FiArrowRight size={14} className="text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <FiArrowRight size={14} className="text-zinc-700 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                 ))}
             </div>

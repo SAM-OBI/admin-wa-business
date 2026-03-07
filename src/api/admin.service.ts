@@ -24,6 +24,11 @@ export const adminService = {
     return { ...response.data, data: validated };
   },
 
+  getPlatformROIStats: async (params?: any): Promise<ApiResponse<any>> => {
+    const response = await api.get('/analytics/roi', { params });
+    return response.data;
+  },
+
   getTreasuryHealth: async (): Promise<ApiResponse<TreasuryHealth>> => {
     const response = await api.get('/admin/treasury-health');
     const validated = TreasuryHealthSchema.parse(response.data.data);
@@ -58,6 +63,11 @@ export const adminService = {
 
   removeLegalHold: async (id: string, justification: string): Promise<ApiResponse<any>> => {
     const response = await api.delete(`/admin/users/${id}/legal-hold`, { data: { justification } });
+    return response.data;
+  },
+
+  impersonateUser: async (id: string, data: { reason: string; targetRole?: string }): Promise<ApiResponse<any>> => {
+    const response = await api.post(`/admin/users/${id}/impersonate`, data);
     return response.data;
   },
 
@@ -265,6 +275,27 @@ export const adminService = {
 
   rollbackIntelligence: async (data: { version: number; password?: string }): Promise<ApiResponse<any>> => {
     const response = await api.post('/admin/intelligence/rollback', data);
+    return response.data;
+  },
+
+  // Journal Moderation (Phase 19)
+  getBlogs: async (params?: any): Promise<ApiResponse<any>> => {
+    const response = await api.get('/admin/journal/blogs', { params });
+    return response.data;
+  },
+
+  moderateBlog: async (id: string, data: { status?: string; isFeatured?: boolean; reason: string }): Promise<ApiResponse<any>> => {
+    const response = await api.patch(`/admin/journal/blogs/${id}/moderate`, data);
+    return response.data;
+  },
+
+  getBlogReports: async (params?: any): Promise<ApiResponse<any>> => {
+    const response = await api.get('/admin/journal/reports', { params });
+    return response.data;
+  },
+
+  resolveBlogReport: async (id: string, data: { status: 'resolved' | 'dismissed'; reason: string }): Promise<ApiResponse<any>> => {
+    const response = await api.patch(`/admin/journal/reports/${id}/resolve`, data);
     return response.data;
   },
 };

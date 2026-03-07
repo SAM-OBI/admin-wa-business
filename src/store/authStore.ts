@@ -6,6 +6,8 @@ interface AdminUser {
   name: string;
   email: string;
   role: string;
+  roles: string[];
+  activeRole: string;
   subscription?: {
     plan: 'free' | 'basic' | 'premium' | 'gold';
     status: 'active' | 'inactive';
@@ -59,7 +61,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       }
 
       // Allow any authenticated user to access the admin dashboard
-      set({ admin: data, isAuthenticated: true });
+      set({ admin: data.user || data, isAuthenticated: true });
       return { success: true };
     } catch (error: any) {
       console.error('Login error:', error);
@@ -127,10 +129,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         sessionStorage.setItem('token', token);
       }
 
-      // Verify role is admin (case-insensitive)
-      const role = admin.role?.toUpperCase();
-      if (role !== 'ADMIN' && role !== 'SUPERADMIN') {
-         console.warn('[AuthStore Admin] Access denied: User is not an admin');
+      // Verify role is admin (check both legacy 'role' and new 'roles')
+      const role = (admin.activeRole || admin.role || '').toUpperCase();
+      const roles = (admin.roles || []).map((r: string) => r.toUpperCase());
+      
+      const hasAdminPrivilege = role === 'ADMIN' || role === 'SUPERADMIN' || roles.includes('ADMIN') || roles.includes('SUPERADMIN');
+
+      if (!hasAdminPrivilege) {
+         console.warn('[AuthStore Admin] Access denied: User is not an admin', { role, roles });
          await api.get('/auth/logout'); // Force backend logout
          set({ admin: null, isAuthenticated: false, isLoading: false });
          return;

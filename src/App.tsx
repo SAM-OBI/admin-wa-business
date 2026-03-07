@@ -28,6 +28,7 @@ const Vendors = lazy(() => import(/* webpackChunkName: "management" */ './pages/
 const ProductModeration = lazy(() => import(/* webpackChunkName: "governance" */ './pages/ProductModeration'));
 const Disputes = lazy(() => import(/* webpackChunkName: "governance" */ './pages/Disputes'));
 const Reviews = lazy(() => import(/* webpackChunkName: "governance" */ './pages/Reviews'));
+const BlogModeration = lazy(() => import(/* webpackChunkName: "governance" */ './pages/BlogModeration'));
 
 // Tier 3: Support & Logs
 const Complaints = lazy(() => import(/* webpackChunkName: "support" */ './pages/Complaints'));
@@ -44,6 +45,7 @@ const Marketing = lazy(() => import(/* webpackChunkName: "marketing" */ './pages
 const CorporateSecurity = lazy(() => import(/* webpackChunkName: "security" */ './pages/SecurityDashboard'));
 const PromoHub = lazy(() => import(/* webpackChunkName: "marketing" */ './pages/AdminPromoHub'));
 const RiskManagement = lazy(() => import(/* webpackChunkName: "security" */ './pages/RiskManagement'));
+const PlatformPerformance = lazy(() => import(/* webpackChunkName: "metrics" */ './pages/PlatformPerformance'));
 
 // Dynamic Detail Views
 const VendorDetails = lazy(() => import(/* webpackChunkName: "details" */ './pages/VendorDetails'));
@@ -125,6 +127,7 @@ function App() {
             <Route path="security" element={<CorporateSecurity />} />
             <Route path="audit-logs" element={<AuditLogs />} />
             <Route path="marketing" element={<Marketing />} />
+            <Route path="performance" element={<PlatformPerformance />} />
             <Route path="promo-hub" element={<PromoHub />} />
             <Route path="financial-audit" element={<FinancialAudit />} />
             <Route path="escrow" element={<EscrowManagement />} />
@@ -134,6 +137,7 @@ function App() {
             <Route path="dlq" element={<DeadLetterQueue />} />
             <Route path="newsletter" element={<Newsletter />} />
             <Route path="product-moderation" element={<ProductModeration />} />
+            <Route path="journal" element={<BlogModeration />} />
             <Route path="settings" element={<SettingsPage />} />
           </Route>
 
