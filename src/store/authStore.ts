@@ -19,7 +19,7 @@ interface AuthState {
   admin: AdminUser | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (credentials: { email: string; password: string }) => Promise<any>;
+  login: (credentials: { email: string; password: string; turnstileToken?: string | null }) => Promise<any>;
   verify2FA: (tempToken: string, totpCode: string) => Promise<any>;
   register: (data: { name: string; email: string; phone: string; password: string; role?: string }) => Promise<void>;
   logout: () => void;
