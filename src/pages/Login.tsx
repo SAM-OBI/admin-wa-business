@@ -6,15 +6,13 @@ import { AuthLayout } from '../layouts/AuthLayout';
 import { FaShieldAlt } from 'react-icons/fa';
 import { showError, showSuccess, showLoading, closeLoading } from '../utils/swal';
 import IPVerificationModal from '../components/IPVerificationModal';
-import { Turnstile } from '@marsidev/react-turnstile';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showIPVerification, setShowIPVerification] = useState(false);
   const [pendingUserId, setPendingUserId] = useState<string | null>(null);
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
-  const { login, isAuthenticated } = useAuthStore();
+  const { login, isAuthenticated, isLoading } = useAuthStore();
   const navigate = useNavigate();
 
   // Redirect once authenticated
@@ -42,7 +40,7 @@ export default function Login() {
     showLoading('Authorizing...');
 
     try {
-      const result = await login({ email, password, turnstileToken });
+      const result = await login({ email, password });
       
       if (result && result.requires2FA) {
         closeLoading();
@@ -130,18 +128,10 @@ export default function Login() {
             />
           </div>
 
-          {/* Turnstile Widget (Invisible) */}
-          <div className="flex justify-center mb-4">
-            <Turnstile
-              siteKey={import.meta.env.VITE_CLOUDFLARE_TURNSTILE_SITE_KEY || '0x4AAAAAACocV7RqStQEAXkm'}
-              onSuccess={setTurnstileToken}
-              options={{ size: 'invisible' }}
-            />
-          </div>
 
           <button
             type="submit"
-            disabled={import.meta.env.PROD && !turnstileToken}
+            disabled={isLoading}
             className="w-full bg-slate-900 hover:bg-black text-white py-3 rounded-lg font-bold text-xs uppercase tracking-[0.2em] shadow-lg shadow-slate-900/10 transition-all duration-200 disabled:opacity-50"
           >
             Authenticate Access
