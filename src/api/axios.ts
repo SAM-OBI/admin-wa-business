@@ -13,6 +13,7 @@ const api = axios.create({
   xsrfHeaderName: 'x-xsrf-token',
   headers: {
     "Content-Type": "application/json",
+    "X-Contract-Version": "1.0.0", // Sync with core contracts
   },
   timeout: 10000, // 10 seconds global timeout
 });
@@ -63,14 +64,17 @@ const getErrorMessage = (status: number, data: any): string => {
 };
 
 api.interceptors.request.use((config) => {
-  // CLEANUP: Ensure no sensitive data remains in localStorage (Legacy check)
-  const legacyKeys = ['token', 'auth_token', 'is_logged', 'is_logged_in'];
-  legacyKeys.forEach(key => {
-    if (localStorage.getItem(key)) {
-      console.warn(`[Axios Admin] Security: Removing legacy ${key} from localStorage`);
-      localStorage.removeItem(key);
+  // 1. Attach Forensic Tracing (Unique Correlation ID)
+  const requestId = crypto.randomUUID();
+  config.headers['X-Request-Id'] = requestId;
+
+  // 2. Automatic Idempotency (v10.4): Prevent race conditions on state changes
+  const method = config.method?.toUpperCase();
+  if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method!)) {
+    if (!config.headers['idempotency-key']) {
+      config.headers['idempotency-key'] = `${method}-${crypto.randomUUID()}`;
     }
-  });
+  }
 
   const token = sessionStorage.getItem('token');
   const isRefreshRequest = config.url?.includes('/auth/refresh');
