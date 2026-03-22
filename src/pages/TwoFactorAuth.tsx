@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { showError, showSuccess, showLoading, closeLoading } from '../utils/swal';
-import { FiShield, FiLock } from 'react-icons/fi';
+import { FiShield, FiLock, FiArrowLeft } from 'react-icons/fi';
 
 export default function TwoFactorAuth() {
     const [code, setCode] = useState('');
@@ -21,91 +20,92 @@ export default function TwoFactorAuth() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (code.length !== 6) {
-            showError('Please enter a 6-digit code', 'Invalid Code');
+            showError('Please enter a 6-digit code');
             return;
         }
 
         setLoading(true);
-        showLoading('Verifying code...');
+        showLoading('Validating identity...');
 
         try {
             await verify2FA(tempToken, code);
             closeLoading();
-            showSuccess('Welcome back!', 'Verification Successful');
+            showSuccess('Identity verified. Access granted.', 'Operational Success');
             navigate('/dashboard', { replace: true });
         } catch (error: any) {
             closeLoading();
-            showError(error.response?.data?.message || 'Invalid or expired 2FA code', 'Verification Failed');
+            showError(error.response?.data?.message || 'Invalid or expired identity token');
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen bg-[#F5F5DC] flex items-center justify-center p-4">
-            <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-3xl shadow-xl w-full max-w-md px-8 py-10 relative z-10 mx-auto"
-            >
-                <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#D4AF37]/10 mb-4">
-                        <FiShield className="text-3xl text-[#D4AF37]" />
+        <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
+            <div className="sm:mx-auto sm:w-full sm:max-w-md">
+                 <h2 className="mt-6 text-center text-3xl font-black text-slate-900 tracking-tight uppercase">
+                    MFA Required
+                 </h2>
+                 <p className="mt-2 text-center text-sm text-slate-500 font-medium">
+                    Enter the code from your hardware or software authenticator
+                 </p>
+            </div>
+
+            <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md p-4 sm:p-0">
+                <div className="bg-white py-12 px-10 shadow-2xl shadow-slate-200/60 rounded-[40px] border border-slate-100">
+                    <div className="text-center mb-10">
+                        <div className="inline-flex items-center justify-center w-20 h-20 rounded-[28px] bg-slate-50 border border-slate-100 mb-6 text-slate-900 shadow-sm">
+                            <FiShield size={36} />
+                        </div>
                     </div>
-                    <h1 className="text-2xl font-bold text-[#4A3728] mb-2">Two-Factor Authentication</h1>
-                    <p className="text-[#4A3728]/70 text-sm">
-                        Enter the 6-digit verification code from your authenticator app to continue.
-                    </p>
+
+                    <form onSubmit={handleSubmit} className="space-y-8">
+                        <div className="space-y-4 text-center">
+                            <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">
+                                Security Authorization Code
+                            </label>
+                            <input
+                                type="text"
+                                value={code}
+                                onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                                required
+                                className="block w-full px-4 py-6 bg-slate-50 border-2 border-transparent focus:bg-white focus:border-slate-900 rounded-2xl focus:ring-8 focus:ring-slate-900/5 transition-all outline-none text-slate-900 text-center text-5xl font-black tracking-[0.5em] placeholder-slate-200"
+                                placeholder="000000"
+                                maxLength={6}
+                                autoFocus
+                            />
+                        </div>
+
+                        <div className="space-y-4">
+                            <button
+                                type="submit"
+                                disabled={loading || code.length !== 6}
+                                className="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold shadow-xl shadow-slate-900/20 hover:bg-black transition-all active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-50"
+                            >
+                                {loading ? (
+                                    <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                                ) : (
+                                    <>
+                                        <FiLock /> Authorize Access
+                                    </>
+                                )}
+                            </button>
+
+                            <div className="flex items-center justify-center pt-2">
+                                <Link to="/login" className="text-xs font-bold text-slate-400 uppercase tracking-widest hover:text-slate-900 transition-colors inline-flex items-center gap-2">
+                                    <FiArrowLeft /> Back to Login
+                                </Link>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div className="mt-10 p-5 bg-amber-50/50 rounded-2xl border border-amber-100/50">
+                        <p className="text-[10px] text-amber-700 font-bold uppercase tracking-wider text-center leading-relaxed">
+                            If you've lost access to your authenticator, please initiate <Link to="/forgot-password" title="Access Recovery" className="underline decoration-amber-500/30 hover:decoration-amber-500 underline-offset-4 decoration-2">Access Recovery</Link>
+                        </p>
+                    </div>
                 </div>
-
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="space-y-2">
-                        <label className="block text-sm font-semibold text-[#4A3728] text-center">
-                            Authentication Code
-                        </label>
-                        <input
-                            type="text"
-                            value={code}
-                            onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                            required
-                            className="block w-full px-4 py-4 bg-[#F5F5DC]/50 border-2 border-transparent focus:bg-white focus:border-[#D4AF37] rounded-xl focus:ring-4 focus:ring-[#D4AF37]/10 transition-all outline-none text-[#4A3728] text-center text-3xl font-bold tracking-[0.5em] placeholder-gray-300"
-                            placeholder="000000"
-                            maxLength={6}
-                            autoFocus
-                        />
-                    </div>
-
-                    <div className="space-y-3">
-                        <button
-                            type="submit"
-                            disabled={loading || code.length !== 6}
-                            className="w-full bg-[#D8C3A5] hover:bg-[#D4AF37] text-[#4A3728] py-4 rounded-xl font-bold shadow-sm hover:shadow-md transition-all duration-200 text-lg flex items-center justify-center gap-2 disabled:opacity-50"
-                        >
-                            {loading ? (
-                                <div className="w-6 h-6 border-2 border-[#4A3728] border-t-transparent rounded-full animate-spin"></div>
-                            ) : (
-                                <>
-                                    <FiLock /> Verify & Login
-                                </>
-                            )}
-                        </button>
-
-                        <button
-                            type="button"
-                            onClick={() => navigate('/login')}
-                            className="w-full text-sm text-[#4A3728]/60 hover:text-[#4A3728] transition-colors font-medium py-2"
-                        >
-                            Back to Login
-                        </button>
-                    </div>
-                </form>
-
-                <div className="mt-8 p-4 bg-amber-50 rounded-xl border border-amber-100">
-                    <p className="text-xs text-amber-800 text-center leading-relaxed">
-                        If you've lost access to your authenticator app, please contact the system administrator or use a recovery code.
-                    </p>
-                </div>
-            </motion.div>
+            </div>
         </div>
     );
 }

@@ -20,11 +20,13 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (credentials: { email: string; password: string }) => Promise<any>;
+  verifyChallenge: (data: { challengeId: string; otp: string; userId?: string; deviceId?: string; deviceName?: string }) => Promise<any>;
+  resendChallenge: (challengeId: string) => Promise<any>;
   verify2FA: (tempToken: string, totpCode: string) => Promise<any>;
   register: (data: { name: string; email: string; phone: string; password: string; role?: string }) => Promise<void>;
   logout: () => void;
   checkAuth: () => Promise<void>;
-  forgotPassword: (email: string) => Promise<void>;
+  forgotPassword: (email: string) => Promise<any>;
   resetPassword: (token: string, password: string) => Promise<void>;
 }
 
@@ -46,6 +48,18 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       const response = await api.post('/auth/login', credentials);
       
+      // Handle Unified Challenge (v10.5)
+      if (response.data?.data?.requiresChallenge || response.data?.requiresChallenge) {
+        const payload = response.data?.data || response.data;
+        return { 
+          requiresChallenge: true, 
+          challengeId: payload.challengeId,
+          factors: payload.factors,
+          userId: payload.userId,
+          emailMask: payload.emailMask
+        };
+      }
+
       const requires2FA = response.data?.requires2FA || response.data?.data?.requires2FA;
       const tempToken = response.data?.tempToken || response.data?.data?.tempToken;
 
@@ -53,18 +67,45 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         return { requires2FA: true, tempToken };
       }
 
-      const { data, accessToken } = response.data; // Backend sets HttpOnly cookie and sends accessToken
+      const { data, accessToken } = response.data;
       
       const token = accessToken || response.data.data?.accessToken;
       if (token) {
         sessionStorage.setItem('token', token);
       }
 
-      // Allow any authenticated user to access the admin dashboard
       set({ admin: data.user || data, isAuthenticated: true });
       return { success: true };
     } catch (error: any) {
       console.error('Login error:', error);
+      throw error;
+    }
+  },
+
+  verifyChallenge: async (payload) => {
+    try {
+      const response = await api.post('/auth/login/verify-challenge', payload);
+      const { data, accessToken } = response.data.data || response.data;
+
+      if (accessToken) {
+        sessionStorage.setItem('token', accessToken);
+        sessionStorage.setItem('is_logged_in', 'true');
+      }
+
+      set({ admin: data || response.data.user, isAuthenticated: true });
+      return response.data;
+    } catch (error) {
+      console.error('Challenge verification error:', error);
+      throw error;
+    }
+  },
+
+  resendChallenge: async (challengeId) => {
+    try {
+      const response = await api.post('/auth/login/resend-challenge', { challengeId });
+      return response.data;
+    } catch (error) {
+      console.error('Resend challenge error:', error);
       throw error;
     }
   },
@@ -156,7 +197,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   forgotPassword: async (email) => {
     try {
-      await api.post('/auth/forgotpassword', { email });
+      const response = await api.post('/auth/forgotpassword', { email });
+      return response.data; // May return challenge if account exists
     } catch (error) {
       console.error('Forgot password error:', error);
       throw error;

@@ -1,17 +1,22 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { AuthLayout } from '../layouts/AuthLayout';
 import { FaShieldAlt } from 'react-icons/fa';
 import { showError, showSuccess, showLoading, closeLoading } from '../utils/swal';
-import IPVerificationModal from '../components/IPVerificationModal';
+import VerifyChallengeModal from '../components/VerifyChallengeModal';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showIPVerification, setShowIPVerification] = useState(false);
-  const [pendingUserId, setPendingUserId] = useState<string | null>(null);
+  const [challengeData, setChallengeData] = useState<{
+    challengeId: string;
+    factors: any[];
+    userId?: string;
+    emailMask?: string;
+  } | null>(null);
+  
   const { login, isAuthenticated, isLoading } = useAuthStore();
   const navigate = useNavigate();
 
@@ -42,6 +47,19 @@ export default function Login() {
     try {
       const result = await login({ email, password });
       
+      // Handle Unified Challenge (IP, 2FA, Device, etc.)
+      if (result && result.requiresChallenge) {
+        closeLoading();
+        setChallengeData({
+          challengeId: result.challengeId,
+          factors: result.factors,
+          userId: result.userId,
+          emailMask: result.emailMask
+        });
+        return;
+      }
+
+      // Legacy 2FA Fallback (if still returned by some edge cases)
       if (result && result.requires2FA) {
         closeLoading();
         navigate('/auth/2fa', { state: { tempToken: result.tempToken } });
@@ -52,32 +70,14 @@ export default function Login() {
     } catch (err: any) {
       closeLoading();
       
-      // Check for IP verification required (status 403)
-      if (err.response?.status === 403 && err.response.data?.requiresIPVerification) {
-        setPendingUserId(err.response.data.userId);
-        setShowIPVerification(true);
-        return; 
-      }
-
       const errorMessage = err.response?.data?.message || 'Authorization failed.';
       showError(errorMessage, 'Security Alert');
     }
   };
 
-  const handleIPVerificationSuccess = (user: any) => {
-    setShowIPVerification(false);
-    setPendingUserId(null);
-    useAuthStore.setState({ 
-      admin: user, 
-      isAuthenticated: true,
-      isLoading: false  
-    });
+  const handleChallengeSuccess = () => {
+    setChallengeData(null);
     handleSuccessfulLogin();
-  };
-
-  const handleIPVerificationCancel = () => {
-    setShowIPVerification(false);
-    setPendingUserId(null);
   };
 
   return (
@@ -144,14 +144,19 @@ export default function Login() {
         </div>
       </motion.div>
 
-      {/* IP Verification Modal */}
-      {showIPVerification && pendingUserId && (
-        <IPVerificationModal
-          userId={pendingUserId}
-          onSuccess={handleIPVerificationSuccess}
-          onCancel={handleIPVerificationCancel}
-        />
-      )}
+      {/* Unified Verification Challenge Modal */}
+      <AnimatePresence>
+        {challengeData && (
+          <VerifyChallengeModal
+            challengeId={challengeData.challengeId}
+            factors={challengeData.factors}
+            userId={challengeData.userId}
+            emailMask={challengeData.emailMask}
+            onSuccess={handleChallengeSuccess}
+            onCancel={() => setChallengeData(null)}
+          />
+        )}
+      </AnimatePresence>
     </AuthLayout>
   );
 }

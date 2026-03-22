@@ -1,164 +1,221 @@
 import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
-import { useNavigate } from 'react-router-dom';
 import { showError, showSuccess, showLoading, closeLoading } from '../utils/swal';
+import { FiUser, FiMail, FiPhone, FiLock, FiShield, FiArrowRight } from 'react-icons/fi';
+import { motion } from 'framer-motion';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
 export default function Signup() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState<'ADMIN' | 'VENDORS' | 'CUSTOMERS'>('ADMIN');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    password: '',
+    confirmPassword: '',
+    role: 'ADMIN' as 'ADMIN' | 'VENDORS' | 'CUSTOMERS'
+  });
+  
+  const [status, setStatus] = useState<'idle' | 'loading'>('idle');
   const { register } = useAuthStore();
   const navigate = useNavigate();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!EMAIL_REGEX.test(email)) {
-      showError('Please enter a valid email address.', 'Invalid Email');
+    if (!EMAIL_REGEX.test(formData.email)) {
+      showError('Please enter a valid administrative email.');
       return;
     }
 
-    if (!PASSWORD_REGEX.test(password)) {
-      showError('Password must be at least 8 chars, with 1 uppercase, 1 lowercase, 1 number, and 1 special char.', 'Weak Password');
+    if (!PASSWORD_REGEX.test(formData.password)) {
+      showError('Security Policy: Password must be 8+ chars, including uppercase, lowercase, number, and special character.');
       return;
     }
 
-    if (password !== confirmPassword) {
-      showError('Passwords do not match.', 'Password Mismatch');
+    if (formData.password !== formData.confirmPassword) {
+      showError('Credentials Mismatch: Access secrets do not match.');
       return;
     }
 
-    showLoading('Creating your account...');
+    setStatus('loading');
+    showLoading('Provisioning administrative account...');
 
     try {
-      // Attempt registration
-      await register({ name, email, phone, password, role });
+      await register({ 
+        name: formData.name, 
+        email: formData.email, 
+        phone: formData.phone, 
+        password: formData.password, 
+        role: formData.role 
+      });
       
       closeLoading();
-      showSuccess('Account created successfully! Redirecting to login...', 'Welcome!');
-      
-      // Navigate to login after successful registration
-      setTimeout(() => {
-         navigate('/login');
-      }, 2000);
+      showSuccess('Account provisioned successfully. Proceed to authentication.', 'Operational Success');
+      setTimeout(() => navigate('/login'), 2000);
 
     } catch (err: any) {
       closeLoading();
-      showError(err.response?.data?.message || 'Failed to create account.', 'Registration Failed');
+      setStatus('idle');
+      showError(err.response?.data?.message || 'Failed to initialize account provisioning.');
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F5DC] flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl shadow-xl w-full max-w-md px-6 py-4 relative z-10 mx-auto border border-gray-100">
-        <div className="text-center mb-2">
-          <h1 className="text-2xl font-bold text-[#4A3728] mb-1">Create Account</h1>
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="sm:mx-auto sm:w-full sm:max-w-md"
+      >
+        <h2 className="mt-6 text-center text-3xl font-black text-slate-900 tracking-tight">
+          Establish Identity
+        </h2>
+        <p className="mt-2 text-center text-sm text-slate-500 font-medium">
+          Create your administrative profile to access the secure vault
+        </p>
+      </motion.div>
+
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-xl p-4 sm:p-0">
+        <div className="bg-white py-10 px-8 shadow-2xl shadow-slate-200/60 rounded-[40px] border border-slate-100">
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            {/* Full Name */}
+            <div className="space-y-2">
+              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest ml-1">Identity Name</label>
+              <div className="relative group">
+                <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none font-medium text-slate-900"
+                  placeholder="John Doe"
+                />
+              </div>
+            </div>
+
+            {/* Email */}
+            <div className="space-y-2">
+              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest ml-1">Service Email</label>
+              <div className="relative group">
+                <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none font-medium text-slate-900"
+                  placeholder="admin@shopvia.com"
+                />
+              </div>
+            </div>
+
+            {/* Phone */}
+            <div className="space-y-2">
+              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest ml-1">Secure Mobile</label>
+              <div className="relative group">
+                <FiPhone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  required
+                  className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none font-medium text-slate-900"
+                  placeholder="+234..."
+                />
+              </div>
+            </div>
+
+            {/* Role */}
+            <div className="space-y-2">
+              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest ml-1">Access Level</label>
+              <div className="relative group">
+                <FiShield className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
+                <select
+                  name="role"
+                  value={formData.role}
+                  onChange={handleChange}
+                  required
+                  className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none font-medium text-slate-900 appearance-none cursor-pointer"
+                >
+                  <option value="ADMIN">System Administrator</option>
+                  <option value="VENDORS">Marketplace Vendor</option>
+                  <option value="CUSTOMERS">Service Customer</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Password */}
+            <div className="space-y-2">
+              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest ml-1">Identity Secret</label>
+              <div className="relative group">
+                <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none font-medium text-slate-900"
+                  placeholder="••••••••"
+                />
+              </div>
+            </div>
+
+            {/* Confirm Password */}
+            <div className="space-y-2">
+              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest ml-1">Confirm Secret</label>
+              <div className="relative group">
+                <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  required
+                  className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none font-medium text-slate-900"
+                  placeholder="••••••••"
+                />
+              </div>
+            </div>
+
+            <div className="md:col-span-2 pt-4">
+              <button
+                type="submit"
+                disabled={status === 'loading'}
+                className="w-full py-5 bg-slate-900 text-white font-bold rounded-2x; hover:bg-black transition-all shadow-xl shadow-slate-900/20 active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-50"
+              >
+                {status === 'loading' ? (
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <>
+                    Initialize Provisioning <FiArrowRight />
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+
+          <div className="mt-8 text-center pt-8 border-t border-slate-50">
+            <p className="text-sm text-slate-500 font-medium">
+              Already have an authorization?{' '}
+              <Link to="/login" className="text-slate-900 font-bold hover:underline">
+                Authenticate Now
+              </Link>
+            </p>
+          </div>
         </div>
-
-
-
-        <form onSubmit={handleSubmit} className="space-y-3">
-           <div className="space-y-1.5">
-            <label className="block text-sm font-semibold text-[#4A3728]">
-              Full Name
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className="block w-full px-4 py-3 bg-white border border-gray-100 focus:border-[#D4AF37] rounded-xl focus:ring-2 focus:ring-[#D4AF37]/20 transition-all outline-none !text-slate-950 placeholder-gray-700 font-medium"
-              placeholder="John Doe"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="block text-sm font-semibold text-[#4A3728]">
-              Email Address
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="block w-full px-4 py-3 bg-white border border-gray-100 focus:border-[#D4AF37] rounded-xl focus:ring-2 focus:ring-[#D4AF37]/20 transition-all outline-none !text-slate-950 placeholder-gray-700 font-medium"
-              placeholder="admin@shopvia.ng"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="block text-sm font-semibold text-[#4A3728]">
-              Phone Number
-            </label>
-            <input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              required
-              className="block w-full px-4 py-3 bg-white border border-gray-100 focus:border-[#D4AF37] rounded-xl focus:ring-2 focus:ring-[#D4AF37]/20 transition-all outline-none !text-slate-950 placeholder-gray-700 font-medium"
-              placeholder="+234 800 000 0000"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="block text-sm font-semibold text-[#4A3728]">
-              Role
-            </label>
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value as 'ADMIN' | 'VENDORS' | 'CUSTOMERS')}
-              required
-              className="block w-full px-4 py-3.5 bg-white border border-gray-100 focus:border-[#D4AF37] rounded-xl focus:ring-2 focus:ring-[#D4AF37]/20 transition-all outline-none !text-slate-950 font-medium"
-            >
-              <option value="ADMIN">Admin</option>
-              <option value="VENDORS">Vendor</option>
-              <option value="CUSTOMERS">Customer</option>
-            </select>
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="block text-sm font-semibold text-[#4A3728]">
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="block w-full px-4 py-3 bg-white border border-gray-100 focus:border-[#D4AF37] rounded-xl focus:ring-2 focus:ring-[#D4AF37]/20 transition-all outline-none !text-slate-950 placeholder-gray-700 font-medium"
-              placeholder="••••••••"
-            />
-          </div>
-          
-          <div className="space-y-1.5">
-             <label className="block text-sm font-semibold text-[#4A3728]">
-              Confirm Password
-            </label>
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              className="block w-full px-4 py-3 bg-white border border-gray-100 focus:border-[#D4AF37] rounded-xl focus:ring-2 focus:ring-[#D4AF37]/20 transition-all outline-none !text-slate-950 placeholder-gray-700 font-medium"
-              placeholder="••••••••"
-            />
-          </div>
-
-         <button
-            type="submit"
-            className="w-full bg-[#D8C3A5] hover:bg-[#D4AF37] text-[#4A3728] py-3.5 rounded-xl font-bold shadow-sm hover:shadow-md transition-all duration-200 text-base"
-          >
-            Sign Up
-          </button>
-        </form>
-
-
       </div>
     </div>
   );
