@@ -2,7 +2,8 @@ import api from './axios';
 export * from '../types';
 import { 
   ApiResponse,
-  TreasuryHealth 
+  TreasuryHealth,
+  MultiSigRequest
 } from '../types';
 import { 
   TreasuryHealthSchema, 
@@ -296,6 +297,17 @@ export const adminService = {
 
   resolveBlogReport: async (id: string, data: { status: 'resolved' | 'dismissed'; reason: string }): Promise<ApiResponse<any>> => {
     const response = await api.patch(`/admin/journal/reports/${id}/resolve`, data);
+    return response.data;
+  },
+
+  // Multi-Sig Governance (v17)
+  getMultiSigRequests: async (): Promise<ApiResponse<MultiSigRequest[]>> => {
+    const response = await api.get('/admin/multisig/requests');
+    return response.data;
+  },
+
+  approveMultiSigRequest: async (id: string): Promise<ApiResponse<any>> => {
+    const response = await api.post(`/admin/multisig/approve/${id}`);
     return response.data;
   },
 };

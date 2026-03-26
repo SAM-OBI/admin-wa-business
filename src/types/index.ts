@@ -245,10 +245,30 @@ export interface Review {
 
 export interface TreasuryHealth {
   status: 'NORMAL' | 'WARNING' | 'CRITICAL' | 'EMERGENCY';
+  interpretedStatus: 'HEALTHY' | 'WARNING' | 'CRITICAL';
   liquidityScore: number;
   totalEscrowValue: number;
   totalWalletLiability: number;
   exposureRatio: number;
+  liquidityRatio: number;
+  drilldown?: {
+    mainCause: string;
+    recommendedAction: string;
+  };
+}
+
+export interface MultiSigRequest {
+  _id: string;
+  actionType: string;
+  description: string;
+  metadata: any;
+  requestedBy: string;
+  status: 'PENDING' | 'APPROVED' | 'COOLDOWN' | 'EXECUTED' | 'REJECTED' | 'EXPIRED';
+  requiredApprovals: number;
+  approvals: any[];
+  expiresAt: string;
+  cooldownEnd?: string;
+  createdAt: string;
 }
 
 export interface IntelligenceSettings {

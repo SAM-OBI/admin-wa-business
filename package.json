@@ -22,7 +22,8 @@
     "react-router-dom": "^6.20.0",
     "sweetalert2": "^11.10.5",
     "zod": "^4.3.6",
-    "zustand": "^4.4.7"
+    "zustand": "^4.4.7",
+    "socket.io-client": "^4.8.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
