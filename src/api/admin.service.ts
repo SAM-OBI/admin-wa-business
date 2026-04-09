@@ -310,4 +310,31 @@ export const adminService = {
     const response = await api.post(`/admin/multisig/approve/${id}`);
     return response.data;
   },
+
+  // 🕵️‍♂️ Phase 16/10: Institutional Oversight Hub
+  getVendorOversight: async (userId: string): Promise<ApiResponse<any>> => {
+    const response = await api.get(`/admin/oversight/vendors/${userId}/360`);
+    return response.data;
+  },
+
+  verifyStoreFollowers: async (storeId: string, data: { actualCount: number; reason: string; justification: string }): Promise<ApiResponse<any>> => {
+    const response = await api.patch(`/admin/oversight/stores/${storeId}/verify-followers`, data);
+    return response.data;
+  },
+
+  toggleEmergencyStop: async (storeId: string, data: { action: 'BLOCK' | 'UNBLOCK'; reason: string; justification: string }): Promise<ApiResponse<any>> => {
+    const response = await api.patch(`/admin/oversight/stores/${storeId}/emergency-stop`, data);
+    return response.data;
+  },
+
+  // 📈 Phase 19.x: Ads Moderation (10/10)
+  getAdCampaigns: async (params?: { cursor?: string; limit?: number; status?: string }): Promise<ApiResponse<any>> => {
+    const response = await api.get('/admin/marketing/ads', { params });
+    return response.data;
+  },
+
+  moderateAdCampaign: async (id: string, data: { status: 'ACTIVE' | 'REJECTED'; reason?: string }): Promise<ApiResponse<any>> => {
+    const response = await api.patch(`/admin/marketing/ads/${id}/moderate`, data);
+    return response.data;
+  },
 };

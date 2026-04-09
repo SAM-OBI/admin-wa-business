@@ -52,6 +52,8 @@ const VendorDetails = lazy(() => import(/* webpackChunkName: "details" */ './pag
 const UserDetails = lazy(() => import(/* webpackChunkName: "details" */ './pages/UserDetails'));
 const ProductDetails = lazy(() => import(/* webpackChunkName: "details" */ './pages/ProductDetails'));
 
+const AdsModeration = lazy(() => import(/* webpackChunkName: "marketing" */ './pages/AdsModeration'));
+
 // Prefetch Priority Modules on Idle
 const prefetchPriorityRoutes = () => {
     // We can't use webpack's magic comments easily with Vite during runtime logic, 
@@ -127,6 +129,7 @@ function App() {
             <Route path="security" element={<CorporateSecurity />} />
             <Route path="audit-logs" element={<AuditLogs />} />
             <Route path="marketing" element={<Marketing />} />
+            <Route path="ads-moderation" element={<AdsModeration />} />
             <Route path="performance" element={<PlatformPerformance />} />
             <Route path="promo-hub" element={<PromoHub />} />
             <Route path="financial-audit" element={<FinancialAudit />} />
