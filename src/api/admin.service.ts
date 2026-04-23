@@ -258,6 +258,12 @@ export const adminService = {
     return response.data;
   },
 
+  // Persistent Audit Trail (Phase 10.8)
+  getSecurityAuditTrail: async (params?: any): Promise<ApiResponse<any>> => {
+    const response = await api.get('/admin/security/audit-trail', { params });
+    return response.data;
+  },
+
   // Autonomous Intelligence (Phase 17)
   getIntelligenceSettings: async (): Promise<ApiResponse<any>> => {
     const response = await api.get('/admin/intelligence/settings');

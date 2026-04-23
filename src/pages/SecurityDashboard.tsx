@@ -41,7 +41,9 @@ export default function SecurityDashboard() {
   const [criticalAlert, setCriticalAlert] = useState<string | null>(null);
   const [fraudIncidents, setFraudIncidents] = useState<any[]>([]);
   const [selectedIncident, setSelectedIncident] = useState<any | null>(null);
-  const [activeTab, setActiveTab] = useState<'alerts' | 'fraud' | 'forensics' | 'intelligence'>('alerts');
+  const [activeTab, setActiveTab] = useState<'alerts' | 'fraud' | 'forensics' | 'intelligence' | 'audit'>('alerts');
+  const [auditLogs, setAuditLogs] = useState<any[]>([]);
+  const [auditLoading, setAuditLoading] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -77,6 +79,22 @@ export default function SecurityDashboard() {
       setLoading(false);
     }
   };
+
+  const fetchAuditTrail = async () => {
+    setAuditLoading(true);
+    try {
+      const res = await adminService.getSecurityAuditTrail();
+      if (res.data?.logs) setAuditLogs(res.data.logs);
+    } catch (error) {
+      console.error('Audit trail fetch failed:', error);
+    } finally {
+      setAuditLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'audit') fetchAuditTrail();
+  }, [activeTab]);
 
   useEffect(() => {
     fetchData();
@@ -265,6 +283,12 @@ export default function SecurityDashboard() {
                 >
                   Autonomous AI
                 </button>
+                <button 
+                  onClick={() => setActiveTab('audit')}
+                  className={`font-bold transition-colors ${activeTab === 'audit' ? 'text-slate-900 border-b-2 border-slate-900 pb-1' : 'text-slate-400'} flex items-center gap-2`}
+                >
+                  Institutional Audit
+                </button>
               </div>
               <span className="bg-red-100 text-red-700 text-[10px] font-black uppercase px-2 py-0.5 rounded">Real-time Stream</span>
             </div>
@@ -385,9 +409,56 @@ export default function SecurityDashboard() {
                 </table>
               ) : activeTab === 'forensics' ? (
                 <ForensicAuditPanel />
-              ) : (
+              ) : activeTab === 'intelligence' ? (
                 <div className="p-6">
                   <AutonomousAIControl />
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                   <table className="w-full">
+                      <thead className="bg-gray-50 text-[10px] font-black uppercase text-gray-400">
+                        <tr>
+                          <th className="px-6 py-4 text-left">Severity</th>
+                          <th className="px-6 py-4 text-left">Event Type</th>
+                          <th className="px-6 py-4 text-left">Message</th>
+                          <th className="px-6 py-4 text-left">Correlation ID</th>
+                          <th className="px-6 py-4 text-left">Timestamp</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-50">
+                        {auditLoading ? (
+                          <tr><td colSpan={5} className="p-10 text-center animate-pulse">Scanning Persistent Audit Trail...</td></tr>
+                        ) : auditLogs.length === 0 ? (
+                          <tr><td colSpan={5} className="p-10 text-center text-gray-400 italic">No append-only logs found in this cycle.</td></tr>
+                        ) : (
+                          auditLogs.map((log, i) => (
+                            <tr key={i} className="hover:bg-gray-50/50">
+                              <td className="px-6 py-4">
+                                <span className={`text-[9px] font-black uppercase px-2 py-1 rounded ${
+                                  log.severity === 'CRITICAL' ? 'bg-red-600 text-white' :
+                                  log.severity === 'HIGH' ? 'bg-orange-500 text-white' :
+                                  'bg-blue-500 text-white'
+                                }`}>
+                                  {log.severity}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 text-[10px] font-black uppercase text-slate-700 tracking-tight">
+                                {log.eventType}
+                              </td>
+                              <td className="px-6 py-4 text-xs text-slate-500 max-w-xs truncate">
+                                {log.message}
+                              </td>
+                              <td className="px-6 py-4 font-mono text-[9px] text-slate-400">
+                                {log.correlationId || 'N/A'}
+                              </td>
+                              <td className="px-6 py-4 text-[10px] text-slate-400">
+                                {new Date(log.timestamp).toLocaleString()}
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                   </table>
                 </div>
               )}
             </div>

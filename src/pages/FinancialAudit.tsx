@@ -19,7 +19,8 @@ import PageLoader from '../components/PageLoader';
 interface FinancialOverview {
     systemBalances: {
         totalAvailable: number;
-        totalEscrow: number;
+        totalSettlementValue: number;
+        totalEscrow?: number; // Legacy Fallback
         storeCount: number;
     };
     withdrawals: {
@@ -122,17 +123,17 @@ const FinancialAudit: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-100 dark:border-white/5 shadow-sm">
                             <div className="flex items-center justify-between mb-6">
-                                <h3 className="text-lg font-black text-gray-900 dark:text-white">Escrow Integrity</h3>
-                                <span className="text-[9px] font-black text-blue-500 uppercase tracking-widest bg-blue-50 px-2 py-1 rounded-md">V1 Formula</span>
+                                <h3 className="text-lg font-black text-gray-900 dark:text-white">Settlement Integrity</h3>
+                                <span className="text-[9px] font-black text-blue-500 uppercase tracking-widest bg-blue-50 px-2 py-1 rounded-md">V2 Safe Settlement</span>
                             </div>
                             <div className="space-y-3">
                                 <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-black/20 rounded-xl">
-                                    <span className="text-[11px] font-bold text-gray-500">Order Totals</span>
-                                    <span className="font-black text-gray-900 dark:text-white text-sm">₦{reconciliation?.escrowIntegrity?.[0]?.totalPricing.toLocaleString() || 0}</span>
+                                    <span className="text-[11px] font-bold text-gray-500">Platform Totals</span>
+                                    <span className="font-black text-gray-900 dark:text-white text-sm">₦{(reconciliation?.escrowIntegrity?.[0]?.totalPricing || 0).toLocaleString()}</span>
                                 </div>
                                 <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-black/20 rounded-xl">
-                                    <span className="text-[11px] font-bold text-gray-500">Escrow Held</span>
-                                    <span className="font-black text-gray-900 dark:text-white text-sm">₦{reconciliation?.escrowIntegrity?.[0]?.escrowHeld.toLocaleString() || 0}</span>
+                                    <span className="text-[11px] font-bold text-gray-500">Held in Vault</span>
+                                    <span className="font-black text-gray-900 dark:text-white text-sm">₦{(reconciliation?.escrowIntegrity?.[0]?.escrowHeld || 0).toLocaleString()}</span>
                                 </div>
                                 <div className={`flex justify-between items-center p-4 rounded-xl border ${Math.abs(reconciliation?.escrowIntegrity?.[0]?.totalPricing - reconciliation?.escrowIntegrity?.[0]?.escrowHeld) > 1000 ? 'border-red-200 bg-red-50' : 'border-green-200 bg-green-50'}`}>
                                     <div>
@@ -192,9 +193,9 @@ const FinancialAudit: React.FC = () => {
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <div className="p-1.5 bg-blue-50 text-blue-500 rounded-lg"><FaHistory size={12} /></div>
-                                    <span className="text-xs font-bold text-gray-500 uppercase tracking-tighter">Escrow</span>
+                                    <span className="text-xs font-bold text-gray-500 uppercase tracking-tighter text-blue-600">Settlement</span>
                                 </div>
-                                <span className="font-black text-sm">₦{(overview?.systemBalances.totalEscrow || 0).toLocaleString()}</span>
+                                <span className="font-black text-sm">₦{(overview?.systemBalances.totalSettlementValue ?? overview?.systemBalances.totalEscrow ?? 0).toLocaleString()}</span>
                             </div>
                         </div>
                     </div>

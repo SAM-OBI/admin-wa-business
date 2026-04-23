@@ -3,33 +3,31 @@ import api from '../api/axios';
 import { FiLock, FiCheckCircle, FiSlash, FiTrendingUp } from 'react-icons/fi';
 import Swal from 'sweetalert2';
 
-interface EscrowDashboard {
-  totalLocked: number;
-  totalReleased: number;
-  totalDisputed: number;
+interface SettlementDashboard {
+  totalSettlementValue: number;
+  totalSettlementReleased: number;
+  totalSettlementDisputed: number;
+  totalInProcess?: number; // Legacy Fallback
+  totalReleased?: number; // Legacy Fallback
+  totalDisputed?: number; // Legacy Fallback
   pendingRelease: number;
   byStatus: Array<{ _id: string; count: number; amount: number }>;
 }
 
-interface VendorEscrow {
+interface VendorSettlement {
   vendorId: string;
   vendorName: string;
   vendorEmail: string;
-  totalLocked: number;
+  totalInProcess: number;
   totalReleased: number;
   orderCount: number;
   stores: Array<{ _id: string; name: string }>;
 }
 
-interface EscrowTransaction {
+interface SettlementTransaction {
   _id: string;
   orderId: string;
-  escrow: {
-    amount: number;
-    status: string;
-    heldAt?: Date;
-    releasedAt?: Date;
-  };
+  settlementState: string;
   totalAmount: number;
   status: string;
   vendor: {
@@ -40,19 +38,20 @@ interface EscrowTransaction {
     name: string;
   };
   createdAt: string;
+  settlementReleaseAt?: string;
 }
 
-export default function EscrowManagement() {
-  const [dashboard, setDashboard] = useState<EscrowDashboard | null>(null);
-  const [vendors, setVendors] = useState<VendorEscrow[]>([]);
-  const [transactions, setTransactions] = useState<EscrowTransaction[]>([]);
+export default function SettlementManagement() {
+  const [dashboard, setDashboard] = useState<SettlementDashboard | null>(null);
+  const [vendors, setVendors] = useState<VendorSettlement[]>([]);
+  const [transactions, setTransactions] = useState<SettlementTransaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'overview' | 'vendors' | 'transactions'>('overview');
   const [filterStatus, setFilterStatus] = useState<string>('all');
 
   const fetchDashboard = useCallback(async () => {
     try {
-      const res = await api.get('/admin/escrow/dashboard');
+      const res = await api.get('/admin/settlement/dashboard');
       if (res.data.success) {
         setDashboard(res.data.data);
       }
@@ -64,9 +63,9 @@ export default function EscrowManagement() {
   const fetchVendors = useCallback(async () => {
     try {
       const params: any = { limit: 20 };
-      if (filterStatus !== 'all') params.status = filterStatus;
+      if (filterStatus !== 'all') params.status = filterStatus.toUpperCase();
 
-      const res = await api.get('/admin/escrow/by-vendor', { params });
+      const res = await api.get('/admin/settlement/by-vendor', { params });
       if (res.data.success) {
         setVendors(res.data.data.vendors);
       }
@@ -79,9 +78,9 @@ export default function EscrowManagement() {
     setLoading(true);
     try {
       const params: any = { limit: 50 };
-      if (filterStatus !== 'all') params.status = filterStatus;
+      if (filterStatus !== 'all') params.status = filterStatus.toUpperCase();
 
-      const res = await api.get('/admin/escrow/transactions', { params });
+      const res = await api.get('/admin/settlement/transactions', { params });
       if (res.data.success) {
         setTransactions(res.data.data.transactions);
       }
@@ -100,18 +99,21 @@ export default function EscrowManagement() {
 
   const handleForceRelease = async (orderId: string, orderIdDisplay: string) => {
     const { value: reason } = await Swal.fire({
-      title: 'Force Release Escrow',
+      title: 'Force Release Settlement',
       html: `
         <p class="mb-4">Order: <strong>${orderIdDisplay}</strong></p>
-        <textarea id="reason" class="swal2-textarea w-full" placeholder="Reason for manual release..." rows="4" required></textarea>
+        <p class="text-[10px] text-gray-500 mb-4 bg-orange-50 p-2 rounded border border-orange-100">
+           Institutional Guard: Action will be cryptographically signed and logged with justification.
+        </p>
+        <textarea id="reason" class="swal2-textarea w-full" placeholder="Internal justification (min 10 chars)..." rows="4" required></textarea>
       `,
       showCancelButton: true,
-      confirmButtonColor: '#3b82f6',
-      confirmButtonText: 'Release Escrow',
+      confirmButtonColor: '#10b981',
+      confirmButtonText: 'Release Funds',
       preConfirm: () => {
         const reason = (document.getElementById('reason') as HTMLTextAreaElement)?.value;
-        if (!reason) {
-          Swal.showValidationMessage('Please provide a reason');
+        if (!reason || reason.length < 10) {
+          Swal.showValidationMessage('Min 10 characters required for override audit trail');
           return false;
         }
         return reason;
@@ -120,35 +122,35 @@ export default function EscrowManagement() {
 
     if (reason) {
       try {
-        const res = await api.post(`/admin/escrow/${orderId}/release`, { reason });
+        const res = await api.post(`/admin/settlement/${orderId}/release`, { reason });
         
         if (res.data.success) {
-          Swal.fire('Released!', `Escrow released: ₦${res.data.data.amountReleased.toLocaleString()}`, 'success');
+          Swal.fire('Released!', 'Settlement released successfully.', 'success');
           fetchDashboard();
           fetchVendors();
           fetchTransactions();
         }
       } catch (error: any) {
-        Swal.fire('Error', error.response?.data?.message || 'Failed to release escrow', 'error');
+        Swal.fire('Error', error.response?.data?.message || 'Failed to release funds', 'error');
       }
     }
   };
 
-  const handleHoldEscrow = async (orderId: string, orderIdDisplay: string) => {
+  const handleHoldSettlement = async (orderId: string, orderIdDisplay: string) => {
     const { value: reason } = await Swal.fire({
-      title: 'Hold Escrow',
+      title: 'Hold Settlement',
       html: `
         <p class="mb-4">Order: <strong>${orderIdDisplay}</strong></p>
-        <p class="text-sm text-orange-600 mb-4">This will prevent automatic escrow release</p>
-        <textarea id="reason" class="swal2-textarea w-full" placeholder="Reason for hold..." rows="4" required></textarea>
+        <p class="text-sm text-orange-600 mb-4 font-bold">Locks funds in HELD state (SLA Suspended)</p>
+        <textarea id="reason" class="swal2-textarea w-full" placeholder="Justification for hold..." rows="4" required></textarea>
       `,
       showCancelButton: true,
       confirmButtonColor: '#f59e0b',
-      confirmButtonText: 'Hold Escrow',
+      confirmButtonText: 'Hold Funds',
       preConfirm: () => {
         const reason = (document.getElementById('reason') as HTMLTextAreaElement)?.value;
-        if (!reason) {
-          Swal.showValidationMessage('Please provide a reason');
+        if (!reason || reason.length < 10) {
+          Swal.showValidationMessage('Min 10 characters required for audit trail');
           return false;
         }
         return reason;
@@ -157,14 +159,14 @@ export default function EscrowManagement() {
 
     if (reason) {
       try {
-        const res = await api.post(`/admin/escrow/${orderId}/hold`, { reason });
+        const res = await api.post(`/admin/settlement/${orderId}/hold`, { reason });
         
         if (res.data.success) {
-          Swal.fire('Hold Applied!', 'Escrow will not auto-release', 'success');
+          Swal.fire('Hold Applied!', 'Safe Settlement is now HELD.', 'success');
           fetchTransactions();
         }
       } catch (error: any) {
-        Swal.fire('Error', error.response?.data?.message || 'Failed to hold escrow', 'error');
+        Swal.fire('Error', error.response?.data?.message || 'Failed to apply hold', 'error');
       }
     }
   };
@@ -182,10 +184,10 @@ export default function EscrowManagement() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-          <FiLock className="text-blue-600" />
-          Escrow Management
+          <FiLock className="text-emerald-600" />
+          Safe Settlement Oversight
         </h1>
-        <p className="text-gray-500 text-sm mt-1">Platform-wide escrow oversight and fund management</p>
+        <p className="text-gray-500 text-sm mt-1">Institutional mediator dashboard for buyer-protection protocols</p>
       </div>
 
       {/* Stats Cards */}
@@ -193,14 +195,14 @@ export default function EscrowManagement() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Locked</div>
+              <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">In-Process</div>
               <FiLock className="text-orange-500" size={18} />
             </div>
             <div className="text-2xl font-black text-gray-900">
-              ₦{dashboard.totalLocked.toLocaleString()}
+              ₦{(dashboard.totalSettlementValue ?? dashboard.totalInProcess ?? 0).toLocaleString()}
             </div>
             <p className="text-[10px] text-gray-400 font-medium mt-1">
-              {dashboard.pendingRelease} pending release
+              {dashboard.pendingRelease} awaiting SLA maturity
             </p>
           </div>
 
@@ -210,7 +212,7 @@ export default function EscrowManagement() {
               <FiCheckCircle className="text-green-500" size={18} />
             </div>
             <div className="text-2xl font-black text-gray-900">
-              ₦{dashboard.totalReleased.toLocaleString()}
+              ₦{(dashboard.totalSettlementReleased ?? dashboard.totalReleased ?? 0).toLocaleString()}
             </div>
           </div>
 
@@ -220,17 +222,17 @@ export default function EscrowManagement() {
               <FiSlash className="text-red-500" size={18} />
             </div>
             <div className="text-2xl font-black text-gray-900">
-              ₦{dashboard.totalDisputed.toLocaleString()}
+              ₦{(dashboard.totalSettlementDisputed ?? dashboard.totalDisputed ?? 0).toLocaleString()}
             </div>
           </div>
 
           <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Managed</div>
+              <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">AUM (Volume)</div>
               <FiTrendingUp className="text-blue-500" size={18} />
             </div>
             <div className="text-2xl font-black text-gray-900">
-              ₦{(dashboard.totalLocked + dashboard.totalReleased).toLocaleString()}
+              ₦{( (dashboard.totalSettlementValue ?? dashboard.totalInProcess ?? 0) + (dashboard.totalSettlementReleased ?? dashboard.totalReleased ?? 0) ).toLocaleString()}
             </div>
           </div>
         </div>
@@ -300,7 +302,7 @@ export default function EscrowManagement() {
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-bold text-gray-800 uppercase tracking-widest flex items-center gap-2">
                   <span className="w-1 h-4 bg-blue-600 rounded-full"></span>
-                  Escrow by Vendor
+                  Settlement by Vendor
                 </h3>
               </div>
               <div className="overflow-x-auto rounded-xl border border-gray-100">
@@ -308,7 +310,7 @@ export default function EscrowManagement() {
                   <thead className="bg-gray-50 text-[10px] font-black uppercase text-gray-400">
                     <tr>
                       <th className="px-4 py-3">Vendor</th>
-                      <th className="px-4 py-3">Locked</th>
+                      <th className="px-4 py-3">In-Process</th>
                       <th className="px-4 py-3">Released</th>
                       <th className="px-4 py-3">Orders</th>
                     </tr>
@@ -323,7 +325,7 @@ export default function EscrowManagement() {
                           </div>
                         </td>
                         <td className="px-4 py-3 font-black text-orange-600 text-sm">
-                          ₦{vendor.totalLocked.toLocaleString()}
+                          ₦{vendor.totalInProcess.toLocaleString()}
                         </td>
                         <td className="px-4 py-3 font-black text-green-600 text-sm">
                           ₦{vendor.totalReleased.toLocaleString()}
@@ -344,10 +346,10 @@ export default function EscrowManagement() {
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-bold text-gray-800 uppercase tracking-widest flex items-center gap-2">
                   <span className="w-1 h-4 bg-blue-600 rounded-full"></span>
-                  Escrow Transactions
+                  Audit-Grade Transactions
                 </h3>
                 <div className="flex gap-2">
-                  {['all', 'pending', 'held', 'released'].map((s) => (
+                  {['all', 'HELD', 'DISPUTED', 'RELEASED'].map((s) => (
                     <button
                       key={s}
                       onClick={() => setFilterStatus(s)}
@@ -381,41 +383,41 @@ export default function EscrowManagement() {
                           <div className="text-xs font-medium text-gray-700">{tx.vendor.name}</div>
                         </td>
                         <td className="px-4 py-3 font-black text-gray-900 text-sm">
-                          ₦{tx.escrow.amount.toLocaleString()}
+                          ₦{tx.totalAmount.toLocaleString()}
                         </td>
                         <td className="px-4 py-3">
                           <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest ${
-                            tx.escrow.status === 'released' ? 'bg-green-50 text-green-600' :
-                            tx.escrow.status === 'pending' ? 'bg-orange-50 text-orange-600' :
+                            tx.settlementState === 'RELEASED' ? 'bg-green-50 text-green-600' :
+                            tx.settlementState === 'HELD' ? 'bg-orange-50 text-orange-600' :
                             'bg-red-50 text-red-600'
                           }`}>
-                            {tx.escrow.status}
+                            {tx.settlementState}
                           </span>
                         </td>
                         <td className="px-4 py-3 text-right">
                           <div className="flex items-center justify-end gap-2">
-                            {tx.escrow.status === 'pending' && (
+                            {tx.settlementState === 'HELD' && (
                               <>
                                 <button
                                   onClick={() => handleForceRelease(tx._id, tx.orderId)}
-                                  className="px-2 py-1 text-[9px] font-black uppercase bg-green-50 text-green-600 rounded hover:bg-green-100"
+                                  className="px-2 py-1 text-[9px] font-black uppercase bg-emerald-50 text-emerald-600 rounded hover:bg-emerald-100"
                                 >
                                   Release
                                 </button>
                                 <button
-                                  onClick={() => handleHoldEscrow(tx._id, tx.orderId)}
+                                  onClick={() => handleHoldSettlement(tx._id, tx.orderId)}
                                   className="px-2 py-1 text-[9px] font-black uppercase bg-orange-50 text-orange-600 rounded hover:bg-orange-100"
                                 >
                                   Hold
                                 </button>
                               </>
                             )}
-                            {tx.escrow.status === 'held' && (
+                            {tx.settlementState === 'DISPUTED' && (
                               <button
                                 onClick={() => handleForceRelease(tx._id, tx.orderId)}
-                                className="px-2 py-1 text-[9px] font-black uppercase bg-green-50 text-green-600 rounded hover:bg-green-100"
+                                className="px-2 py-1 text-[9px] font-black uppercase bg-emerald-50 text-emerald-600 rounded hover:bg-emerald-100"
                               >
-                                Release
+                                Resolve {'->'} Release
                               </button>
                             )}
                           </div>

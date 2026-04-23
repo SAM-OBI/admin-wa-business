@@ -672,6 +672,33 @@ export default function VendorDetails() {
                 </span>
               </div>
 
+              {vendor.verification?.manualReviewDeadline && (
+                <div className={`mt-4 p-4 rounded-xl border ${
+                  vendor.verification.slaStatus === 'BREACHED' ? 'bg-red-500/10 border-red-500/20' :
+                  vendor.verification.slaStatus === 'URGENT' ? 'bg-orange-500/10 border-orange-500/20' :
+                  'bg-blue-500/10 border-blue-500/20'
+                }`}>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">SLA Accountability</span>
+                    <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded ${
+                      vendor.verification.slaStatus === 'BREACHED' ? 'bg-red-600 text-white' :
+                      vendor.verification.slaStatus === 'URGENT' ? 'bg-orange-500 text-white' :
+                      'bg-blue-600 text-white'
+                    }`}>
+                      {vendor.verification.slaStatus}
+                    </span>
+                  </div>
+                  <p className="text-xs text-white font-bold">
+                    Deadline: {new Date(vendor.verification.manualReviewDeadline).toLocaleString()}
+                  </p>
+                  {vendor.verification.assignedAdminId && (
+                    <p className="text-[10px] text-zinc-400 mt-1 uppercase font-bold tracking-tight">
+                      Handler ID: {vendor.verification.assignedAdminId}
+                    </p>
+                  )}
+                </div>
+              )}
+
               {vendor.verification?.status === 'locked' && (
                 <div className="mt-2 p-4 bg-orange-500/5 border border-orange-500/10 rounded-xl">
                   <p className="text-[10px] font-black text-orange-500 uppercase tracking-widest mb-1 italic">Security Lockout</p>

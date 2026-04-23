@@ -18,7 +18,7 @@ const TwoFactorAuth = lazy(() => import(/* webpackChunkName: "auth" */ './pages/
 const Dashboard = lazy(() => import(/* webpackChunkName: "dashboard" */ './pages/Dashboard'));
 const FinancialAudit = lazy(() => import(/* webpackChunkName: "finance" */ './pages/FinancialAudit'));
 const Orders = lazy(() => import(/* webpackChunkName: "orders" */ './pages/Orders'));
-const EscrowManagement = lazy(() => import(/* webpackChunkName: "finance" */ './pages/EscrowManagement'));
+const SettlementManagement = lazy(() => import(/* webpackChunkName: "finance" */ './pages/SettlementManagement'));
 const AccountConsolidations = lazy(() => import(/* webpackChunkName: "management" */ './pages/AccountConsolidations'));
 
 // Tier 2: Operational Governance
@@ -133,7 +133,7 @@ function App() {
             <Route path="performance" element={<PlatformPerformance />} />
             <Route path="promo-hub" element={<PromoHub />} />
             <Route path="financial-audit" element={<FinancialAudit />} />
-            <Route path="escrow" element={<EscrowManagement />} />
+            <Route path="settlement" element={<SettlementManagement />} />
             <Route path="disputes" element={<Disputes />} />
             <Route path="consolidations" element={<AccountConsolidations />} />
             <Route path="error-logs" element={<ErrorLogs />} />

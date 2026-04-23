@@ -31,7 +31,7 @@ const navigation = [
   { name: 'Newsletter', to: '/dashboard/newsletter', icon: FiSend },
   { name: 'Journal Moderation', to: '/dashboard/journal', icon: FiFileText },
   { name: 'Financial Audit', to: '/dashboard/financial-audit', icon: FiTrendingUp },
-  { name: 'Escrow', to: '/dashboard/escrow', icon: FiLock },
+  { name: 'Settlement', to: '/dashboard/settlement', icon: FiLock },
   { name: 'Error Logs', to: '/dashboard/error-logs', icon: FiTerminal },
   { name: 'DLQ', to: '/dashboard/dlq', icon: FiHash },
 ];
