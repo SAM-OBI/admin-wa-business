@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom';
 import { 
   FiHome, FiPackage, FiUsers, FiShoppingBag, 
   FiAlertCircle, FiMessageSquare, FiStar, 
-  FiShield, FiFileText, FiSettings, FiTrendingUp,
+  FiShield, FiFileText, FiSettings, FiTrendingUp, FiMail,
   FiMenu, FiChevronLeft, FiLock, FiTerminal, FiHash, FiSend, FiGitPullRequest
 } from 'react-icons/fi';
 import { useState } from 'react';
@@ -23,6 +23,7 @@ const navigation = [
   { name: 'Audit Logs', to: '/dashboard/audit-logs', icon: FiFileText },
   { name: 'Account Consolidations', to: '/dashboard/consolidations', icon: FiGitPullRequest },
   { name: 'App Feedback', to: '/dashboard/feedback', icon: FiMessageSquare },
+  { name: 'Support Inquiries', to: '/dashboard/support-inquiries', icon: FiMail },
   { name: 'Marketing', to: '/dashboard/marketing', icon: FiTrendingUp },
   { name: 'Ads Moderation', to: '/dashboard/ads-moderation', icon: FiTrendingUp },
   { name: 'ROI Hub', to: '/dashboard/performance', icon: FiTrendingUp },

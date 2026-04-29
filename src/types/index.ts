@@ -84,6 +84,9 @@ export interface Vendor {
     documentUrl?: string;
     attempts?: number;
     failureReason?: string;
+    manualReviewDeadline?: string;
+    slaStatus?: 'NORMAL' | 'URGENT' | 'BREACHED';
+    assignedAdminId?: string;
   };
   reputation?: Reputation;
   accountStatus?: {

@@ -34,6 +34,7 @@ const BlogModeration = lazy(() => import(/* webpackChunkName: "governance" */ '.
 const Complaints = lazy(() => import(/* webpackChunkName: "support" */ './pages/Complaints'));
 const CourtCases = lazy(() => import(/* webpackChunkName: "support" */ './pages/CourtCases'));
 const PlatformFeedback = lazy(() => import(/* webpackChunkName: "support" */ './pages/PlatformFeedback'));
+const SupportInquiries = lazy(() => import(/* webpackChunkName: "support" */ './pages/SupportInquiries'));
 const ErrorLogs = lazy(() => import(/* webpackChunkName: "diagnostics" */ './pages/ErrorLogs'));
 const DeadLetterQueue = lazy(() => import(/* webpackChunkName: "diagnostics" */ './pages/DeadLetterQueue'));
 const AuditLogs = lazy(() => import(/* webpackChunkName: "diagnostics" */ './pages/AuditLogs'));
@@ -125,6 +126,7 @@ function App() {
             <Route path="court-cases" element={<CourtCases />} />
             <Route path="reviews" element={<Reviews />} />
             <Route path="feedback" element={<PlatformFeedback />} />
+            <Route path="support-inquiries" element={<SupportInquiries />} />
             <Route path="risk-management" element={<RiskManagement />} />
             <Route path="security" element={<CorporateSecurity />} />
             <Route path="audit-logs" element={<AuditLogs />} />

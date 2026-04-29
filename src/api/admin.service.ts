@@ -343,4 +343,10 @@ export const adminService = {
     const response = await api.patch(`/admin/marketing/ads/${id}/moderate`, data);
     return response.data;
   },
+
+  // Support
+  getSupportInquiries: async (params?: any): Promise<ApiResponse<any>> => {
+    const response = await api.get('/support/admin/inquiries', { params });
+    return response.data;
+  },
 };
