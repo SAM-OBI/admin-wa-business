@@ -1,8 +1,11 @@
 /// <reference types="vite/client" />
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
+import { getDeviceId, syncClock, getSynchronizedTime } from "../utils/security";
+import { VanguardSigningUtil } from "../utils/vanguard-signing.util";
 
 const getBaseUrl = () => {
-  if ((import.meta as any).env.VITE_API_URL) return (import.meta as any).env.VITE_API_URL;
+  const meta = import.meta as unknown as { env: Record<string, string | boolean | undefined> };
+  if (meta.env.VITE_API_URL) return meta.env.VITE_API_URL as string;
   return (import.meta as any).env.PROD ? 'https://whatsapp-b2b.onrender.com/api' : 'http://localhost:5000/api';
 };
 
@@ -31,11 +34,16 @@ export interface NormalizedAxiosError extends AxiosError {
   errorCode: string;
 }
 
+interface QueuePromise {
+  resolve: (token: string | null) => void;
+  reject: (error: Error | AxiosError | unknown) => void;
+}
+
 // Refresh token state management
 let isRefreshing = false;
-let failedQueue: any[] = [];
+let failedQueue: QueuePromise[] = [];
 
-const processQueue = (error: any, token: string | null = null) => {
+const processQueue = (error: Error | AxiosError | unknown | null, token: string | null = null) => {
   failedQueue.forEach(prom => {
     if (error) {
       prom.reject(error);
@@ -47,8 +55,15 @@ const processQueue = (error: any, token: string | null = null) => {
   failedQueue = [];
 };
 
+interface ResponseData {
+  message?: string;
+  error?: string;
+  code?: string;
+  referenceId?: string;
+}
+
 // Map HTTP Status to Actionable User Messages
-const getErrorMessage = (status: number, data: any): string => {
+const getErrorMessage = (status: number, data: ResponseData | undefined): string => {
   if (data?.message) return data.message;
   
   switch (status) {
@@ -83,14 +98,60 @@ api.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${token}`;
   }
 
+  // 🛡️ [VANGUARD] Institutional Coordination Phase (v32.1)
+  config.headers['x-vanguard-timestamp'] = getSynchronizedTime();
+  config.headers['x-vanguard-device-id'] = getDeviceId();
+  config.headers['x-vanguard-nonce'] = crypto.randomUUID();
+
   // Diagnostic context for all requests
   config.headers['X-Request-Timestamp'] = new Date().toISOString();
   
   return config;
 });
 
+/**
+ * 🛡️ [VANGUARD] SIGNATURE INTERCEPTOR
+ */
+api.interceptors.request.use(async (config) => {
+    if (config.url?.includes('/auth/')) return config;
+
+    const method = config.method?.toUpperCase() || 'GET';
+    const baseUrl = config.baseURL || '';
+    const url = config.url || '';
+    const path = (baseUrl + url).replace(/\/+/g, '/').split('?')[0]; 
+    
+    const query = config.params || {};
+    const timestamp = config.headers['x-vanguard-timestamp'] as string;
+    const nonce = config.headers['x-vanguard-nonce'] as string;
+
+    try {
+        const bodyHash = await VanguardSigningUtil.computeBodyHash(config.data);
+        const canonicalString = VanguardSigningUtil.generateCanonicalString({
+            method,
+            path,
+            query,
+            bodyHash,
+            timestamp,
+            nonce
+        });
+
+        config.headers['x-vanguard-signature'] = await VanguardSigningUtil.generateSignature(canonicalString);
+        return config;
+    } catch (err) {
+        console.error('[VANGUARD_SIGNING_CRASH]', err);
+        return config;
+    }
+}, (error) => Promise.reject(error));
+
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // 🛡️ [VANGUARD] Temporal Sync
+    const serverDate = response.headers['date'];
+    if (serverDate) {
+      syncClock(new Date(serverDate).getTime());
+    }
+    return response;
+  },
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retryCount?: number };
     
@@ -99,7 +160,7 @@ api.interceptors.response.use(
     }
 
     const status = error.response?.status ?? 0;
-    const data = error.response?.data as any;
+    const data = error.response?.data as ResponseData | undefined;
     
     // Standardize error message
     const errorMessage = getErrorMessage(status, data);
@@ -144,8 +205,8 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const { data } = await axios.post(`${api.defaults.baseURL}/auth/refresh`, {}, { withCredentials: true });
-        const newToken = data.accessToken;
+        const { data: refreshData } = await axios.post<{ accessToken: string }>(`${api.defaults.baseURL}/auth/refresh`, {}, { withCredentials: true });
+        const newToken = refreshData.accessToken;
         sessionStorage.setItem('token', newToken);
         
         processQueue(null, newToken);
