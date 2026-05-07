@@ -20,6 +20,7 @@ const navigation = [
   { name: 'Reviews', to: '/dashboard/reviews', icon: FiStar },
   { name: 'Risk Management', to: '/dashboard/risk-management', icon: FiShield },
   { name: 'Security SOC', to: '/dashboard/security', icon: FiShield },
+  { name: 'Governance', to: '/dashboard/governance', icon: FiLock },
   { name: 'Audit Logs', to: '/dashboard/audit-logs', icon: FiFileText },
   { name: 'Account Consolidations', to: '/dashboard/consolidations', icon: FiGitPullRequest },
   { name: 'App Feedback', to: '/dashboard/feedback', icon: FiMessageSquare },

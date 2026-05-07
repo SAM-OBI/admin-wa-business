@@ -306,6 +306,12 @@ export const adminService = {
     return response.data;
   },
 
+  // Governance & Sentinel (Phase 8/Apex v10)
+  getGovernanceStatus: async (): Promise<ApiResponse<{ isDegraded: boolean; mode: string; lastSync: string }>> => {
+    const response = await api.get('/admin/governance/status');
+    return response.data;
+  },
+
   // Multi-Sig Governance (v17)
   getMultiSigRequests: async (): Promise<ApiResponse<MultiSigRequest[]>> => {
     const response = await api.get('/admin/multisig/requests');

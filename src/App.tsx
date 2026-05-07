@@ -44,6 +44,7 @@ const SettingsPage = lazy(() => import(/* webpackChunkName: "util" */ './pages/S
 const Newsletter = lazy(() => import(/* webpackChunkName: "marketing" */ './pages/Newsletter'));
 const Marketing = lazy(() => import(/* webpackChunkName: "marketing" */ './pages/Marketing'));
 const CorporateSecurity = lazy(() => import(/* webpackChunkName: "security" */ './pages/SecurityDashboard'));
+const Governance = lazy(() => import(/* webpackChunkName: "security" */ './pages/Governance'));
 const PromoHub = lazy(() => import(/* webpackChunkName: "marketing" */ './pages/AdminPromoHub'));
 const RiskManagement = lazy(() => import(/* webpackChunkName: "security" */ './pages/RiskManagement'));
 const PlatformPerformance = lazy(() => import(/* webpackChunkName: "metrics" */ './pages/PlatformPerformance'));
@@ -143,6 +144,7 @@ function App() {
             <Route path="newsletter" element={<Newsletter />} />
             <Route path="product-moderation" element={<ProductModeration />} />
             <Route path="journal" element={<BlogModeration />} />
+            <Route path="governance" element={<Governance />} />
             <Route path="settings" element={<SettingsPage />} />
           </Route>
 
