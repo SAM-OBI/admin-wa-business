@@ -655,6 +655,25 @@ export default function VendorDetails() {
                   {vendor.isActive ? 'Active' : 'Suspended'}
                 </span>
               </div>
+
+              <div className="flex justify-between items-center bg-zinc-800/30 p-3 rounded-xl border border-white/5">
+                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Onboarding State</span>
+                <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-black uppercase rounded-md border ${
+                  (vendor as any).onboardingState === 'ACTIVE' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
+                  (vendor as any).onboardingState === 'KYC_PENDING' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
+                  (vendor as any).onboardingState === 'EMAIL_FAILED' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
+                  'bg-zinc-800 text-zinc-500'
+                }`}>
+                  {(vendor as any).onboardingState || 'IDLE'}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center bg-zinc-800/30 p-3 rounded-xl border border-white/5">
+                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Persona</span>
+                <span className="text-[10px] font-black text-white uppercase tracking-tight">
+                  {(vendor as any).onboardingPersona || 'MERCHANT_ELITE'}
+                </span>
+              </div>
               
               <div className="flex justify-between items-center bg-zinc-800/30 p-3 rounded-xl border border-white/5">
                 <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Verification</span>

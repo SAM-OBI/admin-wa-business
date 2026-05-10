@@ -1,6 +1,8 @@
 export type SubscriptionPlan = 'free' | 'basic' | 'premium' | 'gold';
 export type AccountStatus = 'active' | 'restricted' | 'suspended' | 'banned';
 export type VerificationStatus = 'unverified' | 'pending' | 'verified' | 'rejected' | 'locked' | 'failed';
+export type OnboardingState = 'INITIATED' | 'ACCOUNT_CREATED' | 'EMAIL_QUEUED' | 'EMAIL_SENT' | 'EMAIL_FAILED' | 'KYC_PENDING' | 'ACTIVE' | 'SUSPENDED';
+export type OnboardingPersona = 'MERCHANT_ELITE' | 'GLOBAL_BUYER' | 'STOREFRONT_BUYER';
 
 export interface Reputation {
   score: number;
@@ -44,6 +46,8 @@ export interface User {
     nin?: string;
     votersCard?: string;
   };
+  onboardingState?: OnboardingState;
+  onboardingPersona?: OnboardingPersona;
   createdAt: string;
 }
 
@@ -107,6 +111,8 @@ export interface Vendor {
   activityScore?: number;
   sellerLevel?: number;
   isFeatured?: boolean;
+  onboardingState?: OnboardingState;
+  onboardingPersona?: OnboardingPersona;
   createdAt: string;
 }
 

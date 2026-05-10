@@ -442,6 +442,25 @@ export default function UserDetails() {
                   {user.isActive ? 'Active' : 'Suspended'}
                 </span>
               </div>
+
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Onboarding State</span>
+                <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-black uppercase rounded-md border ${
+                  (user as any).onboardingState === 'ACTIVE' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
+                  (user as any).onboardingState === 'KYC_PENDING' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
+                  (user as any).onboardingState === 'EMAIL_FAILED' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
+                  'bg-zinc-800 text-zinc-400 border-zinc-700/50'
+                }`}>
+                  {(user as any).onboardingState || 'IDLE'}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Onboarding Persona</span>
+                <span className="text-[10px] font-black text-white uppercase tracking-tight">
+                  {(user as any).onboardingPersona || 'N/A'}
+                </span>
+              </div>
               
               <div className="flex justify-between items-center">
                 <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">KYC Verification</span>
