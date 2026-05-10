@@ -7,11 +7,13 @@ const getBaseUrl = (): string => {
   try {
     const env = import.meta.env;
     if (env?.VITE_API_URL) return env.VITE_API_URL as string;
-    return env?.PROD ? 'https://whatsapp-b2b.onrender.com/api' : 'http://localhost:5000/api';
+    // Always default to the canonical production URL — never the old Render URL
+    return 'https://api.shopvia.ng/api';
   } catch {
     return 'https://api.shopvia.ng/api';
   }
 };
+
 
 const api = axios.create({
   baseURL: getBaseUrl() || "http://localhost:5000/api",
