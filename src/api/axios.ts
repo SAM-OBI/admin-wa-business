@@ -3,10 +3,14 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { getDeviceId, syncClock, getSynchronizedTime } from "../utils/security";
 import { VanguardSigningUtil } from "../utils/vanguard-signing.util";
 
-const getBaseUrl = () => {
-  const meta = import.meta as unknown as { env: Record<string, string | boolean | undefined> };
-  if (meta.env.VITE_API_URL) return meta.env.VITE_API_URL as string;
-  return (import.meta as any).env.PROD ? 'https://whatsapp-b2b.onrender.com/api' : 'http://localhost:5000/api';
+const getBaseUrl = (): string => {
+  try {
+    const env = import.meta.env;
+    if (env?.VITE_API_URL) return env.VITE_API_URL as string;
+    return env?.PROD ? 'https://whatsapp-b2b.onrender.com/api' : 'http://localhost:5000/api';
+  } catch {
+    return 'https://api.shopvia.ng/api';
+  }
 };
 
 const api = axios.create({
