@@ -26,6 +26,8 @@ interface AuthState {
   register: (data: { name: string; email: string; phone: string; password: string; role?: string }) => Promise<void>;
   logout: () => void;
   checkAuth: () => Promise<void>;
+  authError: { status: number; message: string; code?: string; suggestedUrl?: string; redirectDelay?: number } | null;
+  setAuthError: (error: any) => void;
   forgotPassword: (email: string) => Promise<any>;
   resetPassword: (token: string, password: string) => Promise<void>;
 }
@@ -34,18 +36,32 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   admin: null,
   isAuthenticated: !!(sessionStorage.getItem('token') || sessionStorage.getItem('is_logged_in')),
   isLoading: true,
+  authError: null,
+
+  setAuthError: (error) => set({ authError: error }),
 
   register: async (credentials) => {
     try {
+      set({ authError: null });
       await api.post('/auth/register', credentials); 
     } catch (error: any) {
        console.error('Registration error:', error);
+       if (error.response?.data?.code === 'USER_ALREADY_EXISTS') {
+         set({ authError: {
+           status: error.response.status,
+           message: error.response.data.message,
+           code: error.response.data.code,
+           suggestedUrl: error.response.data.details?.suggestedUrl || '/login',
+           redirectDelay: error.response.data.details?.redirectDelay || 4000
+         }});
+       }
        throw error;
     }
   },
 
   login: async (credentials) => {
     try {
+      set({ authError: null });
       const response = await api.post('/auth/login', credentials);
       
       // Handle Unified Challenge (v10.5)
@@ -78,6 +94,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       return { success: true };
     } catch (error: any) {
       console.error('Login error:', error);
+      if (error.response?.data?.code === 'IDENTITY_NOT_FOUND') {
+        set({ authError: {
+          status: error.response.status,
+          message: error.response.data.message,
+          code: error.response.data.code,
+          suggestedUrl: error.response.data.details?.suggestedUrl || '/signup',
+          redirectDelay: error.response.data.details?.redirectDelay || 4000
+        }});
+      }
       throw error;
     }
   },

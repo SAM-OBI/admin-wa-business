@@ -20,28 +20,15 @@ export default function Login() {
   const { login, isAuthenticated, isLoading, authError, setAuthError } = useAuthStore();
   const navigate = useNavigate();
 
-  const [countdown, setCountdown] = useState<number | null>(null);
-
   // 🛡️ [SOVEREIGN] Abort-Safe Redirect Orchestration
   useEffect(() => {
     if (authError?.suggestedUrl && authError?.redirectDelay) {
-      setTimeout(() => {
-        setCountdown(Math.ceil(authError.redirectDelay! / 1000));
-      }, 0);
-      
-      const timer = setInterval(() => {
-        setCountdown(prev => (prev !== null && prev > 1) ? prev - 1 : 0);
-      }, 1000);
-
       const redirect = setTimeout(() => {
         setAuthError(null);
         navigate(authError.suggestedUrl!);
       }, authError.redirectDelay);
 
-      return () => {
-        clearInterval(timer);
-        clearTimeout(redirect);
-      };
+      return () => clearTimeout(redirect);
     }
   }, [authError, navigate, setAuthError]);
 
@@ -126,17 +113,17 @@ export default function Login() {
             </div>
             <p className="text-xs font-medium text-slate-600">{authError.message}</p>
             
-            {countdown !== null && authError.suggestedUrl && (
-              <div className="pt-2 flex items-center justify-between">
-                <div className="h-1 flex-1 bg-slate-200 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-slate-900 transition-all duration-1000 ease-linear"
-                    style={{ width: `${(countdown / (authError.redirectDelay! / 1000)) * 100}%` }}
-                  />
-                </div>
-                <span className="text-[10px] font-black text-slate-900 ml-3 uppercase">
-                  Redirecting in {countdown}s
-                </span>
+            {authError.suggestedUrl && (
+              <div className="pt-2">
+                <button 
+                  onClick={() => {
+                    setAuthError(null);
+                    navigate(authError.suggestedUrl!);
+                  }}
+                  className="text-[10px] font-black text-slate-900 uppercase hover:underline"
+                >
+                  Create Account →
+                </button>
               </div>
             )}
           </div>

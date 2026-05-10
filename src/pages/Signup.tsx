@@ -22,28 +22,15 @@ export default function Signup() {
   const { register, authError, setAuthError } = useAuthStore();
   const navigate = useNavigate();
 
-  const [countdown, setCountdown] = useState<number | null>(null);
-
   // 🛡️ [SOVEREIGN] Abort-Safe Redirect Orchestration
   useEffect(() => {
     if (authError?.suggestedUrl && authError?.redirectDelay) {
-      setTimeout(() => {
-        setCountdown(Math.ceil(authError.redirectDelay! / 1000));
-      }, 0);
-      
-      const timer = setInterval(() => {
-        setCountdown(prev => (prev !== null && prev > 1) ? prev - 1 : 0);
-      }, 1000);
-
       const redirect = setTimeout(() => {
         setAuthError(null);
         navigate(authError.suggestedUrl!);
       }, authError.redirectDelay);
 
-      return () => {
-        clearInterval(timer);
-        clearTimeout(redirect);
-      };
+      return () => clearTimeout(redirect);
     }
   }, [authError, navigate, setAuthError]);
 
