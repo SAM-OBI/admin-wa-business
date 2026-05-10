@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { showError, showSuccess, showLoading, closeLoading } from '../utils/swal';
@@ -19,8 +19,33 @@ export default function Signup() {
   });
   
   const [status, setStatus] = useState<'idle' | 'loading'>('idle');
-  const { register } = useAuthStore();
+  const { register, authError, setAuthError } = useAuthStore();
   const navigate = useNavigate();
+
+  const [countdown, setCountdown] = useState<number | null>(null);
+
+  // 🛡️ [SOVEREIGN] Abort-Safe Redirect Orchestration
+  useEffect(() => {
+    if (authError?.suggestedUrl && authError?.redirectDelay) {
+      setTimeout(() => {
+        setCountdown(Math.ceil(authError.redirectDelay! / 1000));
+      }, 0);
+      
+      const timer = setInterval(() => {
+        setCountdown(prev => (prev !== null && prev > 1) ? prev - 1 : 0);
+      }, 1000);
+
+      const redirect = setTimeout(() => {
+        setAuthError(null);
+        navigate(authError.suggestedUrl!);
+      }, authError.redirectDelay);
+
+      return () => {
+        clearInterval(timer);
+        clearTimeout(redirect);
+      };
+    }
+  }, [authError, navigate, setAuthError]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -70,9 +95,8 @@ export default function Signup() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
       <motion.div 
-        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="sm:mx-auto sm:w-full sm:max-w-md"
+        className="sm:mx-auto sm:w-full sm:max-w-md space-y-4"
       >
         <h2 className="mt-6 text-center text-3xl font-black text-slate-900 tracking-tight">
           Establish Identity
@@ -80,6 +104,31 @@ export default function Signup() {
         <p className="mt-2 text-center text-sm text-slate-500 font-medium">
           Create your administrative profile to access the secure vault
         </p>
+
+        {/* 🛡️ [SOVEREIGN] Precise Error Notification */}
+        {authError && (
+          <div className="p-4 rounded-xl bg-red-50 border border-red-100 flex flex-col space-y-2 animate-in fade-in slide-in-from-top-4 duration-300 mx-auto max-w-sm">
+            <div className="flex items-center space-x-2 text-red-700">
+              <FiShield size={14} />
+              <span className="text-[10px] font-black uppercase tracking-wider">
+                {authError.code || 'Security Alert'}
+              </span>
+            </div>
+            <p className="text-xs font-medium text-slate-600">{authError.message}</p>
+            
+            {authError.suggestedUrl && (
+              <div className="pt-2">
+                <Link 
+                  to={authError.suggestedUrl}
+                  onClick={() => setAuthError(null)}
+                  className="text-[10px] font-black text-slate-900 uppercase hover:underline"
+                >
+                  Authenticate Now →
+                </Link>
+              </div>
+            )}
+          </div>
+        )}
       </motion.div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-xl p-4 sm:p-0">

@@ -17,8 +17,33 @@ export default function Login() {
     emailMask?: string;
   } | null>(null);
   
-  const { login, isAuthenticated, isLoading } = useAuthStore();
+  const { login, isAuthenticated, isLoading, authError, setAuthError } = useAuthStore();
   const navigate = useNavigate();
+
+  const [countdown, setCountdown] = useState<number | null>(null);
+
+  // 🛡️ [SOVEREIGN] Abort-Safe Redirect Orchestration
+  useEffect(() => {
+    if (authError?.suggestedUrl && authError?.redirectDelay) {
+      setTimeout(() => {
+        setCountdown(Math.ceil(authError.redirectDelay! / 1000));
+      }, 0);
+      
+      const timer = setInterval(() => {
+        setCountdown(prev => (prev !== null && prev > 1) ? prev - 1 : 0);
+      }, 1000);
+
+      const redirect = setTimeout(() => {
+        setAuthError(null);
+        navigate(authError.suggestedUrl!);
+      }, authError.redirectDelay);
+
+      return () => {
+        clearInterval(timer);
+        clearTimeout(redirect);
+      };
+    }
+  }, [authError, navigate, setAuthError]);
 
   // Redirect once authenticated
   useEffect(() => {
@@ -88,8 +113,34 @@ export default function Login() {
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full"
+        className="w-full space-y-6"
       >
+        {/* 🛡️ [SOVEREIGN] Precise Error Notification */}
+        {authError && (
+          <div className="p-4 rounded-xl bg-red-50 border border-red-100 flex flex-col space-y-2 animate-in fade-in slide-in-from-top-4 duration-300">
+            <div className="flex items-center space-x-2 text-red-700">
+              <FaShieldAlt size={14} />
+              <span className="text-[10px] font-black uppercase tracking-wider">
+                {authError.code || 'Security Alert'}
+              </span>
+            </div>
+            <p className="text-xs font-medium text-slate-600">{authError.message}</p>
+            
+            {countdown !== null && authError.suggestedUrl && (
+              <div className="pt-2 flex items-center justify-between">
+                <div className="h-1 flex-1 bg-slate-200 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-slate-900 transition-all duration-1000 ease-linear"
+                    style={{ width: `${(countdown / (authError.redirectDelay! / 1000)) * 100}%` }}
+                  />
+                </div>
+                <span className="text-[10px] font-black text-slate-900 ml-3 uppercase">
+                  Redirecting in {countdown}s
+                </span>
+              </div>
+            )}
+          </div>
+        )}
         <div className="mb-6">
            <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mb-4 text-primary">
               <FaShieldAlt size={20} />
