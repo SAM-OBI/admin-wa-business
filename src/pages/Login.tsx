@@ -128,6 +128,7 @@ export default function Login() {
             )}
           </div>
         )}
+
         <div className="mb-6">
            <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mb-4 text-primary">
               <FaShieldAlt size={20} />

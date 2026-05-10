@@ -15,7 +15,8 @@ export default function Signup() {
     phone: '',
     password: '',
     confirmPassword: '',
-    role: 'ADMIN' as 'ADMIN' | 'VENDORS' | 'CUSTOMERS'
+    inviteToken: '',
+    role: 'ADMIN' as const
   });
   
   const [status, setStatus] = useState<'idle' | 'loading'>('idle');
@@ -41,6 +42,11 @@ export default function Signup() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!formData.inviteToken) {
+      showError('Sovereign Policy Violation: A valid Administrative Invitation Token is required.');
+      return;
+    }
+
     if (!EMAIL_REGEX.test(formData.email)) {
       showError('Please enter a valid administrative email.');
       return;
@@ -65,7 +71,8 @@ export default function Signup() {
         email: formData.email, 
         phone: formData.phone, 
         password: formData.password, 
-        role: formData.role 
+        role: 'ADMIN',
+        inviteToken: formData.inviteToken
       });
       
       closeLoading();
@@ -173,22 +180,20 @@ export default function Signup() {
               </div>
             </div>
 
-            {/* Role */}
-            <div className="space-y-2">
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest ml-1">Access Level</label>
+            {/* Invitation Token */}
+            <div className="md:col-span-2 space-y-2">
+              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest ml-1">Administrative Invitation Token</label>
               <div className="relative group">
                 <FiShield className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
-                <select
-                  name="role"
-                  value={formData.role}
+                <input
+                  type="text"
+                  name="inviteToken"
+                  value={formData.inviteToken}
                   onChange={handleChange}
                   required
-                  className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none font-medium text-slate-900 appearance-none cursor-pointer"
-                >
-                  <option value="ADMIN">System Administrator</option>
-                  <option value="VENDORS">Marketplace Vendor</option>
-                  <option value="CUSTOMERS">Service Customer</option>
-                </select>
+                  className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none font-medium text-slate-900"
+                  placeholder="Paste your attributed invitation token here..."
+                />
               </div>
             </div>
 

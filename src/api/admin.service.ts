@@ -355,4 +355,35 @@ export const adminService = {
     const response = await api.get('/support/admin/inquiries', { params });
     return response.data;
   },
+
+  // ??? Sovereign Governance (v70.0)
+  getAuthzDecisions: async (params?: any): Promise<ApiResponse<any>> => {
+    const response = await api.get('/admin/governance/decisions', { params });
+    return response.data;
+  },
+
+  issueAdminInvite: async (data: { email: string; capabilities: any; inviteTTL?: number }): Promise<ApiResponse<any>> => {
+    const response = await api.post('/auth/admin/issue-invite', data);
+    return response.data;
+  },
+
+  getAdminInvites: async (params?: any): Promise<ApiResponse<any>> => {
+    const response = await api.get('/admin/governance/invites', { params });
+    return response.data;
+  },
+
+  revokeAdminInvite: async (id: string): Promise<ApiResponse<any>> => {
+    const response = await api.delete(`/auth/admin/invites/${id}`);
+    return response.data;
+  },
+
+  getGovernanceMode: async (): Promise<ApiResponse<any>> => {
+    const response = await api.get('/admin/governance/mode');
+    return response.data;
+  },
+
+  setGovernanceMode: async (data: { mode: string; reason: string; quorumApproval?: string[]; ttlHours?: number }): Promise<ApiResponse<any>> => {
+    const response = await api.post('/admin/governance/mode', data);
+    return response.data;
+  },
 };

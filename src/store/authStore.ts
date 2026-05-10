@@ -23,7 +23,7 @@ interface AuthState {
   verifyChallenge: (data: { challengeId: string; otp: string; userId?: string; deviceId?: string; deviceName?: string }) => Promise<any>;
   resendChallenge: (challengeId: string) => Promise<any>;
   verify2FA: (tempToken: string, totpCode: string) => Promise<any>;
-  register: (data: { name: string; email: string; phone: string; password: string; role?: string }) => Promise<void>;
+  register: (data: { name: string; email: string; phone: string; password: string; role?: string; inviteToken?: string }) => Promise<void>;
   logout: () => void;
   checkAuth: () => Promise<void>;
   authError: { status: number; message: string; code?: string; suggestedUrl?: string; redirectDelay?: number } | null;
