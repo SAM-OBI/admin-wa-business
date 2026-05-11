@@ -20,7 +20,7 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (credentials: { email: string; password: string }) => Promise<any>;
-  verifyChallenge: (data: { challengeId: string; otp: string; userId?: string; deviceId?: string; deviceName?: string }) => Promise<any>;
+  verifyChallenge: (data: { challengeId: string; otp: string; userId?: string; deviceId?: string; deviceName?: string }, idempotencyKey?: string) => Promise<any>;
   resendChallenge: (challengeId: string) => Promise<any>;
   verify2FA: (tempToken: string, totpCode: string) => Promise<any>;
   register: (data: { name: string; email: string; phone: string; password: string; role?: string; inviteToken?: string }) => Promise<void>;
@@ -107,9 +107,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
-  verifyChallenge: async (payload) => {
+  verifyChallenge: async (payload, idempotencyKey?: string) => {
     try {
-      const response = await api.post('/auth/login/verify-challenge', payload);
+      const config = idempotencyKey ? { headers: { 'idempotency-key': idempotencyKey } } : {};
+      const response = await api.post('/auth/login/verify-challenge', payload, config);
       const { data, accessToken } = response.data.data || response.data;
 
       if (accessToken) {

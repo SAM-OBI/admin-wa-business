@@ -386,4 +386,21 @@ export const adminService = {
     const response = await api.post('/admin/governance/mode', data);
     return response.data;
   },
+
+  // 🛡️ [v10.0] Institutional Governance & Resilience
+  revokeVendorVerification: async (id: string, data: { reason: string; category: string; multisigId?: string }): Promise<ApiResponse<any>> => {
+    const response = await api.post(`/admin/vendors/${id}/revoke-verification`, data);
+    return response.data;
+  },
+
+  replayNotificationOutbox: async (id: string): Promise<ApiResponse<any>> => {
+    const response = await api.post(`/admin/notifications/outbox/${id}/replay`);
+    return response.data;
+  },
+
+  getGovernanceAnchors: async (params?: any): Promise<ApiResponse<any>> => {
+    const response = await api.get('/admin/governance/anchors', { params });
+    return response.data;
+  }
 };
+

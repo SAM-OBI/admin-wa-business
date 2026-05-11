@@ -99,6 +99,34 @@ export default function VendorDetails() {
     }
   };
 
+  const handleRevoke = async () => {
+    const categories = ['POLICY_VIOLATION', 'IDENTITY_MISMATCH', 'REPUTATION_MANIPULATION', 'LEGAL_COMPLIANCE'];
+    const category = prompt(`Select Enforcement Category:\n${categories.join('\n')}`, 'POLICY_VIOLATION');
+    if (!category || !categories.includes(category)) {
+      alert('Invalid category selection.');
+      return;
+    }
+
+    const reason = prompt('Enter mandatory revocation reason for forensic audit:');
+    if (!reason) return;
+
+    try {
+      const response = await adminService.revokeVendorVerification(id!, { 
+        reason, 
+        category 
+      });
+      
+      if (response.data.requiresQuorum) {
+        alert(`Dual-Control Proposal Created: ${response.data.multisigId}. Awaiting second administrator approval.`);
+      } else {
+        alert('Verification revoked and store placed on monitored probation.');
+      }
+      fetchVendorDetails();
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Revocation failed');
+    }
+  };
+
   const handleImpersonate = async () => {
     if (!vendor) return;
     
@@ -200,6 +228,14 @@ export default function VendorDetails() {
                   Reject Verification
                 </button>
               </>
+            )}
+            {vendor.verification?.status === 'verified' && (
+              <button
+                onClick={handleRevoke}
+                className="px-4 py-2 bg-transparent text-orange-500 border border-orange-500/20 rounded-lg hover:bg-orange-500/10 transition text-sm font-bold flex items-center gap-2"
+              >
+                <FiShield /> Revoke Verification
+              </button>
             )}
             {vendor.verification?.status === 'locked' && (
               <button
@@ -610,6 +646,66 @@ export default function VendorDetails() {
             </div>
           </div>
 
+
+          {/* 🛡️ [v10.0] Monitored Probation Tracker */}
+          {vendor.verification?.recoveryState?.isRecovering && (
+            <div className="bg-orange-500/5 p-6 rounded-2xl border border-orange-500/20 backdrop-blur-sm shadow-[0_0_40px_rgba(249,115,22,0.05)]">
+               <div className="flex justify-between items-start mb-6">
+                 <div>
+                   <h3 className="text-lg font-black text-orange-500 uppercase tracking-widest tracking-tight">Monitored Probation</h3>
+                   <p className="text-[10px] text-orange-500/60 font-bold uppercase mt-1">Trust Restoration in Progress</p>
+                 </div>
+                 <div className="flex flex-col items-end">
+                    <span className="text-xl font-black text-white">
+                       {Math.round(((vendor.reputation?.score || 0) / (vendor.verification.recoveryState.originalScore || 100)) * 100)}%
+                    </span>
+                    <span className="text-[8px] text-zinc-500 font-bold uppercase">Restored</span>
+                 </div>
+               </div>
+
+               <div className="space-y-6">
+                  <div>
+                     <div className="flex justify-between text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">
+                        <span>Discovery Score Recovery</span>
+                        <span className="text-white">
+                          {Math.round(vendor.reputation?.score || 0)} / {vendor.verification.recoveryState.originalScore}
+                        </span>
+                     </div>
+                     <div className="w-full bg-zinc-800 rounded-full h-2 border border-white/5 overflow-hidden">
+                        <div 
+                           className="h-full bg-orange-500 transition-all duration-1000 shadow-[0_0_10px_rgba(249,115,22,0.5)]"
+                           style={{ width: `${Math.min(((vendor.reputation?.score || 0) / (vendor.verification.recoveryState.originalScore || 100)) * 100, 100)}%` }}
+                        />
+                     </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                     <div className="p-4 bg-zinc-900/40 rounded-xl border border-white/5">
+                        <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest mb-1">Probation Ends</p>
+                        <p className="text-sm font-bold text-white">
+                           {vendor.verification?.recoveryState?.probationEndsAt 
+                             ? new Date(vendor.verification.recoveryState.probationEndsAt).toLocaleDateString() 
+                             : 'N/A'}
+                        </p>
+                     </div>
+                     <div className="p-4 bg-zinc-900/40 rounded-xl border border-white/5">
+                        <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest mb-1">Penalty Class</p>
+                        <p className="text-sm font-bold text-orange-500 uppercase">
+                           {vendor.verification?.enforcementCategory || 'RESTRICTED'}
+                        </p>
+                     </div>
+                  </div>
+
+                  <div className="p-4 bg-black/40 rounded-xl border border-orange-500/10 flex items-center gap-3">
+                     <FiAlertTriangle className="text-orange-500 shrink-0" />
+                     <p className="text-[10px] text-zinc-400 font-medium leading-relaxed">
+                        Store is currently under algorithmic suppression. Discoverability is capped at 50%. Restoration is linear and contingent on zero-complaint behavior.
+                     </p>
+                  </div>
+               </div>
+            </div>
+          )}
+
           {/* Internal Friction Logs (Complaints) */}
           {vendor.recentComplaints && vendor.recentComplaints.length > 0 && (
             <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
@@ -755,6 +851,41 @@ export default function VendorDetails() {
                       </a>
                     </div>
                   )}
+                </div>
+              )}
+
+              {/* [v10.0] CAC Registry Oversight */}
+              {vendor.verification?.status !== 'unverified' && (
+                <div className="pt-4 mt-4 border-t border-zinc-800/60 bg-blue-500/5 p-4 rounded-xl border border-blue-500/10">
+                   <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                     <FiShield /> CAC Business Registry
+                   </p>
+                   
+                   <div className="flex justify-between items-center bg-black/40 p-3 rounded-lg border border-white/5">
+                      <div>
+                        <p className="text-[8px] font-black text-zinc-500 uppercase tracking-widest mb-1">Registration No.</p>
+                        <span className="text-white font-mono text-xs font-bold tracking-widest">
+                           {vendor.verification?.cacNumber || 'RC-XXXXXX'}
+                        </span>
+                      </div>
+                      <a 
+                        href={`https://search.cac.gov.ng/home`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-[9px] font-black uppercase px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-500 transition-all flex items-center gap-1 shadow-lg shadow-blue-600/20"
+                      >
+                         Verify <FiExternalLink size={10} />
+                      </a>
+                   </div>
+
+                   <div className="mt-3 flex gap-2">
+                      <button 
+                        onClick={() => handleRevoke()}
+                        className="w-full py-2 bg-red-600/10 hover:bg-red-600/20 text-red-500 rounded text-[9px] font-black uppercase tracking-widest border border-red-500/20 transition-all"
+                      >
+                        Flag Integrity Alert
+                      </button>
+                   </div>
                 </div>
               )}
             </div>

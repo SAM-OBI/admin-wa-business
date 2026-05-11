@@ -91,6 +91,13 @@ export interface Vendor {
     manualReviewDeadline?: string;
     slaStatus?: 'NORMAL' | 'URGENT' | 'BREACHED';
     assignedAdminId?: string;
+    recoveryState?: {
+      probationEndsAt: string;
+      isRecovering: boolean;
+      originalScore: number;
+    };
+    enforcementCategory?: string;
+    cacNumber?: string;
   };
   reputation?: Reputation;
   accountStatus?: {

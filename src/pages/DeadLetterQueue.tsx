@@ -1,43 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import { 
     FiAlertCircle, 
-    FiTrash2, 
     FiRefreshCw, 
     FiClipboard,
-    FiArrowRight,
-    FiTerminal
+    FiTerminal,
+    FiPlay,
+    FiClock
 } from 'react-icons/fi';
 import api from '../api/axios';
+import { adminService } from '../api/admin.service';
 import { toast } from 'react-hot-toast';
 import { logger } from '../utils/logger';
 
-interface DLQError {
-    timestamp: string;
-    error: {
-        message: string;
-        name: string;
-        stack?: string;
-    };
-    context: {
-        userId?: string;
-        path?: string;
-        method?: string;
-        referenceId?: string;
-        [key: string]: any;
-    };
+interface DLQEntry {
+    _id: string;
+    type: string;
+    status: string;
+    failureClassification?: string;
+    lastError: string;
+    errorChain: string[];
+    quarantinedAt?: string;
+    payload: any;
+    metadata?: any;
+    recipientId: string;
 }
 
 const DeadLetterQueue: React.FC = () => {
-    const [errors, setErrors] = useState<DLQError[]>([]);
+    const [entries, setEntries] = useState<DLQEntry[]>([]);
     const [loading, setLoading] = useState(true);
+    const [replaying, setReplaying] = useState<string | null>(null);
     const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+    const [currentTime, setCurrentTime] = useState(0);
+
+    useEffect(() => {
+        setTimeout(() => setCurrentTime(Date.now()), 0);
+    }, []);
 
     const fetchDLQ = async () => {
         setLoading(true);
         try {
-            const response = await api.get('/admin/oversight/dlq');
+            const response = await api.get('/admin/notifications/outbox/quarantine');
             if (response.data.success) {
-                setErrors(response.data.data);
+                setEntries(response.data.data);
             }
         } catch (error) {
             logger.error('Failed to fetch DLQ:', error);
@@ -47,16 +51,16 @@ const DeadLetterQueue: React.FC = () => {
         }
     };
 
-    const clearDLQ = async () => {
-        const confirm = window.confirm('Are you sure you want to clear all critical errors from the queue?');
-        if (!confirm) return;
-
+    const handleReplay = async (id: string) => {
+        setReplaying(id);
         try {
-            await api.delete('/admin/oversight/dlq');
-            setErrors([]);
-            toast.success('Dead Letter Queue cleared');
-        } catch {
-            toast.error('Failed to clear queue');
+            await adminService.replayNotificationOutbox(id);
+            toast.success('Event re-queued for dispatch.');
+            fetchDLQ();
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || 'Replay failed');
+        } finally {
+            setReplaying(null);
         }
     };
 
@@ -64,9 +68,9 @@ const DeadLetterQueue: React.FC = () => {
         fetchDLQ();
     }, []);
 
-    const handleCopy = (err: DLQError) => {
-        navigator.clipboard.writeText(JSON.stringify(err, null, 2));
-        toast.success('Error details copied to clipboard');
+    const handleCopy = (entry: DLQEntry) => {
+        navigator.clipboard.writeText(JSON.stringify(entry, null, 2));
+        toast.success('Entry details copied to clipboard');
     };
 
     return (
@@ -80,7 +84,7 @@ const DeadLetterQueue: React.FC = () => {
                         </div>
                         Dead Letter Queue
                     </h1>
-                    <p className="text-gray-500 mt-1 text-sm font-medium">Critical system failures requiring manual intervention.</p>
+                    <p className="text-gray-500 mt-1 text-sm font-medium">Critical event failures requiring forensic review & replay.</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <button 
@@ -91,42 +95,34 @@ const DeadLetterQueue: React.FC = () => {
                     >
                         <FiRefreshCw className={loading ? 'animate-spin' : ''} />
                     </button>
-                    <button 
-                        onClick={clearDLQ}
-                        disabled={errors.length === 0}
-                        className="flex items-center gap-2 px-4 py-2.5 bg-red-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest transition-all shadow-md shadow-red-200 hover:bg-red-700 disabled:opacity-50"
-                    >
-                        <FiTrash2 />
-                        Clear Queue
-                    </button>
                 </div>
             </div>
 
             {/* Warning Banner */}
-            {errors.length > 0 && (
+            {entries.length > 0 && (
                 <div className="bg-orange-50 border border-orange-100 p-4 rounded-xl flex items-start gap-4 shadow-sm">
                     <FiAlertCircle className="text-orange-500 mt-1 shrink-0" size={20} />
                     <div>
-                        <p className="text-orange-800 font-bold text-[11px] uppercase tracking-widest">Action Required</p>
-                        <p className="text-orange-700/80 text-xs mt-1 leading-relaxed">There are {errors.length} critical errors that failed processing. Investigate their reference IDs in the system logs to prevent data loss.</p>
+                        <p className="text-orange-800 font-bold text-[11px] uppercase tracking-widest">Quarantine Active</p>
+                        <p className="text-orange-700/80 text-xs mt-1 leading-relaxed">There are {entries.length} events in quarantine. Review the failure classification before re-initiating replay to prevent retry storms.</p>
                     </div>
                 </div>
             )}
 
-            {/* Error List */}
+            {/* Entry List */}
             <div className="space-y-3">
-                {errors.length === 0 && !loading ? (
+                {entries.length === 0 && !loading ? (
                     <div className="bg-white py-16 rounded-2xl text-center border border-gray-100 shadow-sm flex flex-col items-center">
                         <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mb-6 text-green-500 shadow-sm border border-green-100">
                             <FiRefreshCw size={28} />
                         </div>
-                        <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">All Systems Nominal</h3>
+                        <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">Pipeline Healthy</h3>
                         <p className="text-xs text-gray-400 mt-2 font-medium">The Dead Letter Queue is currently empty.</p>
                     </div>
                 ) : (
-                    errors.map((err, idx) => (
+                    entries.map((entry, idx) => (
                         <div 
-                            key={idx} 
+                            key={entry._id} 
                             className={`bg-white rounded-2xl border transition-all cursor-pointer overflow-hidden ${
                                 expandedIndex === idx 
                                 ? 'border-red-400 shadow-lg ring-1 ring-red-400/20' 
@@ -140,21 +136,32 @@ const DeadLetterQueue: React.FC = () => {
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center justify-between gap-4 mb-2">
-                                        <h3 className="text-sm font-black text-gray-800 truncate leading-tight">{err.error.message}</h3>
-                                        <span className="text-[9px] font-black uppercase text-gray-400 tracking-widest bg-gray-50 px-2 py-0.5 rounded-full border border-gray-100 whitespace-nowrap">
-                                            {new Date(err.timestamp).toLocaleString()}
-                                        </span>
-                                    </div>
-                                    <div className="flex flex-wrap gap-4 text-[10px] font-black text-gray-400 uppercase tracking-tight">
-                                        {err.context.path && (
-                                            <span className="flex items-center gap-1.5">
-                                                <FiArrowRight className="text-gray-300" />
-                                                <span className="text-gray-600">{err.context.method}</span> {err.context.path}
+                                        <h3 className="text-sm font-black text-gray-800 truncate leading-tight uppercase tracking-tight">{entry.type}</h3>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-[9px] font-black uppercase text-red-600 bg-red-50 px-2 py-0.5 rounded-full border border-red-100">
+                                                {entry.failureClassification || 'UNCATEGORIZED'}
                                             </span>
-                                        )}
-                                        {err.context.referenceId && (
-                                            <span className="text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">REF: {err.context.referenceId}</span>
-                                        )}
+                                            <span className="text-[9px] font-black uppercase text-gray-400 tracking-widest bg-gray-50 px-2 py-0.5 rounded-full border border-gray-100 whitespace-nowrap flex items-center gap-1">
+                                                <FiClock /> {new Date(entry.quarantinedAt || currentTime).toLocaleString()}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex flex-wrap gap-4 text-[10px] font-black text-gray-400 uppercase tracking-tight">
+                                            <span className="text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">ID: {entry._id.substring(0, 12)}...</span>
+                                            <span className="text-zinc-600">Recipient: {entry.recipientId}</span>
+                                        </div>
+                                        <button 
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleReplay(entry._id);
+                                            }}
+                                            disabled={replaying === entry._id}
+                                            className="flex items-center gap-2 px-3 py-1.5 bg-gray-900 text-white rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-black transition-all shadow-sm disabled:opacity-50"
+                                        >
+                                            <FiPlay size={10} />
+                                            {replaying === entry._id ? 'Replaying...' : 'Initiate Replay'}
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -165,30 +172,32 @@ const DeadLetterQueue: React.FC = () => {
                                         <button 
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                handleCopy(err);
+                                                handleCopy(entry);
                                             }}
                                             className="absolute top-4 right-4 p-2 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-lg transition-all"
-                                            title="Copy JSON"
+                                            title="Copy Details"
                                         >
                                             <FiClipboard size={12} />
                                         </button>
                                         <div className="space-y-5">
                                             <div>
-                                                <p className="text-[9px] font-black uppercase text-gray-500 tracking-widest mb-2">Error Diagnostic</p>
-                                                <pre className="text-xs font-mono text-red-400 whitespace-pre-wrap leading-relaxed">{err.error.name}: {err.error.message}</pre>
+                                                <p className="text-[9px] font-black uppercase text-gray-500 tracking-widest mb-2">Diagnostic Error</p>
+                                                <pre className="text-xs font-mono text-red-400 whitespace-pre-wrap leading-relaxed">{entry.lastError}</pre>
                                             </div>
-                                            {err.error.stack && (
-                                                <div>
-                                                    <p className="text-[9px] font-black uppercase text-gray-500 tracking-widest mb-2">Stack Trace</p>
-                                                    <pre className="text-[9px] font-mono text-gray-500 whitespace-pre-wrap max-h-40 overflow-y-auto custom-scrollbar-dark leading-relaxed">
-                                                        {err.error.stack}
-                                                    </pre>
-                                                </div>
-                                            )}
                                             <div>
-                                                <p className="text-[9px] font-black uppercase text-gray-500 tracking-widest mb-2">Operation Context</p>
+                                                <p className="text-[9px] font-black uppercase text-gray-500 tracking-widest mb-2">Forensic Error Chain</p>
+                                                <div className="space-y-1">
+                                                    {entry.errorChain.map((err, i) => (
+                                                        <pre key={i} className="text-[9px] font-mono text-gray-500 whitespace-pre-wrap leading-relaxed">
+                                                            [{i}] {err}
+                                                        </pre>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <p className="text-[9px] font-black uppercase text-gray-500 tracking-widest mb-2">Payload Manifest</p>
                                                 <pre className="text-xs font-mono text-blue-400 overflow-x-auto whitespace-pre leading-relaxed font-bold">
-                                                    {JSON.stringify(err.context, null, 2)}
+                                                    {JSON.stringify(entry.payload, null, 2)}
                                                 </pre>
                                             </div>
                                         </div>

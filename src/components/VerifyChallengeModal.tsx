@@ -33,6 +33,7 @@ export default function VerifyChallengeModal({
     const [error, setError] = useState('');
     const [attemptsLeft, setAttemptsLeft] = useState<number | null>(null);
     const [resendSeconds, setResendSeconds] = useState(60);
+    const isSubmitting = (window as any).isSubmittingRef || { current: false }; 
     
     const { verifyChallenge, resendChallenge } = useAuthStore();
 
@@ -46,34 +47,62 @@ export default function VerifyChallengeModal({
     }, [resendSeconds]);
 
     const handleVerify = async () => {
-        if (code.length < 4 || loading) return;
+        if (code.length < 4 || loading || isSubmitting.current) return;
         
         setLoading(true);
+        isSubmitting.current = true;
         setError('');
         
-        try {
-            const result = await verifyChallenge({
-                challengeId,
-                otp: code,
-                userId,
-                deviceId: localStorage.getItem('deviceId') || undefined,
-                deviceName: navigator.userAgent.includes('Mobile') ? 'Mobile' : 'Desktop'
-            });
+        const idempotencyKey = `verify-admin-${challengeId}-${code}`;
+        const payload = {
+            challengeId,
+            otp: code,
+            userId,
+            deviceId: localStorage.getItem('deviceId') || undefined,
+            deviceName: navigator.userAgent.includes('Mobile') ? 'Admin Mobile' : 'Admin Desktop'
+        };
 
-            if (result.success) {
+        try {
+            let result;
+            let retries = 0;
+            const MAX_RETRIES = 2;
+
+            while (retries <= MAX_RETRIES) {
+                try {
+                    result = await verifyChallenge(payload, idempotencyKey);
+                    break;
+                } catch (retryErr: any) {
+                    const status = retryErr.response?.status;
+                    if (status === 423 && retries < MAX_RETRIES) {
+                        retries++;
+                        await new Promise(r => setTimeout(r, 1000 * Math.pow(2, retries)));
+                        continue;
+                    }
+                    throw retryErr;
+                }
+            }
+
+            if (result && result.success) {
                 showSuccess('Identity Verified', 'Access Granted');
                 onSuccess(result.data);
             }
         } catch (err: any) {
             const errorData = err.response?.data;
+            const status = err.response?.status;
             const message = errorData?.message || 'Verification failed';
+            
             setError(message);
             
             if (typeof errorData?.attemptsLeft === 'number') {
                 setAttemptsLeft(errorData.attemptsLeft);
             }
+
+            if (status === 429) {
+                showError('Rate limit exceeded. Please wait before trying again.', 'Brute Force Protection');
+            }
         } finally {
             setLoading(false);
+            isSubmitting.current = false;
         }
     };
 
