@@ -8,15 +8,15 @@ const getBaseUrl = (): string => {
     const env = import.meta.env;
     if (env?.VITE_API_URL) return env.VITE_API_URL as string;
     // Always default to the canonical production URL — never the old Render URL
-    return 'https://api.shopvia.ng/api';
+    return 'https://api.shopvia.ng/api/v1';
   } catch {
-    return 'https://api.shopvia.ng/api';
+    return 'https://api.shopvia.ng/api/v1';
   }
 };
 
 
 const api = axios.create({
-  baseURL: getBaseUrl() || "http://localhost:5000/api",
+  baseURL: getBaseUrl() || "http://localhost:5000/api/v1",
   withCredentials: true,
   xsrfCookieName: 'XSRF-TOKEN',
   xsrfHeaderName: 'x-xsrf-token',
