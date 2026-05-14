@@ -95,7 +95,7 @@ export default function Complaints() {
         <div className="flex flex-col sm:flex-row gap-3">
           <HardenedSearchInput
             value=""
-            onChange={(val) => {
+            onChange={(_) => {
               // Implementation would involve adding search param to fetchComplaints
             }}
             placeholder="SEARCH ISSUES..."
