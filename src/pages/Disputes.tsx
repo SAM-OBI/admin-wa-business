@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaCheckCircle, FaGavel } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import { useAuthStore } from '../store/authStore';
+import { HardenedSearchInput } from '../components/search/HardenedSearchInput';
 
 // Native relative time helper to replace date-fns
 function formatRelativeTime(date: Date): string {
@@ -25,6 +26,7 @@ export default function Disputes() {
   const [activeDispute, setActiveDispute] = useState<any>(null);
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetchDisputes();
@@ -84,8 +86,11 @@ export default function Disputes() {
   };
 
   const filteredDisputes = disputes.filter(d => {
-    if (filter === 'all') return true;
-    return d.status === filter;
+    const matchesFilter = filter === 'all' || d.status === filter;
+    const matchesSearch = !searchTerm || 
+      d.order?.orderId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      d.reason?.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesFilter && matchesSearch;
   });
 
   return (
@@ -101,18 +106,27 @@ export default function Disputes() {
           <p className="text-gray-500 mt-1 text-sm font-medium">Marketplace Mediation & Resolution</p>
         </div>
 
-        <div className="flex items-center gap-2 bg-white p-1 rounded-xl border border-gray-100 shadow-sm overflow-x-auto">
-           {['all', 'open', 'mediation', 'resolved'].map(f => (
-             <button 
-                key={f}
-                onClick={() => setFilter(f)}
-                className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
-                  filter === f ? 'bg-purple-600 text-white shadow-lg shadow-purple-200' : 'text-gray-400 hover:text-gray-600'
-                }`}
-             >
-               {f}
-             </button>
-           ))}
+        <div className="flex items-center gap-4">
+          <HardenedSearchInput 
+            value={searchTerm}
+            onChange={setSearchTerm}
+            placeholder="SEARCH CASES..."
+            className="w-64 scale-90"
+            context="ADMIN"
+          />
+          <div className="flex items-center gap-2 bg-white p-1 rounded-xl border border-gray-100 shadow-sm overflow-x-auto">
+             {['all', 'open', 'mediation', 'resolved'].map(f => (
+               <button 
+                  key={f}
+                  onClick={() => setFilter(f)}
+                  className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
+                    filter === f ? 'bg-purple-600 text-white shadow-lg shadow-purple-200' : 'text-gray-400 hover:text-gray-600'
+                  }`}
+               >
+                 {f}
+               </button>
+             ))}
+          </div>
         </div>
       </div>
 

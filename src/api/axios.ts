@@ -40,26 +40,13 @@ export interface NormalizedAxiosError extends AxiosError {
   errorCode: string;
 }
 
-interface QueuePromise {
-  resolve: (token: string | null) => void;
-  reject: (error: Error | AxiosError | unknown) => void;
-}
+// 🛡️ [Decommissioned] Queue logic migrated to AdminRefreshCoordinator (v105.5)
+// interface QueuePromise { ... }
 
-// Refresh token state management
-let isRefreshing = false;
-let failedQueue: QueuePromise[] = [];
-
-const processQueue = (error: Error | AxiosError | unknown | null, token: string | null = null) => {
-  failedQueue.forEach(prom => {
-    if (error) {
-      prom.reject(error);
-    } else {
-      prom.resolve(token);
-    }
-  });
-  
-  failedQueue = [];
-};
+// 🛡️ [Decommissioned] Local refresh state managed by AdminRefreshCoordinator (v105.5)
+// let isRefreshing = false;
+// let failedQueue: QueuePromise[] = [];
+// const processQueue = ...
 
 interface ResponseData {
   message?: string;
@@ -196,35 +183,28 @@ api.interceptors.response.use(
     const isAuthCheck = originalRequest.url?.includes('/auth/me');
     const isOnLoginPage = window.location.pathname === "/login";
 
-    // Handle 401 Unauthorized with token rotation
+    // Handle 401 Unauthorized with unified coordination authority
     if (status === 401 && !isAuthCheck && !isOnLoginPage) {
-      if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          failedQueue.push({ resolve, reject });
-        })
-        .then(token => {
-          originalRequest.headers['Authorization'] = 'Bearer ' + token;
-          return api(originalRequest);
-        });
+      if (originalRequest._retryCount && originalRequest._retryCount > 0) {
+        console.error(`[Admin:Auth] Loop detected for ${originalRequest.url}.`);
+        return Promise.reject(error);
       }
 
-      isRefreshing = true;
-
       try {
-        const { data: refreshData } = await axios.post<{ accessToken: string }>(`${api.defaults.baseURL}/auth/refresh`, {}, { withCredentials: true });
-        const newToken = refreshData.accessToken;
-        sessionStorage.setItem('token', newToken);
+        const { refreshCoordinator } = await import('./refreshCoordinator');
+        const { accessToken } = await refreshCoordinator.refresh(`ADMIN_INTERCEPTOR:${originalRequest.url}`);
         
-        processQueue(null, newToken);
-        originalRequest.headers['Authorization'] = 'Bearer ' + newToken;
-        return api(originalRequest);
+        if (accessToken) {
+          sessionStorage.setItem('token', accessToken);
+          originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
+          originalRequest._retryCount = (originalRequest._retryCount || 0) + 1;
+          return api(originalRequest);
+        }
       } catch (refreshError) {
-        processQueue(refreshError, null);
+        console.error('[Admin:Auth] Global refresh failed. Terminating session.');
         sessionStorage.removeItem('token');
         if (!isOnLoginPage) window.location.href = '/login';
         return Promise.reject(refreshError);
-      } finally {
-        isRefreshing = false;
       }
     }
 

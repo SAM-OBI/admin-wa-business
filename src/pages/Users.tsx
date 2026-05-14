@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { adminService, User } from '../api/admin.service';
-import { FiSearch, FiCheckCircle, FiXCircle, FiExternalLink, FiAlertCircle } from 'react-icons/fi';
+import { FiCheckCircle, FiXCircle, FiExternalLink, FiAlertCircle } from 'react-icons/fi';
+import { HardenedSearchInput } from '../components/search/HardenedSearchInput';
 import { Link } from 'react-router-dom';
 
 export default function Users() {
@@ -151,16 +152,13 @@ export default function Users() {
             </select>
           </div>
 
-          <div className="relative group">
-            <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-white transition-colors" />
-            <input
-              type="text"
-              placeholder="SEARCH ENTITIES..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-12 pr-6 py-2 bg-zinc-900/50 border border-zinc-800/40 text-white text-xs font-bold placeholder:text-zinc-700 rounded-xl focus:outline-none focus:border-white/20 w-full sm:w-72 transition-all"
-            />
-          </div>
+          <HardenedSearchInput
+            value={searchTerm}
+            onChange={(val) => setSearchTerm(val)}
+            placeholder="SEARCH ENTITIES..."
+            className="w-full sm:w-72"
+            context="ADMIN"
+          />
         </div>
       </div>
 

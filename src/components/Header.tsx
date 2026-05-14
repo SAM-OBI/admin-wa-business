@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useAuthStore } from '../store/authStore';
-import { FiBell, FiAlertCircle, FiMenu } from 'react-icons/fi';
-import { adminService } from '../api/admin.service';
 import { Link } from 'react-router-dom';
+import { useAuthStore } from '../store/authStore';
+import { adminService } from '../api/admin.service';
+import { FiMenu, FiBell, FiAlertCircle } from 'react-icons/fi';
 import { UserProfileDropdown } from './UserProfileDropdown';
+import { HardenedSearchInput } from './search/HardenedSearchInput';
+import { GlobalSearchOverlay } from './search/GlobalSearchOverlay';
 
 interface HeaderProps {
   toggleMobileSidebar?: () => void;
@@ -14,6 +16,7 @@ export default function Header({ toggleMobileSidebar }: HeaderProps) {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -71,6 +74,24 @@ export default function Header({ toggleMobileSidebar }: HeaderProps) {
             </h2>
             <p className="hidden md:block text-[10px] text-zinc-500 font-black uppercase tracking-widest mt-0.5">Industrial Governance Node</p>
           </div>
+
+          {/* Global Admin Search (v104.2) */}
+          <div className="hidden xl:block w-96 ml-8">
+            <div onClick={() => setShowSearch(true)} className="cursor-pointer">
+              <HardenedSearchInput 
+                value="" 
+                onChange={() => {}} 
+                placeholder="GLOBAL DISCOVERY SEARCH..." 
+                className="scale-90 pointer-events-none"
+                context="ADMIN"
+              />
+            </div>
+          </div>
+          
+          <GlobalSearchOverlay 
+            isOpen={showSearch} 
+            onClose={() => setShowSearch(false)} 
+          />
         </div>
 
         <div className="flex items-center gap-2 md:gap-4">

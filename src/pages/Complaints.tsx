@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { adminService, Complaint } from '../api/admin.service';
 import { FiAlertCircle, FiCheckCircle } from 'react-icons/fi';
+import { HardenedSearchInput } from '../components/search/HardenedSearchInput';
 import ComplaintDetailsModal from '../components/ComplaintDetailsModal';
 import api from '../api/axios';
 
@@ -91,11 +92,21 @@ export default function Complaints() {
           <p className="text-gray-500 text-sm mt-1">Manage user issues and disputes</p>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <HardenedSearchInput
+            value=""
+            onChange={(val) => {
+              // Implementation would involve adding search param to fetchComplaints
+            }}
+            placeholder="SEARCH ISSUES..."
+            className="w-full sm:w-64"
+            context="ADMIN"
+          />
+
           <select
             value={filters.status}
             onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-sm"
           >
             <option value="">All Status</option>
             <option value="pending">Pending</option>
@@ -106,7 +117,7 @@ export default function Complaints() {
           <select
             value={filters.priority}
             onChange={(e) => setFilters(prev => ({ ...prev, priority: e.target.value }))}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-sm"
           >
             <option value="">All Priorities</option>
             <option value="high">High</option>
