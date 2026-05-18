@@ -323,7 +323,12 @@ export const adminService = {
     return response.data;
   },
 
-  // 🕵️‍♂️ Phase 16/10: Institutional Oversight Hub
+  executeMultiSigRequest: async (id: string): Promise<ApiResponse<any>> => {
+    const response = await api.post(`/admin/multisig/execute/${id}`);
+    return response.data;
+  },
+
+  // Institutional Oversight Hub
   getVendorOversight: async (userId: string): Promise<ApiResponse<any>> => {
     const response = await api.get(`/admin/oversight/vendors/${userId}/360`);
     return response.data;
@@ -400,6 +405,16 @@ export const adminService = {
 
   getGovernanceAnchors: async (params?: any): Promise<ApiResponse<any>> => {
     const response = await api.get('/admin/governance/anchors', { params });
+    return response.data;
+  },
+
+  getPAJLogs: async (params?: any): Promise<ApiResponse<any>> => {
+    const response = await api.get('/admin/governance/paj', { params });
+    return response.data;
+  },
+
+  triggerManualAnchor: async (): Promise<ApiResponse<any>> => {
+    const response = await api.post('/admin/governance/anchor/manual');
     return response.data;
   }
 };

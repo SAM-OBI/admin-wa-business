@@ -121,6 +121,7 @@ export default function Products() {
                 <th className="px-8 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">SKU Metadata</th>
                 <th className="px-8 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Origin Source</th>
                 <th className="px-8 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Pricing Index</th>
+                <th className="px-8 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Velocity Index</th>
                 <th className="px-8 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Reserves</th>
                 <th className="px-8 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">State</th>
                 <th className="px-8 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] text-right">Execution</th>
@@ -143,7 +144,12 @@ export default function Products() {
                         </div>
                       )}
                       <div>
-                        <div className="font-black text-white text-sm tracking-tight">{product.name}</div>
+                        <div className="flex items-center gap-2">
+                            <div className="font-black text-white text-sm tracking-tight">{product.name}</div>
+                            {(product as any).soldCount > 50 && (
+                                <span className="bg-emerald-500/10 text-emerald-500 text-[7px] font-black uppercase px-2 py-0.5 rounded border border-emerald-500/20">Elite Asset</span>
+                            )}
+                        </div>
                         <div className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">
                           {typeof product.category === 'object' && product.category !== null 
                             ? product.category.name 
@@ -157,6 +163,12 @@ export default function Products() {
                   </td>
                   <td className="px-8 py-6 font-black text-white text-sm">
                     ₦{product.price.toLocaleString()}
+                  </td>
+                  <td className="px-8 py-6">
+                    <div className="flex flex-col">
+                        <span className="text-sm font-black text-white">{(product as any).soldCount || 0} Sold</span>
+                        <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest">Market Demand</span>
+                    </div>
                   </td>
                   <td className="px-8 py-6">
                     <span className={`inline-flex px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded border ${

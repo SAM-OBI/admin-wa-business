@@ -192,6 +192,14 @@ api.interceptors.response.use(
 
       try {
         const { refreshCoordinator } = await import('./refreshCoordinator');
+        
+        // 🛡️ [v105.8] Terminal Safety Guard
+        if (refreshCoordinator.getState() === 'TERMINAL_FAILURE') {
+          console.warn(`[Admin:Auth] Session is TERMINAL. Skipping coordination.`);
+          if (!isOnLoginPage) window.location.href = '/login';
+          return Promise.reject(error);
+        }
+
         const { accessToken } = await refreshCoordinator.refresh(`ADMIN_INTERCEPTOR:${originalRequest.url}`);
         
         if (accessToken) {

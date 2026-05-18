@@ -30,11 +30,28 @@ class AdminRefreshCoordinator {
     // Broadcast for multi-tab synchronization
     private channel = typeof window !== 'undefined' ? new BroadcastChannel('shopvia_admin_identity_sync_v1') : null;
 
+    private initializationPromise: Promise<void> | null = null;
+    private initResolver: (() => void) | null = null;
+
     private constructor() {
+        this.initializationPromise = new Promise((resolve) => {
+            this.initResolver = resolve;
+        });
+
+        // 🛡️ [v105.8] Institutional Initialization Deadlock Guard (5s)
+        if (typeof window !== 'undefined') {
+            setTimeout(() => {
+                if (this.state === AuthState.INITIALIZING) {
+                    logger.warn('[Forensic:Trace] 🛡️ ADMIN_INIT_DEADLOCK_DETECTED (5s). Forcing DEGRADED state.');
+                    this.transitionTo(AuthState.DEGRADED);
+                    this.initResolver?.();
+                }
+            }, 5000);
+        }
+
         if (this.channel) {
             this.channel.onmessage = (event) => this.handleSyncEvent(event);
         }
-        this.state = AuthState.AUTHENTICATED;
     }
 
     public static getInstance(): AdminRefreshCoordinator {
@@ -45,6 +62,12 @@ class AdminRefreshCoordinator {
     }
 
     public async refresh(context: string = 'UNKNOWN'): Promise<RefreshResult> {
+        // 🛡️ [v105.8] Initialization Gating
+        if (this.state === AuthState.INITIALIZING) {
+            logger.debug(`[AdminRefresh] requested during INITIALIZING. Waiting for boot epoch...`);
+            await this.initializationPromise;
+        }
+
         if (this.state === AuthState.REFRESHING && this.inflight) {
             return this.inflight;
         }
@@ -108,8 +131,30 @@ class AdminRefreshCoordinator {
     }
 
     private transitionTo(newState: AuthState) {
+        const legalTransitions: Record<AuthState, AuthState[]> = {
+            [AuthState.INITIALIZING]: [AuthState.REFRESHING, AuthState.AUTHENTICATED, AuthState.DEGRADED, AuthState.TERMINAL_FAILURE],
+            [AuthState.AUTHENTICATED]: [AuthState.REFRESHING, AuthState.DEGRADED, AuthState.TERMINAL_FAILURE],
+            [AuthState.REFRESHING]: [AuthState.AUTHENTICATED, AuthState.DEGRADED, AuthState.TERMINAL_FAILURE],
+            [AuthState.DEGRADED]: [AuthState.REFRESHING, AuthState.TERMINAL_FAILURE],
+            [AuthState.TERMINAL_FAILURE]: [] 
+        };
+
+        if (!legalTransitions[this.state]?.includes(newState)) {
+            logger.error(`[Admin:Identity] 🚨 ILLEGAL_STATE_TRANSITION: ${this.state} -> ${newState}`);
+            return;
+        }
+
         logger.debug(`[AdminRefresh] State Transition: ${this.state} -> ${newState}`);
         this.state = newState;
+
+        // Resolve initialization gating on first successful state exit
+        if (newState !== AuthState.INITIALIZING) {
+            this.initResolver?.();
+        }
+    }
+
+    public getState(): AuthState {
+        return this.state;
     }
 }
 

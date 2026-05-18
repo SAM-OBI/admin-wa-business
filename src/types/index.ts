@@ -277,13 +277,35 @@ export interface MultiSigRequest {
   _id: string;
   actionType: string;
   description: string;
+  semanticSummary?: string; // 🛡️ [v107.7] Human-Centered Summary
+  riskTier?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'; // 🛡️ [v107.7]
+  anomalyScore?: number; // 🛡️ [v107.7] 0-100
   metadata: any;
-  requestedBy: string;
+  requestedBy: {
+    _id: string;
+    name: string;
+    email: string;
+  };
   status: 'PENDING' | 'APPROVED' | 'COOLDOWN' | 'EXECUTED' | 'REJECTED' | 'EXPIRED';
   requiredApprovals: number;
   approvals: any[];
   expiresAt: string;
   cooldownEnd?: string;
+  createdAt: string;
+}
+
+export interface PAJLog {
+  _id: string;
+  action: string;
+  actor: string;
+  description: string;
+  semanticSummary?: string; // 🛡️ [v107.7]
+  riskTier?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  anomalyScore?: number;
+  impactScope: string;
+  status: 'SUCCESS' | 'FAILED' | 'BLOCKED';
+  metadata: any;
+  forensicHash: string;
   createdAt: string;
 }
 

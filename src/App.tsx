@@ -25,6 +25,7 @@ const AccountConsolidations = lazy(() => import(/* webpackChunkName: "management
 const Products = lazy(() => import(/* webpackChunkName: "inventory" */ './pages/Products'));
 const Users = lazy(() => import(/* webpackChunkName: "management" */ './pages/Users'));
 const Vendors = lazy(() => import(/* webpackChunkName: "management" */ './pages/Vendors'));
+const Subscriptions = lazy(() => import(/* webpackChunkName: "finance" */ './pages/Subscriptions'));
 const ProductModeration = lazy(() => import(/* webpackChunkName: "governance" */ './pages/ProductModeration'));
 const Disputes = lazy(() => import(/* webpackChunkName: "governance" */ './pages/Disputes'));
 const Reviews = lazy(() => import(/* webpackChunkName: "governance" */ './pages/Reviews'));
@@ -122,6 +123,7 @@ function App() {
             <Route path="users/:id" element={<UserDetails />} />
             <Route path="vendors" element={<Vendors />} />
             <Route path="vendors/:id" element={<VendorDetails />} />
+            <Route path="subscriptions" element={<Subscriptions />} />
             <Route path="orders" element={<Orders />} />
             <Route path="complaints" element={<Complaints />} />
             <Route path="court-cases" element={<CourtCases />} />

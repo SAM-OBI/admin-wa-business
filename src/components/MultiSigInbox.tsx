@@ -56,7 +56,10 @@ export const MultiSigInbox: React.FC<Props> = ({ requests, onApprove }) => {
                                     <div className="w-5 h-5 rounded-full bg-primary/20 text-primary flex items-center justify-center text-[10px]">
                                         <FaFingerprint />
                                     </div>
-                                    <span className="text-xs font-medium font-mono truncate">{request.requestedBy}</span>
+                                    <span className="text-xs font-medium font-mono truncate">
+                                        {typeof request.requestedBy === 'string' ? request.requestedBy : (request.requestedBy as any)?.name || (request.requestedBy as any)?.email}
+                                    </span>
+
                                 </div>
                             </div>
                             <div className="space-y-2 text-right">
