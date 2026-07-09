@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { 
   FiUsers, FiShoppingBag, FiPackage, FiTrendingUp, 
   FiUserPlus, FiShoppingCart, FiMessageSquare,
-  FiArrowRight, FiCheckCircle, FiAlertTriangle
+  FiArrowRight, FiCheckCircle, FiAlertTriangle, FiRefreshCw
 } from 'react-icons/fi';
 import { adminService } from '../api/admin.service';
 import { TreasuryMetrics, RecentActivityFeed } from '../components/atomic/DashboardSections';
@@ -12,28 +12,33 @@ import ErrorBoundary from '../components/ErrorBoundary';
 import PageLoader from '../components/PageLoader';
 import { logger } from '../utils/logger';
 
-interface Stats {
-  totalUsers: number;
-  totalVendors: number;
-  totalProducts: number;
-  totalOrders: number;
-  pendingComplaints: number;
-  activeCourtCases: number;
-  unverifiedVendors: number;
-  revenue: {
-    today: number;
-    week: number;
-    month: number;
+interface DashboardViewModel {
+  stats: {
+    totalUsers: number;
+    totalVendors: number;
+    totalProducts: number;
+    totalOrders: number;
+    pendingComplaints: number;
+    activeCourtCases: number;
+    unverifiedVendors: number;
+    revenue: {
+      today: number;
+      week: number;
+      month: number;
+    };
   };
+  lastUpdated: string;
 }
 
 export default function Dashboard() {
-  const [stats, setStats] = useState<Stats | null>(null);
+  const [viewModel, setViewModel] = useState<DashboardViewModel | null>(null);
   const [treasury, setTreasury] = useState<any>(null);
   const [activities, setActivities] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const fetchDashboardData = useCallback(async () => {
+  const fetchDashboardData = useCallback(async (isRefresh = false) => {
+    if (isRefresh) setRefreshing(true);
     try {
       const [statsRes, activitiesRes, treasuryRes] = await Promise.allSettled([
         adminService.getDashboardStats(),
@@ -41,7 +46,12 @@ export default function Dashboard() {
         adminService.getTreasuryHealth()
       ]);
 
-      if (statsRes.status === 'fulfilled') setStats(statsRes.value.data);
+      if (statsRes.status === 'fulfilled') {
+        setViewModel({
+          stats: statsRes.value.data,
+          lastUpdated: new Date().toISOString()
+        });
+      }
       if (activitiesRes.status === 'fulfilled') setActivities(activitiesRes.value.data);
       if (treasuryRes.status === 'fulfilled') setTreasury(treasuryRes.value.data);
       
@@ -49,6 +59,7 @@ export default function Dashboard() {
       logger.error('Critical Dashboard Failure:', error);
     } finally {
       setLoading(false);
+      if (isRefresh) setRefreshing(false);
     }
   }, []);
 
@@ -82,11 +93,13 @@ export default function Dashboard() {
   if (loading) return <PageLoader />;
 
   const statCards = [
-    { title: 'Registered Users', value: stats?.totalUsers || 0, icon: FiUsers, color: 'bg-blue-500/10 text-blue-400 border-blue-500/20', link: '/dashboard/users' },
-    { title: 'Active Vendors', value: stats?.totalVendors || 0, icon: FiShoppingBag, color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20', link: '/dashboard/vendors' },
-    { title: 'Global Catalog', value: stats?.totalProducts || 0, icon: FiPackage, color: 'bg-purple-500/10 text-purple-400 border-purple-500/20', link: '/dashboard/products' },
-    { title: 'Total Volume', value: stats?.totalOrders || 0, icon: FiTrendingUp, color: 'bg-orange-500/10 text-orange-400 border-orange-500/20', link: '/dashboard/orders' },
+    { title: 'Registered Users', value: viewModel?.stats.totalUsers || 0, icon: FiUsers, color: 'bg-blue-500/10 text-blue-400 border-blue-500/20', link: '/dashboard/users' },
+    { title: 'Active Vendors', value: viewModel?.stats.totalVendors || 0, icon: FiShoppingBag, color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20', link: '/dashboard/vendors' },
+    { title: 'Global Catalog', value: viewModel?.stats.totalProducts || 0, icon: FiPackage, color: 'bg-purple-500/10 text-purple-400 border-purple-500/20', link: '/dashboard/products' },
+    { title: 'Total Volume', value: viewModel?.stats.totalOrders || 0, icon: FiTrendingUp, color: 'bg-orange-500/10 text-orange-400 border-orange-500/20', link: '/dashboard/orders' },
   ];
+
+  const timeSinceUpdate = viewModel?.lastUpdated ? Math.round((Date.now() - new Date(viewModel.lastUpdated).getTime()) / 60000) : 0;
 
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700 p-8 max-w-7xl mx-auto">
@@ -97,6 +110,14 @@ export default function Dashboard() {
           <p className="text-xs text-zinc-500 font-bold uppercase tracking-[0.2em] mt-1.5">Real-time infrastructure & financial telemetry</p>
         </div>
         <div className="flex items-center gap-4 bg-zinc-900/50 px-4 py-2 rounded-xl border border-white/5">
+           <button 
+             onClick={() => fetchDashboardData(true)}
+             disabled={refreshing}
+             className="text-[10px] font-black text-zinc-400 uppercase tracking-widest flex items-center gap-2 hover:text-white transition-colors mr-2"
+           >
+             <FiRefreshCw className={refreshing ? 'animate-spin' : ''} />
+             {timeSinceUpdate === 0 ? 'Just now' : `${timeSinceUpdate} min ago`}
+           </button>
            <StatusBadge status="SUCCESS" label="System Online" />
            <div className="relative flex items-center justify-center">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping absolute" />
@@ -174,8 +195,8 @@ export default function Dashboard() {
             <h3 className="text-xs font-black text-white uppercase tracking-[0.2em] mb-8">Command Center</h3>
             <div className="space-y-3">
               {[
-                { label: 'Verify Vendors', link: '/dashboard/vendors?status=pending', count: stats?.unverifiedVendors, color: 'amber' },
-                { label: 'Review Complaints', link: '/dashboard/complaints', count: stats?.pendingComplaints, color: 'red' },
+                { label: 'Verify Vendors', link: '/dashboard/vendors?status=pending', count: viewModel?.stats.unverifiedVendors, color: 'amber' },
+                { label: 'Review Complaints', link: '/dashboard/complaints', count: viewModel?.stats.pendingComplaints, color: 'red' },
                 { label: 'Security Domain', link: '/dashboard/security', color: 'blue' }
               ].map((action, i) => (
                 <Link 
@@ -197,7 +218,7 @@ export default function Dashboard() {
             </div>
 
             {/* Critical Operational Alerts */}
-            {(stats?.activeCourtCases || 0) > 0 && (
+            {(viewModel?.stats.activeCourtCases || 0) > 0 && (
                <Link
                   to="/dashboard/court-cases"
                   className="mt-6 block p-5 rounded-xl border border-red-500/20 bg-red-500/5 hover:bg-red-500/10 transition-all shadow-sm group"
@@ -209,7 +230,7 @@ export default function Dashboard() {
                     <div>
                       <h4 className="text-[10px] font-black text-red-500 uppercase tracking-widest">Active Litigation</h4>
                       <p className="text-[10px] font-bold text-zinc-400 uppercase mt-1.5 opacity-70">
-                        {stats?.activeCourtCases} CASES IN ARBITRATION
+                        {viewModel?.stats.activeCourtCases} CASES IN ARBITRATION
                       </p>
                     </div>
                   </div>

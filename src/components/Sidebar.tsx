@@ -25,6 +25,7 @@ const navigation = [
   { name: 'Account Consolidations', to: '/dashboard/consolidations', icon: FiGitPullRequest },
   { name: 'App Feedback', to: '/dashboard/feedback', icon: FiMessageSquare },
   { name: 'Support Inquiries', to: '/dashboard/support-inquiries', icon: FiMail },
+  { name: 'Support', to: '/dashboard/support', icon: FiMail },
   { name: 'Marketing', to: '/dashboard/marketing', icon: FiTrendingUp },
   { name: 'Ads Moderation', to: '/dashboard/ads-moderation', icon: FiTrendingUp },
   { name: 'ROI Hub', to: '/dashboard/performance', icon: FiTrendingUp },

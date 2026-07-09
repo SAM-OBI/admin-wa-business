@@ -20,6 +20,8 @@ const FinancialAudit = lazy(() => import(/* webpackChunkName: "finance" */ './pa
 const Orders = lazy(() => import(/* webpackChunkName: "orders" */ './pages/Orders'));
 const SettlementManagement = lazy(() => import(/* webpackChunkName: "finance" */ './pages/SettlementManagement'));
 const AccountConsolidations = lazy(() => import(/* webpackChunkName: "management" */ './pages/AccountConsolidations'));
+const CashApplicationWorkbench = lazy(() => import(/* webpackChunkName: "finance" */ './pages/CashApplicationWorkbench'));
+const ReconciliationWorkbench = lazy(() => import(/* webpackChunkName: "finance" */ './pages/ReconciliationWorkbench'));
 
 // Tier 2: Operational Governance
 const Products = lazy(() => import(/* webpackChunkName: "inventory" */ './pages/Products'));
@@ -36,6 +38,7 @@ const Complaints = lazy(() => import(/* webpackChunkName: "support" */ './pages/
 const CourtCases = lazy(() => import(/* webpackChunkName: "support" */ './pages/CourtCases'));
 const PlatformFeedback = lazy(() => import(/* webpackChunkName: "support" */ './pages/PlatformFeedback'));
 const SupportInquiries = lazy(() => import(/* webpackChunkName: "support" */ './pages/SupportInquiries'));
+const SupportWorkspace = lazy(() => import(/* webpackChunkName: "support" */ './pages/SupportWorkspace'));
 const ErrorLogs = lazy(() => import(/* webpackChunkName: "diagnostics" */ './pages/ErrorLogs'));
 const DeadLetterQueue = lazy(() => import(/* webpackChunkName: "diagnostics" */ './pages/DeadLetterQueue'));
 const AuditLogs = lazy(() => import(/* webpackChunkName: "diagnostics" */ './pages/AuditLogs'));
@@ -130,6 +133,7 @@ function App() {
             <Route path="reviews" element={<Reviews />} />
             <Route path="feedback" element={<PlatformFeedback />} />
             <Route path="support-inquiries" element={<SupportInquiries />} />
+            <Route path="support" element={<SupportWorkspace />} />
             <Route path="risk-management" element={<RiskManagement />} />
             <Route path="security" element={<CorporateSecurity />} />
             <Route path="audit-logs" element={<AuditLogs />} />
@@ -138,6 +142,8 @@ function App() {
             <Route path="performance" element={<PlatformPerformance />} />
             <Route path="promo-hub" element={<PromoHub />} />
             <Route path="financial-audit" element={<FinancialAudit />} />
+            <Route path="ar-cash-application" element={<CashApplicationWorkbench />} />
+            <Route path="ar-reconciliation" element={<ReconciliationWorkbench />} />
             <Route path="settlement" element={<SettlementManagement />} />
             <Route path="disputes" element={<Disputes />} />
             <Route path="consolidations" element={<AccountConsolidations />} />
