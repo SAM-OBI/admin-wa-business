@@ -3,40 +3,87 @@ import {
   FiHome, FiPackage, FiUsers, FiShoppingBag, 
   FiAlertCircle, FiMessageSquare, FiStar, 
   FiShield, FiFileText, FiSettings, FiTrendingUp, FiMail,
-  FiMenu, FiChevronLeft, FiLock, FiTerminal, FiHash, FiSend, FiGitPullRequest
+  FiMenu, FiChevronLeft, FiLock, FiTerminal, FiHash, FiSend, FiGitPullRequest, FiTruck
 } from 'react-icons/fi';
 import { useState } from 'react';
 // useState imported above
 import UpgradeModal from './UpgradeModal';
 
-const navigation = [
-  { name: 'Dashboard', to: '/dashboard', icon: FiHome },
-  { name: 'Products', to: '/dashboard/products', icon: FiPackage },
-  { name: 'Users', to: '/dashboard/users', icon: FiUsers },
-  { name: 'Vendors', to: '/dashboard/vendors', icon: FiShoppingBag },
-  { name: 'Orders', to: '/dashboard/orders', icon: FiShoppingBag },
-  { name: 'Complaints', to: '/dashboard/complaints', icon: FiAlertCircle },
-  { name: 'Court Cases', to: '/dashboard/court-cases', icon: FiMessageSquare },
-  { name: 'Reviews', to: '/dashboard/reviews', icon: FiStar },
-  { name: 'Risk Management', to: '/dashboard/risk-management', icon: FiShield },
-  { name: 'Security SOC', to: '/dashboard/security', icon: FiShield },
-  { name: 'Governance', to: '/dashboard/governance', icon: FiLock },
-  { name: 'Audit Logs', to: '/dashboard/audit-logs', icon: FiFileText },
-  { name: 'Account Consolidations', to: '/dashboard/consolidations', icon: FiGitPullRequest },
-  { name: 'App Feedback', to: '/dashboard/feedback', icon: FiMessageSquare },
-  { name: 'Support Inquiries', to: '/dashboard/support-inquiries', icon: FiMail },
-  { name: 'Support', to: '/dashboard/support', icon: FiMail },
-  { name: 'Marketing', to: '/dashboard/marketing', icon: FiTrendingUp },
-  { name: 'Ads Moderation', to: '/dashboard/ads-moderation', icon: FiTrendingUp },
-  { name: 'ROI Hub', to: '/dashboard/performance', icon: FiTrendingUp },
-  { name: 'Promo Hub', to: '/dashboard/promo-hub', icon: FiTrendingUp },
-  { name: 'Product Moderation', to: '/dashboard/product-moderation', icon: FiPackage },
-  { name: 'Newsletter', to: '/dashboard/newsletter', icon: FiSend },
-  { name: 'Journal Moderation', to: '/dashboard/journal', icon: FiFileText },
-  { name: 'Financial Audit', to: '/dashboard/financial-audit', icon: FiTrendingUp },
-  { name: 'Settlement', to: '/dashboard/settlement', icon: FiLock },
-  { name: 'Error Logs', to: '/dashboard/error-logs', icon: FiTerminal },
-  { name: 'DLQ', to: '/dashboard/dlq', icon: FiHash },
+// 🛡️ [FIX] This was one flat 28-item list with zero grouping — on a small
+// device (the mobile drawer, which renders at the same full item count as
+// desktop) that's a long undifferentiated scroll with no way to scan for a
+// section. Grouped into labeled sections matching the domains the rest of
+// this dashboard already uses (Governance Hub, Trust & Safety, etc.).
+const navigationGroups: { label: string; items: { name: string; to: string; icon: typeof FiHome }[] }[] = [
+  {
+    label: 'Overview',
+    items: [
+      { name: 'Dashboard', to: '/dashboard', icon: FiHome },
+    ]
+  },
+  {
+    label: 'Commerce',
+    items: [
+      { name: 'Products', to: '/dashboard/products', icon: FiPackage },
+      { name: 'Orders', to: '/dashboard/orders', icon: FiShoppingBag },
+      { name: 'App-Led Logistics', to: '/dashboard/logistics/app-led', icon: FiTruck },
+      { name: 'Vendors', to: '/dashboard/vendors', icon: FiShoppingBag },
+      { name: 'Users', to: '/dashboard/users', icon: FiUsers },
+      { name: 'Product Moderation', to: '/dashboard/product-moderation', icon: FiPackage },
+    ]
+  },
+  {
+    label: 'Trust & Safety',
+    items: [
+      { name: 'Complaints', to: '/dashboard/complaints', icon: FiAlertCircle },
+      { name: 'Court Cases', to: '/dashboard/court-cases', icon: FiMessageSquare },
+      { name: 'Risk Management', to: '/dashboard/risk-management', icon: FiShield },
+      { name: 'Security SOC', to: '/dashboard/security', icon: FiShield },
+      { name: 'Governance', to: '/dashboard/governance', icon: FiLock },
+      { name: 'Audit Logs', to: '/dashboard/audit-logs', icon: FiFileText },
+      { name: 'Account Consolidations', to: '/dashboard/consolidations', icon: FiGitPullRequest },
+    ]
+  },
+  {
+    label: 'Engagement',
+    items: [
+      { name: 'Reviews', to: '/dashboard/reviews', icon: FiStar },
+      { name: 'Platform Reviews', to: '/dashboard/platform-reviews', icon: FiStar },
+      { name: 'App Feedback', to: '/dashboard/feedback', icon: FiMessageSquare },
+      { name: 'Newsletter', to: '/dashboard/newsletter', icon: FiSend },
+      { name: 'Journal Moderation', to: '/dashboard/journal', icon: FiFileText },
+    ]
+  },
+  {
+    label: 'Support',
+    items: [
+      { name: 'Support Inquiries', to: '/dashboard/support-inquiries', icon: FiMail },
+      { name: 'Support', to: '/dashboard/support', icon: FiMail },
+    ]
+  },
+  {
+    label: 'Marketing & Ads',
+    items: [
+      { name: 'Marketing', to: '/dashboard/marketing', icon: FiTrendingUp },
+      { name: 'Ads Moderation', to: '/dashboard/ads-moderation', icon: FiTrendingUp },
+      { name: 'ROI Hub', to: '/dashboard/performance', icon: FiTrendingUp },
+      { name: 'Promo Hub', to: '/dashboard/promo-hub', icon: FiTrendingUp },
+    ]
+  },
+  {
+    label: 'Finance',
+    items: [
+      { name: 'Financial Audit', to: '/dashboard/financial-audit', icon: FiTrendingUp },
+      { name: 'Settlement', to: '/dashboard/settlement', icon: FiLock },
+    ]
+  },
+  {
+    label: 'System',
+    items: [
+      { name: 'Error Logs', to: '/dashboard/error-logs', icon: FiTerminal },
+      { name: 'DLQ', to: '/dashboard/dlq', icon: FiHash },
+    ]
+  },
 ];
 
 interface SidebarProps {
@@ -100,54 +147,63 @@ export default function Sidebar({ isDesktopCollapsed, toggleDesktop, isMobileOpe
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto p-4 space-y-1.5 scrollbar-thin scrollbar-thumb-zinc-800 hover:scrollbar-thumb-zinc-700">
-          {navigation.map((item) => {
-            const isLocked = false;
-            
-            return (
-              <NavLink
-                key={item.name}
-                to={item.to}
-                end={item.to === '/dashboard'}
-                onClick={(e) => {
-                  if (isLocked) {
-                    e.preventDefault();
-                    setShowUpgradeModal(true);
-                  } else {
-                    if (window.innerWidth < 1024) closeMobile();
-                  }
-                }}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group relative text-[10px] font-black uppercase tracking-[0.15em] ${
-                    isActive && !isLocked
-                      ? 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.1)] border border-white'
-                      : 'text-zinc-500 hover:bg-zinc-900/50 hover:text-white border border-transparent'
-                  } ${isDesktopCollapsed ? 'lg:justify-center px-2' : ''}`
-                }
-                title={isDesktopCollapsed ? item.name : ''}
-              >
-                {({ isActive }) => (
-                  <>
-                    <item.icon className={`text-[17px] shrink-0 transition-all duration-300 ${
-                        isActive && !isLocked ? 'text-black' : isLocked ? 'text-zinc-700' : 'group-hover:scale-110'
-                      }`} />
-                    
-                    {!isDesktopCollapsed && (
-                      <span className="whitespace-nowrap overflow-hidden transition-all duration-300">
-                        {item.name}
-                      </span>
+        <nav className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-zinc-800 hover:scrollbar-thumb-zinc-700">
+          {navigationGroups.map((group) => (
+            <div key={group.label} className="space-y-1.5">
+              {!isDesktopCollapsed && (
+                <p className="px-4 pt-2 pb-1 text-[9px] font-black uppercase tracking-[0.2em] text-zinc-600">
+                  {group.label}
+                </p>
+              )}
+              {group.items.map((item) => {
+                const isLocked = false;
+
+                return (
+                  <NavLink
+                    key={item.name}
+                    to={item.to}
+                    end={item.to === '/dashboard'}
+                    onClick={(e) => {
+                      if (isLocked) {
+                        e.preventDefault();
+                        setShowUpgradeModal(true);
+                      } else {
+                        if (window.innerWidth < 1024) closeMobile();
+                      }
+                    }}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group relative text-[10px] font-black uppercase tracking-[0.15em] ${
+                        isActive && !isLocked
+                          ? 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.1)] border border-white'
+                          : 'text-zinc-500 hover:bg-zinc-900/50 hover:text-white border border-transparent'
+                      } ${isDesktopCollapsed ? 'lg:justify-center px-2' : ''}`
+                    }
+                    title={isDesktopCollapsed ? item.name : ''}
+                  >
+                    {({ isActive }) => (
+                      <>
+                        <item.icon className={`text-[17px] shrink-0 transition-all duration-300 ${
+                            isActive && !isLocked ? 'text-black' : isLocked ? 'text-zinc-700' : 'group-hover:scale-110'
+                          }`} />
+
+                        {!isDesktopCollapsed && (
+                          <span className="whitespace-nowrap overflow-hidden transition-all duration-300">
+                            {item.name}
+                          </span>
+                        )}
+
+                        {!isDesktopCollapsed && isLocked && (
+                          <span className="ml-auto bg-zinc-800 text-zinc-400 text-[8px] font-black px-1.5 py-0.5 border border-zinc-700 rounded-sm">
+                            RESTRICTED
+                          </span>
+                        )}
+                      </>
                     )}
-                    
-                    {!isDesktopCollapsed && isLocked && (
-                      <span className="ml-auto bg-zinc-800 text-zinc-400 text-[8px] font-black px-1.5 py-0.5 border border-zinc-700 rounded-sm">
-                        RESTRICTED
-                      </span>
-                    )}
-                  </>
-                )}
-              </NavLink>
-            );
-          })}
+                  </NavLink>
+                );
+              })}
+            </div>
+          ))}
         </nav>
 
         {/* Footer */}

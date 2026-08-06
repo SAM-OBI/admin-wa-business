@@ -209,7 +209,9 @@ export interface Order {
       images?: string[];
     };
     quantity: number;
-    price: number;
+    priceSnapshot: {
+      unitPriceKobo: number;
+    };
   }>;
   timeline?: Array<{
     description: string;

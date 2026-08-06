@@ -2,6 +2,7 @@ import { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './store/authStore';
 import PageLoader from './components/PageLoader';
+import CookieConsentBanner from './components/CookieConsentBanner';
 
 // Shared Components
 const Layout = lazy(() => import('./components/Layout'));
@@ -13,11 +14,13 @@ const Signup = lazy(() => import(/* webpackChunkName: "auth" */ './pages/Signup'
 const ForgotPassword = lazy(() => import(/* webpackChunkName: "auth" */ './pages/ForgotPassword'));
 const ResetPassword = lazy(() => import(/* webpackChunkName: "auth" */ './pages/ResetPassword'));
 const TwoFactorAuth = lazy(() => import(/* webpackChunkName: "auth" */ './pages/TwoFactorAuth'));
+const MandatoryTwoFactorSetup = lazy(() => import(/* webpackChunkName: "auth" */ './pages/MandatoryTwoFactorSetup'));
 
 // Tier 1: High-Priority Admin Routes (Prefetched)
 const Dashboard = lazy(() => import(/* webpackChunkName: "dashboard" */ './pages/Dashboard'));
 const FinancialAudit = lazy(() => import(/* webpackChunkName: "finance" */ './pages/FinancialAudit'));
 const Orders = lazy(() => import(/* webpackChunkName: "orders" */ './pages/Orders'));
+const AppLedLogistics = lazy(() => import(/* webpackChunkName: "orders" */ './pages/AppLedLogistics'));
 const SettlementManagement = lazy(() => import(/* webpackChunkName: "finance" */ './pages/SettlementManagement'));
 const AccountConsolidations = lazy(() => import(/* webpackChunkName: "management" */ './pages/AccountConsolidations'));
 const CashApplicationWorkbench = lazy(() => import(/* webpackChunkName: "finance" */ './pages/CashApplicationWorkbench'));
@@ -37,6 +40,7 @@ const BlogModeration = lazy(() => import(/* webpackChunkName: "governance" */ '.
 const Complaints = lazy(() => import(/* webpackChunkName: "support" */ './pages/Complaints'));
 const CourtCases = lazy(() => import(/* webpackChunkName: "support" */ './pages/CourtCases'));
 const PlatformFeedback = lazy(() => import(/* webpackChunkName: "support" */ './pages/PlatformFeedback'));
+const PlatformReviews = lazy(() => import(/* webpackChunkName: "support" */ './pages/PlatformReviews'));
 const SupportInquiries = lazy(() => import(/* webpackChunkName: "support" */ './pages/SupportInquiries'));
 const SupportWorkspace = lazy(() => import(/* webpackChunkName: "support" */ './pages/SupportWorkspace'));
 const ErrorLogs = lazy(() => import(/* webpackChunkName: "diagnostics" */ './pages/ErrorLogs'));
@@ -98,15 +102,22 @@ function App() {
         v7_relativeSplatPath: true,
       }}
     >
+      <CookieConsentBanner />
       <Suspense fallback={<PageLoader />}>
         <Routes>
           {/* Public routes */}
           <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+          {/* 🛡️ Admin registration stays closed by default — set both this and the
+              backend's ADMIN_REGISTRATION_ENABLED to true only while actively
+              onboarding a new admin via invite link, then flip both back off. */}
+          {import.meta.env.VITE_ADMIN_REGISTRATION_ENABLED === 'true' && (
+            <Route path="/signup" element={<Signup />} />
+          )}
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/auth/2fa" element={<TwoFactorAuth />} />
-          
+          <Route path="/auth/2fa-setup" element={<MandatoryTwoFactorSetup />} />
+
           {/* Root should redirect to login explicitly */}
           <Route path="/" element={<Navigate to="/login" replace />} />
 
@@ -128,10 +139,12 @@ function App() {
             <Route path="vendors/:id" element={<VendorDetails />} />
             <Route path="subscriptions" element={<Subscriptions />} />
             <Route path="orders" element={<Orders />} />
+            <Route path="logistics/app-led" element={<AppLedLogistics />} />
             <Route path="complaints" element={<Complaints />} />
             <Route path="court-cases" element={<CourtCases />} />
             <Route path="reviews" element={<Reviews />} />
             <Route path="feedback" element={<PlatformFeedback />} />
+            <Route path="platform-reviews" element={<PlatformReviews />} />
             <Route path="support-inquiries" element={<SupportInquiries />} />
             <Route path="support" element={<SupportWorkspace />} />
             <Route path="risk-management" element={<RiskManagement />} />

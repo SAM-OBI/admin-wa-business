@@ -7,6 +7,31 @@ export default {
   theme: {
     extend: {
       colors: {
+        background: 'var(--bg-background)',
+        surface: 'var(--bg-surface)',
+        'surface-elevated': 'var(--bg-surface-elevated)',
+        primary: {
+          DEFAULT: 'var(--color-primary)',
+          hover: 'var(--color-primary-hover)',
+          active: 'var(--color-primary-active)',
+          subtle: 'var(--color-primary-subtle)',
+        },
+        semantic: {
+          success: 'var(--color-success)',
+          warning: 'var(--color-warning)',
+          danger: 'var(--color-danger)',
+          info: 'var(--color-info)',
+        },
+        text: {
+          heading: 'var(--text-heading)',
+          body: 'var(--text-body)',
+          muted: 'var(--text-muted)',
+          inverse: 'var(--text-inverse)',
+        },
+        border: {
+          DEFAULT: 'var(--border-default)',
+          subtle: 'var(--border-subtle)',
+        },
         gold: {
           DEFAULT: '#D4AF37',
           light: '#E5C048',

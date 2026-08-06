@@ -111,7 +111,7 @@ export default function VerifyChallengeModal({
         
         setResending(true);
         try {
-            await resendChallenge(challengeId);
+            await resendChallenge(challengeId, userId, currentFactor.type as 'EMAIL' | 'SMS');
             showToast('Verification code resent', 'success');
             setResendSeconds(60);
             setCode('');

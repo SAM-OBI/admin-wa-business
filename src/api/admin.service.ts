@@ -121,6 +121,17 @@ export const adminService = {
     return response.data;
   },
 
+  // App-Led Logistics (orders where Shopvia itself owns delivery)
+  getAppLedOrders: async <T = any>(params?: any): Promise<ApiResponse<T>> => {
+    const response = await api.get('/admin/logistics/app-led', { params });
+    return response.data;
+  },
+
+  updateAppLedDelivery: async (orderId: string, updates: { status?: string; carrier?: string; trackingNumber?: string }): Promise<ApiResponse<any>> => {
+    const response = await api.patch(`/admin/logistics/app-led/${orderId}`, updates);
+    return response.data;
+  },
+
   // Complaints
   getComplaints: async (params?: any): Promise<ApiResponse<any>> => {
     const response = await api.get('/admin/complaints', { params });
@@ -143,6 +154,17 @@ export const adminService = {
     return response.data;
   },
 
+  // Platform (Marketplace-Level) Reviews
+  getPlatformReviews: async (params?: any): Promise<ApiResponse<any>> => {
+    const response = await api.get('/admin/platform-reviews', { params });
+    return response.data;
+  },
+
+  moderatePlatformReview: async (id: string, status: string, moderationReason?: string): Promise<ApiResponse<any>> => {
+    const response = await api.patch(`/admin/platform-reviews/${id}`, { status, moderationReason });
+    return response.data;
+  },
+
   // Audit Logs
   getAuditLogs: async (params?: any): Promise<ApiResponse<any>> => {
     const response = await api.get('/admin/audit-logs', { params });
@@ -161,18 +183,24 @@ export const adminService = {
   },
 
   // 2FA
+  // 🛡️ [FIX] '/admin/security/2fa/*' has never existed on the backend — the real
+  // mounted routes are '/auth/2fa/*' (auth.routes.ts). setup2FA() 404'd on every
+  // call, so "Enable 2FA" in Settings never got past generating the QR code.
   setup2FA: async (): Promise<ApiResponse<any>> => {
-    const response = await api.post('/admin/security/2fa/setup');
+    const response = await api.post('/auth/2fa/setup');
     return response.data;
   },
 
-  verify2FA: async (token: string): Promise<ApiResponse<any>> => {
-    const response = await api.post('/admin/security/2fa/verify', { token });
+  setup2FAVerify: async (token: string, securityQuestions: { question: string; answer: string }[]): Promise<ApiResponse<{ recoveryCodes: string[]; accessToken?: string }>> => {
+    const response = await api.post('/auth/2fa/verify', { token, securityQuestions });
     return response.data;
   },
 
+  // Note: the real endpoint also requires the account password (`{ token, password }`);
+  // this call passes only the TOTP code, so disabling 2FA will still fail validation
+  // until the Settings form collects a password field too — path is now at least correct.
   disable2FA: async (password: string): Promise<ApiResponse<any>> => {
-    const response = await api.post('/admin/security/2fa/disable', { password });
+    const response = await api.post('/auth/2fa/disable', { password });
     return response.data;
   },
 

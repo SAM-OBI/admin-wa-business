@@ -50,7 +50,7 @@ export default function AgentManagement({ onRefresh }: Props) {
     if (!form.email || !form.displayName) return toast.error('Name and email required');
     setSubmitting(true);
     try {
-      await api.post('/support/admin/agents/invite', form);
+      await api.post('/support/admin/agents', form);
       toast.success(`Invitation sent to ${form.email}`);
       setShowInvite(false);
       setForm({ displayName: '', email: '', role: 'support_agent', queues: ['general'] });

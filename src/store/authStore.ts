@@ -21,7 +21,7 @@ interface AuthState {
   isLoading: boolean;
   login: (credentials: { email: string; password: string }) => Promise<any>;
   verifyChallenge: (data: { challengeId: string; otp: string; userId?: string; deviceId?: string; deviceName?: string }, idempotencyKey?: string) => Promise<any>;
-  resendChallenge: (challengeId: string) => Promise<any>;
+  resendChallenge: (challengeId: string, userId?: string, method?: 'EMAIL' | 'SMS' | 'WHATSAPP') => Promise<any>;
   verify2FA: (tempToken: string, totpCode: string) => Promise<any>;
   register: (data: { name: string; email: string; phone: string; password: string; role?: string; inviteToken?: string }) => Promise<void>;
   logout: () => void;
@@ -83,6 +83,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         return { requires2FA: true, tempToken };
       }
 
+      // 🛡️ [ADMIN HARDENING] Mandatory 2FA — no full session was issued, only a
+      // narrowly-scoped setup token good for the enrollment endpoints. Stash it
+      // the same way a real token is stashed so the axios interceptor attaches
+      // it, but do NOT set isAuthenticated — the dashboard stays locked out.
+      const requiresTwoFactorSetup = response.data?.requiresTwoFactorSetup || response.data?.data?.requiresTwoFactorSetup;
+      if (requiresTwoFactorSetup) {
+        const setupToken = response.data?.accessToken || response.data?.data?.accessToken;
+        if (setupToken) sessionStorage.setItem('token', setupToken);
+        return { requiresTwoFactorSetup: true };
+      }
+
       const { data, accessToken } = response.data;
       
       const token = accessToken || response.data.data?.accessToken;
@@ -126,9 +137,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
-  resendChallenge: async (challengeId) => {
+  resendChallenge: async (challengeId, userId, method = 'EMAIL') => {
     try {
-      const response = await api.post('/auth/login/resend-challenge', { challengeId });
+      // 🛡️ [FIX] '/auth/login/resend-challenge' has never existed on the backend —
+      // the real route is '/login/resend-otp', expecting { userId, token, method }
+      // (token = the challenge's publicId). Every "Resend Code" click 404'd.
+      const response = await api.post('/auth/login/resend-otp', { userId, token: challengeId, method });
       return response.data;
     } catch (error) {
       console.error('Resend challenge error:', error);
@@ -178,7 +192,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         const response = await api.get('/auth/me');
         set({ admin: response.data.data, isAuthenticated: true });
       } catch (error: any) {
-        if (error.response?.status === 401) {
+        // 🛡️ A restricted mode:'mfa_setup' token (see MandatoryTwoFactorSetup.tsx)
+        // gets 403'd by every route but the 2FA setup ones, including this one —
+        // treat that the same as 401 so a stale/partial session clears instead of
+        // leaving isAuthenticated:true with no admin data behind it.
+        if (error.response?.status === 401 || error.response?.status === 403) {
           set({ admin: null, isAuthenticated: false });
         }
       } finally {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState} from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaUserShield, FaStore, FaShoppingBag, FaHistory, FaTimes, FaShieldAlt } from 'react-icons/fa';
 import { HardenedSearchInput } from './HardenedSearchInput';

@@ -165,7 +165,7 @@ export default function Orders() {
                      </div>
                   </td>
                   <td className="px-8 py-6 font-black text-white text-sm">
-                    ₦{order.totalAmount.toLocaleString()}
+                    ₦{(order.totalAmount / 100).toLocaleString()}
                   </td>
                   <td className="px-8 py-6">
                      <span className={`inline-flex px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded border ${

@@ -20,6 +20,14 @@ export const DashboardStatsSchema = z.object({
     today: z.number().default(0),
     week: z.number().default(0),
     month: z.number().default(0),
+    // 🛡️ [FIX] Real per-source platform revenue (buyer protection fee, ads,
+    // subscriptions) — the top-level today/week/month were GMV before this
+    // fix, not Shopvia's actual take, and had no breakdown by source at all.
+    breakdown: z.object({
+      today: z.object({ buyerFee: z.number().default(0), ads: z.number().default(0), subscription: z.number().default(0), total: z.number().default(0) }).optional(),
+      week: z.object({ buyerFee: z.number().default(0), ads: z.number().default(0), subscription: z.number().default(0), total: z.number().default(0) }).optional(),
+      month: z.object({ buyerFee: z.number().default(0), ads: z.number().default(0), subscription: z.number().default(0), total: z.number().default(0) }).optional(),
+    }).optional(),
   }).default({ today: 0, week: 0, month: 0 }),
 });
 

@@ -78,6 +78,15 @@ export default function Login() {
         return;
       }
 
+      // 🛡️ [ADMIN HARDENING] 2FA is mandatory for admin accounts — this account
+      // doesn't have it yet, so it gets a forced enrollment screen instead of a
+      // dashboard. There is no session to land in until setup completes.
+      if (result && result.requiresTwoFactorSetup) {
+        closeLoading();
+        navigate('/auth/2fa-setup', { replace: true });
+        return;
+      }
+
       handleSuccessfulLogin();
     } catch (err: any) {
       closeLoading();

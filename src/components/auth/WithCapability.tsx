@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { type ReactNode} from 'react';
 import { useCapabilities, Capability } from '../../hooks/useCapabilities';
 import { FaLock } from 'react-icons/fa';
 

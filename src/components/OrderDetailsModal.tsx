@@ -105,7 +105,7 @@ export default function OrderDetailsModal({ order, onClose }: OrderDetailsModalP
                     <p className="font-medium text-gray-900">{item.product.name}</p>
                     <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
                   </div>
-                  <p className="font-semibold text-gray-900">${(item.price * item.quantity).toFixed(2)}</p>
+                  <p className="font-semibold text-gray-900">₦{((item.priceSnapshot.unitPriceKobo * item.quantity) / 100).toLocaleString()}</p>
                 </div>
               ))}
             </div>
@@ -120,11 +120,11 @@ export default function OrderDetailsModal({ order, onClose }: OrderDetailsModalP
             <div className="space-y-2">
               <div className="flex justify-between text-gray-700">
                 <span>Subtotal</span>
-                <span>${order.totalAmount.toFixed(2)}</span>
+                <span>₦{(order.totalAmount / 100).toLocaleString()}</span>
               </div>
               <div className="flex justify-between font-bold text-gray-900 text-lg pt-2 border-t border-gray-300">
                 <span>Total</span>
-                <span>${order.totalAmount.toFixed(2)}</span>
+                <span>₦{(order.totalAmount / 100).toLocaleString()}</span>
               </div>
             </div>
           </div>

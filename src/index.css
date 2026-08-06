@@ -20,6 +20,61 @@ body {
   min-height: 100vh;
 }
 
+:root {
+  /* Surface colors */
+  --bg-background: #ffffff;
+  --bg-surface: #f8fafc;
+  --bg-surface-elevated: #ffffff;
+  
+  /* Brand */
+  --color-primary: #0f172a;
+  --color-primary-hover: #1e293b;
+  --color-primary-active: #334155;
+  --color-primary-subtle: #f1f5f9;
+  
+  /* Semantic */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-info: #3b82f6;
+  
+  /* Text */
+  --text-heading: #020617;
+  --text-body: #334155;
+  --text-muted: #64748b;
+  --text-inverse: #ffffff;
+  
+  /* Borders */
+  --border-default: #e2e8f0;
+  --border-subtle: #f1f5f9;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-background: #020617;
+    --bg-surface: #0f172a;
+    --bg-surface-elevated: #1e293b;
+    
+    --color-primary: #f8fafc;
+    --color-primary-hover: #f1f5f9;
+    --color-primary-active: #e2e8f0;
+    --color-primary-subtle: #334155;
+    
+    --text-heading: #f8fafc;
+    --text-body: #cbd5e1;
+    --text-muted: #94a3b8;
+    --text-inverse: #020617;
+    
+    --border-default: #334155;
+    --border-subtle: #1e293b;
+  }
+}
+
+body {
+  background-color: var(--bg-background);
+  color: var(--text-body);
+}
+
 /* 💎 NUCLEAR CONTRAST FIX (v5.4) - Forces DARK text on ALL inputs */
 input, select, textarea {
   color: #0f172a !important; 
