@@ -2,94 +2,80 @@ import { useState, useEffect } from 'react';
 import { useAuthStore } from '../store/authStore';
 import api from '../api/axios';
 import { adminService } from '../api/admin.service';
-import { FiClock, FiMonitor, FiShield, FiCheckCircle } from 'react-icons/fi';
+import { FiMonitor, FiShield, FiCheckCircle } from 'react-icons/fi';
 import SecurityQuestionModal from '../components/SecurityQuestionModal';
 
 // Login History Component ... (unchanged)
-// Enhanced Session & Login History Component
-const LoginHistory = () => {
-    const [data, setData] = useState<{ attempts: any[], sessions: any[] }>({ attempts: [], sessions: [] });
+// ─── Device Sessions Component ─────────────────────────────────────────────────
+const DeviceSessions = () => {
+    const [sessions, setSessions] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
-    const fetchLoginHistory = async () => {
+    const fetchSessions = async () => {
         try {
-            const res = await api.get('/auth/login-history');
-            setData(res.data.data || { attempts: [], sessions: [] });
+            const res = await api.get('/auth/sessions');
+            setSessions(res.data.data || []);
         } catch (error) {
-            console.error('Failed to fetch login history:', error);
+            console.error('Failed to fetch sessions:', error);
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchLoginHistory();
+        fetchSessions();
     }, []);
 
     const handleRevokeSession = async (sessionId: string) => {
         try {
-            await api.post(`/auth/sessions/${sessionId}/revoke`);
-            fetchLoginHistory();
+            await api.delete(`/auth/sessions/${sessionId}`);
+            fetchSessions();
         } catch {
             console.error('Failed to logout device');
         }
     };
 
-    if (loading) return <div className="p-4 text-center text-gray-500">Loading security data...</div>;
+    if (loading) return <div className="p-4 text-center text-gray-500">Loading active sessions...</div>;
 
     return (
         <div className="space-y-6">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                    <FiMonitor className="text-blue-600" /> Active Devices
+                    <FiMonitor className="text-blue-600" /> Active Devices (Max 2)
                 </h2>
-                <div className="space-y-3">
-                    {data.sessions.map((session: any) => (
-                        <div key={session.id} className="flex items-center justify-between p-4 bg-blue-50/30 rounded-lg border border-blue-100">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 bg-blue-100 rounded-full text-blue-600">
-                                    <FiMonitor />
-                                </div>
-                                <div>
-                                    <p className="text-sm font-bold text-gray-800">
-                                        {session.device}
-                                        {session.isActive && <span className="ml-2 text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full uppercase tracking-wider">Active Now</span>}
-                                    </p>
-                                    <p className="text-xs text-gray-500">{session.ipAddress} • {new Date(session.loginTime).toLocaleString()}</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {sessions.map((session: any) => (
+                        <div key={session.id} className="flex flex-col p-4 bg-blue-50/30 rounded-lg border border-blue-100">
+                            <div className="flex items-start justify-between mb-3">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2.5 bg-blue-100 rounded-full text-blue-600">
+                                        <FiMonitor size={20} />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-bold flex items-center gap-2">
+                                            {session.deviceName || 'Unknown Device'}
+                                            {session.isCurrent && (
+                                                <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full uppercase tracking-wider font-bold">This Device</span>
+                                            )}
+                                        </p>
+                                        <p className="text-xs text-gray-500 mt-0.5">{session.ipAddress}</p>
+                                    </div>
                                 </div>
                             </div>
-                            <button 
-                                onClick={() => handleRevokeSession(session.id)}
-                                className="text-xs font-semibold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition"
-                            >
-                                Logout
-                            </button>
-                        </div>
-                    ))}
-                    {data.sessions.length === 0 && <p className="text-sm text-gray-500 text-center py-4 italic">No active sessions found.</p>}
-                </div>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                    <FiClock className="text-gray-600" /> Recent Activity
-                </h2>
-                <div className="space-y-3">
-                    {data.attempts.map((login: any) => (
-                        <div key={login.id} className="flex items-center justify-between p-3 bg-gray-50/50 rounded-lg border border-gray-100">
-                            <div className="flex items-center gap-3">
-                                <div className="text-gray-400">
-                                    <FiMonitor />
-                                </div>
-                                <div>
-                                    <p className="text-xs font-semibold text-gray-700">{login.device}</p>
-                                    <p className="text-[10px] text-gray-400">{new Date(login.loginTime).toLocaleString()}</p>
-                                </div>
+                            <div className="flex items-center justify-between mt-auto pt-3 border-t border-blue-100/50">
+                                <p className="text-[11px] text-gray-400">Active: {new Date(session.lastUsedAt || session.createdAt).toLocaleString()}</p>
+                                {!session.isCurrent && (
+                                    <button
+                                        onClick={() => handleRevokeSession(session.id)}
+                                        className="text-xs font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 px-3 py-1.5 rounded-lg transition"
+                                    >
+                                        Log Out
+                                    </button>
+                                )}
                             </div>
-                            <span className="text-[10px] font-mono text-gray-300">{login.ipAddress}</span>
                         </div>
                     ))}
-                    {data.attempts.length === 0 && <p className="text-sm text-gray-500 text-center py-4 italic">No recent activity detected.</p>}
+                    {sessions.length === 0 && <p className="text-sm text-gray-500 col-span-full py-4 italic">No active sessions found.</p>}
                 </div>
             </div>
         </div>
@@ -431,7 +417,7 @@ export default function SettingsPage() {
                 onSubmit={handleQuestionsSubmit}
               />
 
-              <LoginHistory />
+              <DeviceSessions />
           </div>
       </div>
     </div>

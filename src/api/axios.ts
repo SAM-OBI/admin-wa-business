@@ -196,7 +196,12 @@ api.interceptors.response.use(
         // 🛡️ [v105.8] Terminal Safety Guard
         if (refreshCoordinator.getState() === 'TERMINAL_FAILURE') {
           console.warn(`[Admin:Auth] Session is TERMINAL. Skipping coordination.`);
-          if (!isOnLoginPage) window.location.href = '/login';
+          if (!isOnLoginPage) {
+              if (errorCode === 'SESSION_REVOKED' || errorCode === 'DEVICE_REVOKED' || errorCode === 'SESSION_EVICTED') {
+                  sessionStorage.setItem('auth_redirect_reason', errorCode);
+              }
+              window.location.href = '/login';
+          }
           return Promise.reject(error);
         }
 
@@ -211,7 +216,12 @@ api.interceptors.response.use(
       } catch (refreshError) {
         console.error('[Admin:Auth] Global refresh failed. Terminating session.');
         sessionStorage.removeItem('token');
-        if (!isOnLoginPage) window.location.href = '/login';
+        if (!isOnLoginPage) {
+            if (errorCode === 'SESSION_REVOKED' || errorCode === 'DEVICE_REVOKED' || errorCode === 'SESSION_EVICTED') {
+                sessionStorage.setItem('auth_redirect_reason', errorCode);
+            }
+            window.location.href = '/login';
+        }
         return Promise.reject(refreshError);
       }
     }

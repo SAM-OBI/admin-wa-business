@@ -39,6 +39,19 @@ export default function Login() {
     }
   }, [isAuthenticated, navigate]);
 
+  // Handle redirect reasons
+  useEffect(() => {
+    const reason = sessionStorage.getItem('auth_redirect_reason');
+    if (reason) {
+      sessionStorage.removeItem('auth_redirect_reason');
+      if (reason === 'SESSION_REVOKED' || reason === 'DEVICE_REVOKED') {
+          showError('You have been logged out because this device session was revoked.', 'Session Revoked');
+      } else if (reason === 'SESSION_EVICTED') {
+          showError('You have been logged out to make room for another device (Maximum of 2 active devices allowed).', 'Session Evicted');
+      }
+    }
+  }, []);
+
   const handleSuccessfulLogin = () => {
     closeLoading();
     showSuccess('Access Granted', 'Welcome back, Admin');
