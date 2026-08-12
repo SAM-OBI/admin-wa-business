@@ -99,6 +99,20 @@ export default function VendorDetails() {
     }
   };
 
+  const handleCacReview = async (decision: 'verified' | 'rejected') => {
+    const reason = decision === 'rejected'
+      ? (prompt('Enter reason for rejecting this CAC submission:') || undefined)
+      : undefined;
+    if (decision === 'rejected' && !reason) return;
+
+    try {
+      await adminService.reviewCacVerification(id!, decision, reason);
+      fetchVendorDetails();
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Failed to review CAC verification');
+    }
+  };
+
   const handleRevoke = async () => {
     const categories = ['POLICY_VIOLATION', 'IDENTITY_MISMATCH', 'REPUTATION_MANIPULATION', 'LEGAL_COMPLIANCE'];
     const category = prompt(`Select Enforcement Category:\n${categories.join('\n')}`, 'POLICY_VIOLATION');
@@ -172,6 +186,14 @@ export default function VendorDetails() {
       </div>
     );
   }
+
+  // 🛡️ Store.verifications[type='cac'] is the canonical CAC state — shared
+  // by both the SLA Accountability panel and the CAC Business Registry
+  // panel below, both of which previously read the wrong object entirely
+  // (vendor.verification, personal BVN/NIN KYC, which has no CAC fields at
+  // all — manualReviewDeadline/slaStatus/assignedAdminId only ever existed
+  // on this Store-side entry).
+  const cacEntry = (vendor as any).store?.verifications?.find((v: any) => v.type === 'cac');
 
   const getRiskBadge = () => {
     const level = vendor.riskProfile?.level || 'low';
@@ -787,28 +809,28 @@ export default function VendorDetails() {
                 </span>
               </div>
 
-              {vendor.verification?.manualReviewDeadline && (
+              {cacEntry?.manualReviewDeadline && (
                 <div className={`mt-4 p-4 rounded-xl border ${
-                  vendor.verification.slaStatus === 'BREACHED' ? 'bg-red-500/10 border-red-500/20' :
-                  vendor.verification.slaStatus === 'URGENT' ? 'bg-orange-500/10 border-orange-500/20' :
+                  cacEntry.slaStatus === 'BREACHED' ? 'bg-red-500/10 border-red-500/20' :
+                  cacEntry.slaStatus === 'URGENT' ? 'bg-orange-500/10 border-orange-500/20' :
                   'bg-blue-500/10 border-blue-500/20'
                 }`}>
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">SLA Accountability</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">CAC SLA Accountability</span>
                     <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded ${
-                      vendor.verification.slaStatus === 'BREACHED' ? 'bg-red-600 text-white' :
-                      vendor.verification.slaStatus === 'URGENT' ? 'bg-orange-500 text-white' :
+                      cacEntry.slaStatus === 'BREACHED' ? 'bg-red-600 text-white' :
+                      cacEntry.slaStatus === 'URGENT' ? 'bg-orange-500 text-white' :
                       'bg-blue-600 text-white'
                     }`}>
-                      {vendor.verification.slaStatus}
+                      {cacEntry.slaStatus}
                     </span>
                   </div>
                   <p className="text-xs text-white font-bold">
-                    Deadline: {new Date(vendor.verification.manualReviewDeadline).toLocaleString()}
+                    Deadline: {new Date(cacEntry.manualReviewDeadline).toLocaleString()}
                   </p>
-                  {vendor.verification.assignedAdminId && (
+                  {cacEntry.assignedAdminId && (
                     <p className="text-[10px] text-zinc-400 mt-1 uppercase font-bold tracking-tight">
-                      Handler ID: {vendor.verification.assignedAdminId}
+                      Handler ID: {cacEntry.assignedAdminId}
                     </p>
                   )}
                 </div>
@@ -855,39 +877,73 @@ export default function VendorDetails() {
               )}
 
               {/* [v10.0] CAC Registry Oversight */}
-              {vendor.verification?.status !== 'unverified' && (
-                <div className="pt-4 mt-4 border-t border-zinc-800/60 bg-blue-500/5 p-4 rounded-xl border border-blue-500/10">
-                   <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-3 flex items-center gap-2">
-                     <FiShield /> CAC Business Registry
-                   </p>
-                   
-                   <div className="flex justify-between items-center bg-black/40 p-3 rounded-lg border border-white/5">
-                      <div>
-                        <p className="text-[8px] font-black text-zinc-500 uppercase tracking-widest mb-1">Registration No.</p>
-                        <span className="text-white font-mono text-xs font-bold tracking-widest">
-                           {vendor.verification?.cacNumber || 'RC-XXXXXX'}
-                        </span>
-                      </div>
-                      <a 
-                        href={`https://search.cac.gov.ng/home`} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-[9px] font-black uppercase px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-500 transition-all flex items-center gap-1 shadow-lg shadow-blue-600/20"
-                      >
-                         Verify <FiExternalLink size={10} />
-                      </a>
-                   </div>
+              {/* 🛡️ [FIX] CAC data lives on Store.verifications[type='cac'],
+                  not on the vendor's personal KYC object (vendor.verification
+                  is BVN/NIN identity — a separate, unrelated field). The old
+                  code read vendor.verification?.cacNumber (a field that does
+                  not exist anywhere in the schema) and gated the whole panel
+                  on vendor.verification?.status, so it always showed the
+                  'RC-XXXXXX' placeholder and was visible/hidden based on the
+                  wrong verification entirely. */}
+              {(() => {
+                if (!cacEntry) return null;
+                const rcNumber = cacEntry.metadata?.rcNumber || cacEntry.metadata?.businessName;
+                return (
+                  <div className="pt-4 mt-4 border-t border-zinc-800/60 bg-blue-500/5 p-4 rounded-xl border border-blue-500/10">
+                     <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                       <FiShield /> CAC Business Registry
+                       <span className="ml-auto text-[8px] px-2 py-0.5 rounded bg-white/5 text-zinc-400 normal-case tracking-normal">
+                         {cacEntry.status}{cacEntry.level === 'format_only' && cacEntry.status === 'pending' ? ' · awaiting manual review' : ''}
+                       </span>
+                     </p>
 
-                   <div className="mt-3 flex gap-2">
-                      <button 
-                        onClick={() => handleRevoke()}
-                        className="w-full py-2 bg-red-600/10 hover:bg-red-600/20 text-red-500 rounded text-[9px] font-black uppercase tracking-widest border border-red-500/20 transition-all"
-                      >
-                        Flag Integrity Alert
-                      </button>
-                   </div>
-                </div>
-              )}
+                     <div className="flex justify-between items-center bg-black/40 p-3 rounded-lg border border-white/5">
+                        <div>
+                          <p className="text-[8px] font-black text-zinc-500 uppercase tracking-widest mb-1">Registration No.</p>
+                          <span className="text-white font-mono text-xs font-bold tracking-widest">
+                             {rcNumber || 'RC-XXXXXX'}
+                          </span>
+                        </div>
+                        <a
+                          href={`https://search.cac.gov.ng/home`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[9px] font-black uppercase px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-500 transition-all flex items-center gap-1 shadow-lg shadow-blue-600/20"
+                        >
+                           Verify <FiExternalLink size={10} />
+                        </a>
+                     </div>
+
+                     {cacEntry.status === 'pending' && (
+                        <div className="mt-3 flex gap-2">
+                           <button
+                             onClick={() => handleCacReview('verified')}
+                             className="flex-1 py-2 bg-green-600/10 hover:bg-green-600/20 text-green-500 rounded text-[9px] font-black uppercase tracking-widest border border-green-500/20 transition-all"
+                           >
+                             Approve CAC
+                           </button>
+                           <button
+                             onClick={() => handleCacReview('rejected')}
+                             className="flex-1 py-2 bg-red-600/10 hover:bg-red-600/20 text-red-500 rounded text-[9px] font-black uppercase tracking-widest border border-red-500/20 transition-all"
+                           >
+                             Reject CAC
+                           </button>
+                        </div>
+                     )}
+
+                     {cacEntry.status === 'verified' && (
+                        <div className="mt-3 flex gap-2">
+                           <button
+                             onClick={() => handleRevoke()}
+                             className="w-full py-2 bg-red-600/10 hover:bg-red-600/20 text-red-500 rounded text-[9px] font-black uppercase tracking-widest border border-red-500/20 transition-all"
+                           >
+                             Flag Integrity Alert
+                           </button>
+                        </div>
+                     )}
+                  </div>
+                );
+              })()}
             </div>
           </div>
 

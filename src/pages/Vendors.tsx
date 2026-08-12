@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { adminService, Vendor } from '../api/admin.service';
+import { adminService, Vendor, VerificationStatus } from '../api/admin.service';
 import { FiShield, FiExternalLink, FiCheckCircle, FiXCircle, FiAlertCircle } from 'react-icons/fi';
 import { HardenedSearchInput } from '../components/search/HardenedSearchInput';
 import { Link } from 'react-router-dom';
@@ -92,8 +92,12 @@ export default function Vendors() {
   const filteredVendors = vendors;
 
 
-  const getVerificationBadge = (verification?: Vendor['verification']) => {
-    const status = verification?.status || 'unverified';
+  // 🛡️ Takes a bare status rather than the whole verification object — this
+  // is now called for both personal KYC (vendor.verification?.status) and
+  // CAC (vendor.cacStatus), two separate fields on two separate models; a
+  // single shared badge renderer keyed only on the status string avoids
+  // needing to fabricate a fake verification-shaped object for the CAC case.
+  const getVerificationBadge = (status: VerificationStatus = 'unverified') => {
     const colors = {
       verified: 'bg-green-100 text-green-700',
       pending: 'bg-yellow-100 text-yellow-700',
@@ -202,8 +206,19 @@ export default function Vendors() {
                     <div className="text-[10px] text-zinc-600 font-black uppercase mt-1">INTAKE {new Date(vendor.createdAt).toLocaleDateString()}</div>
                   </td>
                   <td className="px-8 py-6">
+                    {/* 🛡️ [FIX] This column used to show only vendor.verification
+                        (personal BVN/NIN KYC) under the label "Compliance" — CAC/
+                        business-registration status, a completely separate field
+                        on a separate model (Store.verifications[type='cac']), was
+                        never shown here at all. Both are now shown explicitly and
+                        labeled, rather than one silently standing in for the
+                        other. CAC has no inline approve/reject here — that action
+                        already exists, correctly, on the vendor detail page. */}
                     <div className="flex flex-col gap-2">
-                      {getVerificationBadge(vendor.verification)}
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[8px] font-black text-zinc-600 uppercase w-8">KYC</span>
+                        {getVerificationBadge(vendor.verification?.status)}
+                      </div>
                       {vendor.verification?.status === 'pending' && (
                         <div className="flex gap-2 mt-1">
                           <button
@@ -220,6 +235,10 @@ export default function Vendors() {
                           </button>
                         </div>
                       )}
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[8px] font-black text-zinc-600 uppercase w-8">CAC</span>
+                        {getVerificationBadge(vendor.cacStatus)}
+                      </div>
                     </div>
                   </td>
                   <td className="px-8 py-6">

@@ -79,6 +79,18 @@ export interface Vendor {
   isVerified: boolean;
   storeName?: string;
   storeId?: string;
+  // 🛡️ [FIX] manualReviewDeadline/slaStatus/assignedAdminId/cacNumber used to
+  // live on this interface as if they were part of personal identity
+  // verification — they're not. This `verification` object mirrors
+  // User.verification (BVN/NIN identity KYC) exactly; those four fields
+  // actually belong to Store.verifications[type='cac'] (a different model
+  // entirely, see CacVerification.tsx in the vendor app and
+  // reviewCacVerification on the backend), and having them typed here is
+  // almost certainly what led the original CAC panel code to read
+  // `vendor.verification?.cacNumber` — a field the backend never populates
+  // at that path, since it doesn't exist there. CAC status now has its own
+  // top-level field on Vendor below (`cacStatus`), sourced from the real
+  // canonical location.
   verification?: {
     status: VerificationStatus;
     rejectionReason?: string;
@@ -88,17 +100,18 @@ export interface Vendor {
     documentUrl?: string;
     attempts?: number;
     failureReason?: string;
-    manualReviewDeadline?: string;
-    slaStatus?: 'NORMAL' | 'URGENT' | 'BREACHED';
-    assignedAdminId?: string;
     recoveryState?: {
       probationEndsAt: string;
       isRecovering: boolean;
       originalScore: number;
     };
     enforcementCategory?: string;
-    cacNumber?: string;
   };
+  // CAC/business-registration verification status — Store.verifications[type='cac'].status,
+  // projected minimally by the backend (not the full verifications array;
+  // see admin.service.ts::getAllVendors). Distinct from `verification`
+  // above, which is personal identity KYC only.
+  cacStatus?: VerificationStatus;
   reputation?: Reputation;
   accountStatus?: {
     status: AccountStatus;

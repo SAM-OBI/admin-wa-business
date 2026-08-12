@@ -83,8 +83,22 @@ export const adminService = {
     return response.data;
   },
 
+  // 🛡️ [FIX] This targets the vendor's personal BVN/NIN identity verification
+  // (User.verification.status) — NOT CAC/business verification, which is a
+  // separate field (Store.verifications[type='cac']) with its own review
+  // action, reviewCacVerification below. Was calling a route that never
+  // existed (PATCH /admin/vendors/:id/verification); the real, working
+  // backend implementation for this exact field lives at PATCH
+  // /admin/users/:id/verification (updateUserVerification).
   updateVendorVerification: async (id: string, status: string, reason?: string): Promise<ApiResponse<any>> => {
-    const response = await api.patch(`/admin/vendors/${id}/verification`, { status, reason });
+    const response = await api.patch(`/admin/users/${id}/verification`, { status, reason });
+    return response.data;
+  },
+
+  // CAC (business registration) manual review — separate from the personal
+  // KYC action above. decision must be 'verified' or 'rejected'.
+  reviewCacVerification: async (id: string, decision: 'verified' | 'rejected', reason?: string): Promise<ApiResponse<any>> => {
+    const response = await api.patch(`/admin/vendors/${id}/cac-verification`, { decision, reason });
     return response.data;
   },
 
