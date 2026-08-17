@@ -2,11 +2,16 @@ import { useEffect, useState, useCallback } from 'react';
 import { adminService, User } from '../api/admin.service';
 import { FiCheckCircle, FiXCircle, FiExternalLink, FiAlertCircle } from 'react-icons/fi';
 import { HardenedSearchInput } from '../components/search/HardenedSearchInput';
+import { ErrorState } from '../components/ErrorState';
+import { logger } from '../utils/logger';
 import { Link } from 'react-router-dom';
 
 export default function Users() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  // 🛡️ [ADR-005] Same fix as Vendors.tsx — a failed fetch used to be
+  // indistinguishable from "genuinely zero users."
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [pagination, setPagination] = useState({
     page: 1,
@@ -22,6 +27,7 @@ export default function Users() {
 
   const fetchUsers = useCallback(async (page = 1) => {
     setLoading(true);
+    setError(null);
     try {
       const data = await adminService.getUsers<any>({
         search: searchTerm,
@@ -40,8 +46,10 @@ export default function Users() {
       } else {
          setUsers([]);
       }
-    } catch (error) {
-      console.error('Failed to fetch users:', error);
+    } catch (err: any) {
+      logger.error('Failed to fetch users:', err);
+      setError(err?.response?.data?.message || 'We couldn\'t load users right now.');
+      setUsers([]);
     } finally {
       setLoading(false);
     }
@@ -73,7 +81,7 @@ export default function Users() {
         u._id === user._id ? { ...u, isActive: !u.isActive } : u
       ));
     } catch (error) {
-      console.error('Failed to update user status:', error);
+      logger.error('Failed to update user status:', error);
       fetchUsers(pagination.page);
     }
   };
@@ -232,7 +240,13 @@ export default function Users() {
                 </tr>
               ))}
               
-              {filteredUsers.length === 0 && (
+              {error ? (
+                <tr>
+                  <td colSpan={5}>
+                    <ErrorState message={error} onRetry={() => fetchUsers(pagination.page)} />
+                  </td>
+                </tr>
+              ) : filteredUsers.length === 0 && (
                 <tr>
                   <td colSpan={5} className="px-8 py-24 text-center">
                     <div className="flex flex-col items-center gap-4">

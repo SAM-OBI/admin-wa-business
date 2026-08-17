@@ -2,11 +2,17 @@ import { useEffect, useState, useCallback } from 'react';
 import { adminService, Vendor, VerificationStatus } from '../api/admin.service';
 import { FiShield, FiExternalLink, FiCheckCircle, FiXCircle, FiAlertCircle } from 'react-icons/fi';
 import { HardenedSearchInput } from '../components/search/HardenedSearchInput';
+import { ErrorState } from '../components/ErrorState';
+import { logger } from '../utils/logger';
 import { Link } from 'react-router-dom';
 
 export default function Vendors() {
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [loading, setLoading] = useState(true);
+  // 🛡️ [ADR-005] A failed fetch used to fall through to setVendors([]) with
+  // only a console.error to notice it by — indistinguishable on screen from
+  // "there are genuinely zero vendors," for an admin moderation tool.
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
   const [filters, setFilters] = useState({
@@ -23,6 +29,7 @@ export default function Vendors() {
 
   const fetchVendors = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const response = await adminService.getVendors<any>({
          page: pagination.page,
@@ -31,15 +38,16 @@ export default function Vendors() {
          accountStatus: filters.status,
          verificationStatus: filters.verificationStatus
       });
-      
+
       if (response.data && response.data.vendors) {
          setVendors(response.data.vendors);
          setPagination(prev => ({ ...prev, ...response.data.pagination }));
       } else {
          setVendors([]);
       }
-    } catch (error) {
-      console.error('Failed to fetch vendors:', error);
+    } catch (err: any) {
+      logger.error('Failed to fetch vendors:', err);
+      setError(err?.response?.data?.message || 'We couldn\'t load vendors right now.');
       setVendors([]);
     } finally {
       setLoading(false);
@@ -73,7 +81,7 @@ export default function Vendors() {
         v._id === vendor._id ? { ...v, isActive: !v.isActive } : v
       ));
     } catch (error) {
-      console.error('Failed to update vendor status:', error);
+      logger.error('Failed to update vendor status:', error);
       fetchVendors();
     }
   };
@@ -85,7 +93,7 @@ export default function Vendors() {
       await adminService.updateVendorVerification(vendorId, status, reason);
       fetchVendors();
     } catch (error) {
-      console.error('Failed to update verification:', error);
+      logger.error('Failed to update verification:', error);
     }
   };
 
@@ -293,7 +301,15 @@ export default function Vendors() {
                 </tr>
               ))}
               
-              {filteredVendors.length === 0 && (
+              {/* 🛡️ [ADR-005] Distinguish "the fetch failed" from "there are
+                  genuinely zero vendors" — these used to render identically. */}
+              {error ? (
+                <tr>
+                  <td colSpan={5}>
+                    <ErrorState message={error} onRetry={fetchVendors} />
+                  </td>
+                </tr>
+              ) : filteredVendors.length === 0 && (
                 <tr>
                   <td colSpan={5} className="px-8 py-24 text-center">
                     <div className="flex flex-col items-center gap-4">
