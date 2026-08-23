@@ -1,9 +1,9 @@
 import { NavLink } from 'react-router-dom';
-import { 
-  FiHome, FiPackage, FiUsers, FiShoppingBag, 
-  FiAlertCircle, FiMessageSquare, FiStar, 
+import {
+  FiHome, FiPackage, FiUsers, FiShoppingBag,
+  FiAlertCircle, FiMessageSquare, FiStar,
   FiShield, FiFileText, FiSettings, FiTrendingUp, FiMail,
-  FiMenu, FiChevronLeft, FiLock, FiTerminal, FiHash, FiSend, FiGitPullRequest, FiTruck
+  FiMenu, FiChevronLeft, FiLock, FiTerminal, FiHash, FiSend, FiGitPullRequest, FiTruck, FiFlag
 } from 'react-icons/fi';
 import { useState } from 'react';
 // useState imported above
@@ -14,7 +14,7 @@ import UpgradeModal from './UpgradeModal';
 // desktop) that's a long undifferentiated scroll with no way to scan for a
 // section. Grouped into labeled sections matching the domains the rest of
 // this dashboard already uses (Governance Hub, Trust & Safety, etc.).
-const navigationGroups: { label: string; items: { name: string; to: string; icon: typeof FiHome }[] }[] = [
+export const navigationGroups: { label: string; items: { name: string; to: string; icon: typeof FiHome }[] }[] = [
   {
     label: 'Overview',
     items: [
@@ -36,6 +36,11 @@ const navigationGroups: { label: string; items: { name: string; to: string; icon
     label: 'Trust & Safety',
     items: [
       { name: 'Complaints', to: '/dashboard/complaints', icon: FiAlertCircle },
+      // 🛡️ [D-6 FIX] Route existed and is fully backend-wired
+      // (dispute.routes.ts's admin-protected /disputes/admin/all) but had no
+      // nav entry point anywhere in the admin app — unreachable except by
+      // typing the URL directly.
+      { name: 'Disputes', to: '/dashboard/disputes', icon: FiFlag },
       { name: 'Court Cases', to: '/dashboard/court-cases', icon: FiMessageSquare },
       { name: 'Risk Management', to: '/dashboard/risk-management', icon: FiShield },
       { name: 'Security SOC', to: '/dashboard/security', icon: FiShield },

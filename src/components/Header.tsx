@@ -1,59 +1,49 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
-import { adminService } from '../api/admin.service';
-import { FiMenu, FiBell, FiAlertCircle } from 'react-icons/fi';
+import { FiMenu } from 'react-icons/fi';
 import { UserProfileDropdown } from './UserProfileDropdown';
 import { HardenedSearchInput } from './search/HardenedSearchInput';
 import { GlobalSearchOverlay } from './search/GlobalSearchOverlay';
+import { navigationGroups } from './Sidebar';
 
 interface HeaderProps {
   toggleMobileSidebar?: () => void;
 }
 
+const toTitleCase = (segment: string) =>
+  segment.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
+// 🛡️ [D-6 FIX] Derives the header title from the same navigationGroups list
+// Sidebar renders from, rather than a second, separately-maintained title
+// map — a route added to the sidebar automatically gets a correct header
+// title with no further wiring. Routes not in the sidebar (the diagnostic
+// pages intentionally left unexposed — see Sidebar.tsx) fall back to a
+// title-cased version of the URL's last segment, so direct navigation there
+// still shows something accurate rather than the old static text.
+const getPageTitle = (pathname: string): string => {
+  if (pathname === '/dashboard' || pathname === '/dashboard/') return 'Dashboard';
+
+  const allNavItems = navigationGroups.flatMap(g => g.items);
+  const exact = allNavItems.find(item => item.to === pathname);
+  if (exact) return exact.name;
+
+  const byPrefix = allNavItems
+    .filter(item => item.to !== '/dashboard' && pathname.startsWith(`${item.to}/`))
+    .sort((a, b) => b.to.length - a.to.length)[0];
+  if (byPrefix) return byPrefix.name;
+
+  if (pathname === '/dashboard/settings') return 'Settings';
+
+  const lastSegment = pathname.split('/').filter(Boolean).pop();
+  return lastSegment ? toTitleCase(lastSegment) : 'Dashboard';
+};
+
 export default function Header({ toggleMobileSidebar }: HeaderProps) {
   const { admin, logout } = useAuthStore();
-  const [notifications, setNotifications] = useState<any[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [showNotifications, setShowNotifications] = useState(false);
+  const location = useLocation();
+  const pageTitle = getPageTitle(location.pathname);
   const [showSearch, setShowSearch] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchNotifications();
-    const interval = setInterval(fetchNotifications, 15000); // Poll every 15 seconds
-    return () => clearInterval(interval);
-  }, []);
-
-  const fetchNotifications = async () => {
-    try {
-      const data = await adminService.getNotifications({ limit: 5 });
-      if (data.data?.notifications) {
-         setNotifications(data.data.notifications);
-         setUnreadCount(data.data.unreadCount || 0);
-      }
-    } catch (error) {
-      console.error('Failed to fetch notifications:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const markAsRead = async (id: string) => {
-    try {
-        await adminService.markNotificationRead(id);
-        fetchNotifications(); // Refresh
-    } catch (error) {
-        console.error('Failed to mark read', error);
-    }
-  };
-
-  const handleNotificationClick = async (notif: any) => {
-      if (!notif.isRead) {
-          await markAsRead(notif._id);
-      }
-      setShowNotifications(false);
-  };
 
   return (
     <header className="bg-[#0A0A0A]/80 border-b border-zinc-800/40 backdrop-blur-md sticky top-0 z-30 px-4 lg:px-6 py-4">
@@ -70,9 +60,9 @@ export default function Header({ toggleMobileSidebar }: HeaderProps) {
 
            <div>
             <h2 className="text-lg font-bold text-white tracking-tight uppercase">
-              {admin?.name?.split(' ')[0]} <span className="text-zinc-500">/ Dashboard</span>
+              {pageTitle}
             </h2>
-            <p className="hidden md:block text-[10px] text-zinc-500 font-black uppercase tracking-widest mt-0.5">Industrial Governance Node</p>
+            <p className="hidden md:block text-[10px] text-zinc-500 font-black uppercase tracking-widest mt-0.5">{admin?.name?.split(' ')[0]} &middot; Industrial Governance Node</p>
           </div>
 
           {/* Global Admin Search (v104.2) */}
@@ -95,63 +85,18 @@ export default function Header({ toggleMobileSidebar }: HeaderProps) {
         </div>
 
         <div className="flex items-center gap-2 md:gap-4">
-          <div className="relative">
-            <button 
-              onClick={() => setShowNotifications(!showNotifications)}
-              className="p-2.5 hover:bg-zinc-800/50 rounded-xl transition-all relative group border border-zinc-800/0 hover:border-zinc-800/50"
-            >
-              <FiBell className="text-xl text-zinc-500 group-hover:text-white transition-colors" />
-              {!loading && unreadCount > 0 && (
-                <span className="absolute top-2 right-2 px-1.5 py-0.5 bg-white text-black text-[9px] font-black rounded-full border border-black shadow-[0_0_10px_rgba(255,255,255,0.3)]">
-                    {unreadCount > 9 ? '9+' : unreadCount}
-                </span>
-              )}
-            </button>
-
-            {showNotifications && (
-              <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-[#0F0F0F] rounded-xl shadow-2xl border border-zinc-800/50 py-2 ring-1 ring-white/5 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
-                <div className="px-4 py-3 border-b border-zinc-800/50 flex justify-between items-center bg-zinc-900/50">
-                  <h3 className="font-bold text-[11px] uppercase tracking-widest text-white">System Notifications</h3>
-                  <button 
-                    onClick={() => {
-                        adminService.markAllNotificationsRead().then(fetchNotifications);
-                    }}
-                    className="text-[10px] text-zinc-400 hover:text-white font-black uppercase tracking-tight transition"
-                  >
-                    Clear All
-                  </button>
-                </div>
-                {notifications.length === 0 ? (
-                  <div className="px-4 py-12 text-center text-zinc-600 flex flex-col items-center">
-                    <FiBell className="text-3xl mb-2 opacity-10" />
-                    <p className="text-xs font-bold uppercase tracking-tighter">No active alerts</p>
-                  </div>
-                ) : (
-                  <div className="max-h-[28rem] overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-800">
-                    {notifications.map((notif, index) => (
-                      <Link 
-                        key={notif._id || index}
-                        to={notif.metadata?.link || notif.link || '#'}
-                        onClick={() => handleNotificationClick(notif)}
-                        className={`block px-4 py-4 hover:bg-zinc-800/30 transition border-b border-zinc-800/30 last:border-0 ${!notif.isRead ? 'bg-white/[0.02] relative before:content-[""] before:absolute before:left-0 before:top-0 before:bottom-0 before:w-0.5 before:bg-white' : ''}`}
-                      >
-                        <div className="flex items-start gap-4">
-                          <div className={`p-2 rounded-lg mt-0.5 shrink-0 ${!notif.isRead ? 'bg-white text-black' : 'bg-zinc-800 text-zinc-500'}`}>
-                            <FiAlertCircle size={14} />
-                          </div>
-                          <div>
-                            <p className={`text-sm text-white leading-tight ${!notif.isRead ? 'font-bold' : 'font-medium opacity-80'}`}>{notif.title}</p>
-                            <p className="text-xs text-zinc-500 mt-1 line-clamp-2 leading-relaxed">{notif.message}</p>
-                            <p className="text-[9px] text-zinc-600 mt-2 font-black uppercase tracking-widest">{new Date(notif.createdAt).toLocaleString(undefined, { hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' })}</p>
-                          </div>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+          {/*
+            🛡️ [D-3 FIX] Removed: this bell polled GET /admin/notifications
+            every 15s, a route that doesn't exist on the backend (confirmed —
+            no /api/v1/admin/* route matches it). The 404 was silently
+            swallowed and the badge stayed permanently at 0, which read as
+            "nothing needs attention" when the truth was "this was never
+            wired up." Per the product decision on this finding: don't
+            fabricate an /admin/notifications endpoint just to make a bell
+            spin — the eventual correct signal here is an admin attention
+            aggregation (what actionable things exist right now), not a
+            notification feed. When that exists, it belongs in this slot.
+          */}
 
           <div className="h-6 w-px bg-zinc-800/50 mx-2 hidden md:block" />
 
