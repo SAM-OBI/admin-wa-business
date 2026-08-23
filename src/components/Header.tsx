@@ -5,7 +5,7 @@ import { FiMenu } from 'react-icons/fi';
 import { UserProfileDropdown } from './UserProfileDropdown';
 import { HardenedSearchInput } from './search/HardenedSearchInput';
 import { GlobalSearchOverlay } from './search/GlobalSearchOverlay';
-import { navigationGroups } from './Sidebar';
+import { navigationGroups } from './navigation.config';
 
 interface HeaderProps {
   toggleMobileSidebar?: () => void;
