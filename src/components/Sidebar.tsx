@@ -1,10 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import {
-  FiHome, FiPackage, FiUsers, FiShoppingBag,
-  FiAlertCircle, FiMessageSquare, FiStar,
-  FiShield, FiFileText, FiSettings, FiTrendingUp, FiMail,
-  FiMenu, FiChevronLeft, FiLock, FiTerminal, FiHash, FiSend, FiGitPullRequest, FiTruck, FiFlag
-} from 'react-icons/fi';
+import { FiMenu, FiChevronLeft, FiSettings } from 'react-icons/fi';
 import { useState } from 'react';
 // useState imported above
 import UpgradeModal from './UpgradeModal';
