@@ -37,7 +37,7 @@ export const MultiSigInbox: React.FC<Props> = ({ requests, onApprove }) => {
                         className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-white/5 p-5 rounded-[5px] shadow-sm relative overflow-hidden"
                     >
                         {/* Expiry Countdown */}
-                        <div className="absolute top-0 right-0 p-3 flex items-center gap-2 text-[9px] font-black uppercase text-amber-500 bg-amber-50 dark:bg-amber-500/10 rounded-bl-[10px]">
+                        <div className="absolute top-0 right-0 p-3 flex items-center gap-2 text-[9px] font-black uppercase text-sv-warning bg-sv-warning-soft rounded-bl-[10px]">
                             <FaClock /> {formatDistanceToNow(new Date(request.expiresAt))} LEFT
                         </div>
 
@@ -75,8 +75,8 @@ export const MultiSigInbox: React.FC<Props> = ({ requests, onApprove }) => {
                         <div className="p-3 border border-dashed border-gray-200 dark:border-white/10 rounded-[5px] mb-4">
                            <p className="text-[9px] font-black text-gray-400 uppercase mb-2">Impact Awareness</p>
                            <div className="flex gap-2">
-                               <span className="text-[10px] px-2 py-0.5 bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 font-bold rounded">RISK +15%</span>
-                               <span className="text-[10px] px-2 py-0.5 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold rounded">RATIO ADJUST</span>
+                               <span className="text-[10px] px-2 py-0.5 bg-sv-danger-soft text-sv-danger font-bold rounded">RISK +15%</span>
+                               <span className="text-[10px] px-2 py-0.5 bg-sv-success-soft text-sv-success font-bold rounded">RATIO ADJUST</span>
                            </div>
                         </div>
 
@@ -92,7 +92,7 @@ export const MultiSigInbox: React.FC<Props> = ({ requests, onApprove }) => {
                                     <><FaCheck /> Sign Transaction</>
                                 )}
                             </button>
-                            <button className="px-4 h-10 border border-gray-200 dark:border-white/10 rounded-[5px] text-gray-400 hover:text-red-500 hover:border-red-500 transition-colors">
+                            <button className="px-4 h-10 border border-sv-border rounded-[5px] text-sv-text-muted hover:text-sv-danger hover:border-sv-danger transition-colors">
                                 <FaTimes />
                             </button>
                         </div>

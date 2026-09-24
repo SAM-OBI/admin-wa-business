@@ -90,13 +90,13 @@ export default function AccountConsolidations() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'COMPLETED': return 'bg-green-100 text-green-700';
-      case 'APPROVED': return 'bg-blue-100 text-blue-700';
-      case 'REQUESTED': return 'bg-amber-100 text-amber-700';
+      case 'COMPLETED': return 'bg-sv-success-soft text-sv-success';
+      case 'APPROVED': return 'bg-sv-info-soft text-sv-info';
+      case 'REQUESTED': return 'bg-sv-warning-soft text-sv-warning';
       case 'FAILED': 
-      case 'REJECTED': return 'bg-red-100 text-red-700';
-      case 'EXECUTING': return 'bg-indigo-100 text-indigo-700 animate-pulse';
-      default: return 'bg-gray-100 text-gray-700';
+      case 'REJECTED': return 'bg-sv-danger-soft text-sv-danger';
+      case 'EXECUTING': return 'bg-sv-info-soft text-sv-info animate-pulse';
+      default: return 'bg-sv-surface-muted text-sv-text-secondary';
     }
   };
 
@@ -114,7 +114,7 @@ export default function AccountConsolidations() {
             <select 
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
-                className="bg-white border border-gray-200 rounded-xl px-4 py-2 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500/20"
+                className="bg-sv-surface border border-sv-border rounded-xl px-4 py-2 text-sm font-bold outline-none focus:ring-2 focus:ring-sv-primary/20"
             >
                 <option value="ALL">All Status</option>
                 <option value="REQUESTED">Requested</option>
@@ -131,26 +131,26 @@ export default function AccountConsolidations() {
         </div>
       </div>
 
-      <div className="bg-white border border-gray-100 rounded-[32px] overflow-hidden shadow-sm">
+      <div className="bg-sv-surface border border-sv-border rounded-[32px] overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
-            <thead className="bg-gray-50/50 border-b border-gray-100">
+            <thead className="bg-sv-surface-muted border-b border-sv-border">
               <tr>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Request Details</th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Source Account</th>
-                <th className="px-6 py-4 text-center text-[10px] font-black text-gray-400 uppercase tracking-widest"><FiArrowRight className="mx-auto" /></th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Target Account</th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
-                <th className="px-6 py-4 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Actions</th>
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Request Details</th>
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Source Account</th>
+                <th className="px-6 py-4 text-center text-[10px] font-black text-sv-text-muted uppercase tracking-widest"><FiArrowRight className="mx-auto" /></th>
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Target Account</th>
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Status</th>
+                <th className="px-6 py-4 text-right text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-sv-border">
               {requests.map((req) => (
-                <tr key={req._id} className="hover:bg-gray-50/50 transition-colors">
+                <tr key={req._id} className="hover:bg-sv-surface-muted transition-colors">
                   <td className="px-6 py-6">
                     <div className="flex flex-col">
-                        <span className="text-xs font-mono font-bold text-gray-400">ID: ...{req._id.slice(-6).toUpperCase()}</span>
-                        <span className="text-[10px] text-gray-500 mt-1 flex items-center gap-1">
+                        <span className="text-xs font-mono font-bold text-sv-text-muted">ID: ...{req._id.slice(-6).toUpperCase()}</span>
+                        <span className="text-[10px] text-sv-text-secondary mt-1 flex items-center gap-1">
                             <FiClock className="shrink-0" />
                             {new Date(req.createdAt).toLocaleDateString()} by {req.requestedBy?.name}
                         </span>
@@ -158,18 +158,18 @@ export default function AccountConsolidations() {
                   </td>
                   <td className="px-6 py-6">
                     <div className="flex flex-col">
-                      <span className="text-sm font-black text-gray-900">{req.sourceUserId?.name}</span>
-                      <span className="text-xs text-gray-500">{req.sourceUserId?.email}</span>
+                      <span className="text-sm font-black text-sv-text-primary">{req.sourceUserId?.name}</span>
+                      <span className="text-xs text-sv-text-secondary">{req.sourceUserId?.email}</span>
                       <span className="text-[10px] font-bold text-red-500 mt-1 uppercase">Source (To be closed)</span>
                     </div>
                   </td>
                   <td className="px-6 py-6 text-center">
-                    <FiArrowRight className="mx-auto text-gray-300" />
+                    <FiArrowRight className="mx-auto text-sv-text-muted" />
                   </td>
                   <td className="px-6 py-6">
                     <div className="flex flex-col">
-                      <span className="text-sm font-black text-gray-900">{req.targetUserId?.name}</span>
-                      <span className="text-xs text-gray-500">{req.targetUserId?.email}</span>
+                      <span className="text-sm font-black text-sv-text-primary">{req.targetUserId?.name}</span>
+                      <span className="text-xs text-sv-text-secondary">{req.targetUserId?.email}</span>
                       <span className="text-[10px] font-bold text-green-600 mt-1 uppercase">Target (Survivor)</span>
                     </div>
                   </td>
@@ -183,7 +183,7 @@ export default function AccountConsolidations() {
                         {req.status === 'REQUESTED' && (
                             <button 
                                 onClick={() => handleApprove(req._id)}
-                                className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 transition"
+                                className="flex items-center gap-1.5 px-3 py-1.5 bg-sv-primary text-sv-text-inverse rounded-lg text-xs font-bold hover:bg-sv-primary-hover transition"
                             >
                                 <FiCheckCircle size={14} /> Approve
                             </button>
@@ -191,7 +191,7 @@ export default function AccountConsolidations() {
                         {req.status === 'APPROVED' && (
                             <button 
                                 onClick={() => handleExecute(req._id)}
-                                className="flex items-center gap-1.5 px-3 py-1.5 bg-green-600 text-white rounded-lg text-xs font-bold hover:bg-green-700 transition"
+                                className="flex items-center gap-1.5 px-3 py-1.5 bg-sv-success text-sv-text-inverse rounded-lg text-xs font-bold hover:opacity-90 transition"
                             >
                                 <FiShield size={14} /> Execute Merge
                             </button>
@@ -211,7 +211,7 @@ export default function AccountConsolidations() {
               ))}
               {requests.length === 0 && !loading && (
                   <tr>
-                      <td colSpan={6} className="px-6 py-20 text-center text-gray-400 italic">
+                      <td colSpan={6} className="px-6 py-20 text-center text-sv-text-muted italic">
                           No consolidation requests found.
                       </td>
                   </tr>
@@ -222,30 +222,30 @@ export default function AccountConsolidations() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-blue-50/50 border border-blue-100 p-6 rounded-[32px] space-y-4">
-              <div className="flex items-center gap-3 text-blue-700">
+          <div className="bg-sv-info-soft border border-sv-info/30 p-6 rounded-[32px] space-y-4">
+              <div className="flex items-center gap-3 text-sv-info">
                   <FiShield className="text-xl" />
                   <h3 className="font-black text-sm uppercase tracking-widest">Dual-Control Policy</h3>
               </div>
-              <p className="text-xs text-blue-800 leading-relaxed opacity-80">
+              <p className="text-xs text-sv-info leading-relaxed opacity-80">
                   High-value accounts require multiple administrator approvals. The executor cannot be the same person who requested the consolidation.
               </p>
           </div>
-          <div className="bg-green-50/50 border border-green-100 p-6 rounded-[32px] space-y-4">
-              <div className="flex items-center gap-3 text-green-700">
+          <div className="bg-sv-success-soft border border-sv-success/30 p-6 rounded-[32px] space-y-4">
+              <div className="flex items-center gap-3 text-sv-success">
                   <FiCheckCircle className="text-xl" />
                   <h3 className="font-black text-sm uppercase tracking-widest">Transactional Safety</h3>
               </div>
-              <p className="text-xs text-green-800 leading-relaxed opacity-80">
+              <p className="text-xs text-sv-success leading-relaxed opacity-80">
                   All merges use <strong>SNAPSHOT</strong> isolation with distributed locks. Balances are migrated via append-only ledger entries with zero-drift verification.
               </p>
           </div>
-          <div className="bg-amber-50/50 border border-amber-100 p-6 rounded-[32px] space-y-4">
-              <div className="flex items-center gap-3 text-amber-700">
+          <div className="bg-sv-warning-soft border border-sv-warning/30 p-6 rounded-[32px] space-y-4">
+              <div className="flex items-center gap-3 text-sv-warning">
                   <FiXCircle className="text-xl" />
                   <h3 className="font-black text-sm uppercase tracking-widest">Irreversibility</h3>
               </div>
-              <p className="text-xs text-amber-800 leading-relaxed opacity-80">
+              <p className="text-xs text-sv-warning leading-relaxed opacity-80">
                   Once a consolidation is executed, PII is scrubbed from the source account and it is permanently deactivated. Recovery is only possible via forensic backups.
               </p>
           </div>

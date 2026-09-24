@@ -126,14 +126,14 @@ export default function Login() {
       >
         {/* 🛡️ [SOVEREIGN] Precise Error Notification */}
         {authError && (
-          <div className="p-4 rounded-xl bg-red-50 border border-red-100 flex flex-col space-y-2 animate-in fade-in slide-in-from-top-4 duration-300">
-            <div className="flex items-center space-x-2 text-red-700">
+          <div className="p-4 rounded-xl bg-sv-danger-soft border border-sv-danger/30 flex flex-col space-y-2 animate-in fade-in slide-in-from-top-4 duration-300">
+            <div className="flex items-center space-x-2 text-sv-danger">
               <FaShieldAlt size={14} />
               <span className="text-[10px] font-black uppercase tracking-wider">
                 {authError.code || 'Security Alert'}
               </span>
             </div>
-            <p className="text-xs font-medium text-slate-600">{authError.message}</p>
+            <p className="text-xs font-medium text-sv-text-secondary">{authError.message}</p>
             
             {authError.suggestedUrl && (
               <div className="pt-2">
@@ -142,7 +142,7 @@ export default function Login() {
                     setAuthError(null);
                     navigate(authError.suggestedUrl!);
                   }}
-                  className="text-[10px] font-black text-slate-900 uppercase hover:underline"
+                  className="text-[10px] font-black text-sv-primary uppercase hover:underline"
                 >
                   Create Account →
                 </button>
@@ -161,20 +161,20 @@ export default function Login() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Administrative Email</label>
+            <label className="block text-[11px] font-bold text-sv-text-secondary uppercase tracking-wider mb-1.5">Administrative Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-3 py-2.5 rounded-lg border border-slate-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition bg-slate-50 focus:bg-white text-sm text-slate-900"
+              className="w-full px-3 py-2.5 rounded-lg border border-sv-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition bg-sv-surface-muted focus:bg-sv-surface text-sm text-sv-text-primary"
               placeholder="admin@shopvia.com"
             />
           </div>
 
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">Access Secret</label>
+              <label className="block text-[11px] font-bold text-sv-text-secondary uppercase tracking-wider">Access Secret</label>
               <Link to="/forgot-password" title="Recovery" className="text-[10px] font-bold text-primary uppercase tracking-tight hover:underline">
                 Recovery
               </Link>
@@ -184,7 +184,7 @@ export default function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-3 py-2.5 rounded-lg border border-slate-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition bg-slate-50 focus:bg-white text-sm text-slate-900"
+              className="w-full px-3 py-2.5 rounded-lg border border-sv-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition bg-sv-surface-muted focus:bg-sv-surface text-sm text-sv-text-primary"
               placeholder="••••••••"
             />
           </div>
@@ -193,7 +193,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-slate-900 hover:bg-black text-white py-3 rounded-lg font-bold text-xs uppercase tracking-[0.2em] shadow-lg shadow-slate-900/10 transition-all duration-200 disabled:opacity-50"
+            className="w-full bg-sv-primary hover:bg-sv-primary-hover text-sv-text-inverse py-3 rounded-lg font-bold text-xs uppercase tracking-[0.2em] transition-all duration-200 disabled:opacity-50"
           >
             Authenticate Access
           </button>

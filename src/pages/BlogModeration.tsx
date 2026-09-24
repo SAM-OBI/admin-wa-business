@@ -129,14 +129,14 @@ export default function BlogModeration() {
               <input 
                 type="text"
                 placeholder="SEARCH BY ARTICLE TITLE..."
-                className="w-full bg-black border border-zinc-800/50 rounded-xl py-3 pl-11 pr-4 text-[10px] font-bold text-white uppercase tracking-widest focus:border-white/50 transition-all outline-none"
+                className="w-full bg-black border border-zinc-800/50 rounded-xl py-3 pl-11 pr-4 text-[10px] font-bold text-white uppercase tracking-widest focus:border-sv-primary transition-all outline-none"
                 value={filters.search}
                 onChange={(e) => setFilters({ ...filters, search: e.target.value })}
               />
             </div>
             
             <select 
-              className="bg-black border border-zinc-800/50 rounded-xl px-4 py-3 text-[10px] font-black text-white uppercase tracking-widest outline-none focus:border-white/50"
+              className="bg-black border border-zinc-800/50 rounded-xl px-4 py-3 text-[10px] font-black text-white uppercase tracking-widest outline-none focus:border-sv-primary"
               value={filters.status}
               onChange={(e) => setFilters({ ...filters, status: e.target.value })}
             >
@@ -156,18 +156,18 @@ export default function BlogModeration() {
           </div>
 
           {/* Articles Table/Grid */}
-          <div className="lg:col-span-4 overflow-x-auto rounded-2xl border border-zinc-800/40">
+          <div className="lg:col-span-4 overflow-x-auto rounded-2xl border border-sv-border">
             <table className="w-full text-left border-collapse min-w-[1000px]">
-              <thead className="bg-[#0F0F0F]">
+              <thead className="bg-sv-surface-elevated">
                 <tr>
-                  <th className="px-6 py-4 text-[9px] font-black text-zinc-500 uppercase tracking-[0.2em] border-b border-zinc-800/50">Article</th>
-                  <th className="px-6 py-4 text-[9px] font-black text-zinc-500 uppercase tracking-[0.2em] border-b border-zinc-800/50">Vendor / Author</th>
-                  <th className="px-6 py-4 text-[9px] font-black text-zinc-500 uppercase tracking-[0.2em] border-b border-zinc-800/50">Stats</th>
-                  <th className="px-6 py-4 text-[9px] font-black text-zinc-500 uppercase tracking-[0.2em] border-b border-zinc-800/50">Status</th>
-                  <th className="px-6 py-4 text-[9px] font-black text-zinc-500 uppercase tracking-[0.2em] border-b border-zinc-800/50 text-right">Actions</th>
+                  <th className="px-6 py-4 text-[9px] font-black text-sv-text-muted uppercase tracking-[0.2em] border-b border-sv-border">Article</th>
+                  <th className="px-6 py-4 text-[9px] font-black text-sv-text-muted uppercase tracking-[0.2em] border-b border-sv-border">Vendor / Author</th>
+                  <th className="px-6 py-4 text-[9px] font-black text-sv-text-muted uppercase tracking-[0.2em] border-b border-sv-border">Stats</th>
+                  <th className="px-6 py-4 text-[9px] font-black text-sv-text-muted uppercase tracking-[0.2em] border-b border-sv-border">Status</th>
+                  <th className="px-6 py-4 text-[9px] font-black text-sv-text-muted uppercase tracking-[0.2em] border-b border-sv-border text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="bg-[#0A0A0A] divide-y divide-zinc-800/30">
+              <tbody className="bg-sv-surface divide-y divide-sv-border">
                 <AnimatePresence mode="popLayout">
                   {blogs.map((blog) => (
                     <motion.tr 
@@ -176,7 +176,7 @@ export default function BlogModeration() {
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       key={blog._id} 
-                      className="group hover:bg-[#0F0F0F] transition-all duration-300"
+                      className="group hover:bg-sv-surface-muted transition-all duration-300"
                     >
                       <td className="px-6 py-5">
                         <div className="flex items-center gap-4">
@@ -195,13 +195,13 @@ export default function BlogModeration() {
                             )}
                           </div>
                           <div className="space-y-1 max-w-[300px]">
-                            <h3 className="text-xs font-bold text-white uppercase tracking-tight truncate group-hover:text-blue-400 transition-colors uppercase">
+                            <h3 className="text-xs font-bold text-sv-text-primary uppercase tracking-tight truncate group-hover:text-sv-primary transition-colors uppercase">
                               {blog.title}
                             </h3>
-                            <div className="flex items-center gap-2 text-[9px] font-black text-zinc-500 uppercase tracking-widest">
+                            <div className="flex items-center gap-2 text-[9px] font-black text-sv-text-muted uppercase tracking-widest">
                               <FiClock />
                               {format(new Date(blog.createdAt), 'MMM dd, yyyy')}
-                              <span className="text-zinc-800">|</span>
+                              <span className="text-sv-text-muted">|</span>
                               <span>{blog.readingTime || 3} MINS</span>
                             </div>
                           </div>
@@ -209,11 +209,11 @@ export default function BlogModeration() {
                       </td>
                       <td className="px-6 py-5">
                         <div className="space-y-1">
-                          <div className="flex items-center gap-1.5 text-[10px] font-bold text-white uppercase">
-                            <FiShoppingBag className="text-zinc-500" />
+                          <div className="flex items-center gap-1.5 text-[10px] font-bold text-sv-text-primary uppercase">
+                            <FiShoppingBag className="text-sv-text-muted" />
                             {blog.store?.name}
                           </div>
-                          <div className="flex items-center gap-1.5 text-[9px] font-black text-zinc-500 uppercase tracking-widest">
+                          <div className="flex items-center gap-1.5 text-[9px] font-black text-sv-text-muted uppercase tracking-widest">
                             <FiUser size={12} />
                             {blog.author?.name}
                           </div>
@@ -222,20 +222,20 @@ export default function BlogModeration() {
                       <td className="px-6 py-5">
                         <div className="flex items-center gap-4">
                           <div className="text-center">
-                            <p className="text-[10px] font-black text-white">{blog.views || 0}</p>
-                            <p className="text-[8px] font-black text-zinc-600 uppercase tracking-tighter">Views</p>
+                            <p className="text-[10px] font-black text-sv-text-primary">{blog.views || 0}</p>
+                            <p className="text-[8px] font-black text-sv-text-muted uppercase tracking-tighter">Views</p>
                           </div>
-                          <div className="h-6 w-[1px] bg-zinc-800/50" />
+                          <div className="h-6 w-[1px] bg-sv-border" />
                           <div className="text-center">
-                            <p className="text-[10px] font-black text-white">{blog.likes || 0}</p>
-                            <p className="text-[8px] font-black text-zinc-600 uppercase tracking-tighter">Likes</p>
+                            <p className="text-[10px] font-black text-sv-text-primary">{blog.likes || 0}</p>
+                            <p className="text-[8px] font-black text-sv-text-muted uppercase tracking-tighter">Likes</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-5">
                         <span className={`px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-[0.2em] border shadow-sm ${
-                          blog.status === 'published' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30' :
-                          blog.status === 'removed' ? 'bg-red-500/10 text-red-500 border-red-500/30' :
+                          blog.status === 'published' ? 'bg-sv-success-soft text-sv-success border-sv-success/30' :
+                          blog.status === 'removed' ? 'bg-sv-danger-soft text-sv-danger border-sv-danger/30' :
                           'bg-zinc-800/50 text-zinc-400 border-zinc-700/50'
                         }`}>
                           {blog.status}
@@ -360,29 +360,29 @@ export default function BlogModeration() {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="relative w-full max-w-lg bg-[#0F0F0F] rounded-2xl border border-zinc-800 shadow-2xl overflow-hidden p-8"
+              className="relative w-full max-w-lg bg-[#192720] rounded-2xl border border-[#26362F] shadow-2xl overflow-hidden p-8"
             >
               <div className="space-y-6">
                 <div className="space-y-2 text-center">
-                  <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mx-auto border border-red-500/20">
-                    <FiAlertTriangle className="text-red-500 text-3xl" />
+                  <div className="w-16 h-16 bg-[#2E1B1B] rounded-2xl flex items-center justify-center mx-auto border border-[#EF6B6B]/20">
+                    <FiAlertTriangle className="text-[#EF6B6B] text-3xl" />
                   </div>
-                  <h2 className="text-xl font-black text-white uppercase tracking-tighter">Hardened Moderation Action</h2>
-                  <p className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em]">Action will be immutably recorded in Admin Audit Logs</p>
+                  <h2 className="text-xl font-black text-[#F3F7F5] uppercase tracking-tighter">Hardened Moderation Action</h2>
+                  <p className="text-[#7F9188] text-[10px] font-black uppercase tracking-[0.2em]">Action will be immutably recorded in Admin Audit Logs</p>
                 </div>
 
                 <div className="space-y-4">
                   <div className="space-y-1.5">
-                    <label className="text-[9px] font-black text-zinc-500 uppercase tracking-[0.2em] ml-1">Target Article</label>
-                    <div className="bg-black border border-zinc-800/50 p-4 rounded-xl text-[11px] font-bold text-white uppercase">
+                    <label className="text-[9px] font-black text-[#7F9188] uppercase tracking-[0.2em] ml-1">Target Article</label>
+                    <div className="bg-[#0D1512] border border-[#26362F] p-4 rounded-xl text-[11px] font-bold text-[#F3F7F5] uppercase">
                       {selectedItem?.title}
                     </div>
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[9px] font-black text-zinc-500 uppercase tracking-[0.2em] ml-1">Justification Reason (Mandatory)</label>
-                    <textarea 
-                      className="w-full bg-black border border-zinc-800/50 rounded-xl p-4 text-xs text-white placeholder:text-zinc-700 focus:border-red-500/50 transition-all outline-none h-32"
+                    <label className="text-[9px] font-black text-[#7F9188] uppercase tracking-[0.2em] ml-1">Justification Reason (Mandatory)</label>
+                    <textarea
+                      className="w-full bg-[#0D1512] border border-[#26362F] rounded-xl p-4 text-xs text-[#F3F7F5] placeholder:text-[#4A5A52] focus:border-sv-primary transition-all outline-none h-32"
                       placeholder="ENTER DETAILED REASON FOR MODERATION..."
                       value={modReason}
                       onChange={(e) => setModReason(e.target.value)}
@@ -391,15 +391,15 @@ export default function BlogModeration() {
                 </div>
 
                 <div className="flex gap-3">
-                  <button 
+                  <button
                     onClick={() => setShowModModal(false)}
-                    className="flex-1 py-4 bg-zinc-900 text-zinc-500 text-[10px] font-black uppercase tracking-widest rounded-xl hover:text-white transition-all"
+                    className="flex-1 py-4 bg-[#0D1512] text-[#7F9188] text-[10px] font-black uppercase tracking-widest rounded-xl hover:text-[#F3F7F5] transition-all"
                   >
                     Cancel
                   </button>
                   <button 
                     onClick={handleModerate}
-                    className="flex-1 py-4 bg-red-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-[0_0_30px_rgba(220,38,38,0.2)] hover:scale-105 active:scale-95 transition-all"
+                    className="flex-1 py-4 bg-sv-danger text-sv-text-inverse text-[10px] font-black uppercase tracking-widest rounded-xl hover:scale-105 active:scale-95 transition-all"
                   >
                     Confirm Action
                   </button>

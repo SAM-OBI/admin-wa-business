@@ -140,7 +140,7 @@ export default function Signup() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none font-medium text-slate-900"
+                  className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-sv-surface-muted bg-sv-surface-muted focus:bg-sv-surface focus:border-sv-primary focus:ring-4 focus:ring-sv-primary/10 transition-all outline-none font-medium text-sv-text-primary"
                   placeholder="John Doe"
                 />
               </div>
@@ -157,7 +157,7 @@ export default function Signup() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none font-medium text-slate-900"
+                  className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-sv-surface-muted bg-sv-surface-muted focus:bg-sv-surface focus:border-sv-primary focus:ring-4 focus:ring-sv-primary/10 transition-all outline-none font-medium text-sv-text-primary"
                   placeholder="admin@shopvia.com"
                 />
               </div>
@@ -174,7 +174,7 @@ export default function Signup() {
                   value={formData.phone}
                   onChange={handleChange}
                   required
-                  className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none font-medium text-slate-900"
+                  className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-sv-surface-muted bg-sv-surface-muted focus:bg-sv-surface focus:border-sv-primary focus:ring-4 focus:ring-sv-primary/10 transition-all outline-none font-medium text-sv-text-primary"
                   placeholder="+234..."
                 />
               </div>
@@ -191,7 +191,7 @@ export default function Signup() {
                   value={formData.inviteToken}
                   onChange={handleChange}
                   required
-                  className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none font-medium text-slate-900"
+                  className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-sv-surface-muted bg-sv-surface-muted focus:bg-sv-surface focus:border-sv-primary focus:ring-4 focus:ring-sv-primary/10 transition-all outline-none font-medium text-sv-text-primary"
                   placeholder="Paste your attributed invitation token here..."
                 />
               </div>
@@ -208,7 +208,7 @@ export default function Signup() {
                   value={formData.password}
                   onChange={handleChange}
                   required
-                  className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none font-medium text-slate-900"
+                  className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-sv-surface-muted bg-sv-surface-muted focus:bg-sv-surface focus:border-sv-primary focus:ring-4 focus:ring-sv-primary/10 transition-all outline-none font-medium text-sv-text-primary"
                   placeholder="••••••••"
                 />
               </div>
@@ -225,7 +225,7 @@ export default function Signup() {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   required
-                  className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none font-medium text-slate-900"
+                  className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-sv-surface-muted bg-sv-surface-muted focus:bg-sv-surface focus:border-sv-primary focus:ring-4 focus:ring-sv-primary/10 transition-all outline-none font-medium text-sv-text-primary"
                   placeholder="••••••••"
                 />
               </div>
@@ -235,7 +235,7 @@ export default function Signup() {
               <button
                 type="submit"
                 disabled={status === 'loading'}
-                className="w-full py-5 bg-slate-900 text-white font-bold rounded-2x; hover:bg-black transition-all shadow-xl shadow-slate-900/20 active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-50"
+                className="w-full py-5 bg-sv-primary text-sv-text-inverse font-bold rounded-2x; hover:bg-sv-primary-hover transition-all active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-50"
               >
                 {status === 'loading' ? (
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>

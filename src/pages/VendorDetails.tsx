@@ -178,7 +178,7 @@ export default function VendorDetails() {
     return (
       <div className="p-6">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-800">Vendor not found</h2>
+          <h2 className="text-2xl font-bold text-sv-text-primary">Vendor not found</h2>
           <Link to="/vendors" className="text-blue-600 hover:underline mt-4 inline-block">
             Back to Vendors
           </Link>
@@ -198,10 +198,10 @@ export default function VendorDetails() {
   const getRiskBadge = () => {
     const level = vendor.riskProfile?.level || 'low';
     const colors = {
-      low: 'bg-green-100 text-green-700',
-      medium: 'bg-yellow-100 text-yellow-700',
-      high: 'bg-orange-100 text-orange-700',
-      critical: 'bg-red-100 text-red-700'
+      low: 'bg-sv-success-soft text-sv-success',
+      medium: 'bg-sv-warning-soft text-sv-warning',
+      high: 'bg-sv-warning-soft text-sv-warning',
+      critical: 'bg-sv-danger-soft text-sv-danger'
     };
     return (
       <span className={`px-3 py-1 rounded-full text-sm font-semibold ${colors[level]}`}>
@@ -231,7 +231,7 @@ export default function VendorDetails() {
           <div className="flex gap-3">
             <button
                onClick={handleImpersonate}
-               className="px-4 py-2 bg-white text-black rounded-lg hover:bg-zinc-200 transition-all flex items-center gap-2 text-sm font-bold shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+               className="px-4 py-2 bg-sv-primary text-sv-text-inverse rounded-lg hover:bg-sv-primary-hover transition-all flex items-center gap-2 text-sm font-bold"
             >
                <FiShield /> Login As
             </button>
@@ -239,13 +239,13 @@ export default function VendorDetails() {
               <>
                 <button
                   onClick={() => handleVerification('verified')}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+                  className="px-4 py-2 bg-sv-success text-sv-text-inverse rounded-lg hover:opacity-90 transition"
                 >
                   Approve Verification
                 </button>
                 <button
                   onClick={() => handleVerification('rejected')}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+                  className="px-4 py-2 bg-sv-danger text-sv-text-inverse rounded-lg hover:opacity-90 transition"
                 >
                   Reject Verification
                 </button>
@@ -277,7 +277,7 @@ export default function VendorDetails() {
             ) : (
               <button
                 onClick={handleActivate}
-                className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition text-sm font-bold shadow-[0_0_15px_rgba(16,185,129,0.2)]"
+                className="px-4 py-2 bg-sv-success text-sv-text-inverse rounded-lg hover:opacity-90 transition text-sm font-bold"
               >
                 Activate Vendor
               </button>
@@ -466,7 +466,7 @@ export default function VendorDetails() {
                 <div>
                    <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-3">Bonus Capabilities</p>
                    <div className="flex flex-wrap gap-2">
-                      <span className="px-2.5 py-1 bg-zinc-800 text-zinc-400 border border-white/5 rounded text-[10px] font-black uppercase tracking-tighter">
+                      <span className="px-2.5 py-1 bg-sv-surface-muted text-sv-text-secondary border border-sv-border rounded text-[10px] font-black uppercase tracking-tighter">
                          +{vendor.store.bonusProductSlots || 0} Product Slots
                       </span>
                       {vendor.store.isFeatured && (
@@ -606,7 +606,7 @@ export default function VendorDetails() {
               <h2 className="text-lg font-black text-white uppercase tracking-widest">Reputation Matrix</h2>
               <button 
                 onClick={handleTrustOverride}
-                className="text-[9px] font-black uppercase px-2 py-1 bg-zinc-800 text-zinc-500 hover:text-white rounded border border-white/5 transition-colors"
+                className="text-[9px] font-black uppercase px-2 py-1 bg-sv-surface-muted text-sv-text-secondary hover:text-sv-text-primary rounded border border-sv-border transition-colors"
               >
                 Manual Override
               </button>
@@ -742,9 +742,9 @@ export default function VendorDetails() {
                       </div>
                       {/* 🛡️ [BATCH-11] Canonical status is uppercase OPEN|INVESTIGATING|RESOLVED|DISMISSED. */}
                       <span className={`px-2.5 py-1 text-[10px] font-black uppercase rounded border ${
-                        complaint.status === 'RESOLVED' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
-                        (complaint.status === 'OPEN' || complaint.status === 'INVESTIGATING') ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
-                        'bg-red-500/10 text-red-500 border-red-500/20'
+                        complaint.status === 'RESOLVED' ? 'bg-sv-success-soft text-sv-success border-sv-success/30' :
+                        (complaint.status === 'OPEN' || complaint.status === 'INVESTIGATING') ? 'bg-sv-warning-soft text-sv-warning border-sv-warning/30' :
+                        'bg-sv-danger-soft text-sv-danger border-sv-danger/30'
                       }`}>
                         {complaint.status}
                       </span>
@@ -768,7 +768,7 @@ export default function VendorDetails() {
               <div className="flex justify-between items-center bg-zinc-800/30 p-3 rounded-xl border border-white/5">
                 <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Active Status</span>
                 <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-black uppercase rounded-md border ${
-                  vendor.isActive ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-red-500/10 text-red-500 border-red-500/20'
+                  vendor.isActive ? 'bg-sv-success-soft text-sv-success border-sv-success/30' : 'bg-sv-danger-soft text-sv-danger border-sv-danger/30'
                 }`}>
                   {vendor.isActive ? <FiCheckCircle className="mr-1.5" /> : <FiXCircle className="mr-1.5" />}
                   {vendor.isActive ? 'Active' : 'Suspended'}
@@ -778,10 +778,10 @@ export default function VendorDetails() {
               <div className="flex justify-between items-center bg-zinc-800/30 p-3 rounded-xl border border-white/5">
                 <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Onboarding State</span>
                 <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-black uppercase rounded-md border ${
-                  (vendor as any).onboardingState === 'ACTIVE' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
-                  (vendor as any).onboardingState === 'KYC_PENDING' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
-                  (vendor as any).onboardingState === 'EMAIL_FAILED' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
-                  'bg-zinc-800 text-zinc-500'
+                  (vendor as any).onboardingState === 'ACTIVE' ? 'bg-sv-success-soft text-sv-success border-sv-success/30' :
+                  (vendor as any).onboardingState === 'KYC_PENDING' ? 'bg-sv-warning-soft text-sv-warning border-sv-warning/30' :
+                  (vendor as any).onboardingState === 'EMAIL_FAILED' ? 'bg-sv-danger-soft text-sv-danger border-sv-danger/30' :
+                  'bg-sv-surface-muted text-sv-text-secondary'
                 }`}>
                   {(vendor as any).onboardingState || 'IDLE'}
                 </span>
@@ -797,11 +797,11 @@ export default function VendorDetails() {
               <div className="flex justify-between items-center bg-zinc-800/30 p-3 rounded-xl border border-white/5">
                 <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Verification</span>
                 <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-black uppercase rounded-md border ${
-                  vendor.verification?.status === 'verified' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
-                  vendor.verification?.status === 'pending' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
-                  vendor.verification?.status === 'rejected' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
-                  vendor.verification?.status === 'locked' ? 'bg-orange-500/10 text-orange-500 border-orange-500/20' :
-                  'bg-zinc-800 text-zinc-500'
+                  vendor.verification?.status === 'verified' ? 'bg-sv-success-soft text-sv-success border-sv-success/30' :
+                  vendor.verification?.status === 'pending' ? 'bg-sv-warning-soft text-sv-warning border-sv-warning/30' :
+                  vendor.verification?.status === 'rejected' ? 'bg-sv-danger-soft text-sv-danger border-sv-danger/30' :
+                  vendor.verification?.status === 'locked' ? 'bg-sv-warning-soft text-sv-warning border-sv-warning/30' :
+                  'bg-sv-surface-muted text-sv-text-secondary'
                 }`}>
                   {vendor.verification?.status === 'verified' && <FiCheckCircle className="mr-1.5" />}
                   {(vendor.verification?.status === 'pending' || vendor.verification?.status === 'locked') && <FiShield className="mr-1.5" />}
@@ -819,9 +819,9 @@ export default function VendorDetails() {
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">CAC SLA Accountability</span>
                     <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded ${
-                      cacEntry.slaStatus === 'BREACHED' ? 'bg-red-600 text-white' :
-                      cacEntry.slaStatus === 'URGENT' ? 'bg-orange-500 text-white' :
-                      'bg-blue-600 text-white'
+                      cacEntry.slaStatus === 'BREACHED' ? 'bg-sv-danger text-sv-text-inverse' :
+                      cacEntry.slaStatus === 'URGENT' ? 'bg-sv-warning text-sv-text-inverse' :
+                      'bg-sv-success text-sv-text-inverse'
                     }`}>
                       {cacEntry.slaStatus}
                     </span>
@@ -909,7 +909,7 @@ export default function VendorDetails() {
                           href={`https://search.cac.gov.ng/home`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[9px] font-black uppercase px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-500 transition-all flex items-center gap-1 shadow-lg shadow-blue-600/20"
+                          className="text-[9px] font-black uppercase px-2 py-1 bg-sv-primary text-sv-text-inverse rounded hover:bg-sv-primary-hover transition-all flex items-center gap-1"
                         >
                            Verify <FiExternalLink size={10} />
                         </a>
@@ -955,10 +955,10 @@ export default function VendorDetails() {
               <div className="flex justify-between items-center">
                 <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Service Tier</span>
                 <span className={`px-3 py-1 rounded-full text-[10px] font-black border uppercase tracking-widest ${
-                  vendor.subscription?.plan === 'gold' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.1)]' :
-                  vendor.subscription?.plan === 'premium' ? 'bg-purple-500/10 text-purple-500 border-purple-500/20' :
+                  vendor.subscription?.plan === 'gold' ? 'bg-sv-warning-soft text-sv-warning border-sv-warning/30' :
+                  vendor.subscription?.plan === 'premium' ? 'bg-sv-tag-soft text-sv-tag border-sv-tag/20' :
                   vendor.subscription?.plan === 'basic' ? 'bg-white/10 text-white border-white/20' :
-                  'bg-zinc-800 text-zinc-500'
+                  'bg-sv-surface-muted text-sv-text-secondary'
                 }`}>
                   {vendor.subscription?.plan?.toUpperCase() || 'FREE'}
                 </span>

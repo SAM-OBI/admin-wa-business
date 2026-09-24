@@ -41,7 +41,7 @@ export default function ProductDetails() {
     return (
       <div className="p-6">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-800">Product not found</h2>
+          <h2 className="text-2xl font-bold text-sv-text-primary">Product not found</h2>
           <Link to="/products" className="text-blue-600 hover:underline mt-4 inline-block">
             Back to Products
           </Link>
@@ -51,9 +51,9 @@ export default function ProductDetails() {
   }
 
   const getStockBadge = () => {
-    if (product.stock === 0) return <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-semibold">Out of Stock</span>;
-    if (product.stock <= 20) return <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-semibold">Low Stock ({product.stock})</span>;
-    return <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-semibold">In Stock ({product.stock})</span>;
+    if (product.stock === 0) return <span className="px-3 py-1 bg-sv-danger-soft text-sv-danger rounded-full text-sm font-semibold">Out of Stock</span>;
+    if (product.stock <= 20) return <span className="px-3 py-1 bg-sv-warning-soft text-sv-warning rounded-full text-sm font-semibold">Low Stock ({product.stock})</span>;
+    return <span className="px-3 py-1 bg-sv-success-soft text-sv-success rounded-full text-sm font-semibold">In Stock ({product.stock})</span>;
   };
 
   return (
@@ -176,7 +176,7 @@ export default function ProductDetails() {
               <div className="flex justify-between">
                 <span className="text-gray-600">Status</span>
                 <span className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full ${
-                  product.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
+                  product.status === 'active' ? 'bg-sv-success-soft text-sv-success' : 'bg-sv-surface-muted text-sv-text-secondary'
                 }`}>
                   {product.status === 'active' ? <FiCheckCircle className="mr-1" /> : <FiXCircle className="mr-1" />}
                   {product.status}

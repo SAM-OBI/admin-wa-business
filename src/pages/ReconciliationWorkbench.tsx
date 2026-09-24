@@ -14,18 +14,18 @@ export function ReconciliationWorkbench() {
   return (
     <div className="w-full max-w-6xl mx-auto space-y-6">
       {/* Source of Truth Hierarchy & Warning */}
-      <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md shadow-sm">
+      <div className="bg-sv-warning-soft border-l-4 border-sv-warning p-4 rounded-md shadow-sm">
         <div className="flex justify-between items-start">
           <div>
-            <h3 className="text-yellow-800 font-bold">⚠️ Diagnostic View Only</h3>
-            <p className="text-yellow-700 text-sm mt-1">
+            <h3 className="text-sv-warning font-bold">⚠️ Diagnostic View Only</h3>
+            <p className="text-sv-warning text-sm mt-1">
               This panel is not authoritative. It cannot be cited in audit reports.
             </p>
-            <p className="text-yellow-700 text-sm mt-1 font-mono">
+            <p className="text-sv-warning text-sm mt-1 font-mono">
               Last verified against Event Store: {lastVerified} (Lag: {lag})
             </p>
           </div>
-          <div className="text-right text-xs text-yellow-600 bg-yellow-100 p-2 rounded">
+          <div className="text-right text-xs text-sv-warning bg-sv-warning-soft p-2 rounded">
             <p className="font-bold">Source of Truth Hierarchy:</p>
             <ol className="list-decimal list-inside text-left mt-1">
               <li>Event Store (Authoritative)</li>
@@ -36,28 +36,28 @@ export function ReconciliationWorkbench() {
         </div>
       </div>
 
-      <div className="shadow-lg border border-slate-200 rounded-lg overflow-hidden">
-        <div className="bg-slate-50 border-b px-6 py-4 flex flex-row space-x-4 items-center">
-          <h2 className="text-xl font-semibold text-slate-800">Reconciliation Workbench</h2>
+      <div className="shadow-lg border border-sv-border rounded-lg overflow-hidden">
+        <div className="bg-sv-surface-muted border-b border-sv-border px-6 py-4 flex flex-row space-x-4 items-center">
+          <h2 className="text-xl font-semibold text-sv-text-primary">Reconciliation Workbench</h2>
           <div className="flex space-x-2">
-            <button className={`px-3 py-1.5 rounded text-xs font-semibold border ${activeTab === 'AR' ? 'bg-slate-800 text-white border-slate-800' : 'bg-white text-slate-700 border-slate-300'}`} onClick={() => { setActiveTab('AR'); setShowDiff(false); }}>Allocation Drift</button>
-            <button className={`px-3 py-1.5 rounded text-xs font-semibold border ${activeTab === 'FA' ? 'bg-slate-800 text-white border-slate-800' : 'bg-white text-slate-700 border-slate-300'}`} onClick={() => { setActiveTab('FA'); setShowDiff(false); }}>Depreciation Drift</button>
-            <button className={`px-3 py-1.5 rounded text-xs font-semibold border ${activeTab === 'TAX' ? 'bg-slate-800 text-white border-slate-800' : 'bg-white text-slate-700 border-slate-300'}`} onClick={() => { setActiveTab('TAX'); setShowDiff(false); }}>Tax Mismatch</button>
-            <button className={`px-3 py-1.5 rounded text-xs font-semibold border ${activeTab === 'GL' ? 'bg-slate-800 text-white border-slate-800' : 'bg-white text-slate-700 border-slate-300'}`} onClick={() => { setActiveTab('GL'); setShowDiff(false); }}>GL Proof</button>
+            <button className={`px-3 py-1.5 rounded text-xs font-semibold border ${activeTab === 'AR' ? 'bg-sv-primary text-sv-text-inverse border-sv-primary' : 'bg-sv-surface text-sv-text-secondary border-sv-border'}`} onClick={() => { setActiveTab('AR'); setShowDiff(false); }}>Allocation Drift</button>
+            <button className={`px-3 py-1.5 rounded text-xs font-semibold border ${activeTab === 'FA' ? 'bg-sv-primary text-sv-text-inverse border-sv-primary' : 'bg-sv-surface text-sv-text-secondary border-sv-border'}`} onClick={() => { setActiveTab('FA'); setShowDiff(false); }}>Depreciation Drift</button>
+            <button className={`px-3 py-1.5 rounded text-xs font-semibold border ${activeTab === 'TAX' ? 'bg-sv-primary text-sv-text-inverse border-sv-primary' : 'bg-sv-surface text-sv-text-secondary border-sv-border'}`} onClick={() => { setActiveTab('TAX'); setShowDiff(false); }}>Tax Mismatch</button>
+            <button className={`px-3 py-1.5 rounded text-xs font-semibold border ${activeTab === 'GL' ? 'bg-sv-primary text-sv-text-inverse border-sv-primary' : 'bg-sv-surface text-sv-text-secondary border-sv-border'}`} onClick={() => { setActiveTab('GL'); setShowDiff(false); }}>GL Proof</button>
           </div>
         </div>
 
         <div className="p-6">
           {activeTab === 'AR' && (
             <div className="space-y-6">
-              <div className="flex justify-between items-center p-4 bg-red-50 border border-red-200 rounded-md">
+              <div className="flex justify-between items-center p-4 bg-sv-danger-soft border border-sv-danger/30 rounded-md">
                 <div>
-                  <h4 className="font-semibold text-red-900">AR Open Item Drift Detected</h4>
-                  <p className="text-sm text-red-700 font-mono mt-1">Period: 2026-06 | Customer: CUST-901</p>
+                  <h4 className="font-semibold text-sv-danger">AR Open Item Drift Detected</h4>
+                  <p className="text-sm text-sv-danger font-mono mt-1">Period: 2026-06 | Customer: CUST-901</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-red-800 font-bold">Drift: +₦50,000</p>
-                  <button className="mt-2 px-3 py-1.5 text-xs font-semibold bg-red-600 hover:bg-red-700 text-white rounded" onClick={() => setShowDiff(true)}>Explore Diff</button>
+                  <p className="text-sv-danger font-bold">Drift: +₦50,000</p>
+                  <button className="mt-2 px-3 py-1.5 text-xs font-semibold bg-sv-surface hover:bg-sv-surface-muted text-sv-text-primary border border-sv-border rounded" onClick={() => setShowDiff(true)}>Explore Diff</button>
                 </div>
               </div>
 
@@ -77,7 +77,7 @@ export function ReconciliationWorkbench() {
                       <li>amountAllocated: 50,000</li>
                       <li>allocationDate: 2026-06-28T14:32:11Z</li>
                     </ul>
-                    <div className="bg-blue-50 p-3 mt-4 border border-blue-100 rounded text-blue-800">
+                    <div className="bg-sv-info-soft p-3 mt-4 border border-sv-info/30 rounded text-sv-info">
                       <p><strong>Diagnosis:</strong> This allocation exists in ArAllocation collection but was NOT reflected in ArOpenItem #INV-4420.allocatedAmount.</p>
                       <p className="mt-2"><strong>Probable Cause:</strong> PARTIAL_CONFIRMED state — allocation committed but projection update failed before confirmation.</p>
                     <button className="mt-3 px-3 py-1.5 text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded">Trigger Projection Rebuild for INV-4420</button>

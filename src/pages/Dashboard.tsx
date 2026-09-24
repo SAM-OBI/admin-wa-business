@@ -180,7 +180,7 @@ export default function Dashboard() {
           </div>
           <button
             onClick={handleRefresh}
-            className="px-4 py-2 bg-red-500 text-white hover:bg-red-600 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shrink-0"
+            className="px-4 py-2 bg-sv-danger text-sv-text-inverse hover:opacity-90 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shrink-0"
           >
             Retry
           </button>
@@ -204,7 +204,7 @@ export default function Dashboard() {
                     <h3 className="font-black text-sm uppercase tracking-[0.1em]">TREASURY_{treasury.status}_PROTOCOL_ACTIVE</h3>
                     <p className="text-[10px] font-bold uppercase opacity-80 mt-1">Liquidity Score: {treasury.liquidityScore}% | Payout Gate: Restricted</p>
                   </div>
-                  <Link to="/dashboard/financial-audit" className="px-4 py-2 bg-white text-black hover:bg-zinc-200 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">
+                  <Link to="/dashboard/financial-audit" className="px-4 py-2 bg-sv-primary text-sv-text-inverse hover:bg-sv-primary-hover rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">
                     Analyze Ledger
                   </Link>
                 </div>

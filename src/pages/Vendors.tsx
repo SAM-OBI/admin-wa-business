@@ -107,12 +107,12 @@ export default function Vendors() {
   // needing to fabricate a fake verification-shaped object for the CAC case.
   const getVerificationBadge = (status: VerificationStatus = 'unverified') => {
     const colors = {
-      verified: 'bg-green-100 text-green-700',
-      pending: 'bg-yellow-100 text-yellow-700',
-      rejected: 'bg-red-100 text-red-700',
-      unverified: 'bg-gray-100 text-gray-700',
-      locked: 'bg-orange-100 text-orange-700',
-      failed: 'bg-red-100 text-red-700'
+      verified: 'bg-sv-success-soft text-sv-success',
+      pending: 'bg-sv-warning-soft text-sv-warning',
+      rejected: 'bg-sv-danger-soft text-sv-danger',
+      unverified: 'bg-sv-surface-muted text-sv-text-secondary',
+      locked: 'bg-sv-warning-soft text-sv-warning',
+      failed: 'bg-sv-danger-soft text-sv-danger'
     };
 
     const icons = {
@@ -153,7 +153,7 @@ export default function Vendors() {
             <select
               value={filters.status}
               onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
-              className="px-4 py-2 bg-zinc-900/50 border border-zinc-800/40 text-zinc-400 text-xs font-black uppercase tracking-widest rounded-xl focus:outline-none focus:border-white/20 transition-all cursor-pointer"
+              className="px-4 py-2 bg-sv-surface-elevated/50 border border-sv-border text-sv-text-muted text-xs font-black uppercase tracking-widest rounded-xl focus:outline-none focus:border-sv-primary transition-all cursor-pointer"
             >
               <option value="">All Status</option>
               <option value="active">Active</option>
@@ -163,7 +163,7 @@ export default function Vendors() {
              <select
               value={filters.verificationStatus}
               onChange={(e) => setFilters(prev => ({ ...prev, verificationStatus: e.target.value }))}
-              className="px-4 py-2 bg-zinc-900/50 border border-zinc-800/40 text-zinc-400 text-xs font-black uppercase tracking-widest rounded-xl focus:outline-none focus:border-white/20 transition-all cursor-pointer"
+              className="px-4 py-2 bg-sv-surface-elevated/50 border border-sv-border text-sv-text-muted text-xs font-black uppercase tracking-widest rounded-xl focus:outline-none focus:border-sv-primary transition-all cursor-pointer"
             >
               <option value="">All Verification</option>
               <option value="verified">Verified</option>
@@ -183,35 +183,35 @@ export default function Vendors() {
         </div>
       </div>
 
-      <div className="bg-zinc-900/50 rounded-2xl border border-zinc-800/40 backdrop-blur-sm overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+      <div className="bg-sv-surface-elevated/50 rounded-2xl border border-sv-border backdrop-blur-sm overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-zinc-800/60 bg-white/[0.02]">
-                <th className="px-8 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Identity Metadata</th>
-                <th className="px-8 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Registry Stats</th>
-                <th className="px-8 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Compliance</th>
-                <th className="px-8 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Risk & Level</th>
-                <th className="px-8 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] text-right">Execution</th>
+              <tr className="border-b border-sv-border bg-sv-surface/5">
+                <th className="px-8 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Identity Metadata</th>
+                <th className="px-8 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Registry Stats</th>
+                <th className="px-8 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Compliance</th>
+                <th className="px-8 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Risk & Level</th>
+                <th className="px-8 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em] text-right">Execution</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-800/40">
+            <tbody className="divide-y divide-sv-border">
               {filteredVendors.map((vendor) => (
-                <tr key={vendor._id} className="hover:bg-white/[0.03] transition-colors group">
+                <tr key={vendor._id} className="hover:bg-sv-surface-muted transition-colors group">
                   <td className="px-8 py-6">
                     <div className="flex items-center">
-                      <div className="h-12 w-12 rounded-xl bg-zinc-800 flex items-center justify-center text-zinc-400 font-black border border-white/5 group-hover:border-white/20 transition-all text-lg shadow-inner">
+                      <div className="h-12 w-12 rounded-xl bg-sv-surface-muted flex items-center justify-center text-sv-text-secondary font-black border border-sv-border group-hover:border-sv-primary/30 transition-all text-lg shadow-inner">
                         {vendor.name.charAt(0).toUpperCase()}
                       </div>
                       <div className="ml-5">
-                        <div className="font-black text-white text-sm tracking-tight">{vendor.name}</div>
-                        <div className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-0.5">{vendor.email}</div>
+                        <div className="font-black text-sv-text-primary text-sm tracking-tight">{vendor.name}</div>
+                        <div className="text-[10px] text-sv-text-muted font-bold uppercase tracking-widest mt-0.5">{vendor.email}</div>
                       </div>
                     </div>
                   </td>
                   <td className="px-8 py-6">
-                    <div className="font-bold text-zinc-200 text-sm">{vendor.storeName || 'NATIVE_UNBOUND'}</div>
-                    <div className="text-[10px] text-zinc-600 font-black uppercase mt-1">INTAKE {new Date(vendor.createdAt).toLocaleDateString()}</div>
+                    <div className="font-bold text-sv-text-secondary text-sm">{vendor.storeName || 'NATIVE_UNBOUND'}</div>
+                    <div className="text-[10px] text-sv-text-muted font-black uppercase mt-1">INTAKE {new Date(vendor.createdAt).toLocaleDateString()}</div>
                   </td>
                   <td className="px-8 py-6">
                     {/* 🛡️ [FIX] This column used to show only vendor.verification
@@ -224,7 +224,7 @@ export default function Vendors() {
                         already exists, correctly, on the vendor detail page. */}
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-[8px] font-black text-zinc-600 uppercase w-8">KYC</span>
+                        <span className="text-[8px] font-black text-sv-text-muted uppercase w-8">KYC</span>
                         {getVerificationBadge(vendor.verification?.status)}
                       </div>
                       {vendor.verification?.status === 'pending' && (
@@ -237,14 +237,14 @@ export default function Vendors() {
                           </button>
                           <button
                             onClick={() => handleVerification(vendor._id, 'rejected')}
-                            className="text-[9px] font-black uppercase px-2 py-1 bg-red-500 text-white rounded hover:bg-red-400 transition-colors"
+                            className="text-[9px] font-black uppercase px-2 py-1 bg-sv-danger text-sv-text-inverse rounded hover:opacity-90 transition-colors"
                           >
                             Reject
                           </button>
                         </div>
                       )}
                       <div className="flex items-center gap-1.5">
-                        <span className="text-[8px] font-black text-zinc-600 uppercase w-8">CAC</span>
+                        <span className="text-[8px] font-black text-sv-text-muted uppercase w-8">CAC</span>
                         {getVerificationBadge(vendor.cacStatus)}
                       </div>
                     </div>
@@ -253,10 +253,10 @@ export default function Vendors() {
                     <div className="flex flex-col gap-3">
                       <div className="flex items-center gap-2">
                         <span className={`px-2.5 py-1 rounded text-[9px] font-black uppercase border ${
-                          vendor.sellerLevel === 4 ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' :
-                          vendor.sellerLevel === 3 ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
-                          vendor.sellerLevel === 2 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
-                          'bg-zinc-800 text-zinc-500 border-white/5'
+                          vendor.sellerLevel === 4 ? 'bg-sv-tag-soft text-sv-tag border-sv-tag/20' :
+                          vendor.sellerLevel === 3 ? 'bg-sv-info-soft text-sv-info border-sv-info/30' :
+                          vendor.sellerLevel === 2 ? 'bg-sv-success-soft text-sv-success border-sv-success/30' :
+                          'bg-sv-surface-muted text-sv-text-secondary border-sv-border'
                         }`}>
                           LEVEL {vendor.sellerLevel || 1}
                         </span>
@@ -267,7 +267,7 @@ export default function Vendors() {
                         )}
                       </div>
                       <div className="flex items-center gap-3">
-                        <div className="text-[10px] font-black text-white uppercase">{vendor.activityScore || 0} XP</div>
+                        <div className="text-[10px] font-black text-sv-text-primary uppercase">{vendor.activityScore || 0} XP</div>
                         <div className={`text-[9px] px-2 py-0.5 rounded font-black uppercase border ${
                           (vendor.riskProfile?.score || 0) < 30 ? 'text-emerald-500 border-emerald-500/20 bg-emerald-500/5' :
                           (vendor.riskProfile?.score || 0) < 70 ? 'text-amber-500 border-amber-500/20 bg-amber-500/5' :
@@ -313,8 +313,8 @@ export default function Vendors() {
                 <tr>
                   <td colSpan={5} className="px-8 py-24 text-center">
                     <div className="flex flex-col items-center gap-4">
-                      <FiAlertCircle className="text-zinc-800 w-12 h-12" />
-                      <p className="text-zinc-600 text-[10px] font-black uppercase tracking-[0.3em] italic">No active entities detected in registry.</p>
+                      <FiAlertCircle className="text-sv-text-muted w-12 h-12" />
+                      <p className="text-sv-text-muted text-[10px] font-black uppercase tracking-[0.3em] italic">No active entities detected in registry.</p>
                     </div>
                   </td>
                 </tr>
@@ -324,25 +324,25 @@ export default function Vendors() {
         </div>
 
         {/* Global Pagination Hub */}
-        <div className="px-8 py-6 border-t border-zinc-800/60 bg-white/[0.01] flex items-center justify-between">
-          <div className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">
-            Registry Index <span className="text-white mx-1">{filteredVendors.length}</span> of <span className="text-white mx-1">{pagination.total}</span> Entities
+        <div className="px-8 py-6 border-t border-sv-border bg-sv-surface/5 flex items-center justify-between">
+          <div className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">
+            Registry Index <span className="text-sv-text-primary mx-1">{filteredVendors.length}</span> of <span className="text-sv-text-primary mx-1">{pagination.total}</span> Entities
           </div>
           <div className="flex gap-4 items-center">
             <button
               onClick={() => handlePageChange(pagination.page - 1)}
               disabled={pagination.page <= 1}
-              className="p-2 border border-zinc-800/60 rounded-lg text-white disabled:opacity-20 disabled:cursor-not-allowed hover:bg-white/[0.05] transition-all"
+              className="p-2 border border-sv-border rounded-lg text-sv-text-primary disabled:opacity-20 disabled:cursor-not-allowed hover:bg-sv-surface-muted transition-all"
             >
               PREV
             </button>
-            <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest bg-zinc-800 px-3 py-1.5 rounded-md border border-white/5">
+            <span className="text-[10px] font-black text-sv-text-secondary uppercase tracking-widest bg-sv-surface-muted px-3 py-1.5 rounded-md border border-sv-border">
                SEGMENT {pagination.page} / {pagination.pages}
             </span>
             <button
               onClick={() => handlePageChange(pagination.page + 1)}
               disabled={pagination.page >= pagination.pages}
-              className="p-2 border border-zinc-800/60 rounded-lg text-white disabled:opacity-20 disabled:cursor-not-allowed hover:bg-white/[0.05] transition-all"
+              className="p-2 border border-sv-border rounded-lg text-sv-text-primary disabled:opacity-20 disabled:cursor-not-allowed hover:bg-sv-surface-muted transition-all"
             >
               NEXT
             </button>

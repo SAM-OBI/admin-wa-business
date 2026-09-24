@@ -71,7 +71,7 @@ export default function Newsletter() {
         <div className="space-y-6 pb-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-800">Newsletter Management</h1>
+                    <h1 className="text-2xl font-bold text-sv-text-primary">Newsletter Management</h1>
                     <p className="text-gray-500 text-sm mt-1">Manage marketing campaigns and subscriber base</p>
                 </div>
                 <div className="flex gap-3">
@@ -89,7 +89,7 @@ export default function Newsletter() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Send Campaign Form */}
                 <div className="lg:col-span-2 space-y-6">
-                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div className="bg-sv-surface rounded-2xl shadow-sm border border-sv-border overflow-hidden">
                         <div className="px-6 py-4 border-b border-gray-50 bg-gray-50/50 flex items-center gap-2">
                             <FiSend className="text-blue-600" />
                             <h2 className="text-sm font-black text-gray-800 uppercase tracking-widest">Send New Campaign</h2>
@@ -102,7 +102,7 @@ export default function Newsletter() {
                                     value={campaign.subject}
                                     onChange={(e) => setCampaign({ ...campaign, subject: e.target.value })}
                                     placeholder="Enter email subject..."
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all text-sm font-medium bg-gray-50/50"
+                                    className="w-full px-4 py-3 rounded-xl border border-sv-border focus:ring-2 focus:ring-sv-primary/20 outline-none transition-all text-sm font-medium bg-sv-surface-muted"
                                     required
                                 />
                             </div>
@@ -112,7 +112,7 @@ export default function Newsletter() {
                                     value={campaign.message}
                                     onChange={(e) => setCampaign({ ...campaign, message: e.target.value })}
                                     placeholder="Write your campaign message..."
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all h-64 font-mono text-xs resize-none bg-gray-50/50"
+                                    className="w-full px-4 py-3 rounded-xl border border-sv-border focus:ring-2 focus:ring-sv-primary/20 outline-none transition-all h-64 font-mono text-xs resize-none bg-sv-surface-muted"
                                     required
                                 />
                             </div>
@@ -120,7 +120,7 @@ export default function Newsletter() {
                                 <button
                                     type="submit"
                                     disabled={sending}
-                                    className="flex items-center gap-2 bg-blue-600 text-white px-8 py-3 rounded-xl shadow-lg shadow-blue-200 hover:shadow-xl hover:bg-blue-700 transition-all font-black uppercase tracking-widest text-[10px] disabled:opacity-50"
+                                    className="flex items-center gap-2 bg-sv-primary text-sv-text-inverse px-8 py-3 rounded-xl hover:bg-sv-primary-hover transition-all font-black uppercase tracking-widest text-[10px] disabled:opacity-50"
                                 >
                                     {sending ? <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div> : <FiSend />}
                                     {sending ? 'Processing...' : 'Blast Campaign'}
@@ -132,7 +132,7 @@ export default function Newsletter() {
 
                 {/* Sidebar Stats & Recent */}
                 <div className="space-y-6">
-                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-5">
+                    <div className="bg-sv-surface rounded-2xl shadow-sm border border-sv-border p-6 space-y-5">
                         <div className="flex items-center gap-2 text-gray-800 font-bold border-b border-gray-50 pb-3">
                             <FiBarChart2 className="text-blue-600" />
                             <h3 className="text-xs font-black uppercase tracking-widest">Category Interests</h3>
@@ -159,7 +159,7 @@ export default function Newsletter() {
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <div className="bg-sv-surface rounded-2xl shadow-sm border border-sv-border p-6">
                         <div className="flex items-center gap-2 text-gray-800 font-bold border-b border-gray-50 pb-3 mb-4">
                             <FiUsers className="text-blue-600" />
                             <h3 className="text-xs font-black uppercase tracking-widest">Recent Subs</h3>

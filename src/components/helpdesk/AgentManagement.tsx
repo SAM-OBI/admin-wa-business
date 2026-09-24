@@ -175,52 +175,52 @@ export default function AgentManagement({ onRefresh }: Props) {
               initial={{ scale: 0.95, opacity: 0, y: 20 }}
               animate={{ scale: 1,    opacity: 1, y: 0  }}
               exit={{    scale: 0.95, opacity: 0, y: 20 }}
-              className="bg-white dark:bg-gray-900 rounded-[5px] border border-slate-200 dark:border-white/10 p-6 w-full max-w-md"
+              className="bg-sv-surface rounded-[5px] border border-sv-border p-6 w-full max-w-md"
             >
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h3 className="text-lg font-black text-slate-900 dark:text-white">Invite Support Agent</h3>
-                  <p className="text-xs text-slate-400">An email invitation will be sent with a 48h expiry link</p>
+                  <h3 className="text-lg font-black text-sv-text-primary">Invite Support Agent</h3>
+                  <p className="text-xs text-sv-text-muted">An email invitation will be sent with a 48h expiry link</p>
                 </div>
-                <button onClick={() => setShowInvite(false)} className="text-slate-400 hover:text-slate-600">
+                <button onClick={() => setShowInvite(false)} className="text-sv-text-muted hover:text-sv-text-secondary">
                   <FaTimes />
                 </button>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1 block">Full Name</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-sv-text-secondary mb-1 block">Full Name</label>
                   <input
                     type="text"
                     value={form.displayName}
                     onChange={(e) => setForm({ ...form, displayName: e.target.value })}
                     placeholder="Sarah Okafor"
-                    className="w-full px-4 py-3 border border-slate-200 dark:border-white/10 rounded-[5px] bg-slate-50 dark:bg-black/20 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-3 border border-sv-border rounded-[5px] bg-sv-surface-muted text-sm font-medium text-sv-text-primary focus:outline-none focus:border-primary"
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1 block">Email Address</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-sv-text-secondary mb-1 block">Email Address</label>
                   <input
                     type="email"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
                     placeholder="sarah@shopvia.ng"
-                    className="w-full px-4 py-3 border border-slate-200 dark:border-white/10 rounded-[5px] bg-slate-50 dark:bg-black/20 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-3 border border-sv-border rounded-[5px] bg-sv-surface-muted text-sm font-medium text-sv-text-primary focus:outline-none focus:border-primary"
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1 block">Role</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-sv-text-secondary mb-1 block">Role</label>
                   <select
                     value={form.role}
                     onChange={(e) => setForm({ ...form, role: e.target.value as any })}
-                    className="w-full px-4 py-3 border border-slate-200 dark:border-white/10 rounded-[5px] bg-slate-50 dark:bg-black/20 text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:border-primary"
+                    className="w-full px-4 py-3 border border-sv-border rounded-[5px] bg-sv-surface-muted text-sm font-medium text-sv-text-primary focus:outline-none focus:border-primary"
                   >
                     <option value="support_agent">Support Agent</option>
                     <option value="support_supervisor">Support Supervisor</option>
                   </select>
                 </div>
                 <div>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 block">Queue Assignments</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-sv-text-secondary mb-2 block">Queue Assignments</label>
                   <div className="flex flex-wrap gap-2">
                     {AVAILABLE_QUEUES.map((q) => (
                       <button
@@ -235,7 +235,7 @@ export default function AgentManagement({ onRefresh }: Props) {
                         className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-[3px] border transition-all ${
                           form.queues.includes(q)
                             ? 'bg-primary text-white border-primary'
-                            : 'bg-slate-100 dark:bg-black/20 text-slate-500 border-slate-200 dark:border-white/10 hover:border-primary hover:text-primary'
+                            : 'bg-sv-surface-muted text-sv-text-secondary border-sv-border hover:border-primary hover:text-primary'
                         }`}
                       >
                         {q}
@@ -248,7 +248,7 @@ export default function AgentManagement({ onRefresh }: Props) {
               <div className="flex gap-3 mt-6">
                 <button
                   onClick={() => setShowInvite(false)}
-                  className="flex-1 px-4 py-3 border border-slate-200 dark:border-white/10 rounded-[5px] text-xs font-black uppercase tracking-widest text-slate-600 dark:text-gray-300 hover:bg-slate-50 transition-all"
+                  className="flex-1 px-4 py-3 border border-sv-border rounded-[5px] text-xs font-black uppercase tracking-widest text-sv-text-secondary hover:bg-sv-surface-muted transition-all"
                 >
                   Cancel
                 </button>

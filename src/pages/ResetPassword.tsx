@@ -102,7 +102,7 @@ const ResetPassword = () => {
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none font-medium text-slate-900"
+                      className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-sv-surface-muted bg-sv-surface-muted focus:bg-sv-surface focus:border-sv-primary focus:ring-4 focus:ring-sv-primary/10 transition-all outline-none font-medium text-sv-text-primary"
                       placeholder="••••••••"
                       disabled={status === 'loading'}
                     />
@@ -118,7 +118,7 @@ const ResetPassword = () => {
                       required
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none font-medium text-slate-900"
+                      className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-sv-surface-muted bg-sv-surface-muted focus:bg-sv-surface focus:border-sv-primary focus:ring-4 focus:ring-sv-primary/10 transition-all outline-none font-medium text-sv-text-primary"
                       placeholder="••••••••"
                       disabled={status === 'loading'}
                     />
@@ -129,7 +129,7 @@ const ResetPassword = () => {
                   <button
                     type="submit"
                     disabled={status === 'loading'}
-                    className="w-full py-5 bg-slate-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-xl shadow-slate-900/20 active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-50"
+                    className="w-full py-5 bg-sv-primary text-sv-text-inverse font-bold rounded-2xl hover:bg-sv-primary-hover transition-all active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-50"
                   >
                     {status === 'loading' ? (
                       <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>

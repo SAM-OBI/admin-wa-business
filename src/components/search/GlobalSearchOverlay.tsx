@@ -49,24 +49,24 @@ export const GlobalSearchOverlay: React.FC<GlobalSearchOverlayProps> = ({ isOpen
             initial={{ opacity: 0, y: -20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            className="w-full max-w-3xl bg-[#0F0F0F] border border-white/10 rounded-3xl shadow-[0_32px_128px_rgba(0,0,0,0.8)] overflow-hidden"
+            className="w-full max-w-3xl bg-[#192720] border border-[#26362F] rounded-3xl shadow-[0_32px_128px_rgba(0,0,0,0.8)] overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Governance Header */}
-            <div className="p-6 border-b border-white/5 bg-gradient-to-r from-blue-900/10 to-transparent">
+            <div className="p-6 border-b border-[#26362F] bg-gradient-to-r from-blue-900/10 to-transparent">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-blue-500 rounded-lg text-black">
+                  <div className="p-2 bg-[#55B98A] rounded-lg text-[#0D1512]">
                     <FaShieldAlt size={18} />
                   </div>
                   <div>
-                    <h3 className="text-sm font-black text-white uppercase tracking-widest">Institutional Oversight</h3>
-                    <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-tighter mt-0.5">Sovereign Registry Discovery</p>
+                    <h3 className="text-sm font-black text-[#F3F7F5] uppercase tracking-widest">Institutional Oversight</h3>
+                    <p className="text-[10px] text-[#7F9188] font-bold uppercase tracking-tighter mt-0.5">Sovereign Registry Discovery</p>
                   </div>
                 </div>
-                <button 
+                <button
                   onClick={handleClose}
-                  className="p-2 hover:bg-white/10 rounded-full transition-colors text-zinc-400 hover:text-white"
+                  className="p-2 hover:bg-[#26362F] rounded-full transition-colors text-[#7F9188] hover:text-[#F3F7F5]"
                 >
                   <FaTimes size={20} />
                 </button>
@@ -87,9 +87,9 @@ export const GlobalSearchOverlay: React.FC<GlobalSearchOverlayProps> = ({ isOpen
                     onClick={() => setActiveTab(tab.id as any)}
                     className={cn(
                       "flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shrink-0",
-                      activeTab === tab.id 
-                        ? "bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.2)]" 
-                        : "text-zinc-500 hover:text-white hover:bg-white/5"
+                      activeTab === tab.id
+                        ? "bg-[#55B98A] text-[#0D1512]"
+                        : "text-[#7F9188] hover:text-[#F3F7F5] hover:bg-[#26362F]"
                     )}
                   >
                     <tab.icon size={12} />
@@ -104,8 +104,8 @@ export const GlobalSearchOverlay: React.FC<GlobalSearchOverlayProps> = ({ isOpen
               {query.length > 0 ? (
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 px-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-                    <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest">Registry Query in Progress...</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#6FA9DF] animate-pulse" />
+                    <span className="text-[10px] font-black text-[#6FA9DF] uppercase tracking-widest">Registry Query in Progress...</span>
                   </div>
                   {[1, 2, 3].map((i) => (
                     <div key={i} className="p-4 bg-white/5 border border-white/5 rounded-2xl animate-pulse">
@@ -116,20 +116,20 @@ export const GlobalSearchOverlay: React.FC<GlobalSearchOverlayProps> = ({ isOpen
                 </div>
               ) : (
                 <div className="py-20 text-center">
-                  <FaHistory className="mx-auto text-zinc-800 mb-4" size={40} />
-                  <p className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.3em]">Awaiting Authorization Query</p>
-                  <p className="text-[9px] text-zinc-700 mt-2 font-bold uppercase tracking-tighter">Enter criteria to scan the sovereign registry</p>
+                  <FaHistory className="mx-auto text-[#26362F] mb-4" size={40} />
+                  <p className="text-[#7F9188] text-[10px] font-black uppercase tracking-[0.3em]">Awaiting Authorization Query</p>
+                  <p className="text-[9px] text-[#4A5A52] mt-2 font-bold uppercase tracking-tighter">Enter criteria to scan the sovereign registry</p>
                 </div>
               )}
             </div>
 
             {/* Security Footer */}
-            <div className="p-4 border-t border-white/5 bg-black flex items-center justify-between">
+            <div className="p-4 border-t border-[#26362F] bg-[#0D1512] flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                    <FaShieldAlt className="text-blue-500 opacity-50" size={12} />
-                    <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest">Sovereign Discovery OS v104.3</span>
+                    <FaShieldAlt className="text-[#6FA9DF] opacity-50" size={12} />
+                    <span className="text-[9px] font-black text-[#7F9188] uppercase tracking-widest">Sovereign Discovery OS v104.3</span>
                 </div>
-                <div className="text-[9px] font-bold text-zinc-700 uppercase italic">Protected by Institutional WAF</div>
+                <div className="text-[9px] font-bold text-[#4A5A52] uppercase italic">Protected by Institutional WAF</div>
             </div>
           </motion.div>
         </motion.div>

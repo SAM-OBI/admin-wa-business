@@ -121,13 +121,13 @@ const ErrorLogs: React.FC = () => {
     const getLevelStyle = (level: string) => {
         switch (level?.toLowerCase()) {
             case 'critical':
-                return 'bg-red-500/10 text-red-500 border-red-500/20';
+                return 'bg-sv-danger-soft text-sv-danger border-sv-danger/30';
             case 'error':
-                return 'bg-orange-500/10 text-orange-500 border-orange-500/20';
+                return 'bg-sv-warning-soft text-sv-warning border-sv-warning/30';
             case 'warn':
-                return 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20';
+                return 'bg-sv-warning-soft text-sv-warning border-sv-warning/30';
             default:
-                return 'bg-blue-500/10 text-blue-500 border-blue-500/20';
+                return 'bg-sv-info-soft text-sv-info border-sv-info/30';
         }
     };
 
@@ -136,7 +136,7 @@ const ErrorLogs: React.FC = () => {
             {/* Header Area */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+                    <h1 className="text-2xl font-bold text-sv-text-primary flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-red-500">
                             <FiAlertOctagon />
                         </div>
@@ -148,7 +148,7 @@ const ErrorLogs: React.FC = () => {
                     {hasActiveFilters && (
                         <button
                             onClick={clearFilters}
-                            className="flex items-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl transition-all text-sm font-bold uppercase tracking-widest"
+                            className="flex items-center gap-2 px-4 py-2 bg-sv-danger-soft hover:opacity-80 text-sv-danger rounded-xl transition-all text-sm font-bold uppercase tracking-widest"
                         >
                             <FiX size={14} /> Clear
                         </button>
@@ -156,7 +156,7 @@ const ErrorLogs: React.FC = () => {
                     <button 
                         onClick={() => fetchLogs()}
                         disabled={loading}
-                        className="flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-xl transition-all disabled:opacity-50 text-sm font-bold uppercase tracking-widest"
+                        className="flex items-center gap-2 px-4 py-2 bg-sv-surface-muted hover:bg-sv-border text-sv-text-primary rounded-xl transition-all disabled:opacity-50 text-sm font-bold uppercase tracking-widest"
                     >
                         <FiRefreshCw className={loading ? 'animate-spin' : ''} />
                         Sync
@@ -177,7 +177,7 @@ const ErrorLogs: React.FC = () => {
                         value={traceIdSearch}
                         onChange={(e) => setTraceIdSearch(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && fetchLogs()}
-                        className="w-full pl-10 pr-20 py-3 bg-white border border-purple-100 rounded-2xl focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all shadow-sm outline-none text-sm"
+                        className="w-full pl-10 pr-20 py-3 bg-sv-surface border border-sv-border rounded-2xl focus:ring-2 focus:ring-sv-primary/20 focus:border-sv-primary transition-all shadow-sm outline-none text-sm"
                     />
                     <button 
                         onClick={() => fetchLogs()}
@@ -198,11 +198,11 @@ const ErrorLogs: React.FC = () => {
                         value={refIdSearch}
                         onChange={(e) => setRefIdSearch(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && fetchLogs()}
-                        className="w-full pl-10 pr-20 py-3 bg-white border border-gray-100 rounded-2xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm outline-none text-sm"
+                        className="w-full pl-10 pr-20 py-3 bg-sv-surface border border-sv-border rounded-2xl focus:ring-2 focus:ring-sv-primary/20 focus:border-sv-primary transition-all shadow-sm outline-none text-sm"
                     />
                     <button 
                         onClick={() => fetchLogs()}
-                        className="absolute right-2 top-1.5 bottom-1.5 px-3 bg-gray-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-gray-800 transition-colors"
+                        className="absolute right-2 top-1.5 bottom-1.5 px-3 bg-sv-primary text-sv-text-inverse rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-sv-primary-hover transition-colors"
                     >
                         Find
                     </button>
@@ -218,7 +218,7 @@ const ErrorLogs: React.FC = () => {
                         placeholder="Filter message, path, level..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 bg-white border border-gray-100 rounded-2xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm outline-none text-sm"
+                        className="w-full pl-10 pr-4 py-3 bg-sv-surface border border-sv-border rounded-2xl focus:ring-2 focus:ring-sv-primary/20 focus:border-sv-primary transition-all shadow-sm outline-none text-sm"
                     />
                 </div>
 
@@ -238,7 +238,7 @@ const ErrorLogs: React.FC = () => {
                             if (e.target.value !== 'all') params.level = e.target.value;
                             fetchLogsWithParams(params);
                         }}
-                        className="w-full pl-10 pr-4 py-3 bg-white border border-gray-100 rounded-2xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm outline-none text-sm font-medium appearance-none capitalize"
+                        className="w-full pl-10 pr-4 py-3 bg-sv-surface border border-sv-border rounded-2xl focus:ring-2 focus:ring-sv-primary/20 focus:border-sv-primary transition-all shadow-sm outline-none text-sm font-medium appearance-none capitalize"
                     >
                         {LEVEL_OPTIONS.map(l => (
                             <option key={l} value={l}>{l === 'all' ? 'All Levels' : l.charAt(0).toUpperCase() + l.slice(1)}</option>
@@ -258,9 +258,9 @@ const ErrorLogs: React.FC = () => {
                         </span>
                     )}
                     {refIdSearch && (
-                        <span className="flex items-center gap-1.5 text-[10px] font-mono font-bold bg-blue-100 text-blue-700 px-3 py-1 rounded-full border border-blue-200">
+                        <span className="flex items-center gap-1.5 text-[10px] font-mono font-bold bg-sv-info-soft text-sv-info px-3 py-1 rounded-full border border-sv-info/30">
                             ref: {refIdSearch.slice(0, 24)}...
-                            <button onClick={() => { setRefIdSearch(''); fetchLogs(traceIdSearch, ''); }} className="ml-1 hover:text-blue-900"><FiX size={10} /></button>
+                            <button onClick={() => { setRefIdSearch(''); fetchLogs(traceIdSearch, ''); }} className="ml-1 hover:opacity-70"><FiX size={10} /></button>
                         </span>
                     )}
                     {levelFilter !== 'all' && (
@@ -273,7 +273,7 @@ const ErrorLogs: React.FC = () => {
             )}
 
             {/* Logs List */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="bg-sv-surface rounded-2xl shadow-sm border border-sv-border overflow-hidden">
                 <div className="p-6 border-b border-gray-50 bg-gray-50/50 flex items-center justify-between">
                     <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
                         Recent History ({filteredLogs.length} entries)
@@ -430,7 +430,7 @@ const ErrorLogs: React.FC = () => {
             </div>
 
             {/* Quick Helper */}
-            <div className="flex items-start gap-3 p-4 bg-blue-50 text-blue-700 border border-blue-100 rounded-2xl">
+            <div className="flex items-start gap-3 p-4 bg-sv-info-soft text-sv-info border border-sv-info/30 rounded-2xl">
                 <FiAlertTriangle className="shrink-0 mt-0.5" />
                 <p className="text-xs leading-relaxed font-medium">
                     <span className="font-black uppercase tracking-tight mr-2">Debug Help:</span>

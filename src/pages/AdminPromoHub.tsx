@@ -179,7 +179,7 @@ const AdminPromoHub: React.FC = () => {
                     {activeTab === 'referrals' && (
                         <button 
                             onClick={handleGenerateReferral}
-                            className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-xl font-bold text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95"
+                            className="flex items-center gap-2 px-4 py-2 bg-sv-success text-sv-text-inverse rounded-xl font-bold text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95"
                         >
                             <FaPlus /> Generate
                         </button>
@@ -260,9 +260,9 @@ const AdminPromoHub: React.FC = () => {
                                         <td className="px-6 py-4">
                                             {item.riskScore !== 'Low' ? (
                                                 <div className={`flex items-center gap-1.5 px-2 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border w-fit ${
-                                                    item.riskScore === 'Critical' ? 'bg-red-100 text-red-700 border-red-200' : 
-                                                    item.riskScore === 'High' ? 'bg-red-50 text-red-600 border-red-100' : 
-                                                    'bg-orange-50 text-orange-600 border-orange-100'
+                                                    item.riskScore === 'Critical' ? 'bg-sv-danger-soft text-sv-danger border-sv-danger/30' :
+                                                    item.riskScore === 'High' ? 'bg-sv-danger-soft text-sv-danger border-sv-danger/20' :
+                                                    'bg-sv-warning-soft text-sv-warning border-sv-warning/30'
                                                 }`}>
                                                     <FaExclamationTriangle size={10} />
                                                     {item.riskScore} Risk
@@ -307,7 +307,7 @@ const AdminPromoHub: React.FC = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             {item.riskScore === 'Peak' ? (
-                                                <div className="flex items-center gap-1.5 px-2 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border border-orange-100 bg-orange-50 text-orange-600 w-fit">
+                                                <div className="flex items-center gap-1.5 px-2 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border border-sv-warning/30 bg-sv-warning-soft text-sv-warning w-fit">
                                                     Peak Use
                                                 </div>
                                             ) : (

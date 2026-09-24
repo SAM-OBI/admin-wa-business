@@ -13,7 +13,7 @@ export default function Layout() {
   // We can add logic for that later if needed, mostly handled by Sidebar NavLink clicks
 
   return (
-    <div className="flex h-screen bg-[#050505] text-zinc-100 antialiased overflow-hidden selection:bg-white selection:text-black">
+    <div className="flex h-screen bg-sv-bg text-sv-text-primary antialiased overflow-hidden selection:bg-sv-primary selection:text-sv-text-inverse">
       {/* Sidebar handles its own responsive rendering based on these props */}
       <Sidebar 
         isDesktopCollapsed={isDesktopCollapsed} 
@@ -28,7 +28,7 @@ export default function Layout() {
         <Header 
           toggleMobileSidebar={() => setIsMobileOpen(!isMobileOpen)} 
         />
-        <main className="flex-1 overflow-auto bg-[#050505] p-4 lg:p-10 scroll-smooth scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
+        <main className="flex-1 overflow-auto bg-sv-bg p-4 lg:p-10 scroll-smooth scrollbar-thin scrollbar-thumb-sv-border scrollbar-track-transparent">
           <Outlet />
         </main>
       </div>

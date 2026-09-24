@@ -130,7 +130,7 @@ const FinancialAudit: React.FC = () => {
                     <select 
                         value={currency}
                         onChange={(e) => setCurrency(e.target.value)}
-                        className="bg-gray-100 dark:bg-white/5 border-none rounded-xl px-4 py-2 font-black text-[10px] uppercase tracking-widest text-gray-900 dark:text-white focus:ring-1 focus:ring-primary/50 cursor-pointer"
+                        className="bg-sv-surface-muted border-none rounded-xl px-4 py-2 font-black text-[10px] uppercase tracking-widest text-sv-text-primary focus:ring-1 focus:ring-primary/50 cursor-pointer"
                     >
                         <option value="NGN">NGN (₦)</option>
                         <option value="USD">USD ($)</option>
@@ -264,8 +264,8 @@ const FinancialAudit: React.FC = () => {
                                     <td className="px-6 py-4">
                                         <span className={`px-2 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border ${
                                             log.status === 'completed' 
-                                            ? 'bg-green-50 text-green-600 border-green-200' 
-                                            : 'bg-orange-50 text-orange-600 border-orange-200'
+                                            ? 'bg-sv-success-soft text-sv-success border-sv-success/30'
+                                            : 'bg-sv-warning-soft text-sv-warning border-sv-warning/30'
                                         }`}>
                                             {log.status}
                                         </span>

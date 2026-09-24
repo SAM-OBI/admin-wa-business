@@ -55,10 +55,10 @@ const FraudInvestigationPanel: React.FC<Props> = ({ incident, onResolved, onClos
 
   const getSeverityColor = (sev: string) => {
     switch (sev) {
-      case 'CRITICAL': return 'text-red-600 bg-red-100 border-red-200';
-      case 'HIGH': return 'text-orange-600 bg-orange-100 border-orange-200';
-      case 'MEDIUM': return 'text-yellow-600 bg-yellow-100 border-yellow-200';
-      default: return 'text-blue-600 bg-blue-100 border-blue-200';
+      case 'CRITICAL': return 'text-sv-danger bg-sv-danger-soft border-sv-danger/30';
+      case 'HIGH': return 'text-sv-warning bg-sv-warning-soft border-sv-warning/30';
+      case 'MEDIUM': return 'text-sv-warning bg-sv-warning-soft border-sv-warning/30';
+      default: return 'text-sv-info bg-sv-info-soft border-sv-info/30';
     }
   };
 
@@ -66,7 +66,7 @@ const FraudInvestigationPanel: React.FC<Props> = ({ incident, onResolved, onClos
     <motion.div 
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden max-w-2xl w-full"
+      className="bg-sv-surface rounded-xl shadow-2xl border border-sv-border overflow-hidden max-w-2xl w-full"
     >
       <div className={`p-4 border-b flex justify-between items-center ${getSeverityColor(incident.severity)}`}>
         <div className="flex items-center gap-3">
@@ -80,30 +80,30 @@ const FraudInvestigationPanel: React.FC<Props> = ({ incident, onResolved, onClos
 
       <div className="p-6 space-y-6">
         {/* Risk Score Gauge */}
-        <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-100">
+        <div className="flex items-center justify-between p-4 bg-sv-surface-muted rounded-lg border border-sv-border">
           <div>
-            <p className="text-sm text-slate-500 font-medium">Risk Score</p>
+            <p className="text-sm text-sv-text-secondary font-medium">Risk Score</p>
             <div className="flex items-baseline gap-2">
-              <span className={`text-4xl font-black ${incident.riskScore >= 80 ? 'text-red-600' : 'text-slate-800'}`}>
+              <span className={`text-4xl font-black ${incident.riskScore >= 80 ? 'text-sv-danger' : 'text-sv-text-primary'}`}>
                 {incident.riskScore}
               </span>
-              <span className="text-slate-400 font-bold">/ 100</span>
+              <span className="text-sv-text-muted font-bold">/ 100</span>
             </div>
           </div>
           <div className="text-right">
-            <p className="text-sm text-slate-500 font-medium">Occurrences</p>
-            <p className="text-2xl font-bold text-slate-800">{incident.occurrences}</p>
+            <p className="text-sm text-sv-text-secondary font-medium">Occurrences</p>
+            <p className="text-2xl font-bold text-sv-text-primary">{incident.occurrences}</p>
           </div>
         </div>
 
         {/* Triggered Signals */}
         <div>
-          <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+          <h3 className="text-sm font-bold text-sv-text-muted uppercase tracking-widest mb-3 flex items-center gap-2">
             <BsExclamationTriangle /> Triggered Signals
           </h3>
           <div className="flex flex-wrap gap-2">
             {incident.triggeredSignals.map((signal, i) => (
-              <span key={i} className="px-3 py-1 bg-red-50 text-red-700 border border-red-100 rounded-full text-xs font-bold font-mono">
+              <span key={i} className="px-3 py-1 bg-sv-danger-soft text-sv-danger border border-sv-danger/30 rounded-full text-xs font-bold font-mono">
                 {signal}
               </span>
             ))}
@@ -112,29 +112,29 @@ const FraudInvestigationPanel: React.FC<Props> = ({ incident, onResolved, onClos
 
         {/* Device & Context */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="p-3 bg-slate-50 rounded border border-slate-100">
-            <p className="text-[10px] text-slate-400 font-black uppercase">Device Fingerprint</p>
-            <p className="text-xs font-mono break-all text-slate-600 mt-1">{incident.context?.fingerprint || 'N/A'}</p>
+          <div className="p-3 bg-sv-surface-muted rounded border border-sv-border">
+            <p className="text-[10px] text-sv-text-muted font-black uppercase">Device Fingerprint</p>
+            <p className="text-xs font-mono break-all text-sv-text-secondary mt-1">{incident.context?.fingerprint || 'N/A'}</p>
           </div>
-          <div className="p-3 bg-slate-50 rounded border border-slate-100">
-            <p className="text-[10px] text-slate-400 font-black uppercase">Source IP</p>
-            <p className="text-xs font-mono text-slate-600 mt-1">{incident.context?.ip || 'N/A'}</p>
+          <div className="p-3 bg-sv-surface-muted rounded border border-sv-border">
+            <p className="text-[10px] text-sv-text-muted font-black uppercase">Source IP</p>
+            <p className="text-xs font-mono text-sv-text-secondary mt-1">{incident.context?.ip || 'N/A'}</p>
           </div>
         </div>
 
         {/* Resolution Section */}
         {!incident.resolved ? (
-          <div className="mt-8 border-t pt-6">
-            <h3 className="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+          <div className="mt-8 border-t border-sv-border pt-6">
+            <h3 className="text-sm font-bold text-sv-text-primary mb-4 flex items-center gap-2">
               <BsHammer /> Resolution Workflow
             </h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Primary Action</label>
-                <select 
+                <label className="block text-xs font-bold text-sv-text-secondary uppercase mb-2">Primary Action</label>
+                <select
                   value={resolutionAction}
                   onChange={(e) => setResolutionAction(e.target.value)}
-                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
+                  className="w-full p-3 bg-sv-surface-muted border border-sv-border rounded-lg text-sm font-medium focus:ring-2 focus:ring-sv-primary focus:outline-none transition-all"
                 >
                   <option value="CLEARED">Clear Incident (False Positive)</option>
                   <option value="ACCOUNT_SUSPENDED">Suspend Account (Enforce Lock)</option>
@@ -145,21 +145,21 @@ const FraudInvestigationPanel: React.FC<Props> = ({ incident, onResolved, onClos
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Resolution Note (Internal)</label>
-                  <textarea 
+                  <label className="block text-xs font-bold text-sv-text-secondary uppercase mb-2">Resolution Note (Internal)</label>
+                  <textarea
                     value={note}
                     onChange={(e) => setNote(e.target.value)}
                     placeholder="Describe investigation outcome..."
-                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg text-sm min-h-[100px] focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full p-3 bg-sv-surface-muted border border-sv-border rounded-lg text-sm min-h-[100px] focus:ring-2 focus:ring-sv-primary focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase mb-2">Governance Justification</label>
-                  <textarea 
+                  <label className="block text-xs font-bold text-sv-text-secondary uppercase mb-2">Governance Justification</label>
+                  <textarea
                     value={justification}
                     onChange={(e) => setJustification(e.target.value)}
                     placeholder="Mandated audit trail reason..."
-                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg text-sm min-h-[100px] focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full p-3 bg-sv-surface-muted border border-sv-border rounded-lg text-sm min-h-[100px] focus:ring-2 focus:ring-sv-primary focus:outline-none"
                   />
                 </div>
               </div>
@@ -167,7 +167,7 @@ const FraudInvestigationPanel: React.FC<Props> = ({ incident, onResolved, onClos
               <button
                 onClick={handleResolve}
                 disabled={isResolving}
-                className="w-full py-4 bg-slate-900 text-white rounded-xl font-bold hover:bg-black transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full py-4 bg-sv-primary text-sv-text-inverse rounded-xl font-bold hover:bg-sv-primary-hover transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 {isResolving ? 'Processing...' : (
                   <>
@@ -178,11 +178,11 @@ const FraudInvestigationPanel: React.FC<Props> = ({ incident, onResolved, onClos
             </div>
           </div>
         ) : (
-          <div className="mt-8 bg-green-50 p-4 border border-green-200 rounded-xl flex items-center gap-4">
-            <BsCheckCircle className="text-green-600" size={24} />
+          <div className="mt-8 bg-sv-success-soft p-4 border border-sv-success/30 rounded-xl flex items-center gap-4">
+            <BsCheckCircle className="text-sv-success" size={24} />
             <div>
-              <p className="text-green-800 font-bold">Resolved as {incident.context?.resolutionAction || 'CLEARED'}</p>
-              <p className="text-green-600 text-xs">This case is closed for further investigation.</p>
+              <p className="text-sv-success font-bold">Resolved as {incident.context?.resolutionAction || 'CLEARED'}</p>
+              <p className="text-sv-success text-xs">This case is closed for further investigation.</p>
             </div>
           </div>
         )}

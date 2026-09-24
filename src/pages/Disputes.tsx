@@ -147,7 +147,7 @@ export default function Disputes() {
     <div className="p-4 lg:p-6 bg-gray-50/50 min-h-screen">
       <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+          <h1 className="text-2xl font-bold text-sv-text-primary flex items-center gap-3">
             <div className="p-2 bg-purple-50 text-purple-600 rounded-xl shadow-sm border border-purple-100">
               <FaGavel size={20} />
             </div>
@@ -187,7 +187,7 @@ export default function Disputes() {
             {loading ? (
                <div className="flex justify-center p-10"><div className="animate-spin h-8 w-8 border-b-2 border-purple-600 rounded-full"></div></div>
             ) : disputes.length === 0 ? (
-              <div className="text-center py-16 bg-white rounded-2xl border border-dashed border-gray-200">
+              <div className="text-center py-16 bg-sv-surface rounded-2xl border border-dashed border-sv-border">
                 <FaCheckCircle className="mx-auto text-green-500 mb-4" size={40} />
                 <p className="font-black text-gray-400 uppercase text-xs">No Disputes Found</p>
               </div>
@@ -229,7 +229,7 @@ export default function Disputes() {
         {/* Details */}
         <div className="xl:col-span-2">
            {activeDispute ? (
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col h-[calc(100vh-250px)]">
+              <div className="bg-sv-surface rounded-2xl shadow-sm border border-sv-border p-6 flex flex-col h-[calc(100vh-250px)]">
                   <div className="flex justify-between items-start mb-6 pb-6 border-b border-gray-100">
                       <div>
                           <h2 className="text-lg font-bold">Case File: #{activeDispute.order?.orderId?.slice(-8)}</h2>
@@ -240,28 +240,28 @@ export default function Disputes() {
                           <button
                             onClick={() => handleResolve(activeDispute._id, 'refund')}
                             disabled={resolving}
-                            className="bg-red-50 text-red-600 hover:bg-red-100 text-[10px] font-black uppercase px-4 py-2 rounded-lg transition disabled:opacity-50"
+                            className="bg-sv-danger-soft text-sv-danger hover:opacity-80 text-[10px] font-black uppercase px-4 py-2 rounded-lg transition disabled:opacity-50"
                           >
                             Refund Buyer
                           </button>
                           <button
                             onClick={() => handlePartialRefund(activeDispute._id)}
                             disabled={resolving}
-                            className="bg-orange-50 text-orange-600 hover:bg-orange-100 text-[10px] font-black uppercase px-4 py-2 rounded-lg transition disabled:opacity-50"
+                            className="bg-sv-warning-soft text-sv-warning hover:opacity-80 text-[10px] font-black uppercase px-4 py-2 rounded-lg transition disabled:opacity-50"
                           >
                             Partial Refund
                           </button>
                           <button
                             onClick={() => handleResolve(activeDispute._id, 'release')}
                             disabled={resolving}
-                            className="bg-emerald-50 text-emerald-600 hover:bg-emerald-100 text-[10px] font-black uppercase px-4 py-2 rounded-lg transition disabled:opacity-50"
+                            className="bg-sv-success-soft text-sv-success hover:opacity-80 text-[10px] font-black uppercase px-4 py-2 rounded-lg transition disabled:opacity-50"
                           >
                             Release to Vendor
                           </button>
                           <button
                             onClick={() => handleResolve(activeDispute._id, 'dismissed')}
                             disabled={resolving}
-                            className="bg-gray-50 text-gray-600 hover:bg-gray-100 text-[10px] font-black uppercase px-4 py-2 rounded-lg transition disabled:opacity-50"
+                            className="bg-sv-surface-muted text-sv-text-secondary hover:bg-sv-border text-[10px] font-black uppercase px-4 py-2 rounded-lg transition disabled:opacity-50"
                           >
                             Dismiss
                           </button>
@@ -367,7 +367,7 @@ export default function Disputes() {
                          value={message}
                          onChange={e => setMessage(e.target.value)}
                          placeholder="Enter adjudication note..."
-                         className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+                         className="flex-1 bg-sv-surface-muted border border-sv-border rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-sv-primary transition-all"
                       />
                       <button
                          type="submit"
@@ -444,14 +444,14 @@ function AdminAppealReview({ dispute, onUpdate }: { dispute: any; onUpdate: (upd
           <button
             onClick={() => handleReview('OVERTURNED')}
             disabled={reviewing}
-            className="bg-emerald-50 text-emerald-600 hover:bg-emerald-100 text-[10px] font-black uppercase px-4 py-2 rounded-lg transition disabled:opacity-50"
+            className="bg-sv-success-soft text-sv-success hover:opacity-80 text-[10px] font-black uppercase px-4 py-2 rounded-lg transition disabled:opacity-50"
           >
             Overturn
           </button>
           <button
             onClick={() => handleReview('REJECTED')}
             disabled={reviewing}
-            className="bg-gray-100 text-gray-600 hover:bg-gray-200 text-[10px] font-black uppercase px-4 py-2 rounded-lg transition disabled:opacity-50"
+            className="bg-sv-surface-muted text-sv-text-secondary hover:bg-sv-border text-[10px] font-black uppercase px-4 py-2 rounded-lg transition disabled:opacity-50"
           >
             Reject Appeal
           </button>

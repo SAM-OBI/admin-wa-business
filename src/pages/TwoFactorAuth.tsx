@@ -69,7 +69,7 @@ export default function TwoFactorAuth() {
                                 value={code}
                                 onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                                 required
-                                className="block w-full px-4 py-6 bg-slate-50 border-2 border-transparent focus:bg-white focus:border-slate-900 rounded-2xl focus:ring-8 focus:ring-slate-900/5 transition-all outline-none text-slate-900 text-center text-5xl font-black tracking-[0.5em] placeholder-slate-200"
+                                className="block w-full px-4 py-6 bg-sv-surface-muted border-2 border-transparent focus:bg-sv-surface focus:border-sv-primary rounded-2xl focus:ring-8 focus:ring-sv-primary/10 transition-all outline-none text-sv-text-primary text-center text-5xl font-black tracking-[0.5em] placeholder-slate-200"
                                 placeholder="000000"
                                 maxLength={6}
                                 autoFocus
@@ -80,7 +80,7 @@ export default function TwoFactorAuth() {
                             <button
                                 type="submit"
                                 disabled={loading || code.length !== 6}
-                                className="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold shadow-xl shadow-slate-900/20 hover:bg-black transition-all active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-50"
+                                className="w-full bg-sv-primary text-sv-text-inverse py-5 rounded-2xl font-bold hover:bg-sv-primary-hover transition-all active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-50"
                             >
                                 {loading ? (
                                     <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>

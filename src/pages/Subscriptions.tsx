@@ -73,7 +73,7 @@ export default function Subscriptions() {
             <select
               value={filters.plan}
               onChange={(e) => setFilters(prev => ({ ...prev, plan: e.target.value }))}
-              className="px-4 py-2 bg-zinc-900/50 border border-zinc-800/40 text-zinc-400 text-xs font-black uppercase tracking-widest rounded-xl focus:outline-none focus:border-white/20 transition-all cursor-pointer"
+              className="px-4 py-2 bg-sv-surface-elevated/50 border border-sv-border text-sv-text-muted text-xs font-black uppercase tracking-widest rounded-xl focus:outline-none focus:border-sv-primary transition-all cursor-pointer"
             >
               <option value="">All Plans</option>
               <option value="trial">Trial</option>
@@ -86,7 +86,7 @@ export default function Subscriptions() {
              <select
               value={filters.status}
               onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
-              className="px-4 py-2 bg-zinc-900/50 border border-zinc-800/40 text-zinc-400 text-xs font-black uppercase tracking-widest rounded-xl focus:outline-none focus:border-white/20 transition-all cursor-pointer"
+              className="px-4 py-2 bg-sv-surface-elevated/50 border border-sv-border text-sv-text-muted text-xs font-black uppercase tracking-widest rounded-xl focus:outline-none focus:border-sv-primary transition-all cursor-pointer"
             >
               <option value="">All Statuses</option>
               <option value="ACTIVE">Active</option>
@@ -107,25 +107,25 @@ export default function Subscriptions() {
         </div>
       </div>
 
-      <div className="bg-zinc-900/50 rounded-2xl border border-zinc-800/40 backdrop-blur-sm overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+      <div className="bg-sv-surface-elevated/50 rounded-2xl border border-sv-border backdrop-blur-sm overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-zinc-800/60 bg-white/[0.02]">
-                <th className="px-8 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Vendor Entity</th>
-                <th className="px-8 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Subscription Plan</th>
-                <th className="px-8 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Billing Status</th>
-                <th className="px-8 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Lifecycle Timestamps</th>
-                <th className="px-8 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] text-right">Actions</th>
+              <tr className="border-b border-sv-border bg-sv-surface/5">
+                <th className="px-8 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Vendor Entity</th>
+                <th className="px-8 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Subscription Plan</th>
+                <th className="px-8 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Billing Status</th>
+                <th className="px-8 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Lifecycle Timestamps</th>
+                <th className="px-8 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em] text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-800/40">
+            <tbody className="divide-y divide-sv-border">
                 {/* Empty State pending backend API wiring */}
                 <tr>
                   <td colSpan={5} className="px-8 py-24 text-center">
                     <div className="flex flex-col items-center gap-4">
-                      <FiShield className="text-zinc-800 w-12 h-12" />
-                      <p className="text-zinc-600 text-[10px] font-black uppercase tracking-[0.3em] italic">Awaiting Backend Event Sync...</p>
+                      <FiShield className="text-sv-text-muted w-12 h-12" />
+                      <p className="text-sv-text-muted text-[10px] font-black uppercase tracking-[0.3em] italic">Awaiting Backend Event Sync...</p>
                     </div>
                   </td>
                 </tr>
@@ -134,25 +134,25 @@ export default function Subscriptions() {
         </div>
 
         {/* Global Pagination Hub */}
-        <div className="px-8 py-6 border-t border-zinc-800/60 bg-white/[0.01] flex items-center justify-between">
-          <div className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">
-            Registry Index <span className="text-white mx-1">0</span> of <span className="text-white mx-1">{pagination.total}</span> Entities
+        <div className="px-8 py-6 border-t border-sv-border bg-sv-surface/5 flex items-center justify-between">
+          <div className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">
+            Registry Index <span className="text-sv-text-primary mx-1">0</span> of <span className="text-sv-text-primary mx-1">{pagination.total}</span> Entities
           </div>
           <div className="flex gap-4 items-center">
             <button
               onClick={() => handlePageChange(pagination.page - 1)}
               disabled={pagination.page <= 1}
-              className="p-2 border border-zinc-800/60 rounded-lg text-white disabled:opacity-20 disabled:cursor-not-allowed hover:bg-white/[0.05] transition-all"
+              className="p-2 border border-sv-border rounded-lg text-sv-text-primary disabled:opacity-20 disabled:cursor-not-allowed hover:bg-sv-surface-muted transition-all"
             >
               PREV
             </button>
-            <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest bg-zinc-800 px-3 py-1.5 rounded-md border border-white/5">
+            <span className="text-[10px] font-black text-sv-text-secondary uppercase tracking-widest bg-sv-surface-muted px-3 py-1.5 rounded-md border border-sv-border">
                SEGMENT {pagination.page} / {pagination.pages}
             </span>
             <button
               onClick={() => handlePageChange(pagination.page + 1)}
               disabled={pagination.page >= pagination.pages}
-              className="p-2 border border-zinc-800/60 rounded-lg text-white disabled:opacity-20 disabled:cursor-not-allowed hover:bg-white/[0.05] transition-all"
+              className="p-2 border border-sv-border rounded-lg text-sv-text-primary disabled:opacity-20 disabled:cursor-not-allowed hover:bg-sv-surface-muted transition-all"
             >
               NEXT
             </button>

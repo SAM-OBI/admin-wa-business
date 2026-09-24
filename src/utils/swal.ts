@@ -1,8 +1,11 @@
 import Swal from 'sweetalert2';
 
-// Custom colors matching your theme
+// ShopVia Color System v2 confirm-button palette. SweetAlert2 renders through
+// its own injected stylesheet outside our Tailwind/CSS-variable pipeline, so
+// these stay literal hex (light-mode values) rather than sv-* token classes —
+// see src/index.css for the canonical --sv-primary definition this mirrors.
 const colors = {
-  primary: '#D4AF37',
+  primary: '#0B4F3A',
   secondary: '#D8C3A5',
   dark: '#4A3728',
   light: '#F5F5DC'

@@ -181,12 +181,12 @@ export default function UserDetails() {
           <div className="flex gap-3">
             <button
                onClick={handleImpersonate}
-               className="px-4 py-2 bg-white text-black rounded-lg hover:bg-zinc-200 transition-all flex items-center gap-2 text-sm font-bold shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+               className="px-4 py-2 bg-sv-primary text-sv-text-inverse rounded-lg hover:bg-sv-primary-hover transition-all flex items-center gap-2 text-sm font-bold"
             >
                <FiShield /> Login As
             </button>
             {(user as any).legalHold && (
-               <div className="flex items-center gap-1 bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold">
+               <div className="flex items-center gap-1 bg-sv-danger-soft text-sv-danger px-3 py-1 rounded-full text-xs font-bold">
                   <FiLock /> Legal Hold Active
                </div>
             )}
@@ -342,9 +342,9 @@ export default function UserDetails() {
                       <div className="text-right">
                         <p className="text-sm font-black text-white tracking-tight">₦{order.totalAmount.toLocaleString()}</p>
                         <span className={`inline-block px-2 py-0.5 text-[9px] font-black uppercase rounded-full mt-1 ${
-                          order.status === 'delivered' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' :
-                          order.status === 'pending' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' :
-                          'bg-zinc-800 text-zinc-400 border border-zinc-700/50'
+                          order.status === 'delivered' ? 'bg-sv-success-soft text-sv-success border border-sv-success/30' :
+                          order.status === 'pending' ? 'bg-sv-warning-soft text-sv-warning border border-sv-warning/30' :
+                          'bg-sv-surface-muted text-sv-text-secondary border border-sv-border'
                         }`}>
                           {order.status}
                         </span>
@@ -400,9 +400,9 @@ export default function UserDetails() {
                       </div>
                       {/* 🛡️ [BATCH-11] Canonical status is uppercase OPEN|INVESTIGATING|RESOLVED|DISMISSED. */}
                       <span className={`px-2.5 py-1 text-[9px] font-black uppercase rounded border shrink-0 ${
-                        complaint.status === 'RESOLVED' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
-                        (complaint.status === 'OPEN' || complaint.status === 'INVESTIGATING') ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
-                        'bg-red-500/10 text-red-500 border-red-500/20'
+                        complaint.status === 'RESOLVED' ? 'bg-sv-success-soft text-sv-success border-sv-success/30' :
+                        (complaint.status === 'OPEN' || complaint.status === 'INVESTIGATING') ? 'bg-sv-warning-soft text-sv-warning border-sv-warning/30' :
+                        'bg-sv-danger-soft text-sv-danger border-sv-danger/30'
                       }`}>
                         {complaint.status}
                       </span>
@@ -426,9 +426,9 @@ export default function UserDetails() {
               <div className="flex justify-between items-center">
                 <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Access Role</span>
                 <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-tight border ${
-                  user.role === 'ADMIN' ? 'bg-purple-500/10 text-purple-500 border-purple-500/20' :
-                  user.role === 'VENDORS' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
-                  'bg-zinc-800 text-zinc-400 border-zinc-700/50'
+                  user.role === 'ADMIN' ? 'bg-sv-tag-soft text-sv-tag border-sv-tag/20' :
+                  user.role === 'VENDORS' ? 'bg-sv-success-soft text-sv-success border-sv-success/30' :
+                  'bg-sv-surface-muted text-sv-text-secondary border-sv-border'
                 }`}>
                   {user.role}
                 </span>
@@ -437,7 +437,7 @@ export default function UserDetails() {
               <div className="flex justify-between items-center">
                 <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Active State</span>
                 <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-black uppercase rounded-md border ${
-                  user.isActive ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-red-500/10 text-red-500 border-red-500/20'
+                  user.isActive ? 'bg-sv-success-soft text-sv-success border-sv-success/30' : 'bg-sv-danger-soft text-sv-danger border-sv-danger/30'
                 }`}>
                   {user.isActive ? <FiCheckCircle className="mr-1.5" /> : <FiXCircle className="mr-1.5" />}
                   {user.isActive ? 'Active' : 'Suspended'}
@@ -447,10 +447,10 @@ export default function UserDetails() {
               <div className="flex justify-between items-center">
                 <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Onboarding State</span>
                 <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-black uppercase rounded-md border ${
-                  (user as any).onboardingState === 'ACTIVE' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
-                  (user as any).onboardingState === 'KYC_PENDING' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
-                  (user as any).onboardingState === 'EMAIL_FAILED' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
-                  'bg-zinc-800 text-zinc-400 border-zinc-700/50'
+                  (user as any).onboardingState === 'ACTIVE' ? 'bg-sv-success-soft text-sv-success border-sv-success/30' :
+                  (user as any).onboardingState === 'KYC_PENDING' ? 'bg-sv-warning-soft text-sv-warning border-sv-warning/30' :
+                  (user as any).onboardingState === 'EMAIL_FAILED' ? 'bg-sv-danger-soft text-sv-danger border-sv-danger/30' :
+                  'bg-sv-surface-muted text-sv-text-secondary border-sv-border'
                 }`}>
                   {(user as any).onboardingState || 'IDLE'}
                 </span>
@@ -466,10 +466,10 @@ export default function UserDetails() {
               <div className="flex justify-between items-center">
                 <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">KYC Verification</span>
                 <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-black uppercase rounded-md border ${
-                  user.verification?.status === 'verified' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
-                  user.verification?.status === 'pending' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
-                  user.verification?.status === 'locked' ? 'bg-orange-500/10 text-orange-500 border-orange-500/20' :
-                  'bg-zinc-800 text-zinc-400 border-zinc-700/50'
+                  user.verification?.status === 'verified' ? 'bg-sv-success-soft text-sv-success border-sv-success/30' :
+                  user.verification?.status === 'pending' ? 'bg-sv-warning-soft text-sv-warning border-sv-warning/30' :
+                  user.verification?.status === 'locked' ? 'bg-sv-warning-soft text-sv-warning border-sv-warning/30' :
+                  'bg-sv-surface-muted text-sv-text-secondary border-sv-border'
                 }`}>
                   {user.verification?.status === 'verified' && <FiCheckCircle className="mr-1.5" />}
                   {user.verification?.status === 'pending' && <FiShield className="mr-1.5 animate-pulse" />} 
@@ -481,7 +481,7 @@ export default function UserDetails() {
               <div className="flex justify-between items-center">
                 <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Email Identity</span>
                 <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-black uppercase rounded-md border ${
-                  user.isVerified ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-red-500/10 text-red-500 border-red-500/20'
+                  user.isVerified ? 'bg-sv-success-soft text-sv-success border-sv-success/30' : 'bg-sv-danger-soft text-sv-danger border-sv-danger/30'
                 }`}>
                   {user.isVerified ? <FiCheckCircle className="mr-1.5" /> : <FiXCircle className="mr-1.5" />}
                   {user.isVerified ? 'Verified' : 'Unverified'}
@@ -506,7 +506,7 @@ export default function UserDetails() {
                       {!user.verification.bvnVerified && user.governmentId?.bvn && (
                         <button 
                           onClick={() => handleVerificationUpdate('bvn', true)}
-                          className="text-[9px] font-black uppercase px-2 py-1 bg-white text-black rounded hover:bg-zinc-200 transition-colors"
+                          className="text-[9px] font-black uppercase px-2 py-1 bg-sv-primary text-sv-text-inverse rounded hover:bg-sv-primary-hover transition-colors"
                         >
                           Verify
                         </button>
@@ -528,7 +528,7 @@ export default function UserDetails() {
                       {!user.verification.ninVerified && user.governmentId?.nin && (
                         <button 
                           onClick={() => handleVerificationUpdate('nin', true)}
-                          className="text-[9px] font-black uppercase px-2 py-1 bg-white text-black rounded hover:bg-zinc-200 transition-colors"
+                          className="text-[9px] font-black uppercase px-2 py-1 bg-sv-primary text-sv-text-inverse rounded hover:bg-sv-primary-hover transition-colors"
                         >
                           Verify
                         </button>
@@ -550,7 +550,7 @@ export default function UserDetails() {
                       {!user.verification.votersVerified && user.governmentId?.votersCard && (
                         <button 
                           onClick={() => handleVerificationUpdate('voters', true)}
-                          className="text-[9px] font-black uppercase px-2 py-1 bg-white text-black rounded hover:bg-zinc-200 transition-colors"
+                          className="text-[9px] font-black uppercase px-2 py-1 bg-sv-primary text-sv-text-inverse rounded hover:bg-sv-primary-hover transition-colors"
                         >
                           Verify
                         </button>

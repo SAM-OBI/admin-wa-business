@@ -48,7 +48,7 @@ export const UserProfileDropdown = ({ user, logout, settingsPath = '/settings' }
 
             {isOpen && (
                 <div 
-                    className="absolute right-0 mt-3 w-64 bg-[#0F0F0F] rounded-xl shadow-2xl border border-zinc-800/50 overflow-hidden z-50 origin-top-right transform transition-all duration-200 ease-out"
+                    className="absolute right-0 mt-3 w-64 bg-sv-surface-elevated rounded-xl shadow-2xl border border-sv-border overflow-hidden z-50 origin-top-right transform transition-all duration-200 ease-out"
                 >
                     <div className="p-4 border-b border-zinc-800/50 bg-zinc-900/50">
                         <div className="flex items-center gap-3">

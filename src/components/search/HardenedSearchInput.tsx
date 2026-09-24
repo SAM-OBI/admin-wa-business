@@ -79,7 +79,7 @@ export const HardenedSearchInput: React.FC<HardenedSearchInputProps> = ({
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.8 }}
                         >
-                            <FaSpinner className="text-blue-500 animate-spin" size={16} />
+                            <FaSpinner className="text-sv-primary animate-spin" size={16} />
                         </motion.div>
                     ) : isHardened ? (
                         <motion.div
@@ -97,7 +97,7 @@ export const HardenedSearchInput: React.FC<HardenedSearchInputProps> = ({
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.8 }}
                         >
-                            <FaSearch className="text-slate-400 group-focus-within:text-blue-500 transition-colors" size={16} />
+                            <FaSearch className="text-sv-text-muted group-focus-within:text-sv-primary transition-colors" size={16} />
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -109,9 +109,9 @@ export const HardenedSearchInput: React.FC<HardenedSearchInputProps> = ({
                 onChange={(e) => setLocalValue(e.target.value)}
                 placeholder={placeholder}
                 className={cn(
-                    "w-full pl-12 pr-10 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl transition-all",
-                    "focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none font-medium",
-                    "placeholder:text-slate-400 dark:placeholder:text-slate-600",
+                    "w-full pl-12 pr-10 py-3 bg-sv-surface border border-sv-border rounded-xl transition-all",
+                    "focus:ring-2 focus:ring-sv-primary/20 focus:border-sv-primary outline-none font-medium",
+                    "text-sv-text-primary placeholder:text-sv-text-muted",
                     isHardened && "border-emerald-500/50 bg-emerald-50/10"
                 )}
             />

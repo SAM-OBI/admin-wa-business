@@ -133,9 +133,9 @@ export default function WorkflowManager() {
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">v{wf.version}</p>
               </div>
               <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-[3px] border ${
-                wf.status === 'PUBLISHED' ? 'bg-green-50 text-green-700 border-green-200' : 
+                wf.status === 'PUBLISHED' ? 'bg-sv-success-soft text-sv-success border-sv-success/30' :
                 wf.status === 'ARCHIVED' ? 'bg-slate-100 text-slate-500 border-slate-200' :
-                'bg-amber-50 text-amber-700 border-amber-200'
+                'bg-sv-warning-soft text-sv-warning border-sv-warning/30'
               }`}>
                 {wf.status}
               </span>
@@ -146,7 +146,7 @@ export default function WorkflowManager() {
                 <FaEdit size={12} /> Edit
               </button>
               {wf.status === 'PUBLISHED' && (
-                <button onClick={() => setViewingDiff(wf)} className="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold py-2 rounded-[5px] flex items-center justify-center gap-2 transition-colors">
+                <button onClick={() => setViewingDiff(wf)} className="flex-1 bg-sv-info-soft hover:opacity-80 text-sv-info text-xs font-bold py-2 rounded-[5px] flex items-center justify-center gap-2 transition-colors">
                   <FaExchangeAlt size={12} /> View Diff
                 </button>
               )}
@@ -164,26 +164,26 @@ export default function WorkflowManager() {
           >
             <motion.div
               initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
-              className="w-full max-w-4xl bg-white dark:bg-gray-900 rounded-[5px] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+              className="w-full max-w-4xl bg-sv-surface rounded-[5px] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
             >
-              <div className="p-6 border-b flex justify-between items-center bg-slate-50">
+              <div className="p-6 border-b border-sv-border flex justify-between items-center bg-sv-surface-muted">
                 <div className="flex items-center gap-4">
-                  <h3 className="font-black text-xl">Workflow Editor</h3>
-                  <span className="text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded border border-amber-200">
+                  <h3 className="font-black text-xl text-sv-text-primary">Workflow Editor</h3>
+                  <span className="text-[10px] font-bold bg-sv-warning-soft text-sv-warning px-2 py-0.5 rounded border border-sv-warning/30">
                     Editing Draft v{editingWf.version + (editingWf.status === 'PUBLISHED' ? 1 : 0)}
                   </span>
                 </div>
-                <button onClick={() => { setEditingWf(null); setValidationResult(null); }} className="text-slate-400 hover:text-red-500">
+                <button onClick={() => { setEditingWf(null); setValidationResult(null); }} className="text-sv-text-muted hover:text-sv-danger">
                   <FaTimes />
                 </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-6 bg-slate-100/50">
+              <div className="flex-1 overflow-y-auto p-6 bg-sv-surface-muted/50">
                 {/* Node List Simulator */}
                 <div className="space-y-4 max-w-2xl mx-auto relative">
                   {/* Validation Results */}
                   {validationResult && (
-                    <div className={`p-4 rounded-[5px] border ${validationResult.valid ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800'}`}>
+                    <div className={`p-4 rounded-[5px] border ${validationResult.valid ? 'bg-sv-success-soft border-sv-success/30 text-sv-success' : 'bg-sv-danger-soft border-sv-danger/30 text-sv-danger'}`}>
                       <h4 className="font-black text-sm flex items-center gap-2">
                         {validationResult.valid ? <FaCheckCircle /> : <FaExclamationTriangle />}
                         {validationResult.valid ? 'Validation Passed' : 'Validation Failed'}
@@ -198,17 +198,17 @@ export default function WorkflowManager() {
 
                   {editingWf.nodes.map((node, i) => (
                     <div key={node.id} className="relative">
-                      {i > 0 && <div className="absolute left-1/2 -top-4 bottom-full w-0.5 bg-slate-300" />}
-                      <div className="bg-white border rounded-[5px] p-4 shadow-sm z-10 relative">
+                      {i > 0 && <div className="absolute left-1/2 -top-4 bottom-full w-0.5 bg-sv-border" />}
+                      <div className="bg-sv-surface border border-sv-border rounded-[5px] p-4 shadow-sm z-10 relative">
                         <div className="flex justify-between items-center mb-2">
                           <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded ${
-                            node.type === 'TRIGGER' ? 'bg-purple-100 text-purple-700' :
+                            node.type === 'TRIGGER' ? 'bg-sv-tag-soft text-sv-tag' :
                             node.type === 'CONDITION' ? 'bg-orange-100 text-orange-700' :
                             'bg-blue-100 text-blue-700'
                           }`}>
                             {node.type}
                           </span>
-                          <span className="text-[10px] font-bold text-slate-400">{node.id}</span>
+                          <span className="text-[10px] font-bold text-sv-text-muted">{node.id}</span>
                         </div>
                         <input 
                           value={node.name}
@@ -218,25 +218,25 @@ export default function WorkflowManager() {
                             setEditingWf({...editingWf, nodes: newNodes});
                             setValidationResult(null); // invalidate checks
                           }}
-                          className="w-full text-sm font-black text-slate-900 bg-transparent border-b border-dashed border-slate-300 focus:border-primary outline-none"
+                          className="w-full text-sm font-black text-sv-text-primary bg-transparent border-b border-dashed border-sv-border focus:border-primary outline-none"
                         />
                       </div>
                     </div>
                   ))}
                   
-                  <button className="mx-auto block mt-4 bg-white border border-dashed border-slate-300 text-slate-500 font-bold text-xs px-4 py-2 rounded-full hover:bg-slate-50 transition-colors">
+                  <button className="mx-auto block mt-4 bg-sv-surface border border-dashed border-sv-border text-sv-text-secondary font-bold text-xs px-4 py-2 rounded-full hover:bg-sv-surface-muted transition-colors">
                     + Add Node
                   </button>
                 </div>
               </div>
 
-              <div className="p-6 border-t bg-white flex justify-between items-center">
-                <button 
-                  onClick={handleValidate} 
+              <div className="p-6 border-t border-sv-border bg-sv-surface flex justify-between items-center">
+                <button
+                  onClick={handleValidate}
                   disabled={validating}
-                  className="text-xs font-black uppercase tracking-widest text-slate-600 bg-slate-100 px-6 py-3 rounded-[5px] flex items-center gap-2 hover:bg-slate-200"
+                  className="text-xs font-black uppercase tracking-widest text-sv-text-secondary bg-sv-surface-muted px-6 py-3 rounded-[5px] flex items-center gap-2 hover:bg-sv-border"
                 >
-                  {validating ? <div className="animate-spin w-3 h-3 border-2 border-slate-400 border-t-transparent rounded-full"/> : <FaPlay size={10} />}
+                  {validating ? <div className="animate-spin w-3 h-3 border-2 border-sv-text-muted border-t-transparent rounded-full"/> : <FaPlay size={10} />}
                   Validate Workflow
                 </button>
                 

@@ -52,11 +52,11 @@ export default function PlatformFeedback() {
 
     const getStatusColor = (status: string) => {
         switch(status) {
-            case 'new': return 'bg-blue-100 text-blue-800';
-            case 'read': return 'bg-gray-100 text-gray-800';
-            case 'in_progress': return 'bg-yellow-100 text-yellow-800';
-            case 'resolved': return 'bg-green-100 text-green-800';
-            default: return 'bg-gray-100 text-gray-800';
+            case 'new': return 'bg-sv-info-soft text-sv-info';
+            case 'read': return 'bg-sv-surface-muted text-sv-text-secondary';
+            case 'in_progress': return 'bg-sv-warning-soft text-sv-warning';
+            case 'resolved': return 'bg-sv-success-soft text-sv-success';
+            default: return 'bg-sv-surface-muted text-sv-text-secondary';
         }
     };
 
@@ -64,7 +64,7 @@ export default function PlatformFeedback() {
         <div className="p-6">
             <div className="flex justify-between items-center mb-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-800">App Feedback</h1>
+                    <h1 className="text-2xl font-bold text-sv-text-primary">App Feedback</h1>
                     <p className="text-gray-500 text-sm">Review user and vendor feedback about the platform</p>
                 </div>
                 
@@ -73,7 +73,7 @@ export default function PlatformFeedback() {
                     <select 
                         value={filterCategory}
                         onChange={(e) => setFilterCategory(e.target.value)}
-                        className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                        className="border border-sv-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-sv-primary outline-none"
                     >
                         <option value="">All Categories</option>
                         <option value="general">General</option>
@@ -90,13 +90,13 @@ export default function PlatformFeedback() {
             ) : (
                 <div className="grid grid-cols-1 gap-4">
                     {feedbacks.length === 0 ? (
-                        <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
+                        <div className="text-center py-12 bg-sv-surface rounded-xl border border-sv-border">
                             <FiMessageSquare className="mx-auto text-4xl text-gray-300 mb-2" />
                             <p className="text-gray-500">No feedback found</p>
                         </div>
                     ) : (
                         feedbacks.map((item) => (
-                            <div key={item._id} className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm hover:shadow-md transition">
+                            <div key={item._id} className="bg-sv-surface rounded-xl p-5 border border-sv-border shadow-sm hover:shadow-md transition">
                                 <div className="flex justify-between items-start">
                                     <div className="flex items-start gap-3">
                                         <div className="p-2 bg-blue-50 rounded-lg text-blue-600 text-xl font-bold">
@@ -104,7 +104,7 @@ export default function PlatformFeedback() {
                                         </div>
                                         <div>
                                             <div className="flex items-center gap-2 mb-1">
-                                                <span className={`px-2 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider ${item.category === 'bug' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-600'}`}>
+                                                <span className={`px-2 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider ${item.category === 'bug' ? 'bg-sv-danger-soft text-sv-danger' : 'bg-sv-surface-muted text-sv-text-secondary'}`}>
                                                     {item.category.replace('_', ' ')}
                                                 </span>
                                                 <span className="text-xs text-gray-400 flex items-center gap-1">

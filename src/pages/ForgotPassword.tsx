@@ -108,7 +108,7 @@ const ForgotPassword = () => {
                         required
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
-                        className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none font-medium"
+                        className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-sv-surface-muted bg-sv-surface-muted focus:bg-sv-surface focus:border-sv-primary focus:ring-4 focus:ring-sv-primary/10 transition-all outline-none font-medium"
                         placeholder="••••••••"
                     />
                 </div>
@@ -123,7 +123,7 @@ const ForgotPassword = () => {
                         required
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none font-medium"
+                        className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-sv-surface-muted bg-sv-surface-muted focus:bg-sv-surface focus:border-sv-primary focus:ring-4 focus:ring-sv-primary/10 transition-all outline-none font-medium"
                         placeholder="••••••••"
                     />
                 </div>
@@ -131,7 +131,7 @@ const ForgotPassword = () => {
 
               <button
                 type="submit"
-                className="w-full py-4.5 bg-slate-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-xl shadow-slate-900/20 active:scale-[0.98]"
+                className="w-full py-4.5 bg-sv-primary text-sv-text-inverse font-bold rounded-2xl hover:bg-sv-primary-hover transition-all active:scale-[0.98]"
               >
                 Update Identity Secret
               </button>
@@ -166,7 +166,7 @@ const ForgotPassword = () => {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-slate-50 bg-slate-50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none font-medium text-slate-900"
+                    className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-sv-surface-muted bg-sv-surface-muted focus:bg-sv-surface focus:border-sv-primary focus:ring-4 focus:ring-sv-primary/10 transition-all outline-none font-medium text-sv-text-primary"
                     placeholder="admin@shopvia.com"
                   />
                 </div>
@@ -175,7 +175,7 @@ const ForgotPassword = () => {
               <button
                 type="submit"
                 disabled={status === 'loading'}
-                className="w-full py-4.5 bg-slate-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-xl shadow-slate-900/20 disabled:opacity-50 active:scale-[0.98]"
+                className="w-full py-4.5 bg-sv-primary text-sv-text-inverse font-bold rounded-2xl hover:bg-sv-primary-hover transition-all disabled:opacity-50 active:scale-[0.98]"
               >
                 {status === 'loading' ? 'Verifying...' : 'Initiate Recovery'}
               </button>

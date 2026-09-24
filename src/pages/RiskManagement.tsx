@@ -58,7 +58,7 @@ export default function RiskManagement() {
     <div className="p-6">
       <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Risk Management</h1>
+          <h1 className="text-2xl font-bold text-sv-text-primary">Risk Management</h1>
           <p className="text-gray-500 text-sm mt-1 flex items-center gap-2">
             Monitor high-risk accounts and anomalies | 
             <Link to="/dashboard/security" className="text-blue-600 hover:underline flex items-center gap-1 font-bold">
@@ -71,7 +71,7 @@ export default function RiskManagement() {
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            className="px-4 py-2 border border-sv-border rounded-lg focus:outline-none focus:ring-2 focus:ring-sv-primary bg-sv-surface"
           >
             <option value="">All Risks</option>
             <option value="critical">Critical Only (80+)</option>
@@ -98,22 +98,22 @@ export default function RiskManagement() {
 
       <div className="mt-8">
         <h2 className="text-lg font-semibold text-gray-800 mb-4">Flagged Vendors</h2>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="bg-sv-surface rounded-xl shadow-sm border border-sv-border overflow-hidden">
           <table className="w-full text-left">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-sv-surface-muted border-b border-sv-border">
               <tr>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Vendor</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Risk Score</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Actions</th>
+                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">Vendor</th>
+                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">Risk Score</th>
+                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-sv-border">
               {filteredVendors.map((vendor) => (
                 <tr key={vendor._id}>
                   <td className="px-6 py-4">
-                    <div className="font-medium text-gray-900">{vendor.storeName}</div>
-                    <div className="text-sm text-gray-500">{vendor.ownerName}</div>
+                    <div className="font-medium text-sv-text-primary">{vendor.storeName}</div>
+                    <div className="text-sm text-sv-text-secondary">{vendor.ownerName}</div>
                   </td>
                   <td className="px-6 py-4">
                      <div className="flex items-center gap-2 text-red-600 font-bold">
@@ -122,7 +122,7 @@ export default function RiskManagement() {
                      </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">
+                    <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-sv-danger-soft text-sv-danger">
                       High Risk
                     </span>
                   </td>
@@ -139,7 +139,7 @@ export default function RiskManagement() {
               
               {filteredVendors.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={4} className="px-6 py-12 text-center text-sv-text-secondary">
                     No high risk vendors matches filter.
                   </td>
                 </tr>

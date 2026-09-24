@@ -86,18 +86,18 @@ export default function AdsModeration() {
 
   const getStatusBadge = (status: string) => {
     const styles: any = {
-      'PENDING_REVIEW': 'bg-amber-100 text-amber-700 border-amber-200',
-      'ACTIVE': 'bg-emerald-100 text-emerald-700 border-emerald-200',
-      'REJECTED': 'bg-rose-100 text-rose-700 border-rose-200',
-      'PAUSED': 'bg-gray-100 text-gray-700 border-gray-200',
+      'PENDING_REVIEW': 'bg-sv-warning-soft text-sv-warning border-sv-warning/30',
+      'ACTIVE': 'bg-sv-success-soft text-sv-success border-sv-success/30',
+      'REJECTED': 'bg-sv-danger-soft text-sv-danger border-sv-danger/30',
+      'PAUSED': 'bg-sv-surface-muted text-sv-text-secondary border-sv-border',
       'EXHAUSTED': 'bg-purple-100 text-purple-700 border-purple-200',
       'LEARNING': 'bg-sky-100 text-sky-700 border-sky-200',
-      'SYSTEM_SUSPENDED': 'bg-red-100 text-red-700 border-red-200',
-      'SYSTEM_COMPLIANCE_HOLD': 'bg-orange-100 text-orange-700 border-orange-200',
-      'SYSTEM_SUBSCRIPTION_DOWNGRADE': 'bg-yellow-100 text-yellow-700 border-yellow-200'
+      'SYSTEM_SUSPENDED': 'bg-sv-danger-soft text-sv-danger border-sv-danger/30',
+      'SYSTEM_COMPLIANCE_HOLD': 'bg-sv-warning-soft text-sv-warning border-sv-warning/30',
+      'SYSTEM_SUBSCRIPTION_DOWNGRADE': 'bg-sv-warning-soft text-sv-warning border-sv-warning/30'
     };
     return (
-      <span className={`px-2 py-1 text-[10px] font-black uppercase tracking-wider rounded-full border ${styles[status] || 'bg-gray-100 text-gray-700 border-gray-200'}`}>
+      <span className={`px-2 py-1 text-[10px] font-black uppercase tracking-wider rounded-full border ${styles[status] || 'bg-sv-surface-muted text-sv-text-secondary border-sv-border'}`}>
         {status.replace(/_/g, ' ')}
       </span>
     );
@@ -142,7 +142,7 @@ export default function AdsModeration() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
               key={ad._id}
-              className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-5"
+              className="bg-sv-surface rounded-2xl border border-sv-border shadow-sm hover:shadow-md transition-shadow p-5"
             >
               <div className="flex flex-col lg:flex-row gap-6">
                 {/* Store Info */}
@@ -198,14 +198,14 @@ export default function AdsModeration() {
                       <button
                         onClick={() => handleModerate(ad._id, 'ACTIVE')}
                         disabled={!!moderatingId}
-                        className="flex-1 bg-emerald-600 text-white h-10 rounded-xl text-xs font-black shadow-lg shadow-emerald-100 hover:bg-emerald-700 transition-colors active:scale-95 disabled:opacity-50"
+                        className="flex-1 bg-sv-success text-sv-text-inverse h-10 rounded-xl text-xs font-black hover:opacity-90 transition-colors active:scale-95 disabled:opacity-50"
                       >
                         APPROVE
                       </button>
                       <button
                         onClick={() => { setModeratingId(ad._id); setShowRejectModal(true); }}
                         disabled={!!moderatingId}
-                        className="w-10 h-10 bg-white border border-slate-200 text-rose-600 rounded-xl flex items-center justify-center hover:bg-rose-50 transition-colors active:scale-95"
+                        className="w-10 h-10 bg-sv-surface border border-sv-border text-sv-danger rounded-xl flex items-center justify-center hover:bg-sv-danger-soft transition-colors active:scale-95"
                       >
                         <FiXCircle className="text-lg" />
                       </button>
@@ -227,7 +227,7 @@ export default function AdsModeration() {
         {cursor && (
           <button
             onClick={() => fetchAds(false, cursor)}
-            className="mt-6 py-4 text-sm font-black text-blue-600 hover:text-blue-700 uppercase tracking-widest transition-colors"
+            className="mt-6 py-4 text-sm font-black text-sv-primary hover:text-sv-primary-hover uppercase tracking-widest transition-colors"
           >
             Load More Campaigns
           </button>
@@ -249,29 +249,29 @@ export default function AdsModeration() {
                initial={{ scale: 0.9, opacity: 0 }}
                animate={{ scale: 1, opacity: 1 }}
                exit={{ scale: 0.9, opacity: 0 }}
-               className="bg-white rounded-3xl shadow-2xl relative w-full max-w-md p-8"
+               className="bg-sv-surface rounded-3xl shadow-2xl relative w-full max-w-md p-8"
              >
-               <h2 className="text-2xl font-black text-slate-900 mb-2">Reject Campaign</h2>
-               <p className="text-slate-500 text-sm font-medium mb-6">Briefly explain why this ad was rejected so the vendor can fix it.</p>
+               <h2 className="text-2xl font-black text-sv-text-primary mb-2">Reject Campaign</h2>
+               <p className="text-sv-text-secondary text-sm font-medium mb-6">Briefly explain why this ad was rejected so the vendor can fix it.</p>
                
                <textarea
                  value={rejectionReason}
                  onChange={(e) => setRejectionReason(e.target.value)}
-                 className="w-full h-32 bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm focus:ring-2 focus:ring-rose-500 focus:outline-none mb-6 font-medium"
+                 className="w-full h-32 bg-sv-surface-muted border border-sv-border rounded-2xl p-4 text-sm focus:ring-2 focus:ring-sv-primary focus:outline-none mb-6 font-medium"
                  placeholder="e.g. Misleading content, Poor image quality..."
                />
 
                <div className="flex gap-4">
                  <button
                     onClick={() => { setShowRejectModal(false); setModeratingId(null); }}
-                    className="flex-1 bg-slate-100 text-slate-600 h-12 rounded-2xl text-sm font-bold active:scale-95 transition-transform"
+                    className="flex-1 bg-sv-surface-muted text-sv-text-secondary h-12 rounded-2xl text-sm font-bold active:scale-95 transition-transform"
                  >
                     CANCEL
                  </button>
                  <button
                     onClick={() => moderatingId && handleModerate(moderatingId, 'REJECTED')}
                     disabled={!rejectionReason.trim()}
-                    className="flex-1 bg-rose-600 text-white h-12 rounded-2xl text-sm font-black shadow-lg shadow-rose-200 active:scale-95 transition-transform disabled:opacity-50"
+                    className="flex-1 bg-sv-danger text-sv-text-inverse h-12 rounded-2xl text-sm font-black active:scale-95 transition-transform disabled:opacity-50"
                  >
                     REJECT AD
                  </button>

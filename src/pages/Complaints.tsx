@@ -88,7 +88,7 @@ export default function Complaints() {
     <div className="p-6">
       <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Complaints</h1>
+          <h1 className="text-2xl font-bold text-sv-text-primary">Complaints</h1>
           <p className="text-gray-500 text-sm mt-1">Manage user issues and disputes</p>
         </div>
 
@@ -106,7 +106,7 @@ export default function Complaints() {
           <select
             value={filters.status}
             onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-sm"
+            className="px-4 py-2 border border-sv-border rounded-lg focus:outline-none focus:ring-2 focus:ring-sv-primary bg-sv-surface text-sm"
           >
             <option value="">All Status</option>
             <option value="OPEN">Open</option>
@@ -118,7 +118,7 @@ export default function Complaints() {
           <select
             value={filters.priority}
             onChange={(e) => setFilters(prev => ({ ...prev, priority: e.target.value }))}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-sm"
+            className="px-4 py-2 border border-sv-border rounded-lg focus:outline-none focus:ring-2 focus:ring-sv-primary bg-sv-surface text-sm"
           >
             <option value="">All Priorities</option>
             <option value="high">High</option>
@@ -128,46 +128,46 @@ export default function Complaints() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-sv-surface rounded-xl shadow-sm border border-sv-border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-sv-surface-muted border-b border-sv-border">
               <tr>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Issue</th>
+                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">Issue</th>
                 {/* 🛡️ [#8D] type was already sent by the backend but never surfaced in this list. */}
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Type</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">User</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Priority</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Actions</th>
+                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">Type</th>
+                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">User</th>
+                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">Priority</th>
+                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-sv-border">
               {complaints.map((complaint) => (
-                <tr 
-                  key={complaint._id} 
-                  className="hover:bg-gray-50 transition-colors cursor-pointer"
+                <tr
+                  key={complaint._id}
+                  className="hover:bg-sv-surface-muted transition-colors cursor-pointer"
                   onClick={() => handleViewDetails(complaint._id)}
                 >
                   <td className="px-6 py-4">
-                    <div className="font-medium text-gray-900">{complaint.title}</div>
-                    <div className="text-sm text-gray-500 line-clamp-1">{complaint.description}</div>
+                    <div className="font-medium text-sv-text-primary">{complaint.title}</div>
+                    <div className="text-sm text-sv-text-secondary line-clamp-1">{complaint.description}</div>
                   </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      complaint.type === 'direct_transfer_unacknowledged' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'
+                      complaint.type === 'direct_transfer_unacknowledged' ? 'bg-sv-tag-soft text-sv-tag' : 'bg-sv-surface-muted text-sv-text-secondary'
                     }`}>
                       {(complaint.type || 'other').replace(/_/g, ' ')}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-gray-700">
+                  <td className="px-6 py-4 text-sv-text-secondary">
                     {complaint.complainant?.name}
                   </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      complaint.priority === 'high' ? 'bg-red-100 text-red-700' :
-                      complaint.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                      'bg-green-100 text-green-700'
+                      complaint.priority === 'high' ? 'bg-sv-danger-soft text-sv-danger' :
+                      complaint.priority === 'medium' ? 'bg-sv-warning-soft text-sv-warning' :
+                      'bg-sv-success-soft text-sv-success'
                     }`}>
                       {complaint.priority}
                     </span>
@@ -194,7 +194,7 @@ export default function Complaints() {
               
               {complaints.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={6} className="px-6 py-12 text-center text-sv-text-secondary">
                     No complaints found.
                   </td>
                 </tr>
@@ -204,25 +204,25 @@ export default function Complaints() {
         </div>
 
          {/* Pagination Footer */}
-        <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-          <div className="text-sm text-gray-500">
+        <div className="px-6 py-4 border-t border-sv-border flex items-center justify-between">
+          <div className="text-sm text-sv-text-secondary">
             Showing <span className="font-medium">{complaints.length}</span> of <span className="font-medium">{pagination.total}</span> complaints
           </div>
           <div className="flex gap-2">
             <button
               onClick={() => handlePageChange(pagination.page - 1)}
               disabled={pagination.page <= 1}
-              className="px-3 py-1 border border-gray-300 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              className="px-3 py-1 border border-sv-border rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-sv-surface-muted"
             >
               Previous
             </button>
-            <span className="px-3 py-1 text-sm text-gray-700">
+            <span className="px-3 py-1 text-sm text-sv-text-secondary">
               Page {pagination.page} of {pagination.pages}
             </span>
             <button
               onClick={() => handlePageChange(pagination.page + 1)}
               disabled={pagination.page >= pagination.pages}
-              className="px-3 py-1 border border-gray-300 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              className="px-3 py-1 border border-sv-border rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-sv-surface-muted"
             >
               Next
             </button>

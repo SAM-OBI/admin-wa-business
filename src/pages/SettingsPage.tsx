@@ -35,39 +35,39 @@ const DeviceSessions = () => {
         }
     };
 
-    if (loading) return <div className="p-4 text-center text-gray-500">Loading active sessions...</div>;
+    if (loading) return <div className="p-4 text-center text-sv-text-secondary">Loading active sessions...</div>;
 
     return (
         <div className="space-y-6">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                    <FiMonitor className="text-blue-600" /> Active Devices (Max 2)
+            <div className="bg-sv-surface rounded-xl shadow-sm border border-sv-border p-6">
+                <h2 className="text-lg font-semibold text-sv-text-primary mb-4 flex items-center gap-2">
+                    <FiMonitor className="text-sv-info" /> Active Devices (Max 2)
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {sessions.map((session: any) => (
-                        <div key={session.id} className="flex flex-col p-4 bg-blue-50/30 rounded-lg border border-blue-100">
+                        <div key={session.id} className="flex flex-col p-4 bg-sv-info-soft/60 rounded-lg border border-sv-info/20">
                             <div className="flex items-start justify-between mb-3">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2.5 bg-blue-100 rounded-full text-blue-600">
+                                    <div className="p-2.5 bg-sv-info-soft rounded-full text-sv-info">
                                         <FiMonitor size={20} />
                                     </div>
                                     <div>
-                                        <p className="text-sm font-bold flex items-center gap-2">
+                                        <p className="text-sm font-bold flex items-center gap-2 text-sv-text-primary">
                                             {session.deviceName || 'Unknown Device'}
                                             {session.isCurrent && (
-                                                <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full uppercase tracking-wider font-bold">This Device</span>
+                                                <span className="text-[10px] bg-sv-success-soft text-sv-success px-2 py-0.5 rounded-full uppercase tracking-wider font-bold">This Device</span>
                                             )}
                                         </p>
-                                        <p className="text-xs text-gray-500 mt-0.5">{session.ipAddress}</p>
+                                        <p className="text-xs text-sv-text-secondary mt-0.5">{session.ipAddress}</p>
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex items-center justify-between mt-auto pt-3 border-t border-blue-100/50">
-                                <p className="text-[11px] text-gray-400">Active: {new Date(session.lastUsedAt || session.createdAt).toLocaleString()}</p>
+                            <div className="flex items-center justify-between mt-auto pt-3 border-t border-sv-info/20">
+                                <p className="text-[11px] text-sv-text-muted">Active: {new Date(session.lastUsedAt || session.createdAt).toLocaleString()}</p>
                                 {!session.isCurrent && (
                                     <button
                                         onClick={() => handleRevokeSession(session.id)}
-                                        className="text-xs font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 px-3 py-1.5 rounded-lg transition"
+                                        className="text-xs font-semibold text-sv-danger hover:bg-sv-danger-soft px-3 py-1.5 rounded-lg transition"
                                     >
                                         Log Out
                                     </button>
@@ -75,7 +75,7 @@ const DeviceSessions = () => {
                             </div>
                         </div>
                     ))}
-                    {sessions.length === 0 && <p className="text-sm text-gray-500 col-span-full py-4 italic">No active sessions found.</p>}
+                    {sessions.length === 0 && <p className="text-sm text-sv-text-secondary col-span-full py-4 italic">No active sessions found.</p>}
                 </div>
             </div>
         </div>
@@ -128,7 +128,7 @@ export default function SettingsPage() {
           token: totpCode,
           securityQuestions: questions
       });
-      
+
       setRecoveryCodes(res.data.data.recoveryCodes);
       setSetupStep('success');
       setShowQuestionsModal(false);
@@ -144,8 +144,8 @@ export default function SettingsPage() {
     setLoading(true);
     try {
       // Backend disable needs password + code
-      // We can use a prompt for password like in vendor app, 
-      // but let's see current code below. 
+      // We can use a prompt for password like in vendor app,
+      // but let's see current code below.
       // It currently only sends totpCode.
       await adminService.disable2FA(totpCode);
       setMessage({ type: 'success', text: 'Two-Factor Authentication Disabled' });
@@ -179,14 +179,14 @@ export default function SettingsPage() {
         email: formData.email,
         ...(formData.password ? { password: formData.password } : {})
       });
-      
+
       setMessage({ type: 'success', text: 'Profile updated successfully' });
       await checkAuth(); // Refresh admin data
       setFormData(prev => ({ ...prev, password: '', confirmPassword: '' }));
     } catch (error: any) {
-      setMessage({ 
-        type: 'error', 
-        text: error.response?.data?.message || 'Failed to update profile' 
+      setMessage({
+        type: 'error',
+        text: error.response?.data?.message || 'Failed to update profile'
       });
     } finally {
       setLoading(false);
@@ -196,18 +196,18 @@ export default function SettingsPage() {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Settings</h1>
-        <p className="text-gray-500 text-sm mt-1">Manage your account preferences</p>
+        <h1 className="text-2xl font-bold text-sv-text-primary">Settings</h1>
+        <p className="text-sv-text-secondary text-sm mt-1">Manage your account preferences</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Profile Form */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 h-fit">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Profile Information</h2>
-            
+          <div className="bg-sv-surface rounded-xl shadow-sm border border-sv-border p-6 h-fit">
+            <h2 className="text-lg font-semibold text-sv-text-primary mb-4">Profile Information</h2>
+
             {message && (
               <div className={`p-4 rounded-lg mb-6 ${
-                message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
+                message.type === 'success' ? 'bg-sv-success-soft text-sv-success' : 'bg-sv-danger-soft text-sv-danger'
               }`}>
                 {message.text}
               </div>
@@ -215,48 +215,48 @@ export default function SettingsPage() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <label className="block text-sm font-medium text-sv-text-secondary mb-1">Full Name</label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-sv-border rounded-lg focus:outline-none focus:ring-2 focus:ring-sv-primary"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                <label className="block text-sm font-medium text-sv-text-secondary mb-1">Email Address</label>
                 <input
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-sv-border rounded-lg focus:outline-none focus:ring-2 focus:ring-sv-primary"
                   required
                 />
               </div>
 
-              <div className="pt-4 border-t border-gray-100">
-                <h3 className="text-sm font-medium text-gray-900 mb-4">Change Password (Optional)</h3>
+              <div className="pt-4 border-t border-sv-border">
+                <h3 className="text-sm font-medium text-sv-text-primary mb-4">Change Password (Optional)</h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+                    <label className="block text-sm font-medium text-sv-text-secondary mb-1">New Password</label>
                     <input
                       type="password"
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-2 border border-sv-border rounded-lg focus:outline-none focus:ring-2 focus:ring-sv-primary"
                       placeholder="Leave blank to keep current"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+                    <label className="block text-sm font-medium text-sv-text-secondary mb-1">Confirm New Password</label>
                     <input
                       type="password"
                       value={formData.confirmPassword}
                       onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-2 border border-sv-border rounded-lg focus:outline-none focus:ring-2 focus:ring-sv-primary"
                       placeholder="Confirm new password"
                     />
                   </div>
@@ -267,7 +267,7 @@ export default function SettingsPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 font-medium"
+                  className="px-6 py-2 bg-sv-primary text-sv-text-inverse rounded-lg hover:bg-sv-primary-hover transition disabled:opacity-50 font-medium"
                 >
                   {loading ? 'Saving...' : 'Save Changes'}
                 </button>
@@ -278,50 +278,50 @@ export default function SettingsPage() {
 {/* Login History */}
           <div className="space-y-6">
               {/* 2FA Section */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <div className="bg-sv-surface rounded-xl shadow-sm border border-sv-border p-6">
+                <h2 className="text-lg font-semibold text-sv-text-primary mb-4 flex items-center gap-2">
                   <FiShield /> Two-Factor Authentication
                 </h2>
-                
+
                 {admin?.isTwoFactorEnabled ? (
                    <div>
-                     <div className="flex items-center gap-2 text-green-600 mb-4">
+                     <div className="flex items-center gap-2 text-sv-success mb-4">
                        <span className="font-bold">✓ 2FA is Enabled</span>
                      </div>
-                     <p className="text-gray-600 text-sm mb-4">
+                     <p className="text-sv-text-secondary text-sm mb-4">
                        Your account is secured with two-factor authentication. You will be required to enter a code from your authenticator app when logging in.
                      </p>
-                     
+
                      {setupStep !== 'disabling' ? (
                         <button
                           onClick={() => setSetupStep('disabling')}
-                          className="px-4 py-2 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 text-sm font-medium transition"
+                          className="px-4 py-2 border border-sv-danger/30 text-sv-danger rounded-lg hover:bg-sv-danger-soft text-sm font-medium transition"
                         >
                           Disable 2FA
                         </button>
                      ) : (
-                       <div className="bg-gray-50 p-4 rounded-lg border border-gray-100">
-                         <p className="text-sm font-medium text-gray-700 mb-2">Confirm to Disable</p>
-                         <p className="text-xs text-gray-500 mb-3">Enter the code from your app to confirm disabling 2FA.</p>
+                       <div className="bg-sv-surface-muted p-4 rounded-lg border border-sv-border">
+                         <p className="text-sm font-medium text-sv-text-secondary mb-2">Confirm to Disable</p>
+                         <p className="text-xs text-sv-text-muted mb-3">Enter the code from your app to confirm disabling 2FA.</p>
                          <div className="flex gap-2">
                            <input
                              type="text"
                              placeholder="000 000"
                              value={totpCode}
                              onChange={(e) => setTotpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                             className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-center tracking-widest font-mono"
+                             className="flex-1 px-3 py-2 border border-sv-border rounded-lg text-center tracking-widest font-mono"
                              maxLength={6}
                            />
                            <button
                              onClick={handleDisable2FA}
                              disabled={loading || totpCode.length !== 6}
-                             className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 text-sm font-medium"
+                             className="px-4 py-2 bg-sv-danger text-sv-text-inverse rounded-lg hover:opacity-90 disabled:opacity-50 text-sm font-medium"
                            >
                              {loading ? '...' : 'Confirm'}
                            </button>
                            <button
                              onClick={() => { setSetupStep('idle'); setTotpCode(''); }}
-                             className="px-3 py-2 text-gray-500 hover:text-gray-700"
+                             className="px-3 py-2 text-sv-text-muted hover:text-sv-text-primary"
                            >
                              Cancel
                            </button>
@@ -333,13 +333,13 @@ export default function SettingsPage() {
                   <div>
                     {setupStep === 'idle' && (
                       <div>
-                        <p className="text-gray-600 text-sm mb-4">
+                        <p className="text-sv-text-secondary text-sm mb-4">
                           Add an extra layer of security to your account by enabling two-factor authentication.
                         </p>
                         <button
                           onClick={handleSetup2FA}
                           disabled={loading}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                          className="px-4 py-2 bg-sv-primary text-sv-text-inverse rounded-lg hover:bg-sv-primary-hover transition"
                         >
                            {loading ? 'Loading...' : 'Enable 2FA'}
                         </button>
@@ -348,28 +348,28 @@ export default function SettingsPage() {
 
                     {setupStep === 'qr' && qrCode && (
                        <div className="space-y-4">
-                          <div className="flex flex-col items-center p-4 bg-gray-50 rounded-lg border border-gray-100">
-                             <p className="text-sm font-semibold text-gray-800 mb-2">Scan QR Code</p>
-                             <img src={qrCode} alt="2FA QR Code" className="w-40 h-40 mb-4 border border-white shadow-sm" />
-                             <p className="text-xs text-gray-500 text-center max-w-xs mb-4">
+                          <div className="flex flex-col items-center p-4 bg-sv-surface-muted rounded-lg border border-sv-border">
+                             <p className="text-sm font-semibold text-sv-text-primary mb-2">Scan QR Code</p>
+                             <img src={qrCode} alt="2FA QR Code" className="w-40 h-40 mb-4 border border-sv-surface shadow-sm" />
+                             <p className="text-xs text-sv-text-secondary text-center max-w-xs mb-4">
                                Use Google Authenticator or Authy App to scan this code.
                              </p>
-                             
+
                              <div className="w-full max-w-xs">
-                               <label className="block text-xs font-medium text-gray-700 mb-1">Enter 6-digit Code</label>
+                               <label className="block text-xs font-medium text-sv-text-secondary mb-1">Enter 6-digit Code</label>
                                <div className="flex gap-2">
                                  <input
                                    type="text"
                                    placeholder="000 000"
                                    value={totpCode}
                                    onChange={(e) => setTotpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                                   className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-center tracking-widest font-mono focus:ring-2 focus:ring-blue-500 outline-none"
+                                   className="flex-1 px-3 py-2 border border-sv-border rounded-lg text-center tracking-widest font-mono focus:ring-2 focus:ring-sv-primary outline-none"
                                    maxLength={6}
                                  />
                                  <button
                                    onClick={handleVerifyOTP}
                                    disabled={loading || totpCode.length !== 6}
-                                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 text-sm font-medium"
+                                   className="px-4 py-2 bg-sv-primary text-sv-text-inverse rounded-lg hover:bg-sv-primary-hover disabled:opacity-50 text-sm font-medium"
                                  >
                                    Next
                                  </button>
@@ -378,7 +378,7 @@ export default function SettingsPage() {
                           </div>
                           <button
                             onClick={() => { setSetupStep('idle'); setQrCode(''); setTotpCode(''); }}
-                            className="text-gray-500 text-sm hover:underline"
+                            className="text-sv-text-muted text-sm hover:underline"
                           >
                             Cancel Setup
                           </button>
@@ -386,22 +386,22 @@ export default function SettingsPage() {
                     )}
 
                     {setupStep === 'success' && (
-                        <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
-                            <FiCheckCircle className="text-green-500 text-5xl mx-auto mb-4" />
-                            <h3 className="text-lg font-bold text-green-800 mb-2">2FA Enabled!</h3>
-                            <p className="text-sm text-green-700 mb-6">
+                        <div className="bg-sv-success-soft border border-sv-success/30 rounded-xl p-6 text-center">
+                            <FiCheckCircle className="text-sv-success text-5xl mx-auto mb-4" />
+                            <h3 className="text-lg font-bold text-sv-success mb-2">2FA Enabled!</h3>
+                            <p className="text-sm text-sv-success mb-6">
                                 Save these recovery codes safely.
                             </p>
-                            
-                            <div className="bg-white p-3 rounded-lg border border-green-200 grid grid-cols-2 gap-2 font-mono text-xs mb-6">
+
+                            <div className="bg-sv-surface p-3 rounded-lg border border-sv-success/30 grid grid-cols-2 gap-2 font-mono text-xs mb-6">
                                 {recoveryCodes.map((code, i) => (
                                     <div key={i} className="p-1">{code}</div>
                                 ))}
                             </div>
-                            
+
                             <button
                                 onClick={() => setSetupStep('idle')}
-                                className="w-full py-2 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition shadow-sm"
+                                className="w-full py-2 bg-sv-success text-sv-text-inverse rounded-lg font-bold hover:opacity-90 transition shadow-sm"
                             >
                                 Done
                             </button>
@@ -411,7 +411,7 @@ export default function SettingsPage() {
                 )}
               </div>
 
-              <SecurityQuestionModal 
+              <SecurityQuestionModal
                 isOpen={showQuestionsModal}
                 onClose={() => setShowQuestionsModal(false)}
                 onSubmit={handleQuestionsSubmit}

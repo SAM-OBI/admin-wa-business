@@ -21,67 +21,115 @@ body {
 }
 
 :root {
-  /* Surface colors */
-  --bg-background: #ffffff;
-  --bg-surface: #f8fafc;
-  --bg-surface-elevated: #ffffff;
-  
-  /* Brand */
-  --color-primary: #0f172a;
-  --color-primary-hover: #1e293b;
-  --color-primary-active: #334155;
-  --color-primary-subtle: #f1f5f9;
-  
-  /* Semantic */
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
-  --color-danger: #ef4444;
-  --color-info: #3b82f6;
-  
-  /* Text */
-  --text-heading: #020617;
-  --text-body: #334155;
-  --text-muted: #64748b;
-  --text-inverse: #ffffff;
-  
-  /* Borders */
-  --border-default: #e2e8f0;
-  --border-subtle: #f1f5f9;
+  /* ShopVia Color System — canonical tokens (light theme values) */
+  --sv-primary: #0B4F3A;
+  --sv-primary-hover: #083D2D;
+
+  --sv-accent: #7BCB4A;
+  --sv-accent-soft: #EAF7E2;
+
+  --sv-gold: #C89B2C;
+  --sv-gold-soft: #FBF5E5;
+
+  --sv-bg: #F7F8F7;
+  --sv-surface: #FFFFFF;
+  --sv-surface-muted: #F1F4F2;
+  --sv-surface-elevated: #FFFFFF;
+
+  --sv-border: #DDE5E1;
+
+  --sv-text-primary: #17211D;
+  --sv-text-secondary: #61706A;
+  --sv-text-muted: #8A9691;
+  --sv-text-inverse: #FFFFFF;
+
+  --sv-success: #168A55;
+  --sv-success-soft: #E4F5EC;
+  --sv-warning: #B7791F;
+  --sv-warning-soft: #FBF1DE;
+  --sv-danger: #C62828;
+  --sv-danger-soft: #FBEAEA;
+  --sv-info: #2563A6;
+  --sv-info-soft: #E7F0FA;
+
+  /* Phase 2H: formal "category/tag" token — for recurring business-category
+     labels that are neither success/warning/danger/info (e.g. Direct
+     Transfer payment method, ADMIN role, premium tier, workflow trigger
+     type, refunded settlement state). Matches the purple hue these already
+     used informally; this makes it an intentional part of the system
+     instead of an unclassified leftover color. */
+  --sv-tag: #7C3AED;
+  --sv-tag-soft: #F3E8FD;
+
+  /* Legacy aliases — kept so already-tokenized components (Dashboard.tsx,
+     DashboardSections.tsx) automatically inherit the new palette with no
+     changes needed there. New work should use the --sv-* names directly. */
+  --bg-background: var(--sv-bg);
+  --bg-surface: var(--sv-surface);
+  --bg-surface-elevated: var(--sv-surface-elevated);
+  --color-primary: var(--sv-primary);
+  --color-primary-hover: var(--sv-primary-hover);
+  --color-primary-active: var(--sv-primary-hover);
+  --color-primary-subtle: var(--sv-accent-soft);
+  --color-success: var(--sv-success);
+  --color-warning: var(--sv-warning);
+  --color-danger: var(--sv-danger);
+  --color-info: var(--sv-info);
+  --text-heading: var(--sv-text-primary);
+  --text-body: var(--sv-text-secondary);
+  --text-muted: var(--sv-text-muted);
+  --text-inverse: var(--sv-text-inverse);
+  --border-default: var(--sv-border);
+  --border-subtle: var(--sv-surface-muted);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg-background: #020617;
-    --bg-surface: #0f172a;
-    --bg-surface-elevated: #1e293b;
-    
-    --color-primary: #f8fafc;
-    --color-primary-hover: #f1f5f9;
-    --color-primary-active: #e2e8f0;
-    --color-primary-subtle: #334155;
-    
-    --text-heading: #f8fafc;
-    --text-body: #cbd5e1;
-    --text-muted: #94a3b8;
-    --text-inverse: #020617;
-    
-    --border-default: #334155;
-    --border-subtle: #1e293b;
+    --sv-bg: #0D1512;
+    --sv-surface: #14201B;
+    --sv-surface-muted: #182620;
+    --sv-surface-elevated: #192720;
+    --sv-border: #26362F;
+
+    --sv-text-primary: #F3F7F5;
+    --sv-text-secondary: #A7B5AE;
+    --sv-text-muted: #7F9188;
+    --sv-text-inverse: #0D1512;
+
+    --sv-primary: #55B98A;
+    --sv-primary-hover: #6BC79A;
+    --sv-accent: #9AD968;
+    --sv-accent-soft: #1E3327;
+    --sv-gold: #D5AA3A;
+    --sv-gold-soft: #2B2413;
+
+    --sv-success: #55C58A;
+    --sv-success-soft: #16281F;
+    --sv-warning: #D5A84A;
+    --sv-warning-soft: #2B2413;
+    --sv-danger: #EF6B6B;
+    --sv-danger-soft: #2E1B1B;
+    --sv-info: #6FA9DF;
+    --sv-info-soft: #16232E;
+
+    --sv-tag: #A78BFA;
+    --sv-tag-soft: #241B36;
   }
 }
 
 body {
-  background-color: var(--bg-background);
-  color: var(--text-body);
+  background-color: var(--sv-bg);
+  color: var(--sv-text-secondary);
 }
 
-/* 💎 NUCLEAR CONTRAST FIX (v5.4) - Forces DARK text on ALL inputs */
+/* Token-driven form-control text color (replaces a prior hardcoded
+   `!important` rule that forced dark text on every input regardless of
+   theme, which made dark-mode form styling impossible). */
 input, select, textarea {
-  color: #0f172a !important; 
+  color: var(--sv-text-primary);
 }
 
-/* Placeholder contrast force */
 ::placeholder {
-  color: #4b5563 !important;
-  opacity: 1 !important;
+  color: var(--sv-text-muted);
+  opacity: 1;
 }

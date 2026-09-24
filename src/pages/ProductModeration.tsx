@@ -238,7 +238,7 @@ export default function ProductModeration() {
     <div className="p-6">
       <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+          <h1 className="text-2xl font-bold text-sv-text-primary flex items-center gap-3">
             <div className="p-2 bg-blue-50 text-blue-600 rounded-lg shadow-sm">
                 <FiPackage size={24} />
             </div>
@@ -253,7 +253,7 @@ export default function ProductModeration() {
                     key={s}
                     onClick={() => handleStatusFilter(s)}
                     className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
-                        filters.status === s ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'text-gray-400 hover:text-gray-600'
+                        filters.status === s ? 'bg-sv-primary text-sv-text-inverse' : 'text-sv-text-muted hover:text-sv-text-secondary'
                     }`}
                 >
                     {s}
@@ -276,7 +276,7 @@ export default function ProductModeration() {
         ))}
       </div>
 
-      <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mb-6">
+      <div className="bg-sv-surface rounded-2xl p-6 border border-sv-border shadow-sm mb-6">
           <div className="relative">
             <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
@@ -284,43 +284,43 @@ export default function ProductModeration() {
               value={filters.search}
               onChange={handleSearchChange}
               placeholder="Search by product name, vendor, or SKU..."
-              className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500/20 outline-none text-sm font-medium transition-all"
+              className="w-full pl-12 pr-4 py-3 bg-sv-surface-muted border border-sv-border rounded-xl focus:ring-2 focus:ring-sv-primary/20 outline-none text-sm font-medium transition-all"
             />
           </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-sv-surface rounded-2xl border border-sv-border shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-gray-50/50 border-b border-gray-50">
+            <thead className="bg-sv-surface-muted border-b border-sv-border">
               <tr>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Product Reference</th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Storefront</th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">In Stock</th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
-                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Moderation</th>
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Product Reference</th>
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Storefront</th>
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-widest text-center">In Stock</th>
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Status</th>
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-widest text-right">Moderation</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-sv-border">
               {products.map((product) => (
-                <tr key={product._id} className="hover:bg-gray-50/50 transition-colors">
+                <tr key={product._id} className="hover:bg-sv-surface-muted transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-4">
                       {product.images?.[0] ? (
-                        <img src={product.images[0]} className="w-10 h-10 object-cover rounded-lg shadow-sm border border-gray-100" />
+                        <img src={product.images[0]} className="w-10 h-10 object-cover rounded-lg shadow-sm border border-sv-border" />
                       ) : (
-                        <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400"><FiPackage /></div>
+                        <div className="w-10 h-10 bg-sv-surface-muted rounded-lg flex items-center justify-center text-sv-text-muted"><FiPackage /></div>
                       )}
                       <div>
-                        <div className="text-sm font-bold text-gray-800">{product.name}</div>
+                        <div className="text-sm font-bold text-sv-text-primary">{product.name}</div>
                         <div className="text-[10px] font-black text-blue-600 uppercase mt-0.5">{product.category?.name || 'Uncategorized'}</div>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
-                      <FiHome className="text-gray-300" size={12} />
-                      <span className="text-xs font-bold text-gray-600">{product.store.name}</span>
+                      <FiHome className="text-sv-text-muted" size={12} />
+                      <span className="text-xs font-bold text-sv-text-secondary">{product.store.name}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-center">
@@ -328,9 +328,9 @@ export default function ProductModeration() {
                   </td>
                   <td className="px-6 py-4">
                     {product.status === 'disabled' || !product.isActive ? (
-                      <span className="px-3 py-1 rounded-full text-[9px] font-black uppercase bg-red-50 text-red-600 border border-red-100">Blocked</span>
+                      <span className="px-3 py-1 rounded-full text-[9px] font-black uppercase bg-sv-danger-soft text-sv-danger border border-sv-danger/30">Blocked</span>
                     ) : (
-                      <span className="px-3 py-1 rounded-full text-[9px] font-black uppercase bg-green-50 text-green-600 border border-green-100">Live</span>
+                      <span className="px-3 py-1 rounded-full text-[9px] font-black uppercase bg-sv-success-soft text-sv-success border border-sv-success/30">Live</span>
                     )}
                   </td>
                   <td className="px-6 py-4">
@@ -345,14 +345,14 @@ export default function ProductModeration() {
                         {product.status === 'disabled' || !product.isActive ? (
                             <button
                                 onClick={() => handleEnableProduct(product._id)}
-                                className="px-4 py-1.5 text-[9px] font-black uppercase bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all shadow-md shadow-green-100"
+                                className="px-4 py-1.5 text-[9px] font-black uppercase bg-sv-success text-sv-text-inverse rounded-lg hover:opacity-90 transition-all"
                             >
                                 Restore
                             </button>
                         ) : (
                             <button
                                 onClick={() => handleDisableProduct(product._id, product.name)}
-                                className="px-4 py-1.5 text-[9px] font-black uppercase bg-red-50 text-red-600 border border-red-100 rounded-lg hover:bg-red-100 transition-all flex items-center gap-1.5"
+                                className="px-4 py-1.5 text-[9px] font-black uppercase bg-sv-danger-soft text-sv-danger border border-sv-danger/30 rounded-lg hover:opacity-80 transition-all flex items-center gap-1.5"
                             >
                                 <FiSlash size={10} /> Deactivate
                             </button>
@@ -366,22 +366,22 @@ export default function ProductModeration() {
         </div>
 
         {pagination.pages > 1 && (
-          <div className="px-6 py-4 border-t border-gray-50 flex items-center justify-between">
-            <div className="text-[10px] font-black text-gray-400 uppercase">
+          <div className="px-6 py-4 border-t border-sv-border flex items-center justify-between">
+            <div className="text-[10px] font-black text-sv-text-muted uppercase">
               Page {pagination.page} of {pagination.pages}
             </div>
             <div className="flex gap-2">
                 <button
                     onClick={() => setPagination({ ...pagination, page: pagination.page - 1 })}
                     disabled={pagination.page === 1}
-                    className="px-4 py-1.5 text-[9px] font-black uppercase bg-gray-50 text-gray-600 rounded-lg border border-gray-100 disabled:opacity-50"
+                    className="px-4 py-1.5 text-[9px] font-black uppercase bg-sv-surface-muted text-sv-text-secondary rounded-lg border border-sv-border disabled:opacity-50"
                 >
                     Prev
                 </button>
                 <button
                     onClick={() => setPagination({ ...pagination, page: pagination.page + 1 })}
                     disabled={pagination.page === pagination.pages}
-                    className="px-4 py-1.5 text-[9px] font-black uppercase bg-gray-50 text-gray-600 rounded-lg border border-gray-100 disabled:opacity-50"
+                    className="px-4 py-1.5 text-[9px] font-black uppercase bg-sv-surface-muted text-sv-text-secondary rounded-lg border border-sv-border disabled:opacity-50"
                 >
                     Next
                 </button>

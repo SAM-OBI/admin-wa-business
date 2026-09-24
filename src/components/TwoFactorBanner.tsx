@@ -34,7 +34,7 @@ export default function TwoFactorBanner() {
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    className="bg-blue-600 text-white relative overflow-hidden z-[45]"
+                    className="bg-sv-info text-sv-text-inverse relative overflow-hidden z-[45]"
                 >
                     <div className="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8 flex items-center justify-between">
                         <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -52,7 +52,7 @@ export default function TwoFactorBanner() {
                         <div className="flex items-center gap-4 ml-4">
                             <button
                                 onClick={handleSetup}
-                                className="whitespace-nowrap bg-white text-blue-600 px-4 py-1.5 rounded-lg text-sm font-bold hover:bg-blue-50 transition-colors"
+                                className="whitespace-nowrap bg-sv-surface text-sv-info px-4 py-1.5 rounded-lg text-sm font-bold hover:bg-sv-info-soft transition-colors"
                             >
                                 Setup Now
                             </button>

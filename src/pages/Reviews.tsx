@@ -66,10 +66,10 @@ export default function Reviews() {
   // changing it) — no other status-driven branches or actions exist here.
   const getStatusStyle = (status: string) => {
     switch (status) {
-      case 'approved': return 'bg-green-100 text-green-700';
-      case 'rejected': return 'bg-red-100 text-red-700';
-      case 'flagged': return 'bg-orange-100 text-orange-700';
-      default: return 'bg-gray-100 text-gray-700'; // 'pending'
+      case 'approved': return 'bg-sv-success-soft text-sv-success';
+      case 'rejected': return 'bg-sv-danger-soft text-sv-danger';
+      case 'flagged': return 'bg-sv-warning-soft text-sv-warning';
+      default: return 'bg-sv-surface-muted text-sv-text-secondary'; // 'pending'
     }
   };
 
@@ -85,7 +85,7 @@ export default function Reviews() {
     <div className="p-6">
       <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Reviews & Ratings</h1>
+          <h1 className="text-2xl font-bold text-sv-text-primary">Reviews & Ratings</h1>
           <p className="text-gray-500 text-sm mt-1">Monitor product reviews and feedback</p>
         </div>
 
@@ -93,7 +93,7 @@ export default function Reviews() {
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            className="px-4 py-2 border border-sv-border rounded-lg focus:outline-none focus:ring-2 focus:ring-sv-primary bg-sv-surface"
           >
             <option value="">All Reviews</option>
             <option value="pending">Pending Reply</option>
@@ -104,7 +104,7 @@ export default function Reviews() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {reviews.map((review) => (
-          <div key={review._id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col">
+          <div key={review._id} className="bg-sv-surface rounded-xl shadow-sm border border-sv-border p-6 flex flex-col">
             <div className="flex items-center justify-between mb-4">
               <div className="flex gap-1">
                 {renderStars(review.rating)}
@@ -125,7 +125,7 @@ export default function Reviews() {
         ))}
 
         {reviews.length === 0 && (
-          <div className="col-span-full py-12 text-center text-gray-500 bg-white rounded-xl border border-gray-200">
+          <div className="col-span-full py-12 text-center text-sv-text-secondary bg-sv-surface rounded-xl border border-sv-border">
             No reviews found.
           </div>
         )}

@@ -78,7 +78,7 @@ export default function AuditLogs() {
     <div className="p-6">
       <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Audit Logs</h1>
+          <h1 className="text-2xl font-bold text-sv-text-primary">Audit Logs</h1>
           <p className="text-gray-500 text-sm mt-1">System activity and security logs</p>
         </div>
 
@@ -86,7 +86,7 @@ export default function AuditLogs() {
           <select
             value={filters.severity}
             onChange={(e) => setFilters(prev => ({ ...prev, severity: e.target.value }))}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            className="px-4 py-2 border border-sv-border rounded-lg focus:outline-none focus:ring-2 focus:ring-sv-primary bg-sv-surface"
           >
             <option value="">All Severities</option>
             <option value="info">Info</option>
@@ -97,7 +97,7 @@ export default function AuditLogs() {
            <select
             value={filters.userType}
             onChange={(e) => setFilters(prev => ({ ...prev, userType: e.target.value }))}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            className="px-4 py-2 border border-sv-border rounded-lg focus:outline-none focus:ring-2 focus:ring-sv-primary bg-sv-surface"
           >
             <option value="">All Users</option>
             <option value="admin">Admin</option>
@@ -107,48 +107,48 @@ export default function AuditLogs() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-sv-surface rounded-xl shadow-sm border border-sv-border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-sv-surface-muted border-b border-sv-border">
               <tr>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Severity</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Action</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">User</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Description</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Date</th>
+                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">Severity</th>
+                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">Action</th>
+                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">User</th>
+                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">Description</th>
+                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider text-right">Date</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-sv-border">
               {logs.map((log) => (
-                <tr key={log._id} className="hover:bg-gray-50 transition-colors">
+                <tr key={log._id} className="hover:bg-sv-surface-muted transition-colors">
                   <td className="px-6 py-4">
                      <div className="flex items-center gap-2 capitalize">
                        {getSeverityIcon(log.severity)}
-                       <span className="text-sm font-medium text-gray-700">{log.severity}</span>
+                       <span className="text-sm font-medium text-sv-text-secondary">{log.severity}</span>
                      </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="px-2 py-1 bg-gray-100 rounded text-xs font-mono text-gray-700">
+                    <span className="px-2 py-1 bg-sv-surface-muted rounded text-xs font-mono text-sv-text-secondary">
                       {log.action}
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm font-medium text-gray-900">{log.user?.name || 'System'}</div>
-                    <div className="text-xs text-gray-500">{log.user?.email || log.user?.role}</div>
+                    <div className="text-sm font-medium text-sv-text-primary">{log.user?.name || 'System'}</div>
+                    <div className="text-xs text-sv-text-muted">{log.user?.email || log.user?.role}</div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="px-6 py-4 text-sm text-sv-text-secondary">
                     {log.description}
                   </td>
-                  <td className="px-6 py-4 text-right text-sm text-gray-500">
+                  <td className="px-6 py-4 text-right text-sm text-sv-text-muted">
                     {new Date(log.createdAt).toLocaleString()}
                   </td>
                 </tr>
               ))}
-              
+
               {logs.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={5} className="px-6 py-12 text-center text-sv-text-secondary">
                     No audit logs found matching criteria.
                   </td>
                 </tr>
@@ -156,27 +156,27 @@ export default function AuditLogs() {
             </tbody>
           </table>
         </div>
-        
+
         {/* Pagination Footer */}
-        <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-          <div className="text-sm text-gray-500">
+        <div className="px-6 py-4 border-t border-sv-border flex items-center justify-between">
+          <div className="text-sm text-sv-text-secondary">
             Showing <span className="font-medium">{logs.length}</span> of <span className="font-medium">{pagination.total}</span> logs
           </div>
           <div className="flex gap-2">
             <button
               onClick={() => handlePageChange(pagination.page - 1)}
               disabled={pagination.page <= 1}
-              className="px-3 py-1 border border-gray-300 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              className="px-3 py-1 border border-sv-border rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-sv-surface-muted"
             >
               Previous
             </button>
-            <span className="px-3 py-1 text-sm text-gray-700">
+            <span className="px-3 py-1 text-sm text-sv-text-secondary">
               Page {pagination.page} of {pagination.pages}
             </span>
             <button
               onClick={() => handlePageChange(pagination.page + 1)}
               disabled={pagination.page >= pagination.pages}
-              className="px-3 py-1 border border-gray-300 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              className="px-3 py-1 border border-sv-border rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-sv-surface-muted"
             >
               Next
             </button>

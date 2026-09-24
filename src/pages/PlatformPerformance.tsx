@@ -88,14 +88,14 @@ export default function PlatformPerformance() {
             <select 
                 value={dateRange}
                 onChange={(e) => setDateRange(e.target.value)}
-                className="bg-black border border-white/10 text-white text-xs font-bold uppercase tracking-widest rounded-xl px-4 py-3 focus:border-white/30 transition-all outline-none"
+                className="bg-black border border-white/10 text-white text-xs font-bold uppercase tracking-widest rounded-xl px-4 py-3 focus:border-sv-primary transition-all outline-none"
             >
                 <option value="all-time">All Time</option>
                 <option value="30d">Last 30 Days</option>
                 <option value="7d">Last 7 Days</option>
             </select>
             
-            <button className="bg-white text-black px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-zinc-200 transition-colors flex items-center gap-2">
+            <button className="bg-sv-primary text-sv-text-inverse px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-sv-primary-hover transition-colors flex items-center gap-2">
                 <FiDownload /> Export
             </button>
         </div>

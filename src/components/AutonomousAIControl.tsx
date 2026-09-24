@@ -98,7 +98,7 @@ const AutonomousAIControl: React.FC = () => {
               key={tab}
               onClick={() => setActiveTab(tab as any)}
               className={`px-4 py-2 rounded-md transition-all ${
-                activeTab === tab ? 'bg-blue-600' : 'hover:bg-white/10'
+                activeTab === tab ? 'bg-sv-primary' : 'hover:bg-white/10'
               } capitalize text-sm`}
             >
               {tab}
@@ -128,7 +128,7 @@ const AutonomousAIControl: React.FC = () => {
                     <button
                       onClick={() => setSettings({ ...settings, [item.id]: !settings[item.id] })}
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                        settings?.[item.id] ? 'bg-blue-600' : 'bg-white/10'
+                        settings?.[item.id] ? 'bg-sv-primary' : 'bg-white/10'
                       }`}
                     >
                       <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
@@ -156,7 +156,7 @@ const AutonomousAIControl: React.FC = () => {
                     <button
                       onClick={() => setStability({ ...stability, [item.id]: !stability[item.id] })}
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                        stability?.[item.id] ? 'bg-red-500' : 'bg-white/10'
+                        stability?.[item.id] ? 'bg-sv-danger' : 'bg-white/10'
                       }`}
                     >
                       <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
@@ -185,7 +185,7 @@ const AutonomousAIControl: React.FC = () => {
               step="0.05"
               value={settings?.riskDialFactor || 1.0}
               onChange={(e) => setSettings({ ...settings, riskDialFactor: parseFloat(e.target.value) })}
-              className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-blue-500"
+              className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-sv-primary"
             />
             <div className="flex justify-between text-[10px] mt-2 text-white/40 px-1">
               <span>AGRESSIVE GROWTH (0.5x)</span>
@@ -197,7 +197,7 @@ const AutonomousAIControl: React.FC = () => {
           <div className="flex justify-end">
             <button
               onClick={() => setShowConfirm(true)}
-              className="px-8 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-bold shadow-lg shadow-blue-900/20 transition-all flex items-center gap-2"
+              className="px-8 py-3 bg-sv-primary hover:bg-sv-primary-hover rounded-lg font-bold shadow-lg transition-all flex items-center gap-2"
             >
               <FiShield className="w-5 h-5" />
               Commit Configuration
@@ -306,7 +306,7 @@ const AutonomousAIControl: React.FC = () => {
                 <textarea 
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none h-24"
+                  className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-sm focus:ring-2 focus:ring-sv-primary outline-none h-24"
                   placeholder="e.g. Adjusting risk dial in response to detected refund surge in Gadgets category."
                 />
               </div>
@@ -316,7 +316,7 @@ const AutonomousAIControl: React.FC = () => {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-sm focus:ring-2 focus:ring-sv-primary outline-none"
                   placeholder="Confirm password"
                 />
               </div>
@@ -331,7 +331,7 @@ const AutonomousAIControl: React.FC = () => {
               </button>
               <button
                 onClick={handleUpdate}
-                className="flex-1 py-3 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-sm font-bold shadow-lg shadow-blue-900/20 transition-all"
+                className="flex-1 py-3 px-4 rounded-lg bg-sv-primary hover:bg-sv-primary-hover text-sm font-bold shadow-lg transition-all"
               >
                 Authorize & Commit
               </button>

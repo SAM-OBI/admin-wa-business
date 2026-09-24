@@ -201,7 +201,7 @@ export default function SettlementManagement() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+        <h1 className="text-2xl font-bold text-sv-text-primary flex items-center gap-2">
           <FiLock className="text-emerald-600" />
           Safe Settlement Oversight
         </h1>
@@ -211,7 +211,7 @@ export default function SettlementManagement() {
       {/* Stats Cards */}
       {dashboard && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+          <div className="bg-sv-surface rounded-2xl p-6 border border-sv-border shadow-sm">
             <div className="flex items-center justify-between mb-2">
               <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">In-Process</div>
               <FiLock className="text-orange-500" size={18} />
@@ -224,7 +224,7 @@ export default function SettlementManagement() {
             </p>
           </div>
 
-          <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+          <div className="bg-sv-surface rounded-2xl p-6 border border-sv-border shadow-sm">
             <div className="flex items-center justify-between mb-2">
               <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Released</div>
               <FiCheckCircle className="text-green-500" size={18} />
@@ -234,7 +234,7 @@ export default function SettlementManagement() {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+          <div className="bg-sv-surface rounded-2xl p-6 border border-sv-border shadow-sm">
             <div className="flex items-center justify-between mb-2">
               <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Disputed</div>
               <FiSlash className="text-red-500" size={18} />
@@ -244,7 +244,7 @@ export default function SettlementManagement() {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+          <div className="bg-sv-surface rounded-2xl p-6 border border-sv-border shadow-sm">
             <div className="flex items-center justify-between mb-2">
               <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">AUM (Volume)</div>
               <FiTrendingUp className="text-blue-500" size={18} />
@@ -257,7 +257,7 @@ export default function SettlementManagement() {
       )}
 
       {/* Tabs */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-sv-surface rounded-2xl border border-sv-border shadow-sm overflow-hidden">
         <div className="flex border-b border-gray-100">
           <button
             onClick={() => setActiveTab('overview')}
@@ -323,9 +323,9 @@ export default function SettlementManagement() {
                   Settlement by Vendor
                 </h3>
               </div>
-              <div className="overflow-x-auto rounded-xl border border-gray-100">
+              <div className="overflow-x-auto rounded-xl border border-sv-border">
                 <table className="w-full text-left border-collapse">
-                  <thead className="bg-gray-50 text-[10px] font-black uppercase text-gray-400">
+                  <thead className="bg-sv-surface-muted text-[10px] font-black uppercase text-sv-text-muted">
                     <tr>
                       <th className="px-4 py-3">Vendor</th>
                       <th className="px-4 py-3">In-Process</th>
@@ -333,13 +333,13 @@ export default function SettlementManagement() {
                       <th className="px-4 py-3">Orders</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-50">
+                  <tbody className="divide-y divide-sv-border">
                     {vendors.map((vendor) => (
-                      <tr key={vendor.vendorId} className="hover:bg-gray-50/50 transition-colors">
+                      <tr key={vendor.vendorId} className="hover:bg-sv-surface-muted transition-colors">
                         <td className="px-4 py-3 text-sm">
                           <div>
-                            <div className="font-bold text-gray-800">{vendor.vendorName}</div>
-                            <div className="text-[10px] text-gray-400">{vendor.vendorEmail}</div>
+                            <div className="font-bold text-sv-text-primary">{vendor.vendorName}</div>
+                            <div className="text-[10px] text-sv-text-muted">{vendor.vendorEmail}</div>
                           </div>
                         </td>
                         <td className="px-4 py-3 font-black text-orange-600 text-sm">
@@ -348,7 +348,7 @@ export default function SettlementManagement() {
                         <td className="px-4 py-3 font-black text-green-600 text-sm">
                           ₦{vendor.totalReleased.toLocaleString()}
                         </td>
-                        <td className="px-4 py-3 text-sm font-bold text-gray-600">
+                        <td className="px-4 py-3 text-sm font-bold text-sv-text-secondary">
                           {vendor.orderCount}
                         </td>
                       </tr>
@@ -376,8 +376,8 @@ export default function SettlementManagement() {
                       onClick={() => setFilterStatus(s)}
                       className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${
                         filterStatus === s
-                          ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
-                          : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
+                          ? 'bg-sv-primary text-sv-text-inverse'
+                          : 'bg-sv-surface-muted text-sv-text-muted hover:bg-sv-border'
                       }`}
                     >
                       {s}
@@ -385,9 +385,9 @@ export default function SettlementManagement() {
                   ))}
                 </div>
               </div>
-              <div className="overflow-x-auto rounded-xl border border-gray-100">
+              <div className="overflow-x-auto rounded-xl border border-sv-border">
                 <table className="w-full text-left border-collapse">
-                  <thead className="bg-gray-50 text-[10px] font-black uppercase text-gray-400">
+                  <thead className="bg-sv-surface-muted text-[10px] font-black uppercase text-sv-text-muted">
                     <tr>
                       <th className="px-4 py-3">Order ID</th>
                       <th className="px-4 py-3">Vendor</th>
@@ -396,25 +396,25 @@ export default function SettlementManagement() {
                       <th className="px-4 py-3 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-50">
+                  <tbody className="divide-y divide-sv-border">
                     {transactions.map((tx) => (
-                      <tr key={tx._id} className="hover:bg-gray-50/50 transition-colors">
-                        <td className="px-4 py-3 font-bold text-gray-800 text-xs">#{tx.orderId.slice(-8)}</td>
+                      <tr key={tx._id} className="hover:bg-sv-surface-muted transition-colors">
+                        <td className="px-4 py-3 font-bold text-sv-text-primary text-xs">#{tx.orderId.slice(-8)}</td>
                         <td className="px-4 py-3">
-                          <div className="text-xs font-medium text-gray-700">{tx.vendor.name}</div>
+                          <div className="text-xs font-medium text-sv-text-secondary">{tx.vendor.name}</div>
                         </td>
-                        <td className="px-4 py-3 font-black text-gray-900 text-sm">
+                        <td className="px-4 py-3 font-black text-sv-text-primary text-sm">
                           ₦{tx.totalAmount.toLocaleString()}
                         </td>
                         <td className="px-4 py-3">
                           {/* 🛡️ [BATCH-11] Expanded to the real 6-value canonical enum. */}
                           <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest ${
-                            tx.settlementState === 'RELEASED' ? 'bg-green-50 text-green-600' :
-                            tx.settlementState === 'HELD' ? 'bg-orange-50 text-orange-600' :
-                            tx.settlementState === 'RELEASE_PENDING' ? 'bg-amber-50 text-amber-600' :
+                            tx.settlementState === 'RELEASED' ? 'bg-sv-success-soft text-sv-success' :
+                            tx.settlementState === 'HELD' ? 'bg-sv-warning-soft text-sv-warning' :
+                            tx.settlementState === 'RELEASE_PENDING' ? 'bg-sv-warning-soft text-sv-warning' :
                             tx.settlementState === 'REFUND_PENDING' ? 'bg-sky-50 text-sky-600' :
-                            tx.settlementState === 'REFUNDED' ? 'bg-purple-50 text-purple-600' :
-                            'bg-red-50 text-red-600'
+                            tx.settlementState === 'REFUNDED' ? 'bg-sv-tag-soft text-sv-tag' :
+                            'bg-sv-danger-soft text-sv-danger'
                           }`}>
                             {tx.settlementState}
                           </span>
@@ -425,13 +425,13 @@ export default function SettlementManagement() {
                               <>
                                 <button
                                   onClick={() => handleForceRelease(tx._id, tx.orderId)}
-                                  className="px-2 py-1 text-[9px] font-black uppercase bg-emerald-50 text-emerald-600 rounded hover:bg-emerald-100"
+                                  className="px-2 py-1 text-[9px] font-black uppercase bg-sv-success-soft text-sv-success rounded hover:opacity-80"
                                 >
                                   Release
                                 </button>
                                 <button
                                   onClick={() => handleHoldSettlement(tx._id, tx.orderId)}
-                                  className="px-2 py-1 text-[9px] font-black uppercase bg-orange-50 text-orange-600 rounded hover:bg-orange-100"
+                                  className="px-2 py-1 text-[9px] font-black uppercase bg-sv-warning-soft text-sv-warning rounded hover:opacity-80"
                                 >
                                   Hold
                                 </button>
@@ -440,7 +440,7 @@ export default function SettlementManagement() {
                             {tx.settlementState === 'DISPUTED' && (
                               <button
                                 onClick={() => handleForceRelease(tx._id, tx.orderId)}
-                                className="px-2 py-1 text-[9px] font-black uppercase bg-emerald-50 text-emerald-600 rounded hover:bg-emerald-100"
+                                className="px-2 py-1 text-[9px] font-black uppercase bg-sv-success-soft text-sv-success rounded hover:opacity-80"
                               >
                                 Resolve {'->'} Release
                               </button>

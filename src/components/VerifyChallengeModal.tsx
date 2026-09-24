@@ -137,18 +137,18 @@ export default function VerifyChallengeModal({
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-100"
+                className="bg-sv-surface rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-sv-border"
             >
                 {/* Header Section */}
-                <div className="bg-slate-50 px-6 py-6 sm:px-8 sm:py-8 border-b border-slate-100 relative overflow-hidden">
+                <div className="bg-sv-surface-muted px-6 py-6 sm:px-8 sm:py-8 border-b border-sv-border relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl opacity-50" />
-                    
+
                     <div className="relative z-10 text-center">
-                        <div className="w-16 h-16 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center mx-auto mb-4 text-slate-900">
+                        <div className="w-16 h-16 bg-sv-surface rounded-2xl shadow-sm border border-sv-border flex items-center justify-center mx-auto mb-4 text-sv-text-primary">
                             <FaShieldAlt size={28} />
                         </div>
-                        <h2 className="text-xl font-bold text-slate-900 tracking-tight">Access Verification</h2>
-                        <p className="text-slate-500 text-sm mt-1 font-medium">
+                        <h2 className="text-xl font-bold text-sv-text-primary tracking-tight">Access Verification</h2>
+                        <p className="text-sv-text-secondary text-sm mt-1 font-medium">
                             Authorized personnel identity check required
                         </p>
                     </div>
@@ -158,7 +158,7 @@ export default function VerifyChallengeModal({
                     {/* Method Selector (if multiple) */}
                     {factors.length > 1 && (
                         <div className="mb-6">
-                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-3 text-center">
+                            <label className="text-[10px] font-bold text-sv-text-muted uppercase tracking-widest block mb-3 text-center">
                                 Verification Method
                             </label>
                             <div className="flex justify-center gap-2">
@@ -167,9 +167,9 @@ export default function VerifyChallengeModal({
                                         key={f.id}
                                         onClick={() => setCurrentFactor(f)}
                                         className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border-2 ${
-                                            currentFactor.id === f.id 
-                                                ? 'bg-slate-900 border-slate-900 text-white' 
-                                                : 'bg-white border-slate-100 text-slate-500 hover:border-slate-200'
+                                            currentFactor.id === f.id
+                                                ? 'bg-sv-primary border-sv-primary text-sv-text-inverse'
+                                                : 'bg-sv-surface border-sv-border text-sv-text-secondary hover:border-sv-primary/30'
                                         }`}
                                     >
                                         {factorIcon(f.type)}
@@ -181,7 +181,7 @@ export default function VerifyChallengeModal({
                     )}
 
                     <div className="text-center mb-8">
-                        <p className="text-slate-600 text-sm font-medium">
+                        <p className="text-sv-text-secondary text-sm font-medium">
                             {currentFactor.type === 'TOTP' 
                                 ? 'Enter the security code from your authenticator app'
                                 : `Verification code sent to ${currentFactor.label || emailMask || 'your registered contact'}`}
@@ -202,7 +202,7 @@ export default function VerifyChallengeModal({
                                 }}
                                 placeholder="••••••"
                                 maxLength={6}
-                                className="w-full px-4 py-5 text-center text-3xl sm:text-4xl font-black tracking-[0.4em] sm:tracking-[0.6em] rounded-2xl border-2 border-slate-100 bg-slate-50 focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none placeholder:text-slate-200 placeholder:tracking-normal group-hover:border-slate-200"
+                                className="w-full px-4 py-5 text-center text-3xl sm:text-4xl font-black tracking-[0.4em] sm:tracking-[0.6em] rounded-2xl border-2 border-sv-border bg-sv-surface-muted focus:bg-sv-surface focus:border-sv-primary focus:ring-4 focus:ring-sv-primary/10 transition-all outline-none placeholder:text-slate-200 placeholder:tracking-normal group-hover:border-sv-border"
                                 autoFocus
                                 disabled={loading}
                             />
@@ -210,7 +210,7 @@ export default function VerifyChallengeModal({
                         
                         <div className="flex justify-between mt-3 px-1">
                             {attemptsLeft !== null ? (
-                                <span className={`text-[10px] font-bold uppercase tracking-wider ${attemptsLeft <= 1 ? 'text-rose-500' : 'text-amber-500'}`}>
+                                <span className={`text-[10px] font-bold uppercase tracking-wider ${attemptsLeft <= 1 ? 'text-sv-danger' : 'text-sv-warning'}`}>
                                     {attemptsLeft} Attempts remaining
                                 </span>
                             ) : <span />}
@@ -220,8 +220,8 @@ export default function VerifyChallengeModal({
                                     onClick={handleResend}
                                     disabled={resendSeconds > 0 || resending}
                                     className={`text-[10px] font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 ${
-                                        resendSeconds > 0 || resending 
-                                            ? 'text-slate-300 cursor-not-allowed' 
+                                        resendSeconds > 0 || resending
+                                            ? 'text-sv-text-muted cursor-not-allowed'
                                             : 'text-primary hover:text-primary/80 border-b border-primary/20'
                                     }`}
                                 >
@@ -239,10 +239,10 @@ export default function VerifyChallengeModal({
                                 initial={{ opacity: 0, y: -10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -10 }}
-                                className="mb-6 p-4 bg-rose-50 border border-rose-100 rounded-2xl flex items-start gap-3"
+                                className="mb-6 p-4 bg-sv-danger-soft border border-sv-danger/30 rounded-2xl flex items-start gap-3"
                             >
-                                <span className="text-rose-500 mt-0.5">⚠️</span>
-                                <p className="text-xs text-rose-600 font-semibold leading-relaxed">{error}</p>
+                                <span className="text-sv-danger mt-0.5">⚠️</span>
+                                <p className="text-xs text-sv-danger font-semibold leading-relaxed">{error}</p>
                             </motion.div>
                         )}
                     </AnimatePresence>
@@ -252,7 +252,7 @@ export default function VerifyChallengeModal({
                         <button
                             onClick={handleVerify}
                             disabled={loading || code.length < 4}
-                            className="w-full py-4.5 bg-slate-900 text-white font-bold rounded-2xl hover:bg-black transition-all transform active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-slate-900/20 flex items-center justify-center gap-2"
+                            className="w-full py-4.5 bg-sv-primary text-sv-text-inverse font-bold rounded-2xl hover:bg-sv-primary-hover transition-all transform active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                         >
                             {loading ? (
                                 <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
@@ -267,7 +267,7 @@ export default function VerifyChallengeModal({
                         <button
                             onClick={onCancel}
                             disabled={loading}
-                            className="w-full py-3.5 text-xs text-slate-400 font-bold uppercase tracking-widest hover:text-slate-600 transition-colors"
+                            className="w-full py-3.5 text-xs text-sv-text-muted font-bold uppercase tracking-widest hover:text-sv-text-secondary transition-colors"
                         >
                             Cancel Access Request
                         </button>
@@ -275,9 +275,9 @@ export default function VerifyChallengeModal({
                 </div>
 
                 {/* Secure Footer */}
-                <div className="bg-slate-50/50 px-8 py-4 border-t border-slate-100 flex items-center justify-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                <div className="bg-sv-surface-muted/50 px-8 py-4 border-t border-sv-border flex items-center justify-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-sv-success animate-pulse" />
+                    <span className="text-[10px] text-sv-text-muted font-bold uppercase tracking-widest">
                         Industrial-Grade Identity Lock Active
                     </span>
                 </div>

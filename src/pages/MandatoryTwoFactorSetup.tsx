@@ -84,7 +84,7 @@ export default function MandatoryTwoFactorSetup() {
               <button
                 onClick={handleStart}
                 disabled={loading}
-                className="w-full py-4 bg-slate-900 text-white font-bold rounded-2xl hover:bg-black transition-all disabled:opacity-50"
+                className="w-full py-4 bg-sv-primary text-sv-text-inverse font-bold rounded-2xl hover:bg-sv-primary-hover transition-all disabled:opacity-50"
               >
                 {loading ? 'Starting...' : 'Begin Setup'}
               </button>
@@ -105,7 +105,7 @@ export default function MandatoryTwoFactorSetup() {
                     onChange={(e) => setTotpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                     placeholder="000000"
                     maxLength={6}
-                    className="w-full px-4 py-3 border-2 border-slate-100 rounded-xl text-center tracking-[0.4em] font-mono text-xl focus:ring-2 focus:ring-slate-900 outline-none"
+                    className="w-full px-4 py-3 border-2 border-sv-border rounded-xl text-center tracking-[0.4em] font-mono text-xl focus:ring-2 focus:ring-sv-primary outline-none"
                     autoFocus
                   />
                 </div>
@@ -113,7 +113,7 @@ export default function MandatoryTwoFactorSetup() {
               <button
                 onClick={handleContinueToQuestions}
                 disabled={loading || totpCode.length !== 6}
-                className="w-full py-4 bg-slate-900 text-white font-bold rounded-2xl hover:bg-black transition-all disabled:opacity-50"
+                className="w-full py-4 bg-sv-primary text-sv-text-inverse font-bold rounded-2xl hover:bg-sv-primary-hover transition-all disabled:opacity-50"
               >
                 Continue
               </button>
@@ -134,7 +134,7 @@ export default function MandatoryTwoFactorSetup() {
               </div>
               <button
                 onClick={() => navigate('/dashboard', { replace: true })}
-                className="w-full py-4 bg-slate-900 text-white font-bold rounded-2xl hover:bg-black transition-all"
+                className="w-full py-4 bg-sv-primary text-sv-text-inverse font-bold rounded-2xl hover:bg-sv-primary-hover transition-all"
               >
                 Continue to Dashboard
               </button>

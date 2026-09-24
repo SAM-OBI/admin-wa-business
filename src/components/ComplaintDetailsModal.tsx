@@ -150,85 +150,85 @@ export default function ComplaintDetailsModal({ complaint, onClose, onUpdate }: 
 
   const getSeverityColor = (severity: string) => {
     switch (severity.toLowerCase()) {
-      case 'high': return 'bg-red-100 text-red-700';
-      case 'medium': return 'bg-yellow-100 text-yellow-700';
-      default: return 'bg-green-100 text-green-700';
+      case 'high': return 'bg-sv-danger-soft text-sv-danger';
+      case 'medium': return 'bg-sv-warning-soft text-sv-warning';
+      default: return 'bg-sv-success-soft text-sv-success';
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-sv-surface rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+        <div className="sticky top-0 bg-sv-surface border-b border-sv-border px-6 py-4 flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">{complaint.title}</h2>
+            <h2 className="text-2xl font-bold text-sv-text-primary">{complaint.title}</h2>
             <div className="flex items-center gap-2 mt-2">
               <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getSeverityColor(complaint.severity)}`}>
                 {complaint.severity} Severity
               </span>
-              <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-700">
+              <span className="px-2 py-1 text-xs font-semibold rounded-full bg-sv-info-soft text-sv-info">
                 {complaint.type.replace(/_/g, ' ')}
               </span>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition">
-            <FiX className="text-xl text-gray-600" />
+          <button onClick={onClose} className="p-2 hover:bg-sv-surface-muted rounded-lg transition">
+            <FiX className="text-xl text-sv-text-secondary" />
           </button>
         </div>
 
         <div className="p-6 space-y-6">
           {/* Parties */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-gray-50 rounded-lg p-4">
+            <div className="bg-sv-surface-muted rounded-lg p-4">
               <div className="flex items-center gap-2 mb-2">
-                <FiUser className="text-gray-600" />
-                <h3 className="font-semibold text-gray-900">Complainant</h3>
+                <FiUser className="text-sv-text-secondary" />
+                <h3 className="font-semibold text-sv-text-primary">Complainant</h3>
               </div>
-              <p className="text-gray-700">{complaint.complainant.name}</p>
-              <p className="text-sm text-gray-500">{complaint.complainant.email}</p>
+              <p className="text-sv-text-secondary">{complaint.complainant.name}</p>
+              <p className="text-sm text-sv-text-muted">{complaint.complainant.email}</p>
             </div>
-            <div className="bg-gray-50 rounded-lg p-4">
+            <div className="bg-sv-surface-muted rounded-lg p-4">
               <div className="flex items-center gap-2 mb-2">
-                <FiUser className="text-gray-600" />
-                <h3 className="font-semibold text-gray-900">Defendant</h3>
+                <FiUser className="text-sv-text-secondary" />
+                <h3 className="font-semibold text-sv-text-primary">Defendant</h3>
               </div>
-              <p className="text-gray-700">{complaint.defendant.name}</p>
-              <p className="text-sm text-gray-500">{complaint.defendant.email}</p>
+              <p className="text-sv-text-secondary">{complaint.defendant.name}</p>
+              <p className="text-sm text-sv-text-muted">{complaint.defendant.email}</p>
             </div>
           </div>
 
           {/* 🛡️ [#8D] Linked order — previously arrived from the backend but was dropped by this modal entirely. */}
           {complaint.order && (
-            <div className="bg-gray-50 rounded-lg p-4 text-sm">
-              <h3 className="font-semibold text-gray-900 mb-1">Linked Order</h3>
-              <p className="text-gray-700">
+            <div className="bg-sv-surface-muted rounded-lg p-4 text-sm">
+              <h3 className="font-semibold text-sv-text-primary mb-1">Linked Order</h3>
+              <p className="text-sv-text-secondary">
                 Order #{complaint.order.orderId || complaint.order._id.slice(-8)}
-                {complaint.order.status && <span className="text-gray-500"> · {complaint.order.status}</span>}
+                {complaint.order.status && <span className="text-sv-text-muted"> · {complaint.order.status}</span>}
                 {complaint.order.paymentInfo?.method === 'transfer' && (
-                  <span className="ml-2 px-2 py-0.5 text-xs font-semibold rounded-full bg-purple-100 text-purple-700">Direct Transfer</span>
+                  <span className="ml-2 px-2 py-0.5 text-xs font-semibold rounded-full bg-sv-tag-soft text-sv-tag">Direct Transfer</span>
                 )}
               </p>
             </div>
           )}
 
           {/* Description */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="font-semibold text-gray-900 mb-2">Description</h3>
-            <p className="text-gray-700 whitespace-pre-wrap">{complaint.description}</p>
+          <div className="bg-sv-surface-muted rounded-lg p-4">
+            <h3 className="font-semibold text-sv-text-primary mb-2">Description</h3>
+            <p className="text-sv-text-secondary whitespace-pre-wrap">{complaint.description}</p>
           </div>
 
           {/* Evidence */}
           {complaint.evidence && complaint.evidence.length > 0 && (
             <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Evidence</h3>
+              <h3 className="font-semibold text-sv-text-primary mb-3">Evidence</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {complaint.evidence.map((url, index) => (
                   <img
                     key={index}
                     src={url}
                     alt={`Evidence ${index + 1}`}
-                    className="w-full h-32 object-cover rounded-lg border border-gray-200 cursor-pointer hover:opacity-80 transition"
+                    className="w-full h-32 object-cover rounded-lg border border-sv-border cursor-pointer hover:opacity-80 transition"
                     onClick={() => window.open(url, '_blank')}
                   />
                 ))}
@@ -240,24 +240,24 @@ export default function ComplaintDetailsModal({ complaint, onClose, onUpdate }: 
           {complaint.responses && complaint.responses.length > 0 && (
             <div>
               <div className="flex items-center gap-2 mb-3">
-                <FiMessageSquare className="text-gray-600" />
-                <h3 className="font-semibold text-gray-900">Response Thread</h3>
+                <FiMessageSquare className="text-sv-text-secondary" />
+                <h3 className="font-semibold text-sv-text-primary">Response Thread</h3>
               </div>
               <div className="space-y-3 max-h-64 overflow-y-auto">
                 {complaint.responses.map((response, index) => (
                   <div key={index} className={`p-4 rounded-lg ${
-                    response.respondentType === 'admin' ? 'bg-blue-50 ml-4' : 'bg-gray-50 mr-4'
+                    response.respondentType === 'admin' ? 'bg-sv-info-soft ml-4' : 'bg-sv-surface-muted mr-4'
                   }`}>
                     <div className="flex items-start justify-between mb-2">
                       <div>
-                        <p className="font-medium text-gray-900">{response.respondent.name}</p>
-                        <p className="text-xs text-gray-500 capitalize">{response.respondentType}</p>
+                        <p className="font-medium text-sv-text-primary">{response.respondent.name}</p>
+                        <p className="text-xs text-sv-text-muted capitalize">{response.respondentType}</p>
                       </div>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-sv-text-muted">
                         {new Date(response.timestamp).toLocaleString()}
                       </p>
                     </div>
-                    <p className="text-gray-700 text-sm">{response.message}</p>
+                    <p className="text-sv-text-secondary text-sm">{response.message}</p>
                   </div>
                 ))}
               </div>
@@ -267,8 +267,8 @@ export default function ComplaintDetailsModal({ complaint, onClose, onUpdate }: 
           {/* 🛡️ [BATCH-11] Canonical status is RESOLVED|DISMISSED as terminal —
               escalation is RESOLVED + courtCase, not a separate status string. */}
           {complaint.status !== 'RESOLVED' && complaint.status !== 'DISMISSED' && (
-            <div className="bg-gray-50 rounded-lg p-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className="bg-sv-surface-muted rounded-lg p-4">
+              <label className="block text-sm font-medium text-sv-text-secondary mb-2">
                 Add Response
               </label>
               <div className="flex gap-2">
@@ -276,13 +276,13 @@ export default function ComplaintDetailsModal({ complaint, onClose, onUpdate }: 
                   value={responseMessage}
                   onChange={(e) => setResponseMessage(e.target.value)}
                   placeholder="Type your response..."
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 px-4 py-2 border border-sv-border rounded-lg focus:outline-none focus:ring-2 focus:ring-sv-primary"
                   rows={3}
                 />
                 <button
                   onClick={handleSendResponse}
                   disabled={sending || !responseMessage.trim()}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 h-fit"
+                  className="px-4 py-2 bg-sv-primary text-sv-text-inverse rounded-lg hover:bg-sv-primary-hover transition disabled:opacity-50 h-fit"
                 >
                   <FiSend />
                 </button>
@@ -292,10 +292,10 @@ export default function ComplaintDetailsModal({ complaint, onClose, onUpdate }: 
         </div>
 
         {/* Footer Actions */}
-        <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex justify-between gap-3">
+        <div className="sticky bottom-0 bg-sv-surface-muted border-t border-sv-border px-6 py-4 flex justify-between gap-3">
           <button
             onClick={onClose}
-            className="px-6 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
+            className="px-6 py-2 bg-sv-surface border border-sv-border text-sv-text-primary rounded-lg hover:bg-sv-surface-muted transition font-medium"
           >
             Close
           </button>
@@ -304,13 +304,13 @@ export default function ComplaintDetailsModal({ complaint, onClose, onUpdate }: 
               <>
                 <button
                   onClick={handleResolve}
-                  className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium"
+                  className="px-6 py-2 bg-sv-success text-sv-text-inverse rounded-lg hover:opacity-90 transition font-medium"
                 >
                   Resolve
                 </button>
                 <button
                   onClick={handleEscalate}
-                  className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium"
+                  className="px-6 py-2 bg-sv-danger text-sv-text-inverse rounded-lg hover:opacity-90 transition font-medium"
                 >
                   Escalate to Court
                 </button>

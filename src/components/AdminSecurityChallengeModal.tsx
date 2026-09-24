@@ -87,41 +87,41 @@ export default function AdminSecurityChallengeModal({ isOpen, onClose, action, o
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100] p-4">
-      <div className="bg-white rounded-xl shadow-2xl max-w-md w-full overflow-hidden">
-        <div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+      <div className="bg-sv-surface rounded-xl shadow-2xl max-w-md w-full overflow-hidden">
+        <div className="border-b border-sv-border px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
+            <div className="w-10 h-10 rounded-lg bg-sv-info-soft flex items-center justify-center text-sv-info">
               <FiShield />
             </div>
             <div>
-              <h3 className="text-base font-bold text-gray-900">Security Verification</h3>
-              <p className="text-xs text-gray-500">Administrative access requires recent MFA</p>
+              <h3 className="text-base font-bold text-sv-text-primary">Security Verification</h3>
+              <p className="text-xs text-sv-text-secondary">Administrative access requires recent MFA</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition">
-            <FiX className="text-gray-500" />
+          <button onClick={onClose} className="p-2 hover:bg-sv-surface-muted rounded-lg transition">
+            <FiX className="text-sv-text-muted" />
           </button>
         </div>
 
         <div className="p-6">
           {step === 'init' && loading && (
             <div className="py-10 text-center">
-              <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4 animate-spin" />
-              <p className="text-sm text-gray-500">Preparing security challenge...</p>
+              <div className="w-10 h-10 border-4 border-sv-primary border-t-transparent rounded-full mx-auto mb-4 animate-spin" />
+              <p className="text-sm text-sv-text-secondary">Preparing security challenge...</p>
             </div>
           )}
 
           {step === 'init' && !loading && (
             <div className="py-10 text-center space-y-4">
-              <div className="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center mx-auto text-red-500 text-2xl">
+              <div className="w-14 h-14 bg-sv-danger-soft rounded-full flex items-center justify-center mx-auto text-sv-danger text-2xl">
                 <FiAlertTriangle />
               </div>
-              <p className="text-sm text-gray-600">{error || 'Unable to start verification.'}</p>
+              <p className="text-sm text-sv-text-secondary">{error || 'Unable to start verification.'}</p>
               <button
                 type="button"
                 onClick={() => startChallenge()}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition"
+                className="px-6 py-2 bg-sv-primary text-sv-text-inverse rounded-lg text-sm font-semibold hover:bg-sv-primary-hover transition"
               >
                 Try Again
               </button>
@@ -131,10 +131,10 @@ export default function AdminSecurityChallengeModal({ isOpen, onClose, action, o
           {step === 'verify' && (
             <form onSubmit={handleVerify} className="space-y-5">
               <div className="text-center space-y-2">
-                <div className="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center mx-auto text-blue-600 text-2xl">
+                <div className="w-14 h-14 bg-sv-info-soft rounded-full flex items-center justify-center mx-auto text-sv-info text-2xl">
                   {method === 'EMAIL' ? <FiMail /> : <FiKey />}
                 </div>
-                <p className="text-sm text-gray-600 px-4">
+                <p className="text-sm text-sv-text-secondary px-4">
                   {method === 'TOTP'
                     ? 'Enter the 6-digit code from your authenticator app.'
                     : `We've sent a 6-digit code to your ${method === 'EMAIL' ? 'email' : 'device'}.`}
@@ -148,12 +148,12 @@ export default function AdminSecurityChallengeModal({ isOpen, onClose, action, o
                 value={code}
                 onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
                 placeholder="000000"
-                className="w-full text-center text-3xl font-bold tracking-[0.4em] py-4 bg-gray-50 border-2 border-transparent focus:border-blue-500 rounded-lg outline-none transition"
+                className="w-full text-center text-3xl font-bold tracking-[0.4em] py-4 bg-sv-surface-muted border-2 border-transparent focus:border-sv-primary rounded-lg outline-none transition"
                 autoFocus
               />
 
               {error && (
-                <div className="flex items-center gap-2 p-3 bg-red-50 text-red-600 rounded-lg text-sm">
+                <div className="flex items-center gap-2 p-3 bg-sv-danger-soft text-sv-danger rounded-lg text-sm">
                   <FiAlertTriangle className="shrink-0" />
                   <span>{error}</span>
                 </div>
@@ -162,7 +162,7 @@ export default function AdminSecurityChallengeModal({ isOpen, onClose, action, o
               <button
                 type="submit"
                 disabled={loading || code.length !== 6}
-                className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-3 bg-sv-primary text-sv-text-inverse rounded-lg font-semibold hover:bg-sv-primary-hover transition disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -175,11 +175,11 @@ export default function AdminSecurityChallengeModal({ isOpen, onClose, action, o
 
           {step === 'success' && (
             <div className="py-10 text-center space-y-3">
-              <div className="w-14 h-14 bg-green-50 rounded-full flex items-center justify-center mx-auto text-green-500 text-3xl">
+              <div className="w-14 h-14 bg-sv-success-soft rounded-full flex items-center justify-center mx-auto text-sv-success text-3xl">
                 <FiCheckCircle />
               </div>
-              <p className="text-base font-bold text-gray-900">Identity Confirmed</p>
-              <p className="text-sm text-gray-500">Retrying your request...</p>
+              <p className="text-base font-bold text-sv-text-primary">Identity Confirmed</p>
+              <p className="text-sm text-sv-text-secondary">Retrying your request...</p>
             </div>
           )}
         </div>

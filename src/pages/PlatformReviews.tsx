@@ -54,11 +54,11 @@ export default function PlatformReviews() {
 
     const getStatusColor = (status: string) => {
         switch (status) {
-            case 'pending': return 'bg-yellow-100 text-yellow-800';
-            case 'approved': return 'bg-green-100 text-green-800';
-            case 'rejected': return 'bg-gray-100 text-gray-800';
-            case 'flagged': return 'bg-red-100 text-red-800';
-            default: return 'bg-gray-100 text-gray-800';
+            case 'pending': return 'bg-sv-warning-soft text-sv-warning';
+            case 'approved': return 'bg-sv-success-soft text-sv-success';
+            case 'rejected': return 'bg-sv-surface-muted text-sv-text-secondary';
+            case 'flagged': return 'bg-sv-danger-soft text-sv-danger';
+            default: return 'bg-sv-surface-muted text-sv-text-secondary';
         }
     };
 
@@ -66,7 +66,7 @@ export default function PlatformReviews() {
         <div className="p-6">
             <div className="flex justify-between items-center mb-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-800">Platform Reviews</h1>
+                    <h1 className="text-2xl font-bold text-sv-text-primary">Platform Reviews</h1>
                     <p className="text-gray-500 text-sm">How buyers rate Shopvia itself, not any specific store</p>
                 </div>
 
@@ -75,7 +75,7 @@ export default function PlatformReviews() {
                     <select
                         value={filterStatus}
                         onChange={(e) => setFilterStatus(e.target.value)}
-                        className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                        className="border border-sv-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-sv-primary outline-none"
                     >
                         <option value="">All Statuses</option>
                         <option value="pending">Pending</option>
@@ -93,13 +93,13 @@ export default function PlatformReviews() {
             ) : (
                 <div className="grid grid-cols-1 gap-4">
                     {reviews.length === 0 ? (
-                        <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
+                        <div className="text-center py-12 bg-sv-surface rounded-xl border border-sv-border">
                             <FiStar className="mx-auto text-4xl text-gray-300 mb-2" />
                             <p className="text-gray-500">No platform reviews found</p>
                         </div>
                     ) : (
                         reviews.map((item) => (
-                            <div key={item._id} className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm hover:shadow-md transition">
+                            <div key={item._id} className="bg-sv-surface rounded-xl p-5 border border-sv-border shadow-sm hover:shadow-md transition">
                                 <div className="flex justify-between items-start">
                                     <div className="flex items-start gap-3">
                                         <div className="p-2 bg-amber-50 rounded-lg text-amber-600 text-xl font-bold flex items-center gap-1">

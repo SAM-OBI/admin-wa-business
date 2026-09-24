@@ -59,17 +59,17 @@ interface SupportStatsViewModel {
 }
 
 const PRIORITY_CONFIG = {
-  URGENT: { label: 'Urgent',  color: 'bg-red-100 text-red-700 border-red-200',    dot: 'bg-red-500'    },
-  HIGH:   { label: 'High',    color: 'bg-orange-100 text-orange-700 border-orange-200', dot: 'bg-orange-500' },
-  NORMAL: { label: 'Normal',  color: 'bg-blue-100 text-blue-700 border-blue-200', dot: 'bg-blue-500'   },
+  URGENT: { label: 'Urgent',  color: 'bg-sv-danger-soft text-sv-danger border-sv-danger/30',    dot: 'bg-sv-danger'    },
+  HIGH:   { label: 'High',    color: 'bg-sv-warning-soft text-sv-warning border-sv-warning/30', dot: 'bg-sv-warning' },
+  NORMAL: { label: 'Normal',  color: 'bg-sv-info-soft text-sv-info border-sv-info/30', dot: 'bg-sv-info'   },
   LOW:    { label: 'Low',     color: 'bg-slate-100 text-slate-600 border-slate-200', dot: 'bg-slate-400' },
 };
 
 const STATUS_CONFIG = {
   OPEN:             { label: 'Open',          color: 'bg-primary/10 text-primary border-primary/20' },
-  REPLY_PENDING:    { label: 'Reply Pending', color: 'bg-amber-100 text-amber-700 border-amber-200' },
-  WORKFLOW_RUNNING: { label: 'Workflow',      color: 'bg-blue-100 text-blue-700 border-blue-200'   },
-  ESCALATED:        { label: 'Escalated',     color: 'bg-red-100 text-red-700 border-red-200'       },
+  REPLY_PENDING:    { label: 'Reply Pending', color: 'bg-sv-warning-soft text-sv-warning border-sv-warning/30' },
+  WORKFLOW_RUNNING: { label: 'Workflow',      color: 'bg-sv-info-soft text-sv-info border-sv-info/30'   },
+  ESCALATED:        { label: 'Escalated',     color: 'bg-sv-danger-soft text-sv-danger border-sv-danger/30'       },
   CLOSED:           { label: 'Closed',        color: 'bg-slate-100 text-slate-600 border-slate-200' },
 };
 
@@ -211,7 +211,7 @@ export default function SupportWorkspace() {
   });
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#0a0a0a]">
+    <div className="min-h-screen bg-sv-bg">
       {/* Header */}
       <div className="bg-white dark:bg-gray-900 border-b border-slate-200 dark:border-white/10 px-6 py-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -260,7 +260,7 @@ export default function SupportWorkspace() {
                               <p className="text-xs text-slate-600 truncate max-w-[200px]">{JSON.stringify(item.payload)}</p>
                               <div className="flex gap-2 mt-2">
                                 <span className="text-[9px] font-bold bg-white border px-1 rounded">Policy: {item.conflictPolicy}</span>
-                                {item.retryCount > 0 && <span className="text-[9px] font-bold bg-red-50 text-red-600 border border-red-100 px-1 rounded">Retries: {item.retryCount}</span>}
+                                {item.retryCount > 0 && <span className="text-[9px] font-bold bg-sv-danger-soft text-sv-danger border border-sv-danger/30 px-1 rounded">Retries: {item.retryCount}</span>}
                               </div>
                             </div>
                             <button onClick={() => removeQueueItem(item.id)} className="text-slate-300 hover:text-red-500 transition-colors">
@@ -376,7 +376,7 @@ export default function SupportWorkspace() {
                           <FaLock className="inline mr-1" /> {activeLease.agentName} is reviewing
                         </span>
                         {isSupervisor && (
-                          <button onClick={forceTakeover} className="text-[10px] font-bold bg-red-100 text-red-600 px-2 py-1 rounded hover:bg-red-200">
+                          <button onClick={forceTakeover} className="text-[10px] font-bold bg-sv-danger-soft text-sv-danger px-2 py-1 rounded hover:opacity-80">
                             Force Takeover
                           </button>
                         )}
@@ -424,7 +424,7 @@ export default function SupportWorkspace() {
                   )}
                   
                   <textarea 
-                    className="w-full border rounded-[5px] p-3 text-sm focus:outline-none focus:border-primary disabled:bg-slate-50 disabled:text-slate-400" 
+                    className="w-full border border-sv-border rounded-[5px] p-3 text-sm focus:outline-none focus:border-primary disabled:bg-sv-surface-muted disabled:text-sv-text-muted"
                     rows={3} 
                     placeholder="Type a reply or internal note..." 
                     disabled={activeLease?.agentName !== currentUser}

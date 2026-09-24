@@ -23,7 +23,7 @@ export default function GovernanceBanner() {
     if (!status?.isDegraded) return null;
 
     return (
-        <div className="bg-red-600 text-white px-6 py-3 flex items-center justify-between gap-4 animate-pulse">
+        <div className="bg-sv-danger text-sv-text-inverse px-6 py-3 flex items-center justify-between gap-4 animate-pulse">
             <div className="flex items-center gap-3">
                 <FiAlertOctagon className="text-xl" />
                 <div className="text-xs">

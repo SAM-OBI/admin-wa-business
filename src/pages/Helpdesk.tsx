@@ -45,18 +45,18 @@ interface HelpdeskStats {
 type ActiveTab = 'queue' | 'agents' | 'rules';
 
 const PRIORITY_CONFIG: Record<TicketPriority, { label: string; color: string; dot: string }> = {
-  urgent: { label: 'Urgent',  color: 'bg-red-100 text-red-700 border-red-200',    dot: 'bg-red-500'    },
-  high:   { label: 'High',    color: 'bg-orange-100 text-orange-700 border-orange-200', dot: 'bg-orange-500' },
-  normal: { label: 'Normal',  color: 'bg-blue-100 text-blue-700 border-blue-200', dot: 'bg-blue-500'   },
+  urgent: { label: 'Urgent',  color: 'bg-sv-danger-soft text-sv-danger border-sv-danger/30',    dot: 'bg-sv-danger'    },
+  high:   { label: 'High',    color: 'bg-sv-warning-soft text-sv-warning border-sv-warning/30', dot: 'bg-sv-warning' },
+  normal: { label: 'Normal',  color: 'bg-sv-info-soft text-sv-info border-sv-info/30', dot: 'bg-sv-info'   },
   low:    { label: 'Low',     color: 'bg-slate-100 text-slate-600 border-slate-200', dot: 'bg-slate-400' },
 };
 
 const STATUS_CONFIG: Record<TicketStatus, { label: string; color: string }> = {
   OPEN:        { label: 'Open',        color: 'bg-primary/10 text-primary border-primary/20' },
-  IN_PROGRESS: { label: 'In Progress', color: 'bg-blue-100 text-blue-700 border-blue-200'   },
-  PENDING:     { label: 'Pending',     color: 'bg-amber-100 text-amber-700 border-amber-200' },
+  IN_PROGRESS: { label: 'In Progress', color: 'bg-sv-info-soft text-sv-info border-sv-info/30'   },
+  PENDING:     { label: 'Pending',     color: 'bg-sv-warning-soft text-sv-warning border-sv-warning/30' },
   RESOLVED:    { label: 'Resolved',    color: 'bg-secondary text-primary border-primary/20'  },
-  ESCALATED:   { label: 'Escalated',   color: 'bg-red-100 text-red-700 border-red-200'       },
+  ESCALATED:   { label: 'Escalated',   color: 'bg-sv-danger-soft text-sv-danger border-sv-danger/30'       },
 };
 
 export default function Helpdesk() {
@@ -103,7 +103,7 @@ export default function Helpdesk() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#0a0a0a]">
+    <div className="min-h-screen bg-sv-bg">
       {/* Header */}
       <div className="bg-white dark:bg-gray-900 border-b border-slate-200 dark:border-white/10 px-6 py-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -246,7 +246,7 @@ export default function Helpdesk() {
                                 {status.label}
                               </span>
                               {ticket.slaBreached && (
-                                <span className="text-[9px] font-black px-2 py-0.5 rounded-[3px] border uppercase tracking-widest bg-red-100 text-red-600 border-red-200 flex items-center gap-1">
+                                <span className="text-[9px] font-black px-2 py-0.5 rounded-[3px] border uppercase tracking-widest bg-sv-danger-soft text-sv-danger border-sv-danger/30 flex items-center gap-1">
                                   <FaExclamationTriangle size={7} /> SLA Breached
                                 </span>
                               )}

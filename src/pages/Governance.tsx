@@ -213,9 +213,9 @@ export default function Governance() {
                                             <div className="flex-1 space-y-4">
                                                 <div className="flex items-center gap-3">
                                                     <span className={`px-2 py-1 rounded text-[10px] font-black uppercase tracking-widest ${
-                                                        req.status === 'PENDING' ? 'bg-orange-100 text-orange-600' :
-                                                        req.status === 'COOLDOWN' ? 'bg-blue-100 text-blue-600' :
-                                                        'bg-emerald-100 text-emerald-600'
+                                                        req.status === 'PENDING' ? 'bg-sv-warning-soft text-sv-warning' :
+                                                        req.status === 'COOLDOWN' ? 'bg-sv-info-soft text-sv-info' :
+                                                        'bg-sv-success-soft text-sv-success'
                                                     }`}>
                                                         {req.status}
                                                     </span>
@@ -274,7 +274,7 @@ export default function Governance() {
                                                     {req.status === 'COOLDOWN' && (
                                                         <button 
                                                             onClick={() => handleExecute(req._id)}
-                                                            className="bg-slate-900 text-white text-[10px] font-black uppercase px-6 py-3 rounded-xl hover:scale-105 transition-all shadow-lg shadow-slate-900/20 flex items-center gap-2"
+                                                            className="bg-sv-primary text-sv-text-inverse text-[10px] font-black uppercase px-6 py-3 rounded-xl hover:scale-105 transition-all flex items-center gap-2"
                                                         >
                                                             <FiLock /> Commit Mutation
                                                         </button>
@@ -318,17 +318,17 @@ export default function Governance() {
                                         <div className="flex items-start justify-between mb-4">
                                             <div className="flex items-center gap-4">
                                                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-sm shadow-sm ${
-                                                    log.riskTier === 'CRITICAL' ? 'bg-red-500 text-white' :
+                                                    log.riskTier === 'CRITICAL' ? 'bg-sv-danger text-sv-text-inverse' :
                                                     log.riskTier === 'HIGH' ? 'bg-orange-500 text-white' :
-                                                    'bg-slate-900 text-white'
+                                                    'bg-sv-primary text-sv-text-inverse'
                                                 }`}>
                                                     {(log.admin?.name || 'S')[0]}
                                                 </div>
                                                 <div>
                                                     <div className="flex items-center gap-2">
                                                         <span className={`text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-widest ${
-                                                            log.riskTier === 'CRITICAL' ? 'bg-red-100 text-red-600' :
-                                                            log.riskTier === 'HIGH' ? 'bg-orange-100 text-orange-600' :
+                                                            log.riskTier === 'CRITICAL' ? 'bg-sv-danger-soft text-sv-danger' :
+                                                            log.riskTier === 'HIGH' ? 'bg-sv-warning-soft text-sv-warning' :
                                                             'bg-slate-200 text-slate-700'
                                                         }`}>
                                                             {log.actionType}
@@ -360,7 +360,7 @@ export default function Governance() {
                                         </div>
 
                                         {/* 🛡️ [v107.7] Semantic Summary & Risk Visualization */}
-                                        <div className="bg-white rounded-xl border border-slate-100 p-4 mb-4 shadow-sm">
+                                        <div className="bg-sv-surface rounded-xl border border-sv-border p-4 mb-4 shadow-sm">
                                             <div className="text-[9px] font-black uppercase text-slate-400 tracking-[0.2em] mb-2">Intent Visualization</div>
                                             <p className="text-xs text-slate-600 font-medium leading-relaxed">
                                                 {log.semanticSummary || log.description}
@@ -369,7 +369,7 @@ export default function Governance() {
 
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-3">
-                                                <span className="px-2 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[9px] font-black uppercase tracking-widest border border-emerald-100 flex items-center gap-1">
+                                                <span className="px-2 py-1 bg-sv-success-soft text-sv-success rounded-lg text-[9px] font-black uppercase tracking-widest border border-sv-success/30 flex items-center gap-1">
                                                     <FiCheckCircle size={10} /> Attested
                                                 </span>
                                                 <span className="text-[10px] font-mono text-slate-300">

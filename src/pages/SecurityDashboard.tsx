@@ -195,16 +195,16 @@ export default function SecurityDashboard() {
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'critical': return 'bg-red-600 text-white';
-      case 'high': return 'bg-orange-500 text-white';
-      case 'medium': return 'bg-yellow-500 text-black';
-      case 'low': return 'bg-blue-500 text-white';
-      default: return 'bg-gray-500 text-white';
+      case 'critical': return 'bg-sv-danger text-sv-text-inverse';
+      case 'high': return 'bg-sv-warning text-sv-text-inverse';
+      case 'medium': return 'bg-sv-warning text-sv-text-inverse';
+      case 'low': return 'bg-sv-info text-sv-text-inverse';
+      default: return 'bg-sv-surface-muted text-sv-text-secondary';
     }
   };
 
   const SkeletonCard = () => (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 animate-pulse">
+    <div className="bg-sv-surface rounded-2xl shadow-sm border border-sv-border p-6 animate-pulse">
       <div className="flex justify-between items-center">
         <div className="space-y-3 flex-1">
           <div className="h-4 bg-gray-200 rounded w-1/2"></div>
@@ -219,7 +219,7 @@ export default function SecurityDashboard() {
     return (
       <div className="space-y-6 p-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-800">Security Operations Center</h1>
+          <h1 className="text-2xl font-bold text-sv-text-primary">Security Operations Center</h1>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[1, 2, 3, 4].map(i => <SkeletonCard key={i} />)}
@@ -258,13 +258,13 @@ export default function SecurityDashboard() {
 
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-sv-text-primary flex items-center gap-2">
             <FiShield className="text-primary" /> Security Operations Center
           </h1>
           <p className="text-gray-600 mt-1 text-sm flex items-center gap-2">
             Real-time monitoring & threat detection
-            <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">Last Sync: {getTimeSinceSync()}</span>
-            {retryCount > 0 && <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full font-medium">Reconnecting... ({retryCount})</span>}
+            <span className="text-xs bg-sv-success-soft text-sv-success px-2 py-1 rounded-full font-medium">Last Sync: {getTimeSinceSync()}</span>
+            {retryCount > 0 && <span className="text-xs bg-sv-warning-soft text-sv-warning px-2 py-1 rounded-full font-medium">Reconnecting... ({retryCount})</span>}
           </p>
         </div>
         <div className="flex items-center gap-4">
@@ -276,7 +276,7 @@ export default function SecurityDashboard() {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {kpiCards.map((card) => (
-          <div key={card.title} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center gap-4">
+          <div key={card.title} className="bg-sv-surface rounded-2xl shadow-sm border border-sv-border p-6 flex items-center gap-4">
             <div className={`${card.bg} p-3 rounded-xl ${card.color}`}><card.icon size={24} /></div>
             <div>
               <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">{card.title}</p>
@@ -286,10 +286,10 @@ export default function SecurityDashboard() {
         ))}
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+      <div className="bg-sv-surface rounded-2xl shadow-sm border border-sv-border p-6">
         <div className="flex justify-between items-center mb-4">
           <h3 className="font-bold text-gray-800 flex items-center gap-2"><FiLock className="text-primary" /> Argon2 Migration Progress</h3>
-          <span className={`text-xs font-bold px-2 py-1 rounded ${metrics?.argon2.status === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>{metrics?.argon2.status || 'IDLE'}</span>
+          <span className={`text-xs font-bold px-2 py-1 rounded ${metrics?.argon2.status === 'ACTIVE' ? 'bg-sv-success-soft text-sv-success' : 'bg-sv-surface-muted text-sv-text-secondary'}`}>{metrics?.argon2.status || 'IDLE'}</span>
         </div>
         <div className="relative pt-1">
           <div className="flex mb-2 items-center justify-between">
@@ -304,14 +304,14 @@ export default function SecurityDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="p-6 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center overflow-x-auto">
+          <div className="bg-sv-surface rounded-2xl shadow-sm border border-sv-border overflow-hidden">
+            <div className="p-6 border-b border-sv-border bg-sv-surface-muted flex justify-between items-center overflow-x-auto">
               <div className="flex gap-4 min-w-max">
                 {['alerts', 'fraud', 'forensics', 'intelligence', 'decisions', 'invites', 'audit'].map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab as any)}
-                    className={`font-bold transition-colors whitespace-nowrap ${activeTab === tab ? 'text-slate-900 border-b-2 border-slate-900 pb-1' : 'text-slate-400'}`}
+                    className={`font-bold transition-colors whitespace-nowrap ${activeTab === tab ? 'text-sv-primary border-b-2 border-sv-primary pb-1' : 'text-sv-text-muted'}`}
                   >
                     {tab.charAt(0).toUpperCase() + tab.slice(1).replace('decisions', 'Governance Ledger').replace('invites', 'Admin Invites').replace('alerts', 'Threat Intelligence').replace('fraud', 'Fraud Incidents').replace('forensics', 'Forensic Integrity').replace('intelligence', 'Autonomous AI').replace('audit', 'Institutional Audit')}
                   </button>
@@ -322,15 +322,15 @@ export default function SecurityDashboard() {
             <div className="overflow-x-auto">
               {activeTab === 'alerts' ? (
                 <table className="w-full">
-                  <thead className="bg-gray-50 text-[10px] font-black uppercase text-gray-400">
+                  <thead className="bg-sv-surface-muted text-[10px] font-black uppercase text-sv-text-muted">
                     <tr><th className="px-6 py-4 text-left">Level</th><th className="px-6 py-4 text-left">Event</th><th className="px-6 py-4 text-left">Entity</th><th className="px-6 py-4 text-left">Time</th><th className="px-6 py-4 text-left">Action</th></tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-50">
+                  <tbody className="divide-y divide-sv-border">
                     {stats?.recentAlerts.map((alert) => (
-                      <tr key={alert._id} className="hover:bg-gray-50/50">
+                      <tr key={alert._id} className="hover:bg-sv-surface-muted">
                         <td className="px-6 py-4"><span className={`text-[10px] font-black uppercase px-2 py-1 rounded ${getSeverityColor(alert.severity)}`}>{alert.severity}</span></td>
-                        <td className="px-6 py-4"><p className="text-sm font-bold text-gray-800">{alert.type}</p><p className="text-xs text-gray-500">{alert.message}</p></td>
-                        <td className="px-6 py-4 text-xs">{alert.userId ? <div><p className="font-bold">{alert.userId.name}</p><p className="text-gray-400">{alert.userId.email}</p></div> : 'System'}</td>
+                        <td className="px-6 py-4"><p className="text-sm font-bold text-sv-text-primary">{alert.type}</p><p className="text-xs text-sv-text-secondary">{alert.message}</p></td>
+                        <td className="px-6 py-4 text-xs">{alert.userId ? <div><p className="font-bold">{alert.userId.name}</p><p className="text-sv-text-muted">{alert.userId.email}</p></div> : 'System'}</td>
                         <td className="px-6 py-4 text-xs">{new Date(alert.createdAt).toLocaleString()}</td>
                         <td className="px-6 py-4"><button className="text-primary text-xs font-bold">Investigate</button></td>
                       </tr>
@@ -339,16 +339,16 @@ export default function SecurityDashboard() {
                 </table>
               ) : activeTab === 'fraud' ? (
                 <table className="w-full">
-                  <thead className="bg-gray-50 text-[10px] font-black uppercase text-gray-400">
+                  <thead className="bg-sv-surface-muted text-[10px] font-black uppercase text-sv-text-muted">
                     <tr><th className="px-6 py-4 text-left">Severity</th><th className="px-6 py-4 text-left">Incident</th><th className="px-6 py-4 text-left">Risk</th><th className="px-6 py-4 text-left">Action</th></tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-50">
+                  <tbody className="divide-y divide-sv-border">
                     {fraudIncidents.map((incident) => (
                       <tr key={incident._id} className="hover:bg-red-50/30">
                         <td className="px-6 py-4"><span className={`text-[10px] font-black uppercase px-2 py-1 rounded ${getSeverityColor(incident.severity.toLowerCase())}`}>{incident.severity}</span></td>
                         <td className="px-6 py-4"><p className="text-sm font-bold">{incident.incidentType}</p></td>
                         <td className="px-6 py-4 text-sm font-black">{incident.riskScore}</td>
-                        <td className="px-6 py-4"><button onClick={() => setSelectedIncident(incident)} className="bg-slate-900 text-white text-[10px] px-3 py-1.5 rounded-lg">Investigate</button></td>
+                        <td className="px-6 py-4"><button onClick={() => setSelectedIncident(incident)} className="bg-sv-primary text-sv-text-inverse text-[10px] px-3 py-1.5 rounded-lg hover:bg-sv-primary-hover">Investigate</button></td>
                       </tr>
                     ))}
                   </tbody>
@@ -359,12 +359,12 @@ export default function SecurityDashboard() {
                 <div className="p-6"><AutonomousAIControl /></div>
               ) : activeTab === 'decisions' ? (
                 <table className="w-full">
-                  <thead className="bg-gray-50 text-[10px] font-black uppercase text-gray-400">
+                  <thead className="bg-sv-surface-muted text-[10px] font-black uppercase text-sv-text-muted">
                     <tr><th className="px-6 py-4 text-left">Result</th><th className="px-6 py-4 text-left">Actor</th><th className="px-6 py-4 text-left">Action</th><th className="px-6 py-4 text-left">Time</th></tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-50">
+                  <tbody className="divide-y divide-sv-border">
                     {governanceData.decisions.map((decision: any, i: number) => (
-                      <tr key={i} className="hover:bg-gray-50/50">
+                      <tr key={i} className="hover:bg-sv-surface-muted">
                         <td className="px-6 py-4"><span className={`text-[9px] font-black px-2 py-1 rounded ${decision.severity === 'critical' ? 'bg-red-600' : 'bg-green-500'} text-white`}>{decision.metadata?.details?.result}</span></td>
                         <td className="px-6 py-4 text-xs font-bold">{decision.metadata?.details?.actor}</td>
                         <td className="px-6 py-4 text-[10px]">{decision.metadata?.details?.action}</td>
@@ -385,19 +385,19 @@ export default function SecurityDashboard() {
                       </div>
                     ) : (
                       <form className="flex gap-4 items-end" onSubmit={handleIssueInvite}>
-                        <div className="flex-1"><label className="text-[10px] font-bold text-slate-500 uppercase">Email</label><input type="email" id="inviteEmail" className="w-full px-4 py-2 rounded-xl border border-slate-200 outline-none text-sm" /></div>
-                        <div><label className="text-[10px] font-bold text-slate-500 uppercase">Capabilities</label><select id="inviteCapability" className="px-4 py-2 rounded-xl border border-slate-200 text-sm"><option value="FULL">Full (CRITICAL)</option><option value="SECURITY">Security (HIGH)</option><option value="FINANCE">Finance (CRITICAL)</option></select></div>
-                        <button className="bg-slate-900 text-white px-6 py-2 rounded-xl font-bold">Issue</button>
+                        <div className="flex-1"><label className="text-[10px] font-bold text-sv-text-secondary uppercase">Email</label><input type="email" id="inviteEmail" className="w-full px-4 py-2 rounded-xl border border-sv-border outline-none text-sm focus:ring-2 focus:ring-sv-primary/20 focus:border-sv-primary" /></div>
+                        <div><label className="text-[10px] font-bold text-sv-text-secondary uppercase">Capabilities</label><select id="inviteCapability" className="px-4 py-2 rounded-xl border border-sv-border text-sm focus:ring-2 focus:ring-sv-primary/20 focus:border-sv-primary"><option value="FULL">Full (CRITICAL)</option><option value="SECURITY">Security (HIGH)</option><option value="FINANCE">Finance (CRITICAL)</option></select></div>
+                        <button className="bg-sv-primary text-sv-text-inverse px-6 py-2 rounded-xl font-bold hover:bg-sv-primary-hover">Issue</button>
                       </form>
                     )}
                   </div>
                   <table className="w-full">
-                    <thead className="bg-gray-50 text-[10px] font-black uppercase text-gray-400">
+                    <thead className="bg-sv-surface-muted text-[10px] font-black uppercase text-sv-text-muted">
                       <tr><th className="px-6 py-4 text-left">Status</th><th className="px-6 py-4 text-left">Recipient</th><th className="px-6 py-4 text-left">Expires</th><th className="px-6 py-4 text-left">Action</th></tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-50">
+                    <tbody className="divide-y divide-sv-border">
                       {governanceData.invites.map((invite: any, i: number) => (
-                        <tr key={i} className="hover:bg-gray-50/50">
+                        <tr key={i} className="hover:bg-sv-surface-muted">
                           <td className="px-6 py-4"><span className={`text-[9px] font-black px-2 py-1 rounded ${invite.status === 'PENDING' ? 'bg-yellow-500' : 'bg-green-500'} text-white`}>{invite.status}</span></td>
                           <td className="px-6 py-4 text-xs font-bold">{invite.email}</td>
                           <td className="px-6 py-4 text-xs">{new Date(invite.expiresAt).toLocaleString()}</td>
@@ -409,13 +409,13 @@ export default function SecurityDashboard() {
                 </div>
               ) : (
                 <table className="w-full">
-                  <thead className="bg-gray-50 text-[10px] font-black uppercase text-gray-400">
+                  <thead className="bg-sv-surface-muted text-[10px] font-black uppercase text-sv-text-muted">
                     <tr><th className="px-6 py-4 text-left">Severity</th><th className="px-6 py-4 text-left">Type</th><th className="px-6 py-4 text-left">Message</th><th className="px-6 py-4 text-left">Time</th></tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-50">
+                  <tbody className="divide-y divide-sv-border">
                     {auditLogs.map((log: any, i: number) => (
-                      <tr key={i} className="hover:bg-gray-50/50">
-                        <td className="px-6 py-4"><span className={`text-[9px] font-black px-2 py-1 rounded ${log.severity === 'CRITICAL' ? 'bg-red-600 text-white' : 'bg-blue-500 text-white'}`}>{log.severity}</span></td>
+                      <tr key={i} className="hover:bg-sv-surface-muted">
+                        <td className="px-6 py-4"><span className={`text-[9px] font-black px-2 py-1 rounded ${log.severity === 'CRITICAL' ? 'bg-sv-danger text-sv-text-inverse' : 'bg-sv-info text-sv-text-inverse'}`}>{log.severity}</span></td>
                         <td className="px-6 py-4 text-[10px] font-black">{log.eventType}</td>
                         <td className="px-6 py-4 text-xs">{log.message}</td>
                         <td className="px-6 py-4 text-[10px]">{new Date(log.timestamp).toLocaleString()}</td>
@@ -429,7 +429,7 @@ export default function SecurityDashboard() {
         </div>
 
         <div className="space-y-6">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <div className="bg-sv-surface rounded-2xl shadow-sm border border-sv-border p-6">
             <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2"><FiShield className="text-green-500" /> Compliance Status</h3>
             <div className="space-y-4 text-sm text-gray-600">
               <div className="flex justify-between"><span>NDPR Data Anonymizer</span><span className="text-green-600 font-bold">Active</span></div>

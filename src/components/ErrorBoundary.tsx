@@ -48,7 +48,7 @@ class ErrorBoundary extends Component<Props, State> {
           </div>
           <button 
             onClick={this.handleRetry}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-red-200 rounded-lg text-xs font-black text-red-600 uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all shadow-sm"
+            className="flex items-center gap-2 px-4 py-2 bg-sv-surface border border-sv-danger/30 rounded-lg text-xs font-black text-sv-danger uppercase tracking-widest hover:bg-sv-danger hover:text-sv-text-inverse transition-all shadow-sm"
           >
             <FiRefreshCw />
             Attempt Recovery

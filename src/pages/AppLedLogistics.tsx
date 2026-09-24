@@ -20,10 +20,10 @@ interface AppLedOrder {
 const DELIVERY_STATUSES = ['processing', 'enroute', 'shipped', 'delivered', 'received', 'cancelled', 'returned'];
 
 const STATUS_STYLE: Record<string, string> = {
-  delivered: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
-  received: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
-  cancelled: 'bg-red-500/10 text-red-500 border-red-500/20',
-  returned: 'bg-red-500/10 text-red-500 border-red-500/20',
+  delivered: 'bg-sv-success-soft text-sv-success border-sv-success/30',
+  received: 'bg-sv-success-soft text-sv-success border-sv-success/30',
+  cancelled: 'bg-sv-danger-soft text-sv-danger border-sv-danger/30',
+  returned: 'bg-sv-danger-soft text-sv-danger border-sv-danger/30',
 };
 
 export default function AppLedLogistics() {
@@ -99,7 +99,7 @@ export default function AppLedLogistics() {
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            className="px-4 py-2 bg-zinc-900/50 border border-zinc-800/40 text-zinc-400 text-xs font-black uppercase tracking-widest rounded-xl focus:outline-none focus:border-white/20 transition-all cursor-pointer"
+            className="px-4 py-2 bg-sv-surface-elevated/50 border border-sv-border text-sv-text-muted text-xs font-black uppercase tracking-widest rounded-xl focus:outline-none focus:border-sv-primary transition-all cursor-pointer"
           >
             <option value="">Delivery Status</option>
             {DELIVERY_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
@@ -115,48 +115,48 @@ export default function AppLedLogistics() {
         </div>
       </div>
 
-      <div className="bg-zinc-900/50 rounded-2xl border border-zinc-800/40 backdrop-blur-sm overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+      <div className="bg-sv-surface-elevated/50 rounded-2xl border border-sv-border backdrop-blur-sm overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-zinc-800/60 bg-white/[0.02]">
-                <th className="px-6 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Order</th>
-                <th className="px-6 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Store / Buyer</th>
-                <th className="px-6 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Volume</th>
-                <th className="px-6 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Status</th>
-                <th className="px-6 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Carrier</th>
-                <th className="px-6 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Tracking #</th>
-                <th className="px-6 py-5 text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] text-right">Action</th>
+              <tr className="border-b border-sv-border bg-sv-surface/5">
+                <th className="px-6 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Order</th>
+                <th className="px-6 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Store / Buyer</th>
+                <th className="px-6 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Volume</th>
+                <th className="px-6 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Status</th>
+                <th className="px-6 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Carrier</th>
+                <th className="px-6 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Tracking #</th>
+                <th className="px-6 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em] text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-800/40">
+            <tbody className="divide-y divide-sv-border">
               {orders.map((order) => {
                 const draft = drafts[order._id] || { carrier: '', trackingNumber: '', status: order.status };
                 const dirty = draft.carrier !== (order.carrier || '') || draft.trackingNumber !== (order.trackingNumber || '') || draft.status !== order.status;
                 return (
-                  <tr key={order._id} className="hover:bg-white/[0.03] transition-colors group">
+                  <tr key={order._id} className="hover:bg-sv-surface-muted transition-colors group">
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-3">
-                        <div className="p-2.5 bg-zinc-800 rounded-lg text-zinc-500 border border-white/5 group-hover:text-white transition-colors shadow-inner">
+                        <div className="p-2.5 bg-sv-surface-muted rounded-lg text-sv-text-muted border border-sv-border group-hover:text-sv-text-primary transition-colors shadow-inner">
                           <FiTruck size={14} />
                         </div>
-                        <span className="font-black text-white text-sm tracking-tighter">
+                        <span className="font-black text-sv-text-primary text-sm tracking-tighter">
                           {order.orderId ? `#${order.orderId}` : `#${order._id.slice(-6).toUpperCase()}`}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-5">
-                      <div className="text-[10px] text-zinc-400 font-black uppercase tracking-widest border border-white/5 bg-white/[0.02] px-2.5 py-1 rounded-lg inline-block mb-1">
+                      <div className="text-[10px] text-sv-text-secondary font-black uppercase tracking-widest border border-sv-border bg-sv-surface/5 px-2.5 py-1 rounded-lg inline-block mb-1">
                         {order.store?.name || order.store?.storeName || 'NULL_ORIGIN'}
                       </div>
-                      <div className="text-[10px] text-zinc-500 font-bold">{order.user?.name || order.guestInfo?.name || 'Guest'}</div>
+                      <div className="text-[10px] text-sv-text-muted font-bold">{order.user?.name || order.guestInfo?.name || 'Guest'}</div>
                     </td>
-                    <td className="px-6 py-5 font-black text-white text-sm">₦{(order.totalAmount / 100).toLocaleString()}</td>
+                    <td className="px-6 py-5 font-black text-sv-text-primary text-sm">₦{(order.totalAmount / 100).toLocaleString()}</td>
                     <td className="px-6 py-5">
                       <select
                         value={draft.status}
                         onChange={(e) => updateDraft(order._id, { status: e.target.value })}
-                        className={`px-2.5 py-1.5 text-[9px] font-black uppercase tracking-widest rounded border bg-transparent cursor-pointer focus:outline-none ${STATUS_STYLE[draft.status] || 'bg-amber-500/10 text-amber-500 border-amber-500/20'}`}
+                        className={`px-2.5 py-1.5 text-[9px] font-black uppercase tracking-widest rounded border bg-transparent cursor-pointer focus:outline-none ${STATUS_STYLE[draft.status] || 'bg-sv-warning-soft text-sv-warning border-sv-warning/30'}`}
                       >
                         {DELIVERY_STATUSES.map(s => <option key={s} value={s} className="bg-zinc-900 text-white">{s}</option>)}
                       </select>
@@ -166,7 +166,7 @@ export default function AppLedLogistics() {
                         value={draft.carrier}
                         onChange={(e) => updateDraft(order._id, { carrier: e.target.value })}
                         placeholder="Carrier"
-                        className="w-28 px-2.5 py-1.5 bg-zinc-800/60 border border-zinc-700/50 text-xs text-white rounded-lg focus:outline-none focus:border-white/20"
+                        className="w-28 px-2.5 py-1.5 bg-sv-surface-muted border border-sv-border text-xs text-sv-text-primary rounded-lg focus:outline-none focus:border-sv-primary"
                       />
                     </td>
                     <td className="px-6 py-5">
@@ -174,7 +174,7 @@ export default function AppLedLogistics() {
                         value={draft.trackingNumber}
                         onChange={(e) => updateDraft(order._id, { trackingNumber: e.target.value })}
                         placeholder="Tracking #"
-                        className="w-32 px-2.5 py-1.5 bg-zinc-800/60 border border-zinc-700/50 text-xs text-white rounded-lg focus:outline-none focus:border-white/20"
+                        className="w-32 px-2.5 py-1.5 bg-sv-surface-muted border border-sv-border text-xs text-sv-text-primary rounded-lg focus:outline-none focus:border-sv-primary"
                       />
                     </td>
                     <td className="px-6 py-5 text-right">
@@ -194,8 +194,8 @@ export default function AppLedLogistics() {
                 <tr>
                   <td colSpan={7} className="px-8 py-24 text-center">
                     <div className="flex flex-col items-center gap-4">
-                      <FiTruck className="text-zinc-800 w-12 h-12" />
-                      <p className="text-zinc-600 text-[10px] font-black uppercase tracking-[0.3em] italic">No App-Led orders found.</p>
+                      <FiTruck className="text-sv-text-muted w-12 h-12" />
+                      <p className="text-sv-text-muted text-[10px] font-black uppercase tracking-[0.3em] italic">No App-Led orders found.</p>
                     </div>
                   </td>
                 </tr>
@@ -204,9 +204,9 @@ export default function AppLedLogistics() {
           </table>
         </div>
 
-        <div className="px-8 py-6 border-t border-zinc-800/60 bg-white/[0.01] flex items-center justify-between">
-          <div className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">
-            Showing <span className="text-white mx-1">{orders.length}</span> of <span className="text-white mx-1">{pagination.total}</span> App-Led orders
+        <div className="px-8 py-6 border-t border-sv-border bg-sv-surface/5 flex items-center justify-between">
+          <div className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">
+            Showing <span className="text-sv-text-primary mx-1">{orders.length}</span> of <span className="text-sv-text-primary mx-1">{pagination.total}</span> App-Led orders
           </div>
         </div>
       </div>

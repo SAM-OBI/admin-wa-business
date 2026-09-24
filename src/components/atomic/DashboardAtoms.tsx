@@ -46,16 +46,16 @@ export const StatusBadge: React.FC<StatusBadgeProps> = memo(({ status, label }) 
         switch (status) {
             case 'NORMAL':
             case 'SUCCESS':
-                return 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20';
+                return 'bg-sv-success-soft text-sv-success border-sv-success/30';
             case 'WARNING':
             case 'PENDING':
-                return 'bg-amber-500/10 text-amber-500 border-amber-500/20';
+                return 'bg-sv-warning-soft text-sv-warning border-sv-warning/30';
             case 'CRITICAL':
-                return 'bg-red-500/10 text-red-500 border-red-500/20';
+                return 'bg-sv-danger-soft text-sv-danger border-sv-danger/30';
             case 'EMERGENCY':
-                return 'bg-red-600 text-white border-red-700 animate-pulse';
+                return 'bg-sv-danger text-sv-text-inverse border-sv-danger animate-pulse';
             default:
-                return 'bg-zinc-800 text-zinc-500 border-white/5';
+                return 'bg-sv-surface-muted text-sv-text-secondary border-sv-border';
         }
     };
 

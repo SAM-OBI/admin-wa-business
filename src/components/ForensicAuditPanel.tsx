@@ -61,7 +61,7 @@ export default function ForensicAuditPanel() {
 
   const getSeverityBadge = (severity: string) => {
     switch (severity) {
-      case 'CRITICAL': return 'bg-red-600 text-white';
+      case 'CRITICAL': return 'bg-sv-danger text-sv-text-inverse';
       case 'HIGH': return 'bg-orange-500 text-white';
       case 'LOW': return 'bg-yellow-500 text-black';
       default: return 'bg-gray-500 text-white';
@@ -81,7 +81,7 @@ export default function ForensicAuditPanel() {
           <select 
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="text-[10px] font-black uppercase border border-gray-200 rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-primary"
+            className="text-[10px] font-black uppercase border border-sv-border rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-primary"
           >
             <option value="OPEN">Open Anomalies</option>
             <option value="INVESTIGATING">Under Investigation</option>
@@ -90,7 +90,7 @@ export default function ForensicAuditPanel() {
           </select>
           <button 
             onClick={fetchIncidents}
-            className="p-2 hover:bg-gray-100 rounded-lg transition"
+            className="p-2 hover:bg-sv-surface-muted rounded-lg transition"
           >
             <FiRefreshCw className={loading ? 'animate-spin' : ''} />
           </button>
@@ -133,7 +133,7 @@ export default function ForensicAuditPanel() {
                   <td className="px-6 py-4">
                     <div className="flex flex-wrap gap-1">
                       {incident.diffFields.map((field: string, i: number) => (
-                        <span key={i} className="text-[9px] bg-red-50 text-red-600 border border-red-100 px-1.5 py-0.5 rounded font-bold uppercase">
+                        <span key={i} className="text-[9px] bg-sv-danger-soft text-sv-danger border border-sv-danger/30 px-1.5 py-0.5 rounded font-bold uppercase">
                           {field} Modified
                         </span>
                       ))}
@@ -144,9 +144,9 @@ export default function ForensicAuditPanel() {
                   </td>
                   <td className="px-6 py-4">
                     <span className={`text-[9px] font-black uppercase px-2 py-1 rounded-full border ${
-                      incident.resolutionStatus === 'OPEN' ? 'bg-red-50 text-red-600 border-red-200' :
-                      incident.resolutionStatus === 'RESOLVED' ? 'bg-green-50 text-green-600 border-green-200' :
-                      'bg-gray-100 text-gray-600 border-gray-200'
+                      incident.resolutionStatus === 'OPEN' ? 'bg-sv-danger-soft text-sv-danger border-sv-danger/30' :
+                      incident.resolutionStatus === 'RESOLVED' ? 'bg-sv-success-soft text-sv-success border-sv-success/30' :
+                      'bg-sv-surface-muted text-sv-text-secondary border-sv-border'
                     }`}>
                       {incident.resolutionStatus}
                     </span>
@@ -154,7 +154,7 @@ export default function ForensicAuditPanel() {
                   <td className="px-6 py-4 text-right">
                     <button 
                       onClick={() => setSelectedIncident(incident)}
-                      className="p-2 hover:bg-gray-100 rounded-lg transition text-gray-400 hover:text-primary"
+                      className="p-2 hover:bg-sv-surface-muted rounded-lg transition text-sv-text-muted hover:text-sv-primary"
                     >
                       <FiSearch size={16} />
                     </button>
@@ -172,7 +172,7 @@ export default function ForensicAuditPanel() {
           <div className="w-full max-w-lg bg-white h-full shadow-2xl animate-in slide-in-from-right duration-300 p-8 overflow-y-auto">
             <div className="flex justify-between items-center mb-8">
               <h2 className="text-2xl font-black text-gray-800">Forensic Investigation</h2>
-              <button onClick={() => setSelectedIncident(null)} className="p-2 hover:bg-gray-100 rounded-full transition">✕</button>
+              <button onClick={() => setSelectedIncident(null)} className="p-2 hover:bg-sv-surface-muted rounded-full transition">✕</button>
             </div>
 
             <div className="space-y-6">

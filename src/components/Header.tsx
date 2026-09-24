@@ -46,23 +46,23 @@ export default function Header({ toggleMobileSidebar }: HeaderProps) {
   const [showSearch, setShowSearch] = useState(false);
 
   return (
-    <header className="bg-[#0A0A0A]/80 border-b border-zinc-800/40 backdrop-blur-md sticky top-0 z-30 px-4 lg:px-6 py-4">
+    <header className="bg-sv-surface/80 border-b border-sv-border backdrop-blur-md sticky top-0 z-30 px-4 lg:px-6 py-4">
       <div className="flex items-center justify-between">
         
         <div className="flex items-center gap-4">
            {/* Mobile Menu Toggle */}
            <button 
              onClick={toggleMobileSidebar}
-             className="lg:hidden p-2 rounded-lg hover:bg-zinc-800/50 text-zinc-400"
+             className="lg:hidden p-2 rounded-lg hover:bg-sv-surface-muted text-sv-text-muted"
            >
              <FiMenu size={24} />
            </button>
 
            <div>
-            <h2 className="text-lg font-bold text-white tracking-tight uppercase">
+            <h2 className="text-lg font-bold text-sv-text-primary tracking-tight uppercase">
               {pageTitle}
             </h2>
-            <p className="hidden md:block text-[10px] text-zinc-500 font-black uppercase tracking-widest mt-0.5">{admin?.name?.split(' ')[0]} &middot; Industrial Governance Node</p>
+            <p className="hidden md:block text-[10px] text-sv-text-muted font-black uppercase tracking-widest mt-0.5">{admin?.name?.split(' ')[0]} &middot; Industrial Governance Node</p>
           </div>
 
           {/* Global Admin Search (v104.2) */}
@@ -98,7 +98,7 @@ export default function Header({ toggleMobileSidebar }: HeaderProps) {
             notification feed. When that exists, it belongs in this slot.
           */}
 
-          <div className="h-6 w-px bg-zinc-800/50 mx-2 hidden md:block" />
+          <div className="h-6 w-px bg-sv-border mx-2 hidden md:block" />
 
           <UserProfileDropdown user={admin} logout={logout} settingsPath="/dashboard/settings" />
         </div>

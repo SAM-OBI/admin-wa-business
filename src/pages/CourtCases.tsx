@@ -60,7 +60,7 @@ export default function CourtCases() {
     <div className="p-6">
       <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Court Cases</h1>
+          <h1 className="text-2xl font-bold text-sv-text-primary">Court Cases</h1>
           <p className="text-gray-500 text-sm mt-1">Legal disputes and arbitrations</p>
         </div>
 
@@ -68,7 +68,7 @@ export default function CourtCases() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            className="px-4 py-2 border border-sv-border rounded-lg focus:outline-none focus:ring-2 focus:ring-sv-primary bg-sv-surface"
           >
             <option value="">All Costs</option>
             <option value="open">Open</option>
@@ -77,44 +77,44 @@ export default function CourtCases() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-sv-surface rounded-xl shadow-sm border border-sv-border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-sv-surface-muted border-b border-sv-border">
               <tr>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Case Number</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Parties</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Filing Date</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Actions</th>
+                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">Case Number</th>
+                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">Parties</th>
+                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">Filing Date</th>
+                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-sv-border">
               {cases.map((courtCase) => (
-                <tr 
-                  key={courtCase._id} 
-                  className="hover:bg-gray-50 transition-colors cursor-pointer"
+                <tr
+                  key={courtCase._id}
+                  className="hover:bg-sv-surface-muted transition-colors cursor-pointer"
                   onClick={() => setSelectedCaseId(courtCase._id)}
                 >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <FiFileText className="text-gray-400" />
-                      <span className="font-medium text-gray-900">{courtCase.caseNumber}</span>
+                      <FiFileText className="text-sv-text-muted" />
+                      <span className="font-medium text-sv-text-primary">{courtCase.caseNumber}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="text-sm">
                       <span className="font-medium">{courtCase.plaintiff}</span>
-                      <span className="text-gray-500 mx-2">vs</span>
+                      <span className="text-sv-text-secondary mx-2">vs</span>
                       <span className="font-medium">{courtCase.defendant}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-gray-500">
+                  <td className="px-6 py-4 text-sv-text-secondary">
                     {new Date(courtCase.filingDate).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      courtCase.status === 'open' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
+                      courtCase.status === 'open' ? 'bg-sv-info-soft text-sv-info' : 'bg-sv-surface-muted text-sv-text-secondary'
                     }`}>
                       {courtCase.status}
                     </span>
@@ -135,7 +135,7 @@ export default function CourtCases() {
               
               {cases.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={5} className="px-6 py-12 text-center text-sv-text-secondary">
                     No court cases found.
                   </td>
                 </tr>
@@ -145,25 +145,25 @@ export default function CourtCases() {
         </div>
 
         {/* Pagination Footer */}
-        <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-          <div className="text-sm text-gray-500">
+        <div className="px-6 py-4 border-t border-sv-border flex items-center justify-between">
+          <div className="text-sm text-sv-text-secondary">
             Showing <span className="font-medium">{cases.length}</span> of <span className="font-medium">{pagination.total}</span> cases
           </div>
           <div className="flex gap-2">
             <button
               onClick={() => handlePageChange(pagination.page - 1)}
               disabled={pagination.page <= 1}
-              className="px-3 py-1 border border-gray-300 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              className="px-3 py-1 border border-sv-border rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-sv-surface-muted"
             >
               Previous
             </button>
-            <span className="px-3 py-1 text-sm text-gray-700">
+            <span className="px-3 py-1 text-sm text-sv-text-secondary">
               Page {pagination.page} of {pagination.pages}
             </span>
             <button
               onClick={() => handlePageChange(pagination.page + 1)}
               disabled={pagination.page >= pagination.pages}
-              className="px-3 py-1 border border-gray-300 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              className="px-3 py-1 border border-sv-border rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-sv-surface-muted"
             >
               Next
             </button>

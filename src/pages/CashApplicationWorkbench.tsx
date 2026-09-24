@@ -40,9 +40,9 @@ export function CashApplicationWorkbench() {
   };
 
   const badgeColor =
-    state === 'SUCCESS' ? 'bg-green-100 text-green-700' :
-    state === 'FAILED_CONFLICT' ? 'bg-red-100 text-red-700' :
-    state === 'PARTIAL_CONFIRMED' ? 'bg-orange-100 text-orange-700' : 'bg-slate-100 text-slate-600';
+    state === 'SUCCESS' ? 'bg-sv-success-soft text-sv-success' :
+    state === 'FAILED_CONFLICT' ? 'bg-sv-danger-soft text-sv-danger' :
+    state === 'PARTIAL_CONFIRMED' ? 'bg-sv-warning-soft text-sv-warning' : 'bg-sv-surface-muted text-sv-text-secondary';
 
   return (
     <div className="w-full max-w-4xl mx-auto shadow-lg border border-slate-200 rounded-lg overflow-hidden">
@@ -70,7 +70,7 @@ export function CashApplicationWorkbench() {
                 <span>Bal: ₦{inv.collectibleBalance.toLocaleString()}</span>
               </div>
             ))}
-            <button onClick={handleReview} className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium">Review Allocation</button>
+            <button onClick={handleReview} className="w-full px-4 py-2 bg-sv-primary hover:bg-sv-primary-hover text-sv-text-inverse rounded-md text-sm font-medium">Review Allocation</button>
           </div>
         )}
 
@@ -82,7 +82,7 @@ export function CashApplicationWorkbench() {
             </div>
             <div className="flex space-x-4">
               <button onClick={() => setState('IDLE')} className="w-1/2 px-4 py-2 border border-slate-300 rounded-md text-sm font-medium text-slate-700 hover:bg-slate-50">Cancel</button>
-              <button onClick={handleCommit} className="w-1/2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium">Confirm &amp; Post</button>
+              <button onClick={handleCommit} className="w-1/2 px-4 py-2 bg-sv-primary hover:bg-sv-primary-hover text-sv-text-inverse rounded-md text-sm font-medium">Confirm &amp; Post</button>
             </div>
           </div>
         )}
@@ -121,7 +121,7 @@ export function CashApplicationWorkbench() {
               Another user allocated cash to INV-A while you were working. 
               The balance has changed from ₦3,000 to ₦1,000.
             </p>
-            <button onClick={() => setState('IDLE')} className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm font-medium">
+            <button onClick={() => setState('IDLE')} className="w-full px-4 py-2 bg-sv-danger hover:opacity-90 text-sv-text-inverse rounded-md text-sm font-medium">
               Refresh Balances &amp; Try Again
             </button>
           </div>

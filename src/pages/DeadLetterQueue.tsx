@@ -78,7 +78,7 @@ const DeadLetterQueue: React.FC = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+                    <h1 className="text-2xl font-bold text-sv-text-primary flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-red-500 shadow-sm border border-red-100">
                             <FiTerminal size={20} />
                         </div>
@@ -90,7 +90,7 @@ const DeadLetterQueue: React.FC = () => {
                     <button 
                         onClick={fetchDLQ}
                         disabled={loading}
-                        className="p-3 bg-gray-50 text-gray-500 rounded-xl hover:bg-gray-100 transition-all border border-gray-100 shadow-sm disabled:opacity-50"
+                        className="p-3 bg-sv-surface-muted text-sv-text-secondary rounded-xl hover:bg-sv-border transition-all border border-sv-border shadow-sm disabled:opacity-50"
                         title="Refresh Queue"
                     >
                         <FiRefreshCw className={loading ? 'animate-spin' : ''} />
@@ -157,7 +157,7 @@ const DeadLetterQueue: React.FC = () => {
                                                 handleReplay(entry._id);
                                             }}
                                             disabled={replaying === entry._id}
-                                            className="flex items-center gap-2 px-3 py-1.5 bg-gray-900 text-white rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-black transition-all shadow-sm disabled:opacity-50"
+                                            className="flex items-center gap-2 px-3 py-1.5 bg-sv-primary text-sv-text-inverse rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-sv-primary-hover transition-all shadow-sm disabled:opacity-50"
                                         >
                                             <FiPlay size={10} />
                                             {replaying === entry._id ? 'Replaying...' : 'Initiate Replay'}

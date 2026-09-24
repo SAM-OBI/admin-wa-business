@@ -31,11 +31,11 @@ export default function SupportInquiries() {
 
     const getStatusColor = (status: string) => {
         switch(status) {
-            case 'OPEN': return 'bg-red-100 text-red-700';
-            case 'IN_PROGRESS': return 'bg-yellow-100 text-yellow-800';
-            case 'RESOLVED': return 'bg-green-100 text-green-800';
-            case 'CLOSED': return 'bg-gray-100 text-gray-800';
-            default: return 'bg-gray-100 text-gray-800';
+            case 'OPEN': return 'bg-sv-danger-soft text-sv-danger';
+            case 'IN_PROGRESS': return 'bg-sv-warning-soft text-sv-warning';
+            case 'RESOLVED': return 'bg-sv-success-soft text-sv-success';
+            case 'CLOSED': return 'bg-sv-surface-muted text-sv-text-secondary';
+            default: return 'bg-sv-surface-muted text-sv-text-secondary';
         }
     };
 
@@ -61,7 +61,7 @@ export default function SupportInquiries() {
                         placeholder="Search by ID, Name or Email"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-[5px] text-sm focus:outline-none focus:border-blue-500 transition-all font-medium"
+                        className="w-full pl-10 pr-4 py-2 bg-sv-surface-muted border border-sv-border rounded-[5px] text-sm focus:outline-none focus:border-sv-primary transition-all font-medium"
                     />
                 </div>
             </div>
@@ -73,17 +73,17 @@ export default function SupportInquiries() {
             ) : (
                 <div className="space-y-4">
                     {filteredInquiries.length === 0 ? (
-                        <div className="text-center py-24 bg-white rounded-[5px] border border-gray-100">
+                        <div className="text-center py-24 bg-sv-surface rounded-[5px] border border-sv-border">
                             <FiMail className="mx-auto text-4xl text-gray-200 mb-2" />
                             <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">No support inquiries found</p>
                         </div>
                     ) : (
                         filteredInquiries.map((item) => (
-                            <div key={item._id} className="bg-white rounded-[5px] p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+                            <div key={item._id} className="bg-sv-surface rounded-[5px] p-6 border border-sv-border shadow-sm hover:shadow-md transition-all group">
                                 <div className="flex flex-col md:flex-row justify-between items-start gap-6">
                                     <div className="flex-1 space-y-4 min-w-0">
                                         <div className="flex items-center gap-3">
-                                            <span className="text-[10px] font-black uppercase tracking-widest bg-gray-900 text-white px-2 py-1 rounded">
+                                            <span className="text-[10px] font-black uppercase tracking-widest bg-sv-surface-muted text-sv-text-secondary px-2 py-1 rounded">
                                                 {item.forensicId}
                                             </span>
                                             <span className={`px-2 py-1 rounded text-[10px] font-black uppercase tracking-widest ${getStatusColor(item.status)}`}>
@@ -140,20 +140,20 @@ export default function SupportInquiries() {
             {/* Institutional Pagination */}
             {totalPages > 1 && (
                 <div className="flex justify-center mt-12 gap-2">
-                    <button 
+                    <button
                         disabled={page === 1}
                         onClick={() => setPage(p => Math.max(1, p - 1))}
-                        className="px-4 py-2 border border-gray-200 rounded-[5px] text-[10px] font-black uppercase tracking-widest disabled:opacity-30 hover:bg-gray-50 transition-all"
+                        className="px-4 py-2 border border-sv-border rounded-[5px] text-[10px] font-black uppercase tracking-widest disabled:opacity-30 hover:bg-sv-surface-muted transition-all"
                     >
                         Prev
                     </button>
-                    <span className="px-6 py-2 bg-white border border-gray-200 rounded-[5px] text-[10px] font-black uppercase tracking-widest text-gray-500">
+                    <span className="px-6 py-2 bg-sv-surface border border-sv-border rounded-[5px] text-[10px] font-black uppercase tracking-widest text-sv-text-secondary">
                         Batch {page} of {totalPages}
                     </span>
-                    <button 
+                    <button
                         disabled={page === totalPages}
                         onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                        className="px-4 py-2 border border-gray-200 rounded-[5px] text-[10px] font-black uppercase tracking-widest disabled:opacity-30 hover:bg-gray-50 transition-all"
+                        className="px-4 py-2 border border-sv-border rounded-[5px] text-[10px] font-black uppercase tracking-widest disabled:opacity-30 hover:bg-sv-surface-muted transition-all"
                     >
                         Next
                     </button>
