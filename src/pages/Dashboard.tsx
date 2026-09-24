@@ -62,7 +62,7 @@ export default function Dashboard() {
     refetchInterval: 300000 // Refetch every 5 minutes
   });
 
-  const { data: activities = [], isError: activitiesError } = useQuery({
+  const { data: activities = [], isError: activitiesError, refetch: refetchActivities } = useQuery({
     queryKey: ['dashboard', 'activities'],
     queryFn: async () => {
       const res = await adminService.getRecentActivity();
@@ -71,7 +71,7 @@ export default function Dashboard() {
     staleTime: 30000
   });
 
-  const { data: treasury, isError: treasuryError } = useQuery({
+  const { data: treasury, isError: treasuryError, refetch: refetchTreasury } = useQuery({
     queryKey: ['dashboard', 'treasury'],
     queryFn: async () => {
       const res = await adminService.getTreasuryHealth();
@@ -88,7 +88,10 @@ export default function Dashboard() {
   const isV2Enabled = useFeatureFlag('admin.dashboard.v2');
 
   const handleRefresh = async () => {
-      await refetchStats();
+      // 🛡️ [BATCH-10] Was refetching stats only — activity/treasury stayed
+      // stale after "Retry"/refresh even though they're displayed right
+      // alongside stats on this same page.
+      await Promise.all([refetchStats(), refetchActivities(), refetchTreasury()]);
   };
 
   if (!isV2Enabled) {

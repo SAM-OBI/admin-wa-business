@@ -44,7 +44,11 @@ export const TreasuryMetrics: React.FC<TreasuryProps> = memo(({ data }) => (
 
             <div>
                 <p className="text-[10px] font-black text-muted uppercase tracking-[0.2em] mb-3">Wallet Liability</p>
-                <MetricValue value={formatCurrency(data.totalWalletLiability)} label="Wallet Liability" color="text-muted" />
+                {/* 🛡️ [BATCH-11] No backend source exists for this metric yet
+                    (needs its own accounting-scope decision — see decision
+                    ledger) — showing a placeholder rather than a broken
+                    currency string from an undefined value. */}
+                <MetricValue value={data.totalWalletLiability != null ? formatCurrency(data.totalWalletLiability) : '—'} label="Wallet Liability" color="text-muted" />
             </div>
 
             <div>

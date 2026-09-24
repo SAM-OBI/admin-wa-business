@@ -60,6 +60,19 @@ export default function Reviews() {
     ));
   };
 
+  // 🛡️ [REVIEWS-CONTRACT] 'published' was never a real backend status —
+  // the real Review model enum is pending/approved/rejected/flagged. This
+  // was the only status-dependent rendering in the file (traced before
+  // changing it) — no other status-driven branches or actions exist here.
+  const getStatusStyle = (status: string) => {
+    switch (status) {
+      case 'approved': return 'bg-green-100 text-green-700';
+      case 'rejected': return 'bg-red-100 text-red-700';
+      case 'flagged': return 'bg-orange-100 text-orange-700';
+      default: return 'bg-gray-100 text-gray-700'; // 'pending'
+    }
+  };
+
   if (loading) {
     return (
       <div className="p-6 flex items-center justify-center">
@@ -96,9 +109,7 @@ export default function Reviews() {
               <div className="flex gap-1">
                 {renderStars(review.rating)}
               </div>
-              <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                review.status === 'published' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
-              }`}>
+              <span className={`text-xs font-semibold px-2 py-1 rounded-full ${getStatusStyle(review.status)}`}>
                 {review.status}
               </span>
             </div>

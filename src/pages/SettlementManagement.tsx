@@ -91,11 +91,21 @@ export default function SettlementManagement() {
     }
   }, [filterStatus]);
 
+  // 🛡️ [BATCH-10] The status filter control only exists inside the
+  // Transactions tab (see the JSX below), but this single effect listed
+  // all three fetchers, so every filter change refetched the Overview
+  // dashboard and the Vendors list too, even though the filter has nothing
+  // to do with either. Dashboard/Vendors now load once on mount;
+  // Transactions alone reacts to filter changes.
   useEffect(() => {
     fetchDashboard();
     fetchVendors();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     fetchTransactions();
-  }, [fetchDashboard, fetchVendors, fetchTransactions]);
+  }, [fetchTransactions]);
 
   const handleForceRelease = async (orderId: string, orderIdDisplay: string) => {
     const { value: reason } = await Swal.fire({
@@ -123,7 +133,7 @@ export default function SettlementManagement() {
     if (reason) {
       try {
         const res = await api.post(`/admin/settlement/${orderId}/release`, { reason });
-        
+
         if (res.data.success) {
           Swal.fire('Released!', 'Settlement released successfully.', 'success');
           fetchDashboard();
@@ -160,7 +170,7 @@ export default function SettlementManagement() {
     if (reason) {
       try {
         const res = await api.post(`/admin/settlement/${orderId}/hold`, { reason });
-        
+
         if (res.data.success) {
           Swal.fire('Hold Applied!', 'Safe Settlement is now HELD.', 'success');
           fetchTransactions();
@@ -349,7 +359,10 @@ export default function SettlementManagement() {
                   Audit-Grade Transactions
                 </h3>
                 <div className="flex gap-2">
-                  {['all', 'HELD', 'DISPUTED', 'RELEASED'].map((s) => (
+                  {/* 🛡️ [BATCH-11] Was missing 3 of the 6 real canonical
+                      settlementState values (RELEASE_PENDING/REFUND_PENDING/
+                      REFUNDED) — those transactions were always unfilterable. */}
+                  {['all', 'HELD', 'DISPUTED', 'RELEASE_PENDING', 'RELEASED', 'REFUND_PENDING', 'REFUNDED'].map((s) => (
                     <button
                       key={s}
                       onClick={() => setFilterStatus(s)}
@@ -386,9 +399,13 @@ export default function SettlementManagement() {
                           ₦{tx.totalAmount.toLocaleString()}
                         </td>
                         <td className="px-4 py-3">
+                          {/* 🛡️ [BATCH-11] Expanded to the real 6-value canonical enum. */}
                           <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest ${
                             tx.settlementState === 'RELEASED' ? 'bg-green-50 text-green-600' :
                             tx.settlementState === 'HELD' ? 'bg-orange-50 text-orange-600' :
+                            tx.settlementState === 'RELEASE_PENDING' ? 'bg-amber-50 text-amber-600' :
+                            tx.settlementState === 'REFUND_PENDING' ? 'bg-sky-50 text-sky-600' :
+                            tx.settlementState === 'REFUNDED' ? 'bg-purple-50 text-purple-600' :
                             'bg-red-50 text-red-600'
                           }`}>
                             {tx.settlementState}

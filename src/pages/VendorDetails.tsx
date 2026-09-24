@@ -740,9 +740,10 @@ export default function VendorDetails() {
                         <p className="text-sm font-black text-white uppercase tracking-tight">{complaint.title}</p>
                         <p className="text-xs text-zinc-500 mt-1">{complaint.description}</p>
                       </div>
+                      {/* 🛡️ [BATCH-11] Canonical status is uppercase OPEN|INVESTIGATING|RESOLVED|DISMISSED. */}
                       <span className={`px-2.5 py-1 text-[10px] font-black uppercase rounded border ${
-                        complaint.status === 'resolved' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
-                        complaint.status === 'pending' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
+                        complaint.status === 'RESOLVED' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
+                        (complaint.status === 'OPEN' || complaint.status === 'INVESTIGATING') ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
                         'bg-red-500/10 text-red-500 border-red-500/20'
                       }`}>
                         {complaint.status}

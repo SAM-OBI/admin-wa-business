@@ -35,6 +35,15 @@ interface Complaint {
     name: string;
     email: string;
   };
+  // 🛡️ [#8D] Already sent by the backend (admin.helpers.ts::getComplaintDetails
+  // populates it in full) but never declared/rendered here — a DT complaint
+  // had no link back to its order anywhere in this modal.
+  order?: {
+    _id: string;
+    orderId?: string;
+    status?: string;
+    paymentInfo?: { method?: string; status?: string };
+  };
 }
 
 interface ComplaintDetailsModalProps {
@@ -159,7 +168,7 @@ export default function ComplaintDetailsModal({ complaint, onClose, onUpdate }: 
                 {complaint.severity} Severity
               </span>
               <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-700">
-                {complaint.type.replace('_', ' ')}
+                {complaint.type.replace(/_/g, ' ')}
               </span>
             </div>
           </div>
@@ -188,6 +197,20 @@ export default function ComplaintDetailsModal({ complaint, onClose, onUpdate }: 
               <p className="text-sm text-gray-500">{complaint.defendant.email}</p>
             </div>
           </div>
+
+          {/* 🛡️ [#8D] Linked order — previously arrived from the backend but was dropped by this modal entirely. */}
+          {complaint.order && (
+            <div className="bg-gray-50 rounded-lg p-4 text-sm">
+              <h3 className="font-semibold text-gray-900 mb-1">Linked Order</h3>
+              <p className="text-gray-700">
+                Order #{complaint.order.orderId || complaint.order._id.slice(-8)}
+                {complaint.order.status && <span className="text-gray-500"> · {complaint.order.status}</span>}
+                {complaint.order.paymentInfo?.method === 'transfer' && (
+                  <span className="ml-2 px-2 py-0.5 text-xs font-semibold rounded-full bg-purple-100 text-purple-700">Direct Transfer</span>
+                )}
+              </p>
+            </div>
+          )}
 
           {/* Description */}
           <div className="bg-gray-50 rounded-lg p-4">
@@ -241,8 +264,9 @@ export default function ComplaintDetailsModal({ complaint, onClose, onUpdate }: 
             </div>
           )}
 
-          {/* Add Response */}
-          {complaint.status !== 'resolved' && complaint.status !== 'escalated_to_court' && (
+          {/* 🛡️ [BATCH-11] Canonical status is RESOLVED|DISMISSED as terminal —
+              escalation is RESOLVED + courtCase, not a separate status string. */}
+          {complaint.status !== 'RESOLVED' && complaint.status !== 'DISMISSED' && (
             <div className="bg-gray-50 rounded-lg p-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Add Response
@@ -276,7 +300,7 @@ export default function ComplaintDetailsModal({ complaint, onClose, onUpdate }: 
             Close
           </button>
           <div className="flex gap-3">
-            {complaint.status !== 'resolved' && complaint.status !== 'escalated_to_court' && (
+            {complaint.status !== 'RESOLVED' && complaint.status !== 'DISMISSED' && (
               <>
                 <button
                   onClick={handleResolve}

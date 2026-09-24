@@ -43,15 +43,25 @@ export default function Disputes() {
   const [searchTerm, setSearchTerm] = useState('');
   const [resolving, setResolving] = useState(false);
 
+  // 🛡️ [BATCH-11] Was a single fetch-everything-on-mount call with all
+  // filtering/search done client-side against the full in-memory array —
+  // the backend now paginates + filters server-side, so `filter`/
+  // `searchTerm` are wired into the request instead of a local .filter().
   useEffect(() => {
     fetchDisputes();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter, searchTerm]);
 
   const fetchDisputes = async () => {
     try {
       setLoading(true);
-      const res = await api.get('/disputes/admin/all');
-      setDisputes(res.data.data);
+      const activeFilter = STATUS_FILTERS.find(f => f.key === filter);
+      const params: Record<string, string> = { limit: '100' };
+      if (activeFilter?.statuses) params.status = activeFilter.statuses.join(',');
+      if (searchTerm) params.search = searchTerm;
+
+      const res = await api.get('/disputes/admin/all', { params });
+      setDisputes(res.data.data.disputes);
     } catch {
       toast.error('Failed to fetch disputes');
     } finally {
@@ -133,15 +143,6 @@ export default function Disputes() {
       }
   };
 
-  const filteredDisputes = disputes.filter(d => {
-    const activeFilter = STATUS_FILTERS.find(f => f.key === filter);
-    const matchesFilter = !activeFilter?.statuses || activeFilter.statuses.includes(d.status);
-    const matchesSearch = !searchTerm ||
-      d.order?.orderId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      d.reason?.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesFilter && matchesSearch;
-  });
-
   return (
     <div className="p-4 lg:p-6 bg-gray-50/50 min-h-screen">
       <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -185,13 +186,13 @@ export default function Disputes() {
           <AnimatePresence mode="popLayout">
             {loading ? (
                <div className="flex justify-center p-10"><div className="animate-spin h-8 w-8 border-b-2 border-purple-600 rounded-full"></div></div>
-            ) : filteredDisputes.length === 0 ? (
+            ) : disputes.length === 0 ? (
               <div className="text-center py-16 bg-white rounded-2xl border border-dashed border-gray-200">
                 <FaCheckCircle className="mx-auto text-green-500 mb-4" size={40} />
                 <p className="font-black text-gray-400 uppercase text-xs">No Disputes Found</p>
               </div>
             ) : (
-              filteredDisputes.map(dispute => (
+              disputes.map(dispute => (
                 <motion.div
                   key={dispute._id}
                   layout

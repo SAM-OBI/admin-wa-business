@@ -57,8 +57,8 @@ export default function Complaints() {
   const handleResolve = async (id: string) => {
     try {
       await adminService.resolveComplaint(id);
-      setComplaints(complaints.map(c => 
-        c._id === id ? { ...c, status: 'resolved' } : c
+      setComplaints(complaints.map(c =>
+        c._id === id ? { ...c, status: 'RESOLVED' } : c
       ));
     } catch (error) {
       console.error('Failed to resolve complaint:', error);
@@ -109,9 +109,10 @@ export default function Complaints() {
             className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-sm"
           >
             <option value="">All Status</option>
-            <option value="pending">Pending</option>
-            <option value="resolved">Resolved</option>
-            <option value="escalated">Escalated</option>
+            <option value="OPEN">Open</option>
+            <option value="INVESTIGATING">Investigating</option>
+            <option value="RESOLVED">Resolved</option>
+            <option value="DISMISSED">Dismissed</option>
           </select>
 
           <select
@@ -133,6 +134,8 @@ export default function Complaints() {
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Issue</th>
+                {/* 🛡️ [#8D] type was already sent by the backend but never surfaced in this list. */}
+                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Type</th>
                 <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">User</th>
                 <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Priority</th>
                 <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
@@ -150,8 +153,15 @@ export default function Complaints() {
                     <div className="font-medium text-gray-900">{complaint.title}</div>
                     <div className="text-sm text-gray-500 line-clamp-1">{complaint.description}</div>
                   </td>
+                  <td className="px-6 py-4">
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      complaint.type === 'direct_transfer_unacknowledged' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'
+                    }`}>
+                      {(complaint.type || 'other').replace(/_/g, ' ')}
+                    </span>
+                  </td>
                   <td className="px-6 py-4 text-gray-700">
-                    {complaint.user.name}
+                    {complaint.complainant?.name}
                   </td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
@@ -164,13 +174,13 @@ export default function Complaints() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
-                       {complaint.status === 'pending' && <FiAlertCircle className="text-yellow-500" />}
-                       {complaint.status === 'resolved' && <FiCheckCircle className="text-green-500" />}
+                       {(complaint.status === 'OPEN' || complaint.status === 'INVESTIGATING') && <FiAlertCircle className="text-yellow-500" />}
+                       {complaint.status === 'RESOLVED' && <FiCheckCircle className="text-green-500" />}
                        <span className="capitalize">{complaint.status}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    {complaint.status !== 'resolved' && (
+                    {complaint.status !== 'RESOLVED' && complaint.status !== 'DISMISSED' && (
                       <button
                         onClick={() => handleResolve(complaint._id)}
                         className="text-green-600 hover:text-green-800 text-sm font-medium"
@@ -184,7 +194,7 @@ export default function Complaints() {
               
               {complaints.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
                     No complaints found.
                   </td>
                 </tr>

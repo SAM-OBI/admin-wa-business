@@ -48,18 +48,21 @@ const FinancialAudit: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [currency, setCurrency] = useState('NGN');
 
-    const fetchData = useCallback(async () => {
+    // 🛡️ [BATCH-10] Was a single fetchData keyed on [currency] that
+    // Promise.all'd all 4 calls — only reconciliation's query actually uses
+    // currency, so toggling the selector refetched overview/withdrawals/
+    // multisig-requests for no reason. Split into a currency-independent
+    // fetch (mount-only) and a currency-dependent one (reconciliation).
+    const fetchStaticData = useCallback(async () => {
         try {
-            const [overviewRes, withdrawalsRes, reconRes, requestsRes] = await Promise.all([
+            const [overviewRes, withdrawalsRes, requestsRes] = await Promise.all([
                 api.get('/admin/oversight/finance/overview'),
                 api.get('/admin/oversight/finance/withdrawals'),
-                api.get(`/admin/oversight/finance/reconciliation?currency=${currency}`),
                 adminService.getMultiSigRequests()
             ]);
-            
+
             if (overviewRes.data.success) setOverview(overviewRes.data.data);
             if (withdrawalsRes.data.success) setWithdrawals(withdrawalsRes.data.data);
-            if (reconRes.data.success) setReconciliation(reconRes.data.data);
             if (requestsRes.success) setMultiSigRequests(requestsRes.data);
         } catch (error) {
             logger.error('Failed to fetch financial audit data:', error);
@@ -67,21 +70,42 @@ const FinancialAudit: React.FC = () => {
         } finally {
             setLoading(false);
         }
+    }, []);
+
+    const fetchReconciliation = useCallback(async () => {
+        try {
+            const reconRes = await api.get(`/admin/oversight/finance/reconciliation?currency=${currency}`);
+            if (reconRes.data.success) setReconciliation(reconRes.data.data);
+        } catch (error) {
+            logger.error('Failed to fetch reconciliation data:', error);
+            toast.error('Failed to load reconciliation data');
+        }
     }, [currency]);
 
     useEffect(() => {
-        fetchData();
-    }, [fetchData]);
+        fetchStaticData();
+    }, [fetchStaticData]);
+
+    useEffect(() => {
+        fetchReconciliation();
+    }, [fetchReconciliation]);
 
     const handleApprove = async (id: string) => {
         try {
             await adminService.approveMultiSigRequest(id);
             toast.success('Consensus vote recorded');
-            fetchData();
+            fetchStaticData();
+            fetchReconciliation();
         } catch (err: any) {
             toast.error(err.normalized?.message || 'Approval failed');
         }
     };
+
+    // 🛡️ [BATCH-10] These were previously new inline arrow functions on
+    // every render, which made ResilientSocketWatcher's effect tear down
+    // and re-subscribe (reconnect + new watchdog interval) constantly.
+    const handleTreasuryPulse = useCallback((data: TreasuryHealth) => setHealth(data), []);
+    const treasuryFallback = useCallback(() => adminService.getTreasuryHealth().then(res => res.data), []);
 
     if (loading && !overview) return <PageLoader />;
 
@@ -99,9 +123,9 @@ const FinancialAudit: React.FC = () => {
                     <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm font-medium">Real-time interpreted liquidity and governance console.</p>
                 </div>
                 <div className="flex items-center gap-4">
-                    <ResilientSocketWatcher 
-                        onPulse={(data) => setHealth(data)} 
-                        fallbackAction={() => adminService.getTreasuryHealth().then(res => res.data)}
+                    <ResilientSocketWatcher
+                        onPulse={handleTreasuryPulse}
+                        fallbackAction={treasuryFallback}
                     />
                     <select 
                         value={currency}

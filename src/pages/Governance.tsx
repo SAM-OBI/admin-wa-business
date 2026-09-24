@@ -17,20 +17,47 @@ export default function Governance() {
 
 
     const fetchData = async () => {
+        // 🛡️ [BATCH-10] These 4 calls used to share one try/catch — the
+        // multisig-requests call throwing (it's currently blocked by the
+        // platform-wide isMfaVerified defect, tracked separately) meant
+        // execution never reached the PAJ/anchors calls or the Sentinel
+        // check below, on mount or on any of the 15s polls. Independent
+        // try/catches so one failing endpoint can't suppress the others.
         try {
             const res = await adminService.getMultiSigRequests();
             if (res.data) setRequests(res.data);
-            
-            const pajRes = await adminService.getPAJLogs();
-            if (pajRes.data) setPajLogs(pajRes.data);
+        } catch (error) {
+            console.error('Multisig requests fetch failed:', error);
+        }
 
+        try {
+            // 🛡️ [BATCH-10] getPAJLogs's envelope nests the array under
+            // `.logs` ({data:{logs:[...]}}) — this used to assign the whole
+            // wrapper object to pajLogs instead of the array itself, so
+            // pajLogs.length/.map silently no-op'd even when the request
+            // succeeded.
+            const pajRes = await adminService.getPAJLogs();
+            if (pajRes.data?.logs) setPajLogs(pajRes.data.logs);
+        } catch (error) {
+            console.error('PAJ logs fetch failed:', error);
+        }
+
+        try {
             const anchorRes = await adminService.getGovernanceAnchors();
             if (anchorRes.data) setAnchors(anchorRes.data);
-
-            // Simulate Sentinel check
-            setIsDegraded(false); 
         } catch (error) {
-            console.error('Governance fetch failed:', error);
+            console.error('Governance anchors fetch failed:', error);
+        }
+
+        try {
+            // 🛡️ [BATCH-10] Was `setIsDegraded(false)` with a "Simulate
+            // Sentinel check" comment — a fabricated duplicate of the real,
+            // already-working widget in GovernanceBanner.tsx. Calling the
+            // same real endpoint here instead.
+            const statusRes = await adminService.getGovernanceStatus();
+            if (statusRes.data) setIsDegraded(statusRes.data.isDegraded);
+        } catch (error) {
+            console.error('Governance status fetch failed:', error);
         }
     };
 
@@ -295,7 +322,7 @@ export default function Governance() {
                                                     log.riskTier === 'HIGH' ? 'bg-orange-500 text-white' :
                                                     'bg-slate-900 text-white'
                                                 }`}>
-                                                    {(log.actor || 'S')[0]}
+                                                    {(log.admin?.name || 'S')[0]}
                                                 </div>
                                                 <div>
                                                     <div className="flex items-center gap-2">
@@ -304,9 +331,9 @@ export default function Governance() {
                                                             log.riskTier === 'HIGH' ? 'bg-orange-100 text-orange-600' :
                                                             'bg-slate-200 text-slate-700'
                                                         }`}>
-                                                            {log.action}
+                                                            {log.actionType}
                                                         </span>
-                                                        <p className="text-sm font-black text-slate-800">{log.actor || 'System Actor'}</p>
+                                                        <p className="text-sm font-black text-slate-800">{log.admin?.name || 'System Actor'}</p>
                                                     </div>
                                                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">
                                                         Risk Tier: <span className={
@@ -346,7 +373,7 @@ export default function Governance() {
                                                     <FiCheckCircle size={10} /> Attested
                                                 </span>
                                                 <span className="text-[10px] font-mono text-slate-300">
-                                                    {(log.forensicHash || 'pending').substring(0, 16)}...
+                                                    {(log.entryHash || 'pending').substring(0, 16)}...
                                                 </span>
                                             </div>
                                             <div className="w-32 h-1.5 bg-slate-100 rounded-full overflow-hidden">

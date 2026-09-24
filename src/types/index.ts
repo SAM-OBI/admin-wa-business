@@ -239,7 +239,11 @@ export interface Complaint {
   _id: string;
   orderId: string;
   userId: string;
-  user: {
+  // 🛡️ [BATCH-10] The real populated field on both getAllComplaints and
+  // getComplaintDetails is `complainant`, not `user` — this type declared a
+  // field name that was never actually sent, and Complaints.tsx's list
+  // render crashed on every row as a result.
+  complainant: {
      name: string;
      email?: string;
   };
@@ -247,8 +251,20 @@ export interface Complaint {
   subject?: string;
   description: string;
   priority: 'low' | 'medium' | 'high';
-  status: 'pending' | 'resolved' | 'investigating' | 'escalated';
+  // 🛡️ [BATCH-11] Canonicalized to the real, uppercase backend enum
+  // (OPEN|INVESTIGATING|RESOLVED|DISMISSED) — no separate ESCALATED value;
+  // an escalated complaint is RESOLVED with a non-null `courtCase` ref.
+  status: 'OPEN' | 'INVESTIGATING' | 'RESOLVED' | 'DISMISSED';
   createdAt: string;
+  // 🛡️ [#8D] Both already sent by the backend (complaint.controller.ts /
+  // admin.helpers.ts::getComplaintDetails) but never declared/rendered here.
+  type?: string;
+  order?: {
+    _id: string;
+    orderId?: string;
+    status?: string;
+    paymentInfo?: { method?: string; status?: string };
+  };
 }
 
 export interface CourtCase {
@@ -268,7 +284,9 @@ export interface Review {
   _id: string;
   comment: string;
   rating: number;
-  status: 'published' | 'pending';
+  // 🛡️ [REVIEWS-CONTRACT] 'published' was never a real backend value —
+  // the actual Review model enum (review.model.ts) is exactly these 4.
+  status: 'pending' | 'approved' | 'rejected' | 'flagged';
   productName: string;
   userName: string;
   createdAt: string;

@@ -16,7 +16,10 @@ interface AdCampaign {
     name: string;
     email: string;
   };
-  status: 'PENDING_REVIEW' | 'ACTIVE' | 'REJECTED' | 'PAUSED' | 'EXHAUSTED';
+  // 🛡️ [BATCH-10] Real schema enum (adCampaign.model.ts) has 4 more values
+  // than this type declared — a campaign in any of them would have hit
+  // styles[status]===undefined below.
+  status: 'PENDING_REVIEW' | 'ACTIVE' | 'REJECTED' | 'PAUSED' | 'EXHAUSTED' | 'LEARNING' | 'SYSTEM_SUSPENDED' | 'SYSTEM_COMPLIANCE_HOLD' | 'SYSTEM_SUBSCRIPTION_DOWNGRADE';
   type: string;
   totalBudget: number;
   bidAmount: number;
@@ -87,11 +90,15 @@ export default function AdsModeration() {
       'ACTIVE': 'bg-emerald-100 text-emerald-700 border-emerald-200',
       'REJECTED': 'bg-rose-100 text-rose-700 border-rose-200',
       'PAUSED': 'bg-gray-100 text-gray-700 border-gray-200',
-      'EXHAUSTED': 'bg-purple-100 text-purple-700 border-purple-200'
+      'EXHAUSTED': 'bg-purple-100 text-purple-700 border-purple-200',
+      'LEARNING': 'bg-sky-100 text-sky-700 border-sky-200',
+      'SYSTEM_SUSPENDED': 'bg-red-100 text-red-700 border-red-200',
+      'SYSTEM_COMPLIANCE_HOLD': 'bg-orange-100 text-orange-700 border-orange-200',
+      'SYSTEM_SUBSCRIPTION_DOWNGRADE': 'bg-yellow-100 text-yellow-700 border-yellow-200'
     };
     return (
-      <span className={`px-2 py-1 text-[10px] font-black uppercase tracking-wider rounded-full border ${styles[status]}`}>
-        {status.replace('_', ' ')}
+      <span className={`px-2 py-1 text-[10px] font-black uppercase tracking-wider rounded-full border ${styles[status] || 'bg-gray-100 text-gray-700 border-gray-200'}`}>
+        {status.replace(/_/g, ' ')}
       </span>
     );
   };

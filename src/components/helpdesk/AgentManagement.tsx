@@ -36,7 +36,10 @@ export default function AgentManagement({ onRefresh }: Props) {
     setLoading(true);
     try {
       const res = await api.get('/support/admin/agents');
-      setAgents(res.data.data || []);
+      // 🛡️ [BATCH-10] The array is nested one level deeper than this read
+      // assumed — sendResponse's envelope puts it at data.data.agents, not
+      // data.data (which is {agents, pagination}, an object, not an array).
+      setAgents(res.data.data?.agents || []);
     } catch {
       toast.error('Failed to load agents');
     } finally {
