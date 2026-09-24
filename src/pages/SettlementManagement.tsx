@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import api from '../api/axios';
 import { FiLock, FiCheckCircle, FiSlash, FiTrendingUp } from 'react-icons/fi';
 import Swal from 'sweetalert2';
+import { useAdminGovernanceStepUp } from '../hooks/useAdminGovernanceStepUp';
 
 interface SettlementDashboard {
   totalSettlementValue: number;
@@ -42,6 +43,13 @@ interface SettlementTransaction {
 }
 
 export default function SettlementManagement() {
+  // 🛡️ [MFA-P0-PHASE-2A] Settlement's force-release/hold are both
+  // ADMIN_CRITICAL_POLICY (FORENSIC) — gated by governanceGuard()'s MFA
+  // freshness check. Wrapping with `execute` lets a stale/missing MFA
+  // session get refreshed via the same governance step-up modal, then
+  // transparently retries the original request (no token to attach — once
+  // refreshed, the session itself satisfies governanceGuard()).
+  const { execute: executeWithStepUp, modal: governanceStepUpModal } = useAdminGovernanceStepUp();
   const [dashboard, setDashboard] = useState<SettlementDashboard | null>(null);
   const [vendors, setVendors] = useState<VendorSettlement[]>([]);
   const [transactions, setTransactions] = useState<SettlementTransaction[]>([]);
@@ -132,7 +140,7 @@ export default function SettlementManagement() {
 
     if (reason) {
       try {
-        const res = await api.post(`/admin/settlement/${orderId}/release`, { reason });
+        const res = await executeWithStepUp(() => api.post(`/admin/settlement/${orderId}/release`, { reason }));
 
         if (res.data.success) {
           Swal.fire('Released!', 'Settlement released successfully.', 'success');
@@ -169,7 +177,7 @@ export default function SettlementManagement() {
 
     if (reason) {
       try {
-        const res = await api.post(`/admin/settlement/${orderId}/hold`, { reason });
+        const res = await executeWithStepUp(() => api.post(`/admin/settlement/${orderId}/hold`, { reason }));
 
         if (res.data.success) {
           Swal.fire('Hold Applied!', 'Safe Settlement is now HELD.', 'success');
@@ -453,6 +461,7 @@ export default function SettlementManagement() {
           )}
         </div>
       </div>
+      {governanceStepUpModal}
     </div>
   );
 }
