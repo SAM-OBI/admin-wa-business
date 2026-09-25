@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { adminService, Order, OrderListItem } from '../api/admin.service';
+import { adminService, Order, OrderAuditTrail, OrderListItem } from '../api/admin.service';
 import { FiShoppingBag } from 'react-icons/fi';
 import { HardenedSearchInput } from '../components/search/HardenedSearchInput';
 import OrderDetailsModal from '../components/OrderDetailsModal';
@@ -10,6 +10,11 @@ export default function Orders() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  // 🛡️ [#8D] Fetched alongside order details, not blocking the modal's
+  // initial render — a slower/failed aggregation shouldn't stop the
+  // operator from seeing the core order they already asked for.
+  const [auditTrail, setAuditTrail] = useState<OrderAuditTrail | null>(null);
+  const [auditTrailLoading, setAuditTrailLoading] = useState(false);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 20,
@@ -62,6 +67,7 @@ export default function Orders() {
   };
 
   const handleViewDetails = async (orderId: string) => {
+    setAuditTrail(null);
     try {
       const response = await api.get(`/admin/orders/${orderId}/details`);
       if (response.data.data) {
@@ -69,7 +75,23 @@ export default function Orders() {
       }
     } catch (error) {
       console.error('Failed to fetch order details:', error);
+      return;
     }
+
+    setAuditTrailLoading(true);
+    try {
+      const auditResponse = await adminService.getOrderAuditTrail(orderId);
+      setAuditTrail(auditResponse.data || null);
+    } catch (error) {
+      console.error('Failed to fetch order audit trail:', error);
+    } finally {
+      setAuditTrailLoading(false);
+    }
+  };
+
+  const handleCloseDetails = () => {
+    setSelectedOrder(null);
+    setAuditTrail(null);
   };
 
   if (loading && orders.length === 0) {
@@ -232,7 +254,9 @@ export default function Orders() {
       {selectedOrder && (
         <OrderDetailsModal
           order={selectedOrder}
-          onClose={() => setSelectedOrder(null)}
+          auditTrail={auditTrail}
+          auditTrailLoading={auditTrailLoading}
+          onClose={handleCloseDetails}
         />
       )}
     </div>

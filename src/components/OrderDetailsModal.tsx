@@ -1,12 +1,18 @@
-import { FiX, FiPackage, FiCalendar, FiDollarSign, FiMapPin, FiUser } from 'react-icons/fi';
-import { Order } from '../api/admin.service';
+import { FiX, FiPackage, FiCalendar, FiDollarSign, FiMapPin, FiUser, FiTruck, FiAlertCircle } from 'react-icons/fi';
+import { Order, OrderAuditTrail } from '../api/admin.service';
 
 interface OrderDetailsModalProps {
   order: Order;
   onClose: () => void;
+  // 🛡️ [#8D] Optional — the modal renders correctly with these absent
+  // (e.g. while the aggregation is still loading, or if it failed), never
+  // blocking on them.
+  auditTrail?: OrderAuditTrail | null;
+  auditTrailLoading?: boolean;
 }
 
-export default function OrderDetailsModal({ order, onClose }: OrderDetailsModalProps) {
+export default function OrderDetailsModal({ order, onClose, auditTrail, auditTrailLoading }: OrderDetailsModalProps) {
+  const isDirectTransfer = order.paymentInfo?.method === 'transfer';
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'delivered': return 'bg-green-100 text-green-700';
@@ -35,7 +41,7 @@ export default function OrderDetailsModal({ order, onClose }: OrderDetailsModalP
 
         <div className="p-6 space-y-6">
           {/* Status and Payment */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-gray-50 rounded-lg p-4">
               <p className="text-sm text-gray-600 mb-2">Order Status</p>
               <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(order.status)}`}>
@@ -50,7 +56,90 @@ export default function OrderDetailsModal({ order, onClose }: OrderDetailsModalP
                 {order.paymentInfo?.status || 'Pending'}
               </span>
             </div>
+            {/* 🛡️ [#8D] Payment method was never displayed anywhere in this
+                modal before, despite being on the type already. */}
+            <div className="bg-gray-50 rounded-lg p-4">
+              <p className="text-sm text-gray-600 mb-2">Payment Method</p>
+              <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${
+                isDirectTransfer ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'
+              }`}>
+                {isDirectTransfer ? 'Direct Transfer' : (order.paymentInfo?.method || 'Unknown')}
+              </span>
+            </div>
           </div>
+
+          {/* 🛡️ [#8D] Direct Transfer investigation panel — Shopvia never
+              holds this money; these are purely status/timestamp signals
+              for an operator investigating a DT order, not financial data. */}
+          {isDirectTransfer && (
+            <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <FiTruck className="text-purple-700" />
+                <h3 className="font-semibold text-purple-900">Direct Transfer Status</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                <div>
+                  <p className="text-gray-600">Free-cancellation deadline</p>
+                  <p className="text-gray-900 font-medium">{order.freeCancellationDeadline ? new Date(order.freeCancellationDeadline).toLocaleString() : '—'}</p>
+                </div>
+                <div>
+                  <p className="text-gray-600">Vendor funds acknowledgement</p>
+                  <p className="text-gray-900 font-medium">
+                    {order.directTransferFundsReceivedAt
+                      ? `Acknowledged ${new Date(order.directTransferFundsReceivedAt).toLocaleString()}`
+                      : 'Not yet acknowledged'}
+                  </p>
+                </div>
+                {order.paymentInfo?.buyerReportedAmountKobo != null && (
+                  <div>
+                    <p className="text-gray-600">Buyer-reported amount paid</p>
+                    <p className="text-gray-900 font-medium">₦{(order.paymentInfo.buyerReportedAmountKobo / 100).toLocaleString()} <span className="text-xs text-gray-500">(unverified, informational only)</span></p>
+                  </div>
+                )}
+                {order.cancellationReason && (
+                  <div>
+                    <p className="text-gray-600">Cancellation reason</p>
+                    <p className="text-gray-900 font-medium">{order.cancellationReason}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          {!isDirectTransfer && order.vendorFirstActionAt && (
+            <div className="bg-gray-50 rounded-lg p-4 text-sm">
+              <p className="text-gray-600">Vendor first action</p>
+              <p className="text-gray-900 font-medium">{new Date(order.vendorFirstActionAt).toLocaleString()}</p>
+            </div>
+          )}
+
+          {/* 🛡️ [#8D] Linked complaints/reports for this order — previously
+              invisible from this modal entirely. */}
+          {auditTrailLoading && (
+            <div className="text-sm text-gray-500">Loading complaint/refund history…</div>
+          )}
+          {auditTrail && auditTrail.complaints.length > 0 && (
+            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <FiAlertCircle className="text-orange-700" />
+                <h3 className="font-semibold text-orange-900">Linked Complaints ({auditTrail.complaints.length})</h3>
+              </div>
+              <div className="space-y-2">
+                {auditTrail.complaints.map((c) => (
+                  <div key={c._id} className="text-sm bg-white rounded-md p-3 border border-orange-100">
+                    <p className="font-medium text-gray-900">{c.title} <span className="text-xs text-gray-500 font-normal">({(c.type || 'other').replace(/_/g, ' ')})</span></p>
+                    <p className="text-gray-600">{c.description}</p>
+                    <p className="text-xs text-gray-500 mt-1">Status: {c.status}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {auditTrail && auditTrail.refundCase && (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-sm">
+              <h3 className="font-semibold text-green-900 mb-2">Refund Case</h3>
+              <p className="text-gray-700">Status: {auditTrail.refundCase.status} · Amount: ₦{(auditTrail.refundCase.refundAmount / 100).toLocaleString()}</p>
+            </div>
+          )}
 
           {/* Customer Information */}
           <div className="bg-gray-50 rounded-lg p-4">

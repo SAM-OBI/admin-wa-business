@@ -208,6 +208,8 @@ export interface Order {
   paymentInfo?: {
     status: string;
     method?: string;
+    // 🛡️ [#8D] Buyer-supplied, informational only — never financial authority.
+    buyerReportedAmountKobo?: number;
   };
   shippingAddress?: {
     street: string;
@@ -231,6 +233,12 @@ export interface Order {
     timestamp: string;
   }>;
   createdAt: string;
+  // 🛡️ [#8C/#8D] Free-cancellation window + DT/vendor-action audit fields.
+  // Backend-authoritative — this dashboard only ever displays them.
+  freeCancellationDeadline?: string;
+  vendorFirstActionAt?: string;
+  directTransferFundsReceivedAt?: string;
+  cancellationReason?: string;
 }
 
 export type OrderListItem = Order;
@@ -265,6 +273,37 @@ export interface Complaint {
     status?: string;
     paymentInfo?: { method?: string; status?: string };
   };
+}
+
+// 🛡️ [#8D] GET /admin/orders/:orderId/audit-trail response shape —
+// admin.service.ts::getOrderAuditTrail's read-only aggregation.
+export interface OrderAuditTrail {
+  order: Order;
+  complaints: Complaint[];
+  refundCase: {
+    _id: string;
+    status: string;
+    settlementStatus: string;
+    reasonCode: string;
+    description: string;
+    refundAmount: number;
+    gatewayReference?: string;
+    createdAt: string;
+  } | null;
+  refundIntents: Array<{
+    _id: string;
+    status: string;
+    amount: number;
+    reason: string;
+    resolutionType?: string;
+    createdAt: string;
+  }>;
+  dispute: {
+    _id: string;
+    status: string;
+    reason: string;
+    createdAt: string;
+  } | null;
 }
 
 export interface CourtCase {

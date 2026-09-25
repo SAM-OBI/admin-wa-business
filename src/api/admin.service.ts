@@ -135,6 +135,13 @@ export const adminService = {
     return response.data;
   },
 
+  // 🛡️ [#8D] Read-only aggregation (Order + Complaint + RefundCase +
+  // RefundIntent + Dispute) — no financial mutation.
+  getOrderAuditTrail: async (orderId: string): Promise<ApiResponse<any>> => {
+    const response = await api.get(`/admin/orders/${orderId}/audit-trail`);
+    return response.data;
+  },
+
   // App-Led Logistics (orders where Shopvia itself owns delivery)
   getAppLedOrders: async <T = any>(params?: any): Promise<ApiResponse<T>> => {
     const response = await api.get('/admin/logistics/app-led', { params });
@@ -269,11 +276,11 @@ export const adminService = {
     return response.data;
   },
 
-  resolveFraudIncident: async (id: string, action: string, note: string, justification?: string): Promise<ApiResponse<any>> => {
-    const response = await api.patch(`/admin/security/incidents/${id}/resolve`, { 
-        action, 
+  resolveFraudIncident: async (id: string, action: string, note: string, reason?: string): Promise<ApiResponse<any>> => {
+    const response = await api.patch(`/admin/security/incidents/${id}/resolve`, {
+        action,
         note,
-        justification // Required by mandate
+        reason // Required by mandate — canonical justification field name (matches requireJustification middleware)
     });
     return response.data;
   },
