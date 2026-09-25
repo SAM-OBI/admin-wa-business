@@ -296,6 +296,22 @@ export const adminService = {
     return response.data;
   },
 
+  // Subscription Oversight (Phase 3)
+  overrideSubscription: async (id: string, data: { plan: string; expiresAt: string; reason: string }, challengeToken: string): Promise<ApiResponse<any>> => {
+    const response = await api.patch(`/admin/subscriptions/vendors/${id}/override`, data, {
+      headers: { 'x-security-challenge-token': challengeToken }
+    });
+    return response.data;
+  },
+
+  clearSubscriptionOverride: async (id: string, data: { reason: string }, challengeToken: string): Promise<ApiResponse<any>> => {
+    const response = await api.delete(`/admin/subscriptions/vendors/${id}/override`, {
+      data,
+      headers: { 'x-security-challenge-token': challengeToken }
+    });
+    return response.data;
+  },
+
   // Forensic Integrity (Phase 16)
   getForensicIncidents: async (params?: any): Promise<ApiResponse<any>> => {
     const response = await api.get('/admin/security/forensic-incidents', { params });

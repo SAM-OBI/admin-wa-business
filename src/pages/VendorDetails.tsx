@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { adminService, VendorDetails as VendorDetailsType } from '../api/admin.service';
+import AdminSecurityChallengeModal from '../components/AdminSecurityChallengeModal';
 import { 
   FiArrowLeft, FiShield, FiPackage, FiShoppingCart, FiDollarSign, 
   FiCheckCircle, FiXCircle, FiUser, FiMail, FiPhone,
@@ -14,6 +15,13 @@ export default function VendorDetails() {
   const [showId, setShowId] = useState(false);
   const [trustHistory, setTrustHistory] = useState<any[]>([]);
   const [trustLoading, setTrustLoading] = useState(false);
+
+  // Subscription Override State
+  const [isChallengeOpen, setIsChallengeOpen] = useState(false);
+  const [challengeActionType, setChallengeActionType] = useState<'SET' | 'CLEAR'>('SET');
+  const [overridePlan, setOverridePlan] = useState('premium');
+  const [overrideExpiresAt, setOverrideExpiresAt] = useState('');
+  const [overrideReason, setOverrideReason] = useState('');
 
   const fetchVendorDetails = useCallback(async () => {
     setLoading(true);
@@ -65,6 +73,46 @@ export default function VendorDetails() {
       fetchTrustHistory();
     } catch (error) {
       console.error('Trust override failed:', error);
+    }
+  };
+
+  const initSetOverride = () => {
+    if (!overridePlan || !overrideExpiresAt || !overrideReason) {
+      alert('Please fill out plan, expiration date, and reason');
+      return;
+    }
+    setChallengeActionType('SET');
+    setIsChallengeOpen(true);
+  };
+
+  const initClearOverride = () => {
+    const reason = prompt('Enter mandatory reason to clear override:');
+    if (!reason) return;
+    setOverrideReason(reason);
+    setChallengeActionType('CLEAR');
+    setIsChallengeOpen(true);
+  };
+
+  const handleChallengeSuccess = async (challengeToken: string) => {
+    try {
+      if (challengeActionType === 'SET') {
+        await adminService.overrideSubscription(id!, {
+          plan: overridePlan,
+          expiresAt: overrideExpiresAt,
+          reason: overrideReason
+        }, challengeToken);
+      } else {
+        await adminService.clearSubscriptionOverride(id!, {
+          reason: overrideReason
+        }, challengeToken);
+      }
+      // Refresh state
+      setOverrideReason('');
+      setOverrideExpiresAt('');
+      fetchVendorDetails();
+    } catch (error) {
+      console.error('Subscription override failed:', error);
+      alert('Subscription override failed.');
     }
   };
 
@@ -1003,6 +1051,78 @@ export default function VendorDetails() {
                    <p className="text-xs font-bold text-zinc-400 italic">{vendor.subscription?.endDate ? new Date(vendor.subscription.endDate).toLocaleDateString() : 'FOREVER'}</p>
                 </div>
               </div>
+
+              {/* Admin Override Details & Controls */}
+              <div className="mt-6 pt-6 border-t border-white/10 space-y-4">
+                {vendor.subscription?.manualOverridePlan ? (
+                  <div className="p-4 bg-sv-warning-soft/20 border border-sv-warning/30 rounded-xl">
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <h4 className="text-xs font-black text-sv-warning uppercase tracking-widest flex items-center gap-2">
+                          <FiAlertTriangle /> Admin Override Active
+                        </h4>
+                        <p className="text-xs text-sv-text-secondary mt-1">
+                          Expires: {vendor.subscription.manualOverrideExpiresAt ? new Date(vendor.subscription.manualOverrideExpiresAt).toLocaleString() : 'N/A'}
+                        </p>
+                      </div>
+                      <span className="px-2 py-1 bg-sv-warning text-black rounded text-[10px] font-black uppercase tracking-widest">
+                        {vendor.subscription.manualOverridePlan}
+                      </span>
+                    </div>
+                    <button 
+                      onClick={initClearOverride}
+                      className="w-full py-2 bg-red-500/20 text-red-400 hover:bg-red-500/30 rounded font-black text-xs uppercase tracking-widest transition-colors"
+                    >
+                      Clear Override
+                    </button>
+                  </div>
+                ) : (
+                  <div className="p-4 bg-zinc-950/50 border border-white/5 rounded-xl space-y-3">
+                    <h4 className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Set Subscription Override</h4>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[10px] font-bold text-zinc-500 mb-1">Plan</label>
+                        <select 
+                          value={overridePlan}
+                          onChange={(e) => setOverridePlan(e.target.value)}
+                          className="w-full bg-zinc-900 border border-zinc-800 rounded p-2 text-xs text-white"
+                        >
+                          <option value="basic">Basic</option>
+                          <option value="premium">Premium</option>
+                          <option value="gold">Gold</option>
+                          <option value="business">Business</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-zinc-500 mb-1">Expires At</label>
+                        <input 
+                          type="datetime-local" 
+                          value={overrideExpiresAt}
+                          onChange={(e) => setOverrideExpiresAt(e.target.value)}
+                          className="w-full bg-zinc-900 border border-zinc-800 rounded p-2 text-xs text-white [color-scheme:dark]"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-zinc-500 mb-1">Justification Reason</label>
+                      <input 
+                        type="text" 
+                        value={overrideReason}
+                        onChange={(e) => setOverrideReason(e.target.value)}
+                        placeholder="Required for audit..."
+                        className="w-full bg-zinc-900 border border-zinc-800 rounded p-2 text-xs text-white"
+                      />
+                    </div>
+                    <button 
+                      onClick={initSetOverride}
+                      disabled={!overridePlan || !overrideExpiresAt || !overrideReason}
+                      className="w-full py-2 bg-sv-primary text-black disabled:opacity-50 hover:bg-sv-primary/90 rounded font-black text-xs uppercase tracking-widest transition-colors"
+                    >
+                      Apply Override
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -1036,6 +1156,12 @@ export default function VendorDetails() {
           </div>
         </div>
       </div>
+      <AdminSecurityChallengeModal
+        isOpen={isChallengeOpen}
+        onClose={() => setIsChallengeOpen(false)}
+        action="OVERRIDE_SUBSCRIPTION"
+        onSuccess={handleChallengeSuccess}
+      />
     </div>
   );
 }

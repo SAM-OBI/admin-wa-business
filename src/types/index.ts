@@ -151,6 +151,8 @@ export interface VendorDetails extends Vendor {
     startDate: string;
     endDate: string;
     autoRenew: boolean;
+    manualOverridePlan?: string;
+    manualOverrideExpiresAt?: string;
   };
   recentComplaints?: any[];
   governmentIdUrl?: string;
