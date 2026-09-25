@@ -62,7 +62,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   login: async (credentials) => {
     try {
       set({ authError: null });
-      const response = await api.post('/auth/login', credentials);
+      const response = await api.post('/auth/login', { ...credentials, ctx: 'ADMIN_PORTAL' });
       
       // Handle Unified Challenge (v10.5)
       if (response.data?.data?.requiresChallenge || response.data?.requiresChallenge) {
