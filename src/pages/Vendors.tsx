@@ -87,12 +87,18 @@ export default function Vendors() {
   };
 
   const handleVerification = async (vendorId: string, status: 'verified' | 'rejected') => {
+    const defaultReason = status === 'verified' ? 'Identity documents reviewed and verified.' : '';
+    const reason = prompt(`Enter reason for ${status}:`, defaultReason);
+    if (!reason || reason.trim().length < 5) {
+      alert('A valid justification (minimum 5 characters) is required.');
+      return;
+    }
+    
     try {
-      const reason = status === 'rejected' ? (prompt('Enter reason for rejection:') || undefined) : undefined;
-      if (status === 'rejected' && !reason) return;
       await adminService.updateVendorVerification(vendorId, status, reason);
       fetchVendors();
-    } catch (error) {
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Failed to update verification');
       logger.error('Failed to update verification:', error);
     }
   };
