@@ -110,7 +110,8 @@ export default function Governance() {
         setTimeout(() => {
             fetchData();
         }, 0);
-        const interval = setInterval(fetchData, 15000);
+        // Reduced from 15s to 2m (120,000ms) to reduce network noise
+        const interval = setInterval(fetchData, 120000);
         return () => clearInterval(interval);
     }, []);
 

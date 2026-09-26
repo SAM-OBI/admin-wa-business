@@ -137,21 +137,28 @@ export default function VendorDetails() {
   };
 
   const handleVerification = async (status: 'verified' | 'rejected' | 'unverified') => {
-    const reason = status === 'rejected' ? (prompt('Enter reason for rejection:') || undefined) : undefined;
-    if (status === 'rejected' && !reason) return;
+    const defaultReason = status === 'verified' ? 'Identity documents reviewed and verified.' : '';
+    const reason = prompt(`Enter reason for ${status}:`, defaultReason);
+    if (!reason || reason.trim().length < 5) {
+      alert('A valid justification (minimum 5 characters) is required.');
+      return;
+    }
     try {
       await adminService.updateVendorVerification(id!, status, reason);
       fetchVendorDetails();
-    } catch (error) {
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Failed to update verification');
       console.error('Failed to update verification:', error);
     }
   };
 
   const handleCacReview = async (decision: 'verified' | 'rejected') => {
-    const reason = decision === 'rejected'
-      ? (prompt('Enter reason for rejecting this CAC submission:') || undefined)
-      : undefined;
-    if (decision === 'rejected' && !reason) return;
+    const defaultReason = decision === 'verified' ? 'CAC documents reviewed and verified.' : '';
+    const reason = prompt(`Enter reason for ${decision} CAC:`, defaultReason);
+    if (!reason || reason.trim().length < 5) {
+      alert('A valid justification (minimum 5 characters) is required.');
+      return;
+    }
 
     try {
       await adminService.reviewCacVerification(id!, decision, reason);

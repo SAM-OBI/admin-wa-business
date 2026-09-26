@@ -16,7 +16,8 @@ export default function GovernanceBanner() {
         };
 
         checkStatus();
-        const interval = setInterval(checkStatus, 30000);
+        // Reduced polling from 30s to 5 minutes to prevent network tab clutter
+        const interval = setInterval(checkStatus, 300000);
         return () => clearInterval(interval);
     }, []);
 
