@@ -147,7 +147,7 @@ export default function Vendors() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="w-full max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-6">
         <div>
           <h1 className="text-3xl font-black text-white tracking-tight uppercase">Vendors Management</h1>
@@ -189,8 +189,8 @@ export default function Vendors() {
         </div>
       </div>
 
-      <div className="bg-sv-surface-elevated/50 rounded-2xl border border-sv-border backdrop-blur-sm overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-        <div className="overflow-x-auto">
+      <div className="bg-sv-surface-elevated/50 rounded-2xl border border-sv-border backdrop-blur-sm overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] min-w-0">
+        <div className="overflow-x-auto min-w-0">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-sv-border bg-sv-surface/5">

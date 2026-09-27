@@ -139,7 +139,7 @@ export default function Dashboard() {
   const timeSinceUpdate = viewModel?.lastUpdated ? Math.round((Date.now() - new Date(viewModel.lastUpdated).getTime()) / 60000) : 0;
 
   return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700 p-8 max-w-7xl mx-auto bg-background text-body">
+    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700 w-full max-w-7xl mx-auto bg-background text-body">
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>

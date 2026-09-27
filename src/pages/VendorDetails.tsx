@@ -266,7 +266,7 @@ export default function VendorDetails() {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="w-full max-w-7xl mx-auto">
       {/* Header */}
       <div className="mb-8">
         <Link 

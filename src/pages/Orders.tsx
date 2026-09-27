@@ -103,7 +103,7 @@ export default function Orders() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="w-full max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-6">
         <div>
           <h1 className="text-3xl font-black text-white tracking-tight uppercase">Operational Ledger</h1>
