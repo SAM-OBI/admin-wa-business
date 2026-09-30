@@ -1,17 +1,37 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { FiShield, FiClock, FiXCircle, FiAlertTriangle } from 'react-icons/fi';
 import { HardenedSearchInput } from '../components/search/HardenedSearchInput';
+import { ErrorState } from '../components/ErrorState';
+import { adminService } from '../api/admin.service';
+import { Link } from 'react-router-dom';
+import { logger } from '../utils/logger';
 
-interface SubscriptionMetric {
-  title: string;
-  value: string | number;
-  trend: string;
-  trendType: 'positive' | 'negative' | 'neutral';
-  icon: any;
+interface VendorSubscription {
+  _id: string;
+  name: string;
+  email: string;
+  plan?: string;
+  status?: string;
+  billingCycle?: string;
+  trialEndsAt?: string;
+  subscriptionEndsAt?: string;
+  manualOverridePlan?: string;
+  manualOverrideExpiresAt?: string;
+}
+
+interface SubscriptionStats {
+  activePaid: number;
+  inTrial: number;
+  expiringSoon: number;
+  recentlyChurned: number;
 }
 
 export default function Subscriptions() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [subscriptions, setSubscriptions] = useState<VendorSubscription[]>([]);
+  const [stats, setStats] = useState<SubscriptionStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [filters, setFilters] = useState({
     plan: '',
@@ -25,19 +45,66 @@ export default function Subscriptions() {
     pages: 1
   });
 
-  // Mock initial state before backend wiring
-  const metrics: SubscriptionMetric[] = [
-    { title: 'Active Paid Subscriptions', value: '1,248', trend: '+12% this month', trendType: 'positive', icon: <FiShield /> },
-    { title: 'Vendors in 14-Day Trial', value: '342', trend: '+5% this week', trendType: 'positive', icon: <FiClock /> },
-    { title: 'Expiring Next 7 Days', value: '89', trend: 'Requires attention', trendType: 'neutral', icon: <FiAlertTriangle /> },
-    { title: 'Recently Churned', value: '12', trend: '-2% churn rate', trendType: 'negative', icon: <FiXCircle /> },
-  ];
+  const fetchSubscriptions = useCallback(async (page = 1) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await adminService.getVendorSubscriptions({
+        page,
+        limit: pagination.limit,
+        plan: filters.plan || undefined,
+        status: filters.status || undefined,
+        search: searchTerm || undefined
+      });
+      if (res.data?.subscriptions) {
+        setSubscriptions(res.data.subscriptions);
+        setPagination(res.data.pagination);
+      } else {
+        setSubscriptions([]);
+      }
+    } catch (err: any) {
+      logger.error('Failed to fetch vendor subscriptions:', err);
+      setError(err.response?.data?.message || 'We couldn\'t load subscriptions right now.');
+    } finally {
+      setLoading(false);
+    }
+  }, [filters.plan, filters.status, searchTerm, pagination.limit]);
+
+  const fetchStats = useCallback(async () => {
+    try {
+      const res = await adminService.getSubscriptionStats();
+      if (res.data) setStats(res.data);
+    } catch (err) {
+      logger.error('Failed to fetch subscription stats:', err);
+    }
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchSubscriptions(1);
+    }, 400);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters.plan, filters.status, searchTerm]);
+
+  useEffect(() => {
+    fetchStats();
+  }, [fetchStats]);
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= pagination.pages) {
-      setPagination(prev => ({ ...prev, page: newPage }));
+      fetchSubscriptions(newPage);
     }
   };
+
+  const metrics = [
+    { title: 'Active Paid Subscriptions', value: stats?.activePaid ?? '—', trendType: 'positive' as const, icon: <FiShield /> },
+    { title: 'Vendors in Trial', value: stats?.inTrial ?? '—', trendType: 'positive' as const, icon: <FiClock /> },
+    { title: 'Expiring Next 7 Days', value: stats?.expiringSoon ?? '—', trendType: 'neutral' as const, icon: <FiAlertTriangle /> },
+    { title: 'Recently Churned', value: stats?.recentlyChurned ?? '—', trendType: 'negative' as const, icon: <FiXCircle /> },
+  ];
+
+  const formatDate = (date?: string) => date ? new Date(date).toLocaleDateString() : '—';
 
   return (
     <div className="w-full max-w-7xl mx-auto">
@@ -57,12 +124,6 @@ export default function Subscriptions() {
             </div>
             <div className="text-zinc-500 text-[10px] font-black uppercase tracking-widest mb-2">{metric.title}</div>
             <div className="text-3xl font-black text-white tracking-tight mb-2">{metric.value}</div>
-            <div className={`text-[10px] font-bold uppercase tracking-wide ${
-              metric.trendType === 'positive' ? 'text-emerald-500' :
-              metric.trendType === 'negative' ? 'text-red-500' : 'text-amber-500'
-            }`}>
-              {metric.trend}
-            </div>
           </div>
         ))}
       </div>
@@ -76,10 +137,11 @@ export default function Subscriptions() {
               className="px-4 py-2 bg-sv-surface-elevated/50 border border-sv-border text-sv-text-muted text-xs font-black uppercase tracking-widest rounded-xl focus:outline-none focus:border-sv-primary transition-all cursor-pointer"
             >
               <option value="">All Plans</option>
+              <option value="free">Free</option>
               <option value="trial">Trial</option>
               <option value="basic">Basic</option>
               <option value="premium">Premium</option>
-              <option value="gold">Gold</option>
+              <option value="shopvia">Shopvia</option>
               <option value="business">Business</option>
             </select>
 
@@ -93,14 +155,16 @@ export default function Subscriptions() {
               <option value="TRIAL_ACTIVE">Trial Active</option>
               <option value="TRIAL_GRACE">Grace Period</option>
               <option value="PAST_DUE">Past Due</option>
+              <option value="SUSPENDED">Suspended</option>
               <option value="EXPIRED">Expired</option>
+              <option value="CANCELLED">Cancelled</option>
             </select>
           </div>
 
           <HardenedSearchInput
             value={searchTerm}
             onChange={(val) => setSearchTerm(val)}
-            placeholder="SEARCH VENDOR OR ID..."
+            placeholder="SEARCH VENDOR OR EMAIL..."
             className="w-full sm:w-72"
             context="ADMIN"
           />
@@ -120,15 +184,61 @@ export default function Subscriptions() {
               </tr>
             </thead>
             <tbody className="divide-y divide-sv-border">
-                {/* Empty State pending backend API wiring */}
-                <tr>
-                  <td colSpan={5} className="px-8 py-24 text-center">
-                    <div className="flex flex-col items-center gap-4">
-                      <FiShield className="text-sv-text-muted w-12 h-12" />
-                      <p className="text-sv-text-muted text-[10px] font-black uppercase tracking-[0.3em] italic">Awaiting Backend Event Sync...</p>
-                    </div>
-                  </td>
-                </tr>
+                {loading ? (
+                  <tr>
+                    <td colSpan={5} className="px-8 py-24 text-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sv-primary mx-auto"></div>
+                    </td>
+                  </tr>
+                ) : error ? (
+                  <tr>
+                    <td colSpan={5} className="px-8 py-16">
+                      <ErrorState message={error} onRetry={() => fetchSubscriptions(pagination.page)} />
+                    </td>
+                  </tr>
+                ) : subscriptions.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="px-8 py-24 text-center">
+                      <div className="flex flex-col items-center gap-4">
+                        <FiShield className="text-sv-text-muted w-12 h-12" />
+                        <p className="text-sv-text-muted text-[10px] font-black uppercase tracking-[0.3em] italic">No vendor subscriptions matching these filters.</p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : subscriptions.map((sub) => (
+                  <tr key={sub._id} className="hover:bg-sv-surface-muted/50 transition-colors">
+                    <td className="px-8 py-5">
+                      <div className="text-sm font-bold text-white">{sub.name}</div>
+                      <div className="text-xs text-sv-text-muted">{sub.email}</div>
+                    </td>
+                    <td className="px-8 py-5">
+                      <span className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-sv-surface-muted text-sv-text-primary">
+                        {sub.plan || 'free'}
+                      </span>
+                      {sub.manualOverridePlan && (
+                        <span className="ml-2 px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                          Override
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-8 py-5">
+                      <span className="text-xs font-bold text-sv-text-secondary uppercase tracking-widest">{sub.status || '—'}</span>
+                    </td>
+                    <td className="px-8 py-5 text-xs text-sv-text-muted">
+                      {sub.trialEndsAt && <div>Trial ends: {formatDate(sub.trialEndsAt)}</div>}
+                      {sub.subscriptionEndsAt && <div>Renews/expires: {formatDate(sub.subscriptionEndsAt)}</div>}
+                      {!sub.trialEndsAt && !sub.subscriptionEndsAt && '—'}
+                    </td>
+                    <td className="px-8 py-5 text-right">
+                      <Link
+                        to={`/dashboard/vendors/${sub._id}`}
+                        className="text-[10px] font-black uppercase tracking-widest text-sv-primary hover:underline"
+                      >
+                        Manage
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
@@ -136,7 +246,7 @@ export default function Subscriptions() {
         {/* Global Pagination Hub */}
         <div className="px-8 py-6 border-t border-sv-border bg-sv-surface/5 flex items-center justify-between">
           <div className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">
-            Registry Index <span className="text-sv-text-primary mx-1">0</span> of <span className="text-sv-text-primary mx-1">{pagination.total}</span> Entities
+            Registry Index <span className="text-sv-text-primary mx-1">{subscriptions.length}</span> of <span className="text-sv-text-primary mx-1">{pagination.total}</span> Entities
           </div>
           <div className="flex gap-4 items-center">
             <button

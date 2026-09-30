@@ -297,6 +297,16 @@ export const adminService = {
   },
 
   // Subscription Oversight (Phase 3)
+  getVendorSubscriptions: async (params?: { page?: number; limit?: number; plan?: string; status?: string; search?: string }): Promise<ApiResponse<any>> => {
+    const response = await api.get('/admin/subscriptions/vendors', { params });
+    return response.data;
+  },
+
+  getSubscriptionStats: async (): Promise<ApiResponse<{ activePaid: number; inTrial: number; expiringSoon: number; recentlyChurned: number }>> => {
+    const response = await api.get('/admin/subscriptions/stats');
+    return response.data;
+  },
+
   overrideSubscription: async (id: string, data: { plan: string; expiresAt: string; reason: string }, challengeToken: string): Promise<ApiResponse<any>> => {
     const response = await api.patch(`/admin/subscriptions/vendors/${id}/override`, data, {
       headers: { 'x-security-challenge-token': challengeToken }
