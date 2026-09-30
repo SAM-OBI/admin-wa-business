@@ -15,6 +15,11 @@ export default function VendorDetails() {
   const [showId, setShowId] = useState(false);
   const [trustHistory, setTrustHistory] = useState<any[]>([]);
   const [trustLoading, setTrustLoading] = useState(false);
+  // 🛡️ Shared double-submit guard for suspend/activate/revoke/cacReview/
+  // impersonate — these are mutually exclusive, modal/prompt-driven admin
+  // actions, so one shared flag (rather than one per handler) is enough to
+  // stop a fast double-click firing the same mutation twice.
+  const [actionPending, setActionPending] = useState(false);
 
   // Subscription Override State
   const [isChallengeOpen, setIsChallengeOpen] = useState(false);
@@ -71,7 +76,8 @@ export default function VendorDetails() {
       await adminService.overrideVendorTrust(id!, { newScore, reason, justification });
       fetchVendorDetails();
       fetchTrustHistory();
-    } catch (error) {
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Trust override failed');
       console.error('Trust override failed:', error);
     }
   };
@@ -119,20 +125,30 @@ export default function VendorDetails() {
   const handleSuspend = async () => {
     const reason = prompt('Enter reason for suspension:');
     if (!reason) return;
+    if (actionPending) return;
+    setActionPending(true);
     try {
       await adminService.suspendVendor(id!, reason);
       fetchVendorDetails();
-    } catch (error) {
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Failed to suspend vendor');
       console.error('Failed to suspend vendor:', error);
+    } finally {
+      setActionPending(false);
     }
   };
 
   const handleActivate = async () => {
+    if (actionPending) return;
+    setActionPending(true);
     try {
       await adminService.activateVendor(id!);
       fetchVendorDetails();
-    } catch (error) {
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Failed to activate vendor');
       console.error('Failed to activate vendor:', error);
+    } finally {
+      setActionPending(false);
     }
   };
 
@@ -159,12 +175,16 @@ export default function VendorDetails() {
       alert('A valid justification (minimum 5 characters) is required.');
       return;
     }
+    if (actionPending) return;
+    setActionPending(true);
 
     try {
       await adminService.reviewCacVerification(id!, decision, reason);
       fetchVendorDetails();
     } catch (error: any) {
       alert(error.response?.data?.message || 'Failed to review CAC verification');
+    } finally {
+      setActionPending(false);
     }
   };
 
@@ -178,13 +198,15 @@ export default function VendorDetails() {
 
     const reason = prompt('Enter mandatory revocation reason for forensic audit:');
     if (!reason) return;
+    if (actionPending) return;
+    setActionPending(true);
 
     try {
-      const response = await adminService.revokeVendorVerification(id!, { 
-        reason, 
-        category 
+      const response = await adminService.revokeVendorVerification(id!, {
+        reason,
+        category
       });
-      
+
       if (response.data.requiresQuorum) {
         alert(`Dual-Control Proposal Created: ${response.data.multisigId}. Awaiting second administrator approval.`);
       } else {
@@ -193,6 +215,8 @@ export default function VendorDetails() {
       fetchVendorDetails();
     } catch (error: any) {
       alert(error.response?.data?.message || 'Revocation failed');
+    } finally {
+      setActionPending(false);
     }
   };
 
@@ -204,20 +228,24 @@ export default function VendorDetails() {
       alert('A valid justification (min 5 chars) is required for audit.');
       return;
     }
+    if (actionPending) return;
+    setActionPending(true);
 
     try {
-      const response = await adminService.impersonateUser(vendor._id, { 
-        reason, 
-        targetRole: 'VENDORS' 
+      const response = await adminService.impersonateUser(vendor._id, {
+        reason,
+        targetRole: 'VENDORS'
       });
       const { accessToken, user: impersonatedUser } = response.data;
-      
+
       const storefrontUrl = import.meta.env.VITE_STOREFRONT_URL || 'https://shopvia.ng';
       const targetUrl = `${storefrontUrl}/auth/impersonate?accessToken=${accessToken}&user=${encodeURIComponent(JSON.stringify(impersonatedUser))}`;
-      
+
       window.open(targetUrl, '_blank');
     } catch (err: any) {
       alert(err.response?.data?.message || 'Failed to initialize session');
+    } finally {
+      setActionPending(false);
     }
   };
 
@@ -234,7 +262,7 @@ export default function VendorDetails() {
       <div className="p-6">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-sv-text-primary">Vendor not found</h2>
-          <Link to="/vendors" className="text-blue-600 hover:underline mt-4 inline-block">
+          <Link to="/dashboard/vendors" className="text-blue-600 hover:underline mt-4 inline-block">
             Back to Vendors
           </Link>
         </div>
@@ -269,8 +297,8 @@ export default function VendorDetails() {
     <div className="w-full max-w-7xl mx-auto">
       {/* Header */}
       <div className="mb-8">
-        <Link 
-          to="/vendors" 
+        <Link
+          to="/dashboard/vendors"
           className="inline-flex items-center text-zinc-400 hover:text-white mb-4 transition-colors"
         >
           <FiArrowLeft className="mr-2" />
@@ -286,7 +314,8 @@ export default function VendorDetails() {
           <div className="flex gap-3">
             <button
                onClick={handleImpersonate}
-               className="px-4 py-2 bg-sv-primary text-sv-text-inverse rounded-lg hover:bg-sv-primary-hover transition-all flex items-center gap-2 text-sm font-bold"
+               disabled={actionPending}
+               className="px-4 py-2 bg-sv-primary text-sv-text-inverse rounded-lg hover:bg-sv-primary-hover transition-all flex items-center gap-2 text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed"
             >
                <FiShield /> Login As
             </button>
@@ -309,7 +338,8 @@ export default function VendorDetails() {
             {vendor.verification?.status === 'verified' && (
               <button
                 onClick={handleRevoke}
-                className="px-4 py-2 bg-transparent text-orange-500 border border-orange-500/20 rounded-lg hover:bg-orange-500/10 transition text-sm font-bold flex items-center gap-2"
+                disabled={actionPending}
+                className="px-4 py-2 bg-transparent text-orange-500 border border-orange-500/20 rounded-lg hover:bg-orange-500/10 transition text-sm font-bold flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <FiShield /> Revoke Verification
               </button>
@@ -325,14 +355,16 @@ export default function VendorDetails() {
             {vendor.isActive ? (
               <button
                 onClick={handleSuspend}
-                className="px-4 py-2 bg-transparent text-red-500 border border-red-500/20 rounded-lg hover:bg-red-500/10 transition text-sm font-bold"
+                disabled={actionPending}
+                className="px-4 py-2 bg-transparent text-red-500 border border-red-500/20 rounded-lg hover:bg-red-500/10 transition text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Suspend Vendor
               </button>
             ) : (
               <button
                 onClick={handleActivate}
-                className="px-4 py-2 bg-sv-success text-sv-text-inverse rounded-lg hover:opacity-90 transition text-sm font-bold"
+                disabled={actionPending}
+                className="px-4 py-2 bg-sv-success text-sv-text-inverse rounded-lg hover:opacity-90 transition text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Activate Vendor
               </button>
@@ -637,7 +669,7 @@ export default function VendorDetails() {
                            <FiXCircle size={14} />
                         </button>
                         <a 
-                          href={`https://shopvia.com/blog/${blog.slug}`} 
+                          href={`${import.meta.env.VITE_STOREFRONT_URL || 'https://shopvia.ng'}/blog/${blog.slug}`}
                           target="_blank" 
                           rel="noopener noreferrer"
                           className="p-1.5 bg-black border border-white/5 rounded-md hover:border-white hover:text-white text-zinc-500"
@@ -974,13 +1006,15 @@ export default function VendorDetails() {
                         <div className="mt-3 flex gap-2">
                            <button
                              onClick={() => handleCacReview('verified')}
-                             className="flex-1 py-2 bg-green-600/10 hover:bg-green-600/20 text-green-500 rounded text-[9px] font-black uppercase tracking-widest border border-green-500/20 transition-all"
+                             disabled={actionPending}
+                             className="flex-1 py-2 bg-green-600/10 hover:bg-green-600/20 text-green-500 rounded text-[9px] font-black uppercase tracking-widest border border-green-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                            >
                              Approve CAC
                            </button>
                            <button
                              onClick={() => handleCacReview('rejected')}
-                             className="flex-1 py-2 bg-red-600/10 hover:bg-red-600/20 text-red-500 rounded text-[9px] font-black uppercase tracking-widest border border-red-500/20 transition-all"
+                             disabled={actionPending}
+                             className="flex-1 py-2 bg-red-600/10 hover:bg-red-600/20 text-red-500 rounded text-[9px] font-black uppercase tracking-widest border border-red-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                            >
                              Reject CAC
                            </button>
