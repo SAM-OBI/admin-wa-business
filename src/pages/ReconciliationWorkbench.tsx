@@ -1,35 +1,84 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import api from '../api/axios';
+import { ErrorState } from '../components/ErrorState';
 
-// Computed once at module load time — satisfies react-hooks/purity (no Date.now inside render)
-const DEMO_LAST_VERIFIED = new Date(Date.now() - 1000 * 60 * 15).toISOString();
+interface EscrowEntry {
+  _id: string; // storeId
+  totalPricing: number; // Kobo
+  totalEscrow: number; // Kobo
+  variance: number; // Kobo
+}
+
+interface LedgerEntry {
+  storeId: string;
+  storeName: string;
+  currency: string;
+  expected: number; // Kobo
+  actual: number; // Kobo
+  variance: number; // Kobo
+}
+
+interface ReconciliationData {
+  escrowIntegrity: EscrowEntry[];
+  ledgerDrift: LedgerEntry[];
+  pendingProjections: LedgerEntry[];
+  isolation: { currency: string; storeId: string };
+  timestamp: string;
+}
+
+const naira = (kobo: number) => `₦${(kobo / 100).toLocaleString('en-NG', { minimumFractionDigits: 2 })}`;
 
 export function ReconciliationWorkbench() {
-  const [activeTab, setActiveTab] = useState<'AR' | 'FA' | 'TAX' | 'GL'>('AR');
-  const [showDiff, setShowDiff] = useState(false);
+  const [activeTab, setActiveTab] = useState<'ESCROW' | 'LEDGER'>('ESCROW');
+  const [data, setData] = useState<ReconciliationData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currency] = useState('NGN');
 
-  // Mocks for UI demonstration
-  const lastVerified = DEMO_LAST_VERIFIED;
-  const lag = "15 minutes";
+  const fetchReconciliation = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await api.get('/admin/oversight/finance/reconciliation', { params: { currency } });
+      if (res.data?.success) {
+        setData(res.data.data);
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Could not load the reconciliation report.');
+    } finally {
+      setLoading(false);
+    }
+  }, [currency]);
+
+  useEffect(() => {
+    fetchReconciliation();
+  }, [fetchReconciliation]);
+
+  const escrowDrift = (data?.escrowIntegrity || []).filter(e => Math.abs(e.variance) > 0);
+  const ledgerDrift = data?.ledgerDrift || [];
+  const pendingProjections = data?.pendingProjections || [];
 
   return (
     <div className="w-full max-w-6xl mx-auto space-y-6">
       {/* Source of Truth Hierarchy & Warning */}
       <div className="bg-sv-warning-soft border-l-4 border-sv-warning p-4 rounded-md shadow-sm">
-        <div className="flex justify-between items-start">
+        <div className="flex justify-between items-start gap-4">
           <div>
             <h3 className="text-sv-warning font-bold">⚠️ Diagnostic View Only</h3>
             <p className="text-sv-warning text-sm mt-1">
               This panel is not authoritative. It cannot be cited in audit reports.
             </p>
-            <p className="text-sv-warning text-sm mt-1 font-mono">
-              Last verified against Event Store: {lastVerified} (Lag: {lag})
-            </p>
+            {data?.timestamp && (
+              <p className="text-sv-warning text-sm mt-1 font-mono">
+                Report generated: {new Date(data.timestamp).toLocaleString()}
+              </p>
+            )}
           </div>
-          <div className="text-right text-xs text-sv-warning bg-sv-warning-soft p-2 rounded">
+          <div className="text-right text-xs text-sv-warning bg-sv-warning-soft p-2 rounded shrink-0">
             <p className="font-bold">Source of Truth Hierarchy:</p>
             <ol className="list-decimal list-inside text-left mt-1">
-              <li>Event Store (Authoritative)</li>
-              <li>Ledger Tables (Materialized)</li>
+              <li>Ledger (Authoritative)</li>
+              <li>Store.availableBalance (Materialized)</li>
               <li className="font-bold">Reconciliation UI (Diagnostic)</li>
             </ol>
           </div>
@@ -40,72 +89,70 @@ export function ReconciliationWorkbench() {
         <div className="bg-sv-surface-muted border-b border-sv-border px-6 py-4 flex flex-row space-x-4 items-center">
           <h2 className="text-xl font-semibold text-sv-text-primary">Reconciliation Workbench</h2>
           <div className="flex space-x-2">
-            <button className={`px-3 py-1.5 rounded text-xs font-semibold border ${activeTab === 'AR' ? 'bg-sv-primary text-sv-text-inverse border-sv-primary' : 'bg-sv-surface text-sv-text-secondary border-sv-border'}`} onClick={() => { setActiveTab('AR'); setShowDiff(false); }}>Allocation Drift</button>
-            <button className={`px-3 py-1.5 rounded text-xs font-semibold border ${activeTab === 'FA' ? 'bg-sv-primary text-sv-text-inverse border-sv-primary' : 'bg-sv-surface text-sv-text-secondary border-sv-border'}`} onClick={() => { setActiveTab('FA'); setShowDiff(false); }}>Depreciation Drift</button>
-            <button className={`px-3 py-1.5 rounded text-xs font-semibold border ${activeTab === 'TAX' ? 'bg-sv-primary text-sv-text-inverse border-sv-primary' : 'bg-sv-surface text-sv-text-secondary border-sv-border'}`} onClick={() => { setActiveTab('TAX'); setShowDiff(false); }}>Tax Mismatch</button>
-            <button className={`px-3 py-1.5 rounded text-xs font-semibold border ${activeTab === 'GL' ? 'bg-sv-primary text-sv-text-inverse border-sv-primary' : 'bg-sv-surface text-sv-text-secondary border-sv-border'}`} onClick={() => { setActiveTab('GL'); setShowDiff(false); }}>GL Proof</button>
+            <button className={`px-3 py-1.5 rounded text-xs font-semibold border ${activeTab === 'ESCROW' ? 'bg-sv-primary text-sv-text-inverse border-sv-primary' : 'bg-sv-surface text-sv-text-secondary border-sv-border'}`} onClick={() => setActiveTab('ESCROW')}>
+              Escrow Integrity {escrowDrift.length > 0 && `(${escrowDrift.length})`}
+            </button>
+            <button className={`px-3 py-1.5 rounded text-xs font-semibold border ${activeTab === 'LEDGER' ? 'bg-sv-primary text-sv-text-inverse border-sv-primary' : 'bg-sv-surface text-sv-text-secondary border-sv-border'}`} onClick={() => setActiveTab('LEDGER')}>
+              Ledger Drift {ledgerDrift.length > 0 && `(${ledgerDrift.length})`}
+            </button>
           </div>
         </div>
 
         <div className="p-6">
-          {activeTab === 'AR' && (
-            <div className="space-y-6">
-              <div className="flex justify-between items-center p-4 bg-sv-danger-soft border border-sv-danger/30 rounded-md">
-                <div>
-                  <h4 className="font-semibold text-sv-danger">AR Open Item Drift Detected</h4>
-                  <p className="text-sm text-sv-danger font-mono mt-1">Period: 2026-06 | Customer: CUST-901</p>
+          {loading ? (
+            <div className="flex justify-center py-16">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sv-primary"></div>
+            </div>
+          ) : error ? (
+            <ErrorState message={error} onRetry={fetchReconciliation} />
+          ) : activeTab === 'ESCROW' ? (
+            <div className="space-y-4">
+              {escrowDrift.length === 0 ? (
+                <div className="p-8 text-center text-slate-500">
+                  <span className="inline-block mb-2 text-xs border border-slate-300 px-2 py-1 rounded text-slate-500">Healthy</span>
+                  <p className="text-sm mt-2">Order totals match escrow held across all {(data?.escrowIntegrity || []).length} stores checked.</p>
                 </div>
-                <div className="text-right">
-                  <p className="text-sv-danger font-bold">Drift: +₦50,000</p>
-                  <button className="mt-2 px-3 py-1.5 text-xs font-semibold bg-sv-surface hover:bg-sv-surface-muted text-sv-text-primary border border-sv-border rounded" onClick={() => setShowDiff(true)}>Explore Diff</button>
-                </div>
-              </div>
-
-              {showDiff && (
-                <div className="border border-slate-200 rounded-md p-4 bg-white shadow-inner">
-                  <h4 className="font-bold text-slate-800 border-b pb-2 mb-4">Diff Explorer: Root Cause Analysis</h4>
-                  <div className="font-mono text-sm space-y-2 text-slate-600">
-                    <p>Expected AR Balance: <span className="text-green-600">₦1,000,000</span></p>
-                    <p>Actual AR Balance:   <span className="text-red-600">₦1,050,000</span></p>
-                    <p>Difference:         <span className="text-red-600 font-bold">+₦50,000</span></p>
-                    <hr className="my-4" />
-                    <p>Traced to: <span className="font-bold text-blue-600">ArAllocation #AR-12881</span></p>
-                    <ul className="list-disc list-inside pl-4 text-slate-500 space-y-1">
-                      <li>allocationType: APPLY</li>
-                      <li>sourceReceiptId: RCPT-9901</li>
-                      <li>targetInvoiceId: INV-4420</li>
-                      <li>amountAllocated: 50,000</li>
-                      <li>allocationDate: 2026-06-28T14:32:11Z</li>
-                    </ul>
-                    <div className="bg-sv-info-soft p-3 mt-4 border border-sv-info/30 rounded text-sv-info">
-                      <p><strong>Diagnosis:</strong> This allocation exists in ArAllocation collection but was NOT reflected in ArOpenItem #INV-4420.allocatedAmount.</p>
-                      <p className="mt-2"><strong>Probable Cause:</strong> PARTIAL_CONFIRMED state — allocation committed but projection update failed before confirmation.</p>
-                    <button className="mt-3 px-3 py-1.5 text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded">Trigger Projection Rebuild for INV-4420</button>
-                    </div>
+              ) : escrowDrift.map((entry) => (
+                <div key={entry._id} className="flex justify-between items-center p-4 bg-sv-danger-soft border border-sv-danger/30 rounded-md">
+                  <div>
+                    <h4 className="font-semibold text-sv-danger">Escrow Drift Detected</h4>
+                    <p className="text-sm text-sv-danger font-mono mt-1">Store: {entry._id}</p>
+                    <p className="text-xs text-sv-text-secondary font-mono mt-1">
+                      Order Total: {naira(entry.totalPricing)} · Escrow Held: {naira(entry.totalEscrow)}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sv-danger font-bold">Drift: {entry.variance > 0 ? '+' : ''}{naira(entry.variance)}</p>
                   </div>
                 </div>
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {ledgerDrift.length === 0 ? (
+                <div className="p-8 text-center text-slate-500">
+                  <span className="inline-block mb-2 text-xs border border-slate-300 px-2 py-1 rounded text-slate-500">Healthy</span>
+                  <p className="text-sm mt-2">Store.availableBalance matches the canonical ledger sum for every store checked.</p>
+                </div>
+              ) : ledgerDrift.map((entry) => (
+                <div key={entry.storeId} className="flex justify-between items-center p-4 bg-sv-danger-soft border border-sv-danger/30 rounded-md">
+                  <div>
+                    <h4 className="font-semibold text-sv-danger">Ledger Drift Detected</h4>
+                    <p className="text-sm text-sv-danger font-mono mt-1">{entry.storeName}</p>
+                    <p className="text-xs text-sv-text-secondary font-mono mt-1">
+                      Expected: {naira(entry.expected)} · Actual: {naira(entry.actual)}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sv-danger font-bold">Drift: {entry.variance > 0 ? '+' : ''}{naira(entry.variance)}</p>
+                  </div>
+                </div>
+              ))}
+              {pendingProjections.length > 0 && (
+                <p className="text-xs text-sv-text-muted font-medium pt-2 border-t border-sv-border">
+                  {pendingProjections.length} more store{pendingProjections.length === 1 ? '' : 's'} showing expected replication lag (~60s, one cron cycle) — not counted as drift.
+                </p>
               )}
-            </div>
-          )}
-
-          {activeTab === 'FA' && (
-            <div className="p-8 text-center text-slate-500">
-              <span className="inline-block mb-4 text-xs border border-slate-300 px-2 py-1 rounded text-slate-500">Healthy</span>
-            </div>
-          )}
-
-          {activeTab === 'TAX' && (
-            <div className="p-8 text-center text-slate-500">
-              <span className="inline-block mb-4 text-xs border border-slate-300 px-2 py-1 rounded text-slate-500">Healthy</span>
-            </div>
-          )}
-
-          {activeTab === 'GL' && (
-            <div className="p-8 text-center text-slate-500">
-              <p className="font-mono bg-slate-100 p-2 rounded inline-block text-slate-800">
-                TripleLock Hash: 8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4
-              </p>
-              <p className="mt-4 text-sm">Last verified 15 minutes ago.</p>
             </div>
           )}
         </div>

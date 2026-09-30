@@ -145,58 +145,92 @@ const FinancialAudit: React.FC = () => {
                     
                     {/* Reconciliation Board */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-100 dark:border-white/5 shadow-sm">
-                            <div className="flex items-center justify-between mb-6">
-                                <h3 className="text-lg font-black text-gray-900 dark:text-white">Settlement Integrity</h3>
-                                <span className="text-[9px] font-black text-blue-500 uppercase tracking-widest bg-blue-50 px-2 py-1 rounded-md">V2 Safe Settlement</span>
-                            </div>
-                            <div className="space-y-3">
-                                <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-black/20 rounded-xl">
-                                    <span className="text-[11px] font-bold text-gray-500">Platform Totals</span>
-                                    <span className="font-black text-gray-900 dark:text-white text-sm">₦{(reconciliation?.escrowIntegrity?.[0]?.totalPricing || 0).toLocaleString()}</span>
-                                </div>
-                                <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-black/20 rounded-xl">
-                                    <span className="text-[11px] font-bold text-gray-500">Held in Vault</span>
-                                    <span className="font-black text-gray-900 dark:text-white text-sm">₦{(reconciliation?.escrowIntegrity?.[0]?.escrowHeld || 0).toLocaleString()}</span>
-                                </div>
-                                <div className={`flex justify-between items-center p-4 rounded-xl border ${Math.abs(reconciliation?.escrowIntegrity?.[0]?.totalPricing - reconciliation?.escrowIntegrity?.[0]?.escrowHeld) > 1000 ? 'border-red-200 bg-red-50' : 'border-green-200 bg-green-50'}`}>
-                                    <div>
-                                        <p className="text-[9px] font-black uppercase tracking-widest text-gray-500">Variance</p>
-                                        <p className={`text-xl font-black ${Math.abs(reconciliation?.escrowIntegrity?.[0]?.totalPricing - reconciliation?.escrowIntegrity?.[0]?.escrowHeld) > 1000 ? 'text-red-500' : 'text-green-500'}`}>
-                                            ₦{(reconciliation?.escrowIntegrity?.[0]?.totalPricing - reconciliation?.escrowIntegrity?.[0]?.escrowHeld || 0).toLocaleString()}
-                                        </p>
-                                    </div>
-                                    {Math.abs(reconciliation?.escrowIntegrity?.[0]?.totalPricing - reconciliation?.escrowIntegrity?.[0]?.escrowHeld) > 1000 && (
-                                        <FaExclamationTriangle className="text-red-500" size={20} />
-                                    )}
-                                </div>
-                            </div>
-                        </div>
+                        {(() => {
+                            // 🛡️ [FIX] This board read escrowIntegrity[0] (an
+                            // arbitrary single store, not a platform total
+                            // despite the "Platform Totals" label) and fields
+                            // (escrowHeld, ledgerCheck.totalCredits/.walletSum)
+                            // that no longer exist on
+                            // GET /admin/oversight/finance/reconciliation's
+                            // actual response shape (escrowIntegrity entries
+                            // use totalEscrow, not escrowHeld; there is no
+                            // ledgerCheck object at all - it's ledgerDrift +
+                            // pendingProjections arrays). Every value here was
+                            // silently reading undefined and rendering ₦0 or
+                            // NaN regardless of real reconciliation state.
+                            const escrowEntries: any[] = reconciliation?.escrowIntegrity || [];
+                            const totalPricing = escrowEntries.reduce((sum, e) => sum + (e.totalPricing || 0), 0);
+                            const totalEscrow = escrowEntries.reduce((sum, e) => sum + (e.totalEscrow || 0), 0);
+                            const escrowVariance = totalPricing - totalEscrow;
 
-                        <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-100 dark:border-white/5 shadow-sm">
-                            <div className="flex items-center justify-between mb-6">
-                                <h3 className="text-lg font-black text-gray-900 dark:text-white">Ledger Consistency</h3>
-                                <span className="text-[9px] font-black text-purple-500 uppercase tracking-widest bg-purple-50 px-2 py-1 rounded-md">V1 Formula</span>
-                            </div>
-                            <div className="space-y-3">
-                                <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-black/20 rounded-xl">
-                                    <span className="text-[11px] font-bold text-gray-500">Total Credits</span>
-                                    <span className="font-black text-gray-900 dark:text-white text-sm">{currency === 'NGN' ? '₦' : '$'}{reconciliation?.ledgerCheck?.totalCredits?.toLocaleString() || 0}</span>
-                                </div>
-                                <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-black/20 rounded-xl">
-                                    <span className="text-[11px] font-bold text-gray-500">Wallet Sum</span>
-                                    <span className="font-black text-gray-900 dark:text-white text-sm">{currency === 'NGN' ? '₦' : '$'}{reconciliation?.ledgerCheck?.walletSum?.toLocaleString() || 0}</span>
-                                </div>
-                                <div className={`flex justify-between items-center p-4 rounded-xl border ${Math.abs(reconciliation?.ledgerCheck?.totalCredits - reconciliation?.ledgerCheck?.walletSum) > 1000 ? 'border-red-200 bg-red-50' : 'border-green-200 bg-green-50'}`}>
-                                    <div>
-                                        <p className="text-[9px] font-black uppercase tracking-widest text-gray-500">Balance Drift</p>
-                                        <p className={`text-xl font-black ${Math.abs(reconciliation?.ledgerCheck?.totalCredits - reconciliation?.ledgerCheck?.walletSum) > 1000 ? 'text-red-500' : 'text-green-500'}`}>
-                                            {currency === 'NGN' ? '₦' : '$'}{(reconciliation?.ledgerCheck?.totalCredits - reconciliation?.ledgerCheck?.walletSum || 0).toLocaleString()}
-                                        </p>
+                            const ledgerDrift: any[] = reconciliation?.ledgerDrift || [];
+                            const pendingProjections: any[] = reconciliation?.pendingProjections || [];
+                            const totalExpected = ledgerDrift.reduce((sum, e) => sum + (e.expected || 0), 0);
+                            const totalActual = ledgerDrift.reduce((sum, e) => sum + (e.actual || 0), 0);
+                            const totalLedgerVariance = ledgerDrift.reduce((sum, e) => sum + (e.variance || 0), 0);
+
+                            return (
+                                <>
+                                    <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-100 dark:border-white/5 shadow-sm">
+                                        <div className="flex items-center justify-between mb-6">
+                                            <h3 className="text-lg font-black text-gray-900 dark:text-white">Settlement Integrity</h3>
+                                            <span className="text-[9px] font-black text-blue-500 uppercase tracking-widest bg-blue-50 px-2 py-1 rounded-md">V2 Safe Settlement</span>
+                                        </div>
+                                        <div className="space-y-3">
+                                            <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-black/20 rounded-xl">
+                                                <span className="text-[11px] font-bold text-gray-500">Platform Totals ({escrowEntries.length} stores)</span>
+                                                <span className="font-black text-gray-900 dark:text-white text-sm">₦{(totalPricing / 100).toLocaleString()}</span>
+                                            </div>
+                                            <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-black/20 rounded-xl">
+                                                <span className="text-[11px] font-bold text-gray-500">Held in Vault</span>
+                                                <span className="font-black text-gray-900 dark:text-white text-sm">₦{(totalEscrow / 100).toLocaleString()}</span>
+                                            </div>
+                                            <div className={`flex justify-between items-center p-4 rounded-xl border ${Math.abs(escrowVariance) > 1000 ? 'border-red-200 bg-red-50' : 'border-green-200 bg-green-50'}`}>
+                                                <div>
+                                                    <p className="text-[9px] font-black uppercase tracking-widest text-gray-500">Variance</p>
+                                                    <p className={`text-xl font-black ${Math.abs(escrowVariance) > 1000 ? 'text-red-500' : 'text-green-500'}`}>
+                                                        ₦{(escrowVariance / 100).toLocaleString()}
+                                                    </p>
+                                                </div>
+                                                {Math.abs(escrowVariance) > 1000 && (
+                                                    <FaExclamationTriangle className="text-red-500" size={20} />
+                                                )}
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
+
+                                    <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-100 dark:border-white/5 shadow-sm">
+                                        <div className="flex items-center justify-between mb-6">
+                                            <h3 className="text-lg font-black text-gray-900 dark:text-white">Ledger Consistency</h3>
+                                            <span className="text-[9px] font-black text-purple-500 uppercase tracking-widest bg-purple-50 px-2 py-1 rounded-md">{ledgerDrift.length} store{ledgerDrift.length === 1 ? '' : 's'} drifted</span>
+                                        </div>
+                                        <div className="space-y-3">
+                                            <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-black/20 rounded-xl">
+                                                <span className="text-[11px] font-bold text-gray-500">Expected (Canonical Ledger)</span>
+                                                <span className="font-black text-gray-900 dark:text-white text-sm">{currency === 'NGN' ? '₦' : '$'}{(totalExpected / 100).toLocaleString()}</span>
+                                            </div>
+                                            <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-black/20 rounded-xl">
+                                                <span className="text-[11px] font-bold text-gray-500">Actual (Store Balance)</span>
+                                                <span className="font-black text-gray-900 dark:text-white text-sm">{currency === 'NGN' ? '₦' : '$'}{(totalActual / 100).toLocaleString()}</span>
+                                            </div>
+                                            <div className={`flex justify-between items-center p-4 rounded-xl border ${Math.abs(totalLedgerVariance) > 1000 ? 'border-red-200 bg-red-50' : 'border-green-200 bg-green-50'}`}>
+                                                <div>
+                                                    <p className="text-[9px] font-black uppercase tracking-widest text-gray-500">Balance Drift</p>
+                                                    <p className={`text-xl font-black ${Math.abs(totalLedgerVariance) > 1000 ? 'text-red-500' : 'text-green-500'}`}>
+                                                        {currency === 'NGN' ? '₦' : '$'}{(totalLedgerVariance / 100).toLocaleString()}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            {pendingProjections.length > 0 && (
+                                                <p className="text-[10px] text-gray-400 font-medium pt-1">
+                                                    {pendingProjections.length} more store{pendingProjections.length === 1 ? '' : 's'} showing expected replication lag (~60s), not counted as drift.
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                </>
+                            );
+                        })()}
                     </div>
                 </div>
 
