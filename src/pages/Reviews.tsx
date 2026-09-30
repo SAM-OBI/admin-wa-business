@@ -1,10 +1,12 @@
 import { useEffect, useState, useCallback } from 'react';
 import { adminService, Review } from '../api/admin.service';
 import { FiStar } from 'react-icons/fi';
+import { ErrorState } from '../components/ErrorState';
 
 export default function Reviews() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState(''); // 'responded' or 'pending'
   const [pagination, setPagination] = useState({
     page: 1,
@@ -17,6 +19,7 @@ export default function Reviews() {
 
   const fetchReviews = useCallback(async (page = 1) => {
     setLoading(true);
+    setError(null);
     try {
       const params: any = {
         page,
@@ -34,8 +37,9 @@ export default function Reviews() {
       } else {
          setReviews([]);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to fetch reviews:', error);
+      setError(error.response?.data?.message || 'We couldn\'t load reviews right now.');
     } finally {
       setLoading(false);
     }
@@ -45,11 +49,11 @@ export default function Reviews() {
     fetchReviews(1);
   }, [fetchReviews]);
 
-  /* const handlePageChange = (newPage: number) => {
+  const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= pagination.pages) {
       fetchReviews(newPage);
     }
-  }; */
+  };
 
   const renderStars = (rating: number) => {
     return [...Array(5)].map((_, i) => (
@@ -102,6 +106,11 @@ export default function Reviews() {
         </div>
       </div>
 
+      {error && (
+        <ErrorState message={error} onRetry={() => fetchReviews(pagination.page)} />
+      )}
+
+      {!error && (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {reviews.map((review) => (
           <div key={review._id} className="bg-sv-surface rounded-xl shadow-sm border border-sv-border p-6 flex flex-col">
@@ -130,6 +139,29 @@ export default function Reviews() {
           </div>
         )}
       </div>
+      )}
+
+      {!error && pagination.pages > 1 && (
+        <div className="mt-6 flex items-center justify-center gap-4">
+          <button
+            onClick={() => handlePageChange(pagination.page - 1)}
+            disabled={pagination.page <= 1}
+            className="px-4 py-2 border border-sv-border rounded-lg text-sm font-medium text-sv-text-primary disabled:opacity-40 disabled:cursor-not-allowed hover:bg-sv-surface-muted transition-all"
+          >
+            Previous
+          </button>
+          <span className="text-sm font-medium text-sv-text-secondary">
+            Page {pagination.page} of {pagination.pages}
+          </span>
+          <button
+            onClick={() => handlePageChange(pagination.page + 1)}
+            disabled={pagination.page >= pagination.pages}
+            className="px-4 py-2 border border-sv-border rounded-lg text-sm font-medium text-sv-text-primary disabled:opacity-40 disabled:cursor-not-allowed hover:bg-sv-surface-muted transition-all"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 }

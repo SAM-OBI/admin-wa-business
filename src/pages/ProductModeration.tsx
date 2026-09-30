@@ -361,6 +361,17 @@ export default function ProductModeration() {
                   </td>
                 </tr>
               ))}
+
+              {products.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="px-6 py-16 text-center">
+                    <div className="flex flex-col items-center gap-3">
+                      <FiPackage className="text-sv-text-muted w-10 h-10" />
+                      <p className="text-sv-text-secondary text-sm font-medium">No products found matching these filters.</p>
+                    </div>
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

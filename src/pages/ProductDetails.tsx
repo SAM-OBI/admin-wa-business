@@ -1,23 +1,27 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { adminService, ProductDetails as ProductDetailsType } from '../api/admin.service';
-import { 
+import {
   FiArrowLeft, FiShoppingCart, FiDollarSign, FiStar, FiPackage,
   FiCheckCircle, FiXCircle, FiUser, FiMail, FiPhone
 } from 'react-icons/fi';
+import { ErrorState } from '../components/ErrorState';
 
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<ProductDetailsType | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchProductDetails = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const response = await adminService.getProductById(id!);
       setProduct(response.data);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to fetch product details:', error);
+      setError(error.response?.data?.message || 'We couldn\'t load this product right now.');
     } finally {
       setLoading(false);
     }
@@ -37,12 +41,20 @@ export default function ProductDetails() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="p-6">
+        <ErrorState message={error} onRetry={fetchProductDetails} />
+      </div>
+    );
+  }
+
   if (!product) {
     return (
       <div className="p-6">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-sv-text-primary">Product not found</h2>
-          <Link to="/products" className="text-blue-600 hover:underline mt-4 inline-block">
+          <Link to="/dashboard/products" className="text-blue-600 hover:underline mt-4 inline-block">
             Back to Products
           </Link>
         </div>
@@ -60,8 +72,8 @@ export default function ProductDetails() {
     <div className="p-6">
       {/* Header */}
       <div className="mb-6">
-        <Link 
-          to="/products" 
+        <Link
+          to="/dashboard/products"
           className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-4"
         >
           <FiArrowLeft className="mr-2" />
@@ -237,7 +249,7 @@ export default function ProductDetails() {
                   <div>
                     <p className="text-sm text-gray-500">Vendor Name</p>
                     <Link 
-                      to={`/vendors/${product.vendor._id}`}
+                      to={`/dashboard/vendors/${product.vendor._id}`}
                       className="font-medium text-blue-600 hover:text-blue-800"
                     >
                       {product.vendor.name}

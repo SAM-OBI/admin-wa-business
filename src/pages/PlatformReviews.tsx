@@ -23,8 +23,17 @@ export default function PlatformReviews() {
                 setHasMore(response.data.pagination.hasMore);
                 setCursor(response.data.pagination.nextCursor);
             }
-        } catch {
-            console.error('Failed to fetch platform reviews');
+        } catch (error: any) {
+            console.error('Failed to fetch platform reviews', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Could not load reviews',
+                text: error.response?.data?.message || 'Please try again.',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 4000
+            });
         } finally {
             setLoading(false);
         }

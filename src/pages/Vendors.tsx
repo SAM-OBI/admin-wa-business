@@ -5,6 +5,7 @@ import { HardenedSearchInput } from '../components/search/HardenedSearchInput';
 import { ErrorState } from '../components/ErrorState';
 import { logger } from '../utils/logger';
 import { Link } from 'react-router-dom';
+import { showError } from '../utils/swal';
 
 export default function Vendors() {
   const [vendors, setVendors] = useState<Vendor[]>([]);
@@ -14,6 +15,7 @@ export default function Vendors() {
   // "there are genuinely zero vendors," for an admin moderation tool.
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [togglingVendorId, setTogglingVendorId] = useState<string | null>(null);
 
   const [filters, setFilters] = useState({
     status: '',
@@ -68,21 +70,33 @@ export default function Vendors() {
   };
 
   const handleToggleStatus = async (vendor: Vendor) => {
-    try {
-      if (vendor.isActive) {
-        const reason = prompt('Enter reason for suspension:');
-        if (!reason) return;
+    if (togglingVendorId) return;
+    if (vendor.isActive) {
+      const reason = prompt('Enter reason for suspension:');
+      if (!reason) return;
+      setTogglingVendorId(vendor._id);
+      try {
         await adminService.suspendVendor(vendor._id, reason);
-      } else {
-        await adminService.activateVendor(vendor._id);
+        setVendors(vendors.map(v => v._id === vendor._id ? { ...v, isActive: false } : v));
+      } catch (error: any) {
+        logger.error('Failed to suspend vendor:', error);
+        showError(error.response?.data?.message || 'Failed to suspend vendor');
+        fetchVendors();
+      } finally {
+        setTogglingVendorId(null);
       }
-      // Optimistic update
-      setVendors(vendors.map(v => 
-        v._id === vendor._id ? { ...v, isActive: !v.isActive } : v
-      ));
-    } catch (error) {
-      logger.error('Failed to update vendor status:', error);
-      fetchVendors();
+    } else {
+      setTogglingVendorId(vendor._id);
+      try {
+        await adminService.activateVendor(vendor._id);
+        setVendors(vendors.map(v => v._id === vendor._id ? { ...v, isActive: true } : v));
+      } catch (error: any) {
+        logger.error('Failed to activate vendor:', error);
+        showError(error.response?.data?.message || 'Failed to activate vendor');
+        fetchVendors();
+      } finally {
+        setTogglingVendorId(null);
+      }
     }
   };
 
@@ -294,13 +308,14 @@ export default function Vendors() {
                       </Link>
                       <button
                         onClick={() => handleToggleStatus(vendor)}
-                        className={`text-[10px] font-black uppercase px-3 py-1.5 rounded-lg transition-all border ${
+                        disabled={togglingVendorId === vendor._id}
+                        className={`text-[10px] font-black uppercase px-3 py-1.5 rounded-lg transition-all border disabled:opacity-50 disabled:cursor-not-allowed ${
                           vendor.isActive
                             ? 'text-red-500 border-red-500/20 hover:bg-red-500/10'
                             : 'text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/10'
                         }`}
                       >
-                        {vendor.isActive ? 'TERMINATE_SESSION' : 'REVIVE_ACCESS'}
+                        {togglingVendorId === vendor._id ? '...' : (vendor.isActive ? 'TERMINATE_SESSION' : 'REVIVE_ACCESS')}
                       </button>
                     </div>
                   </td>

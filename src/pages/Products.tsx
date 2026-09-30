@@ -3,10 +3,12 @@ import { adminService, Product } from '../api/admin.service';
 import { FiPackage, FiEye, FiEyeOff } from 'react-icons/fi';
 import { HardenedSearchInput } from '../components/search/HardenedSearchInput';
 import { Link } from 'react-router-dom';
+import { ErrorState } from '../components/ErrorState';
 
 export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [pagination, setPagination] = useState({
     page: 1,
@@ -21,6 +23,7 @@ export default function Products() {
 
   const fetchProducts = useCallback(async (page = 1) => {
     setLoading(true);
+    setError(null);
     try {
       console.log('Fetching products with filters:', { search: searchTerm, status: filters.status, page, limit: pagination.limit });
       const data = await adminService.getProducts<any>({
@@ -43,8 +46,9 @@ export default function Products() {
          console.warn('Unexpected products data structure:', data);
          setProducts([]);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to fetch products:', error);
+      setError(error.response?.data?.message || 'We couldn\'t load products right now.');
     } finally {
       setLoading(false);
     }
@@ -215,9 +219,17 @@ export default function Products() {
                 </tr>
               ))}
               
-              {filteredProducts.length === 0 && (
+              {error && (
                 <tr>
-                  <td colSpan={6} className="px-8 py-24 text-center">
+                  <td colSpan={7} className="px-8 py-24">
+                    <ErrorState message={error} onRetry={() => fetchProducts(pagination.page)} />
+                  </td>
+                </tr>
+              )}
+
+              {!error && filteredProducts.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="px-8 py-24 text-center">
                     <div className="flex flex-col items-center gap-4">
                       <FiPackage className="text-zinc-800 w-12 h-12" />
                       <p className="text-zinc-600 text-[10px] font-black uppercase tracking-[0.3em] italic">No active SKUs detected in registry.</p>

@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { adminService } from '../api/admin.service';
 import { FiTag, FiSearch } from 'react-icons/fi';
+import { ErrorState } from '../components/ErrorState';
 
 interface DiscountCode {
   _id: string;
@@ -17,6 +18,7 @@ interface DiscountCode {
 export default function Marketing() {
   const [codes, setCodes] = useState<DiscountCode[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [pagination, setPagination] = useState({
     page: 1,
@@ -27,6 +29,7 @@ export default function Marketing() {
 
   const fetchCodes = useCallback(async (page = 1) => {
     setLoading(true);
+    setError(null);
     try {
       const data = await adminService.getMarketingDiscountCodes({
         page,
@@ -39,8 +42,9 @@ export default function Marketing() {
       } else {
          setCodes([]);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to fetch discount codes:', error);
+      setError(error.response?.data?.message || 'We couldn\'t load discount codes right now.');
     } finally {
       setLoading(false);
     }
@@ -137,7 +141,15 @@ export default function Marketing() {
                 </tr>
               ))}
 
-              {codes.length === 0 && (
+              {error && (
+                <tr>
+                  <td colSpan={6} className="px-6 py-12">
+                    <ErrorState message={error} onRetry={() => fetchCodes(pagination.page)} />
+                  </td>
+                </tr>
+              )}
+
+              {!error && codes.length === 0 && (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-sv-text-secondary">
                     No discount codes found.

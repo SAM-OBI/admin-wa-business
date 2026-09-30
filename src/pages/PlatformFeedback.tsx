@@ -27,8 +27,17 @@ export default function PlatformFeedback() {
                 setFeedbacks(response.data.feedbacks);
                 setTotalPages(response.data.pagination.pages);
             }
-        } catch {
-            console.error('Failed to fetch feedback details');
+        } catch (error: any) {
+            console.error('Failed to fetch feedback details', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Could not load feedback',
+                text: error.response?.data?.message || 'Please try again.',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 4000
+            });
         } finally {
             setLoading(false);
         }

@@ -48,8 +48,9 @@ export default function AdsModeration() {
         setAds(isInitial ? resp.data.ads : prev => [...prev, ...resp.data.ads]);
         setCursor(resp.data.nextCursor);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to fetch ads:', error);
+      alert(error.response?.data?.message || 'Could not load ad campaigns. Please try again.');
     } finally {
       setLoading(false);
     }

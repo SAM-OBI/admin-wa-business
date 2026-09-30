@@ -24,6 +24,8 @@ export default function BlogModeration() {
   const [showModModal, setShowModModal] = useState(false);
   const [modReason, setModReason] = useState('');
   const [newStatus, setNewStatus] = useState('');
+  const [moderating, setModerating] = useState(false);
+  const [featuringId, setFeaturingId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchData();
@@ -49,7 +51,9 @@ export default function BlogModeration() {
 
   const handleModerate = async () => {
     if (!modReason) return toast.error('Moderation reason is required');
-    
+    if (moderating) return;
+
+    setModerating(true);
     try {
       await adminService.moderateBlog(selectedItem._id, {
         status: newStatus || selectedItem.status,
@@ -61,10 +65,14 @@ export default function BlogModeration() {
       fetchData();
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Moderation failed');
+    } finally {
+      setModerating(false);
     }
   };
 
   const handleFeature = async (blog: any) => {
+    if (featuringId) return;
+    setFeaturingId(blog._id);
     try {
       await adminService.moderateBlog(blog._id, {
         isFeatured: !blog.isFeatured,
@@ -74,6 +82,8 @@ export default function BlogModeration() {
       fetchData();
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Action failed');
+    } finally {
+      setFeaturingId(null);
     }
   };
 
@@ -243,9 +253,10 @@ export default function BlogModeration() {
                       </td>
                       <td className="px-6 py-5 text-right">
                         <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button 
+                          <button
                             onClick={() => handleFeature(blog)}
-                            className={`p-2 rounded-lg border transition-all ${blog.isFeatured ? 'bg-yellow-500/20 border-yellow-500 text-yellow-500' : 'bg-black border-zinc-800 hover:border-zinc-500 text-zinc-500'}`}
+                            disabled={!!featuringId}
+                            className={`p-2 rounded-lg border transition-all disabled:opacity-50 disabled:cursor-not-allowed ${blog.isFeatured ? 'bg-yellow-500/20 border-yellow-500 text-yellow-500' : 'bg-black border-zinc-800 hover:border-zinc-500 text-zinc-500'}`}
                             title={blog.isFeatured ? "Unfeature" : "Feature"}
                           >
                             <FiStar size={14} />
@@ -262,7 +273,7 @@ export default function BlogModeration() {
                             <FiXCircle size={14} />
                           </button>
                           <a 
-                            href={`https://shopvia.com/blog/${blog.slug}`} 
+                            href={`${import.meta.env.VITE_STOREFRONT_URL || 'https://shopvia.ng'}/blog/${blog.slug}`}
                             target="_blank" 
                             rel="noopener noreferrer"
                             className="p-2 bg-black border border-zinc-800 rounded-lg hover:border-white hover:text-white text-zinc-500 transition-all"
@@ -397,11 +408,12 @@ export default function BlogModeration() {
                   >
                     Cancel
                   </button>
-                  <button 
+                  <button
                     onClick={handleModerate}
-                    className="flex-1 py-4 bg-sv-danger text-sv-text-inverse text-[10px] font-black uppercase tracking-widest rounded-xl hover:scale-105 active:scale-95 transition-all"
+                    disabled={moderating}
+                    className="flex-1 py-4 bg-sv-danger text-sv-text-inverse text-[10px] font-black uppercase tracking-widest rounded-xl hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Confirm Action
+                    {moderating ? 'Processing...' : 'Confirm Action'}
                   </button>
                 </div>
               </div>

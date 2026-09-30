@@ -59,25 +59,46 @@ const AdminPromoHub: React.FC = () => {
         const controller = new AbortController();
         setLoading(true);
         try {
-            const [codesRes, flashRes, refRes] = await Promise.all([
-                api.get('/admin/marketing/discount-codes', { signal: controller.signal }).catch(() => ({ data: { success: false }})),
-                api.get('/admin/marketing/flash-sales', { signal: controller.signal }).catch(() => ({ data: { success: false }})),
-                api.get('/referrals', { signal: controller.signal }).catch(() => ({ data: { success: false }}))
+            // 🛡️ [FIX] Each request used to carry its own .catch(() => ({data:
+            // {success:false}})), which swallowed the real error before it
+            // ever reached error handling - a failed request just silently
+            // left that tab's state as whatever it was (empty on first
+            // load), with zero error signal anywhere. Promise.allSettled
+            // keeps the three tabs independent (one endpoint failing doesn't
+            // block the other two from loading) while surfacing exactly
+            // which one(s) failed via a real toast instead of a swallowed
+            // error.
+            const [codesRes, flashRes, refRes] = await Promise.allSettled([
+                api.get('/admin/marketing/discount-codes', { signal: controller.signal }),
+                api.get('/admin/marketing/flash-sales', { signal: controller.signal }),
+                api.get('/referrals', { signal: controller.signal })
             ]);
-            
-            if (codesRes.data.success) {
-                setDiscountCodes(codesRes.data.data.data); // data.data.data due to pagination wrapper
+
+            const failedLabels: string[] = [];
+
+            if (codesRes.status === 'fulfilled') {
+                if (codesRes.value.data.success) setDiscountCodes(codesRes.value.data.data.data); // data.data.data due to pagination wrapper
+            } else if ((codesRes.reason as any)?.name !== 'CanceledError') {
+                logger.error('Failed to fetch discount codes:', codesRes.reason);
+                failedLabels.push('discount codes');
             }
-            if (flashRes.data.success) {
-                setFlashSales(flashRes.data.data.data);
+
+            if (flashRes.status === 'fulfilled') {
+                if (flashRes.value.data.success) setFlashSales(flashRes.value.data.data.data);
+            } else if ((flashRes.reason as any)?.name !== 'CanceledError') {
+                logger.error('Failed to fetch flash sales:', flashRes.reason);
+                failedLabels.push('flash sales');
             }
-            if (refRes.data.success) {
-                setReferrals(refRes.data.data);
+
+            if (refRes.status === 'fulfilled') {
+                if (refRes.value.data.success) setReferrals(refRes.value.data.data);
+            } else if ((refRes.reason as any)?.name !== 'CanceledError') {
+                logger.error('Failed to fetch referrals:', refRes.reason);
+                failedLabels.push('referrals');
             }
-        } catch (error: any) {
-            if (error.name !== 'CanceledError') {
-                logger.error('Failed to fetch promo hub data:', error);
-                toast.error('Failed to load marketing oversight data');
+
+            if (failedLabels.length > 0) {
+                toast.error(`Failed to load ${failedLabels.join(', ')}. Please try again.`);
             }
         } finally {
             setLoading(false);
@@ -153,9 +174,13 @@ const AdminPromoHub: React.FC = () => {
 
                 if (res.data.success) {
                     toast.success('Promotion status updated');
-                    // Optimistic update or refetch
-                    // Refetching is safer for audit sync
-                    window.location.reload(); 
+                    // 🛡️ [FIX] window.location.reload() wiped all React state
+                    // including activeTab - toggling anything on Flash Sales
+                    // or Store Referrals kicked the admin back to the default
+                    // Discount Codes tab after every single toggle. fetchData
+                    // already exists for exactly this refetch-for-audit-sync
+                    // purpose, without the full page reload.
+                    fetchData();
                 }
             } catch (error: any) {
                 toast.error(error?.normalized?.message || 'Toggle failed');
