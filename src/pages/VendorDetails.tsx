@@ -2,10 +2,12 @@ import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { adminService, VendorDetails as VendorDetailsType } from '../api/admin.service';
 import AdminSecurityChallengeModal from '../components/AdminSecurityChallengeModal';
-import { 
-  FiArrowLeft, FiShield, FiPackage, FiShoppingCart, FiDollarSign, 
+import { ErrorState } from '../components/ErrorState';
+import {
+  FiArrowLeft, FiShield, FiPackage, FiShoppingCart, FiDollarSign,
   FiCheckCircle, FiXCircle, FiUser, FiMail, FiPhone,
-  FiCalendar, FiAlertTriangle, FiExternalLink, FiFileText, FiClock
+  FiCalendar, FiAlertTriangle, FiExternalLink, FiFileText, FiClock,
+  FiBookOpen
 } from 'react-icons/fi';
 
 export default function VendorDetails() {
@@ -15,6 +17,9 @@ export default function VendorDetails() {
   const [showId, setShowId] = useState(false);
   const [trustHistory, setTrustHistory] = useState<any[]>([]);
   const [trustLoading, setTrustLoading] = useState(false);
+  const [revenueLedger, setRevenueLedger] = useState<any[]>([]);
+  const [revenueLoading, setRevenueLoading] = useState(false);
+  const [revenueError, setRevenueError] = useState<string | null>(null);
   // 🛡️ Shared double-submit guard for suspend/activate/revoke/cacReview/
   // impersonate — these are mutually exclusive, modal/prompt-driven admin
   // actions, so one shared flag (rather than one per handler) is enough to
@@ -52,12 +57,27 @@ export default function VendorDetails() {
     }
   }, [id]);
 
+  const fetchRevenueLedger = useCallback(async () => {
+    setRevenueLoading(true);
+    setRevenueError(null);
+    try {
+      const response = await adminService.getVendorRevenueLedger(id!, { limit: 10 });
+      setRevenueLedger(response.data?.invoices || []);
+    } catch (error: any) {
+      console.error('Failed to fetch revenue ledger:', error);
+      setRevenueError(error.response?.data?.message || 'Could not load the revenue ledger.');
+    } finally {
+      setRevenueLoading(false);
+    }
+  }, [id]);
+
   useEffect(() => {
     if (id) {
       fetchVendorDetails();
       fetchTrustHistory();
+      fetchRevenueLedger();
     }
-  }, [id, fetchVendorDetails, fetchTrustHistory]);
+  }, [id, fetchVendorDetails, fetchTrustHistory, fetchRevenueLedger]);
 
   const handleTrustOverride = async () => {
     const newScoreStr = prompt('Enter new trust score (0-100):');
@@ -753,6 +773,43 @@ export default function VendorDetails() {
                 <div className="text-center py-4 text-zinc-600 text-[10px] font-black uppercase italic">No reputation shifts detected.</div>
               )}
             </div>
+          </div>
+
+          {/* 🛡️ [AR-REVENUE-MIRROR-1] First real UI surface for the AR
+              engine's actual data - one CustomerInvoice per order whose
+              escrow was released to this vendor. */}
+          <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-lg font-black text-white uppercase tracking-widest flex items-center gap-2">
+                <FiBookOpen className="text-emerald-500" size={16} /> Revenue Ledger
+              </h2>
+              <span className="text-[9px] font-black uppercase text-zinc-600 tracking-widest">Most Recent 10</span>
+            </div>
+
+            {revenueLoading ? (
+              <div className="text-center py-4 text-zinc-500 text-[10px] font-black uppercase italic">Loading ledger...</div>
+            ) : revenueError ? (
+              <ErrorState message={revenueError} onRetry={fetchRevenueLedger} className="py-4" />
+            ) : revenueLedger.length === 0 ? (
+              <div className="text-center py-6 text-zinc-600 text-[10px] font-black uppercase italic">
+                No settled revenue recorded yet for this vendor.
+              </div>
+            ) : (
+              <div className="space-y-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+                {revenueLedger.map((invoice: any) => (
+                  <div key={invoice._id} className="p-3 bg-zinc-800/30 border border-white/5 rounded-xl flex justify-between items-center">
+                    <div>
+                      <span className="text-[10px] font-black text-white uppercase tracking-tight block">{invoice.invoiceNumber}</span>
+                      <span className="text-[9px] font-bold text-zinc-600 uppercase">{new Date(invoice.invoiceDate).toLocaleDateString()}</span>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-sm font-black text-emerald-500">₦{(invoice.totalAmount / 100).toLocaleString()}</span>
+                      <span className="text-[9px] font-black text-zinc-500 uppercase block">{invoice.status}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
 

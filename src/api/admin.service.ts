@@ -291,6 +291,11 @@ export const adminService = {
     return response.data;
   },
 
+  getVendorRevenueLedger: async (id: string, params?: { page?: number; limit?: number }): Promise<ApiResponse<any>> => {
+    const response = await api.get(`/admin/vendors/${id}/revenue-ledger`, { params });
+    return response.data;
+  },
+
   overrideVendorTrust: async (id: string, data: { newScore: number; reason: string; justification: string }): Promise<ApiResponse<any>> => {
     const response = await api.patch(`/admin/trust/vendors/${id}/override`, data);
     return response.data;
