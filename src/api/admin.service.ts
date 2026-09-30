@@ -217,11 +217,11 @@ export const adminService = {
     return response.data;
   },
 
-  // Note: the real endpoint also requires the account password (`{ token, password }`);
-  // this call passes only the TOTP code, so disabling 2FA will still fail validation
-  // until the Settings form collects a password field too — path is now at least correct.
-  disable2FA: async (password: string): Promise<ApiResponse<any>> => {
-    const response = await api.post('/auth/2fa/disable', { password });
+  // Backend requires both the 6-digit TOTP code and the account password
+  // (twoFactorDisableSchema, auth.validation.ts — .strict(), so sending
+  // only one of the two 400s before the controller ever runs).
+  disable2FA: async (token: string, password: string): Promise<ApiResponse<any>> => {
+    const response = await api.post('/auth/2fa/disable', { token, password });
     return response.data;
   },
 

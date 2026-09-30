@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../store/authStore';
 import { showError, showSuccess, showToast } from '../utils/swal';
@@ -33,7 +33,12 @@ export default function VerifyChallengeModal({
     const [error, setError] = useState('');
     const [attemptsLeft, setAttemptsLeft] = useState<number | null>(null);
     const [resendSeconds, setResendSeconds] = useState(60);
-    const isSubmitting = (window as any).isSubmittingRef || { current: false }; 
+    // 🛡️ [FIX] Was `(window as any).isSubmittingRef || { current: false }` —
+    // window.isSubmittingRef is never assigned anywhere in this codebase, so
+    // this recreated a fresh, disconnected {current:false} object on every
+    // render; `isSubmitting.current = true` below had no effect across
+    // re-renders/clicks. A real useRef persists across renders as intended.
+    const isSubmitting = useRef(false);
     
     const { verifyChallenge, resendChallenge } = useAuthStore();
 

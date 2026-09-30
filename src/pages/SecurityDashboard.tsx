@@ -47,6 +47,7 @@ export default function SecurityDashboard() {
   const [governanceData, setGovernanceData] = useState<{ decisions: any[], invites: any[] }>({ decisions: [], invites: [] });
   const [govMode, setGovMode] = useState<'NORMAL' | 'ELEVATED_THREAT' | 'LOCKDOWN_FINANCE' | 'LOCKDOWN_ADMIN' | 'FULL_CONTAINMENT' | 'RECOVERY'>('NORMAL');
   const [generatedToken, setGeneratedToken] = useState<string | null>(null);
+  const [revokingInviteId, setRevokingInviteId] = useState<string | null>(null);
 
   const fetchData = async () => {
     try {
@@ -89,6 +90,7 @@ export default function SecurityDashboard() {
       if (res.data?.logs) setAuditLogs(res.data.logs);
     } catch (error) {
       console.error('Audit trail fetch failed:', error);
+      showError('Could not load the institutional audit trail. It may be incomplete or stale.');
     }
   };
 
@@ -104,6 +106,7 @@ export default function SecurityDashboard() {
       });
     } catch (error) {
       console.error('Governance data fetch failed:', error);
+      showError('Could not load the governance ledger or admin invites. The list shown may be incomplete or stale.');
     }
   };
 
@@ -136,7 +139,39 @@ export default function SecurityDashboard() {
     }
   };
 
+  const handleRevokeInvite = async (invite: any) => {
+    const confirmed = window.confirm(`Revoke the pending invitation for ${invite.email}? This cannot be undone.`);
+    if (!confirmed) return;
+    if (revokingInviteId) return;
+    setRevokingInviteId(invite._id);
+    try {
+      await adminService.revokeAdminInvite(invite._id);
+      showSuccess('Invitation revoked', `${invite.email} can no longer use this invite to establish identity.`);
+      fetchGovernanceData();
+    } catch (error: any) {
+      showError(error.response?.data?.message || 'Failed to revoke invitation.');
+    } finally {
+      setRevokingInviteId(null);
+    }
+  };
+
   const transitionGovernance = async (newMode: typeof govMode) => {
+    // 🛡️ [FIX] FULL_CONTAINMENT/RECOVERY require quorumApproval.length >= 2
+    // on the backend (securityAlerts.service.ts) — but that check only
+    // counts array entries, it never verifies they're real, distinct,
+    // independently-authenticated admin identities. This UI was sending a
+    // hardcoded ['admin_current', 'admin_secondary_verified'] literal on
+    // every transition, so a single admin session could trigger platform-
+    // wide containment/recovery while the UI implied genuine dual-admin
+    // sign-off had occurred. No real second-admin approval flow exists yet
+    // (no pending-request/approve mechanism for governance mode, unlike the
+    // real one that exists for MultiSigRequest) — until one is built, block
+    // this here rather than fabricate the quorum and pretend it's real.
+    if (newMode === 'FULL_CONTAINMENT' || newMode === 'RECOVERY') {
+      showError('Dual-admin quorum approval for this transition is not yet implemented on the backend. This mode change is blocked until a real second-admin approval flow exists.', 'Quorum Enforcement Unavailable');
+      return;
+    }
+
     const { isConfirmed } = await (window as any).Swal.fire({
       title: 'Institutional Governance Step-Up',
       text: `Are you sure you want to transition to ${newMode}? This will affect platform availability and trust boundaries.`,
@@ -161,12 +196,10 @@ export default function SecurityDashboard() {
       if (reason) {
         showLoading(`Initiating ${newMode}...`);
         try {
-          // Simulation of Quorum (Phase 1 simplistic)
-          const quorumApproval = (newMode === 'FULL_CONTAINMENT' || newMode === 'RECOVERY') 
-            ? ['admin_current', 'admin_secondary_verified'] 
-            : undefined;
-
-          await adminService.setGovernanceMode({ mode: newMode, reason, quorumApproval });
+          // FULL_CONTAINMENT/RECOVERY are blocked above before reaching
+          // here, so quorumApproval is never sent for any mode this can
+          // actually reach.
+          await adminService.setGovernanceMode({ mode: newMode, reason });
           setGovMode(newMode);
           showSuccess(`Platform transitioned to ${newMode}`, 'Sovereign Governance Updated');
           fetchData();
@@ -323,7 +356,7 @@ export default function SecurityDashboard() {
               {activeTab === 'alerts' ? (
                 <table className="w-full">
                   <thead className="bg-sv-surface-muted text-[10px] font-black uppercase text-sv-text-muted">
-                    <tr><th className="px-6 py-4 text-left">Level</th><th className="px-6 py-4 text-left">Event</th><th className="px-6 py-4 text-left">Entity</th><th className="px-6 py-4 text-left">Time</th><th className="px-6 py-4 text-left">Action</th></tr>
+                    <tr><th className="px-6 py-4 text-left">Level</th><th className="px-6 py-4 text-left">Event</th><th className="px-6 py-4 text-left">Entity</th><th className="px-6 py-4 text-left">Time</th></tr>
                   </thead>
                   <tbody className="divide-y divide-sv-border">
                     {stats?.recentAlerts.map((alert) => (
@@ -332,7 +365,6 @@ export default function SecurityDashboard() {
                         <td className="px-6 py-4"><p className="text-sm font-bold text-sv-text-primary">{alert.type}</p><p className="text-xs text-sv-text-secondary">{alert.message}</p></td>
                         <td className="px-6 py-4 text-xs">{alert.userId ? <div><p className="font-bold">{alert.userId.name}</p><p className="text-sv-text-muted">{alert.userId.email}</p></div> : 'System'}</td>
                         <td className="px-6 py-4 text-xs">{new Date(alert.createdAt).toLocaleString()}</td>
-                        <td className="px-6 py-4"><button className="text-primary text-xs font-bold">Investigate</button></td>
                       </tr>
                     ))}
                   </tbody>
@@ -401,7 +433,17 @@ export default function SecurityDashboard() {
                           <td className="px-6 py-4"><span className={`text-[9px] font-black px-2 py-1 rounded ${invite.status === 'PENDING' ? 'bg-yellow-500' : 'bg-green-500'} text-white`}>{invite.status}</span></td>
                           <td className="px-6 py-4 text-xs font-bold">{invite.email}</td>
                           <td className="px-6 py-4 text-xs">{new Date(invite.expiresAt).toLocaleString()}</td>
-                          <td className="px-6 py-4"><button className="text-red-600 text-[10px] font-black uppercase">Revoke</button></td>
+                          <td className="px-6 py-4">
+                            {invite.status === 'PENDING' && (
+                              <button
+                                onClick={() => handleRevokeInvite(invite)}
+                                disabled={revokingInviteId === invite._id}
+                                className="text-red-600 text-[10px] font-black uppercase disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                {revokingInviteId === invite._id ? 'Revoking...' : 'Revoke'}
+                              </button>
+                            )}
+                          </td>
                         </tr>
                       ))}
                     </tbody>

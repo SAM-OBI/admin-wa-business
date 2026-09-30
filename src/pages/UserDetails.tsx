@@ -12,6 +12,9 @@ export default function UserDetails() {
   const { id } = useParams<{ id: string }>();
   const [user, setUser] = useState<UserDetailsType | null>(null);
   const [loading, setLoading] = useState(true);
+  // 🛡️ Shared double-submit guard for unlock/legal-hold/impersonate — all
+  // mutually exclusive, modal-driven admin actions on this user.
+  const [actionPending, setActionPending] = useState(false);
 
   const fetchUserDetails = useCallback(async () => {
     setLoading(true);
@@ -27,30 +30,41 @@ export default function UserDetails() {
 
   const handleVerificationUpdate = async (type: 'bvn' | 'nin' | 'voters', status: boolean) => {
     if (!user) return;
+    if (actionPending) return;
+    setActionPending(true);
     try {
       const updateData = { [type]: status };
       const response = await adminService.updateUserVerification(user._id, updateData);
       setUser(prev => prev ? { ...prev, verification: response.data.verification } : null);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to update verification:', error);
+      Swal.fire('Error', error.response?.data?.message || 'Failed to update verification', 'error');
+    } finally {
+      setActionPending(false);
     }
   };
 
   const handleUnlock = async () => {
     if (!user) return;
+    if (actionPending) return;
     if (confirm('Are you sure you want to unlock this user? This will reset their verification attempts.')) {
+        setActionPending(true);
         try {
             const response = await adminService.updateUserVerification(user._id, { status: 'unverified' });
             setUser(prev => prev ? { ...prev, verification: response.data.verification } : null);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Failed to unlock user:', error);
+            Swal.fire('Error', error.response?.data?.message || 'Failed to unlock user', 'error');
+        } finally {
+            setActionPending(false);
         }
     }
   };
 
   const handleLegalHoldToggle = async () => {
     if (!user) return;
-    
+    if (actionPending) return;
+
     if ((user as any).legalHold) {
        const { value: justification } = await Swal.fire({
           title: 'Remove Legal Hold',
@@ -64,12 +78,15 @@ export default function UserDetails() {
        });
 
        if (justification) {
+          setActionPending(true);
           try {
              await adminService.removeLegalHold(user._id, justification);
              Swal.fire('Success', 'Legal hold removed.', 'success');
              fetchUserDetails();
-          } catch (err: any) { 
+          } catch (err: any) {
              Swal.fire('Error', err.response?.data?.message || 'Failed to remove legal hold', 'error');
+          } finally {
+             setActionPending(false);
           }
        }
     } else {
@@ -86,12 +103,15 @@ export default function UserDetails() {
        });
 
        if (reason) {
+          setActionPending(true);
           try {
              await adminService.setLegalHold(user._id, reason);
              Swal.fire('Success', 'Account placed under legal hold.', 'success');
              fetchUserDetails();
-          } catch (err: any) { 
+          } catch (err: any) {
              Swal.fire('Error', err.response?.data?.message || 'Failed to set legal hold', 'error');
+          } finally {
+             setActionPending(false);
           }
        }
     }
@@ -101,7 +121,8 @@ export default function UserDetails() {
 
   const handleImpersonate = async () => {
     if (!user) return;
-    
+    if (actionPending) return;
+
     const { value: reason } = await Swal.fire({
       title: 'Initialize Impersonation',
       text: 'You are about to securely access this account. This action is audited.',
@@ -115,19 +136,22 @@ export default function UserDetails() {
     });
 
     if (reason) {
+      setActionPending(true);
       try {
         const response = await adminService.impersonateUser(user._id, { reason });
         const { accessToken, user: impersonatedUser } = response.data;
-        
+
         // Build the target URL for the storefront
         const storefrontUrl = import.meta.env.VITE_STOREFRONT_URL || 'https://shopvia.ng';
         const targetUrl = `${storefrontUrl}/auth/impersonate?accessToken=${accessToken}&user=${encodeURIComponent(JSON.stringify(impersonatedUser))}`;
-        
+
         // Open in a new tab
         window.open(targetUrl, '_blank');
         Swal.fire('Session Initialized', 'Impersonation session opened in a new tab.', 'success');
       } catch (err: any) {
         Swal.fire('Security Error', err.response?.data?.message || 'Failed to initialize session', 'error');
+      } finally {
+        setActionPending(false);
       }
     }
   };
@@ -165,14 +189,14 @@ export default function UserDetails() {
     <div className="w-full max-w-7xl mx-auto">
       {/* Header */}
       <div className="mb-6">
-        <Link 
-          to="/users" 
+        <Link
+          to="/dashboard/users"
           className="inline-flex items-center text-zinc-400 hover:text-white mb-4 transition-colors"
         >
           <FiArrowLeft className="mr-2" />
           Back to Users
         </Link>
-        
+
         <div className="flex justify-between items-start">
           <div>
             <h1 className="text-3xl font-black text-white tracking-tight">{user.name}</h1>
@@ -181,7 +205,8 @@ export default function UserDetails() {
           <div className="flex gap-3">
             <button
                onClick={handleImpersonate}
-               className="px-4 py-2 bg-sv-primary text-sv-text-inverse rounded-lg hover:bg-sv-primary-hover transition-all flex items-center gap-2 text-sm font-bold"
+               disabled={actionPending}
+               className="px-4 py-2 bg-sv-primary text-sv-text-inverse rounded-lg hover:bg-sv-primary-hover transition-all flex items-center gap-2 text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed"
             >
                <FiShield /> Login As
             </button>
@@ -193,14 +218,16 @@ export default function UserDetails() {
             {user.verification?.status === 'locked' && (
                 <button
                   onClick={handleUnlock}
-                  className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition flex items-center gap-2 text-sm"
+                  disabled={actionPending}
+                  className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition flex items-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <FiUnlock /> Unlock Account
                 </button>
             )}
             <button
                onClick={handleLegalHoldToggle}
-               className={`px-4 py-2 rounded-lg transition-all flex items-center gap-2 text-sm font-bold border ${
+               disabled={actionPending}
+               className={`px-4 py-2 rounded-lg transition-all flex items-center gap-2 text-sm font-bold border disabled:opacity-50 disabled:cursor-not-allowed ${
                   (user as any).legalHold 
                   ? 'bg-zinc-800 text-white border-white/10 hover:bg-zinc-700' 
                   : 'bg-transparent text-red-500 border-red-500/20 hover:bg-red-500/10'

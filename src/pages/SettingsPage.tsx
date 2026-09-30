@@ -99,6 +99,7 @@ export default function SettingsPage() {
   const [totpCode, setTotpCode] = useState('');
   const [recoveryCodes, setRecoveryCodes] = useState<string[]>([]);
   const [showQuestionsModal, setShowQuestionsModal] = useState(false);
+  const [disablePassword, setDisablePassword] = useState('');
 
   const handleSetup2FA = async () => {
     setLoading(true);
@@ -141,20 +142,21 @@ export default function SettingsPage() {
   };
 
   const handleDisable2FA = async () => {
+    if (!disablePassword) {
+      setMessage({ type: 'error', text: 'Your account password is required to disable 2FA' });
+      return;
+    }
     setLoading(true);
     try {
-      // Backend disable needs password + code
-      // We can use a prompt for password like in vendor app,
-      // but let's see current code below.
-      // It currently only sends totpCode.
-      await adminService.disable2FA(totpCode);
+      await adminService.disable2FA(totpCode, disablePassword);
       setMessage({ type: 'success', text: 'Two-Factor Authentication Disabled' });
       setSetupStep('idle');
       setQrCode('');
       setTotpCode('');
+      setDisablePassword('');
       await checkAuth(); // Refresh user state
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.response?.data?.message || 'Invalid code' });
+      setMessage({ type: 'error', text: error.response?.data?.message || 'Invalid code or password' });
     } finally {
       setLoading(false);
     }
@@ -302,29 +304,38 @@ export default function SettingsPage() {
                      ) : (
                        <div className="bg-sv-surface-muted p-4 rounded-lg border border-sv-border">
                          <p className="text-sm font-medium text-sv-text-secondary mb-2">Confirm to Disable</p>
-                         <p className="text-xs text-sv-text-muted mb-3">Enter the code from your app to confirm disabling 2FA.</p>
-                         <div className="flex gap-2">
+                         <p className="text-xs text-sv-text-muted mb-3">Enter your account password and the code from your app to confirm disabling 2FA.</p>
+                         <div className="space-y-2">
                            <input
-                             type="text"
-                             placeholder="000 000"
-                             value={totpCode}
-                             onChange={(e) => setTotpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                             className="flex-1 px-3 py-2 border border-sv-border rounded-lg text-center tracking-widest font-mono"
-                             maxLength={6}
+                             type="password"
+                             placeholder="Account password"
+                             value={disablePassword}
+                             onChange={(e) => setDisablePassword(e.target.value)}
+                             className="w-full px-3 py-2 border border-sv-border rounded-lg"
                            />
-                           <button
-                             onClick={handleDisable2FA}
-                             disabled={loading || totpCode.length !== 6}
-                             className="px-4 py-2 bg-sv-danger text-sv-text-inverse rounded-lg hover:opacity-90 disabled:opacity-50 text-sm font-medium"
-                           >
-                             {loading ? '...' : 'Confirm'}
-                           </button>
-                           <button
-                             onClick={() => { setSetupStep('idle'); setTotpCode(''); }}
-                             className="px-3 py-2 text-sv-text-muted hover:text-sv-text-primary"
-                           >
-                             Cancel
-                           </button>
+                           <div className="flex gap-2">
+                             <input
+                               type="text"
+                               placeholder="000 000"
+                               value={totpCode}
+                               onChange={(e) => setTotpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                               className="flex-1 px-3 py-2 border border-sv-border rounded-lg text-center tracking-widest font-mono"
+                               maxLength={6}
+                             />
+                             <button
+                               onClick={handleDisable2FA}
+                               disabled={loading || totpCode.length !== 6 || !disablePassword}
+                               className="px-4 py-2 bg-sv-danger text-sv-text-inverse rounded-lg hover:opacity-90 disabled:opacity-50 text-sm font-medium"
+                             >
+                               {loading ? '...' : 'Confirm'}
+                             </button>
+                             <button
+                               onClick={() => { setSetupStep('idle'); setTotpCode(''); setDisablePassword(''); }}
+                               className="px-3 py-2 text-sv-text-muted hover:text-sv-text-primary"
+                             >
+                               Cancel
+                             </button>
+                           </div>
                          </div>
                        </div>
                      )}

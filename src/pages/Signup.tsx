@@ -235,7 +235,7 @@ export default function Signup() {
               <button
                 type="submit"
                 disabled={status === 'loading'}
-                className="w-full py-5 bg-sv-primary text-sv-text-inverse font-bold rounded-2x; hover:bg-sv-primary-hover transition-all active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-50"
+                className="w-full py-5 bg-sv-primary text-sv-text-inverse font-bold rounded-2xl hover:bg-sv-primary-hover transition-all active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-50"
               >
                 {status === 'loading' ? (
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>

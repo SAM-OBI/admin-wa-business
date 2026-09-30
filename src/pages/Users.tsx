@@ -5,9 +5,11 @@ import { HardenedSearchInput } from '../components/search/HardenedSearchInput';
 import { ErrorState } from '../components/ErrorState';
 import { logger } from '../utils/logger';
 import { Link } from 'react-router-dom';
+import { showError } from '../utils/swal';
 
 export default function Users() {
   const [users, setUsers] = useState<User[]>([]);
+  const [togglingUserId, setTogglingUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   // 🛡️ [ADR-005] Same fix as Vendors.tsx — a failed fetch used to be
   // indistinguishable from "genuinely zero users."
@@ -74,15 +76,23 @@ export default function Users() {
   };
 
   const handleToggleStatus = async (user: User) => {
+    if (togglingUserId) return;
+    const verb = user.isActive ? 'suspend' : 'revive';
+    if (!window.confirm(`Are you sure you want to ${verb} ${user.name || user.email}?`)) return;
+
+    setTogglingUserId(user._id);
     try {
       await adminService.toggleUserStatus(user._id, user.isActive);
       // Optimistic update
-      setUsers(users.map(u => 
+      setUsers(users.map(u =>
         u._id === user._id ? { ...u, isActive: !u.isActive } : u
       ));
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Failed to update user status:', error);
+      showError(error.response?.data?.message || `Failed to ${verb} user`);
       fetchUsers(pagination.page);
+    } finally {
+      setTogglingUserId(null);
     }
   };
 
@@ -227,13 +237,14 @@ export default function Users() {
                       </Link>
                       <button
                         onClick={() => handleToggleStatus(user)}
-                        className={`text-[10px] font-black uppercase px-3 py-1.5 rounded-lg transition-all border ${
+                        disabled={togglingUserId === user._id}
+                        className={`text-[10px] font-black uppercase px-3 py-1.5 rounded-lg transition-all border disabled:opacity-50 disabled:cursor-not-allowed ${
                           user.isActive
                             ? 'text-red-500 border-red-500/20 hover:bg-red-500/10'
                             : 'text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/10'
                         }`}
                       >
-                        {user.isActive ? 'Suspend' : 'Revive'}
+                        {togglingUserId === user._id ? '...' : (user.isActive ? 'Suspend' : 'Revive')}
                       </button>
                     </div>
                   </td>

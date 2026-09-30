@@ -21,7 +21,7 @@ export default function MandatoryTwoFactorSetup() {
   const [showQuestionsModal, setShowQuestionsModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { logout } = useAuthStore();
+  const { logout, checkAuth } = useAuthStore();
 
   const handleStart = async () => {
     setLoading(true);
@@ -52,6 +52,14 @@ export default function MandatoryTwoFactorSetup() {
       if (res.data?.accessToken) {
         sessionStorage.setItem('token', res.data.accessToken);
         sessionStorage.setItem('is_logged_in', 'true');
+        // 🛡️ [FIX] The store's isAuthenticated/admin state was never updated
+        // here — only sessionStorage was written — so PrivateRoute (which
+        // reads the in-memory store, not sessionStorage directly) bounced
+        // the just-enrolled admin straight back to /login on "Continue to
+        // Dashboard". checkAuth() re-reads the fresh token and populates
+        // the store correctly, exactly as a cold page reload already did
+        // (which is why this bug looked intermittent).
+        await checkAuth();
       }
       setStep('success');
       setShowQuestionsModal(false);

@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import api from '../api/axios';
 import { FiAlertOctagon, FiAlertTriangle, FiInfo } from 'react-icons/fi';
+import { ErrorState } from '../components/ErrorState';
 
 interface AuditLog {
   _id: string;
@@ -15,6 +16,7 @@ interface AuditLog {
 export default function AuditLogs() {
   const [logs, setLogs] = useState<AuditLog[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 20,
@@ -29,8 +31,9 @@ export default function AuditLogs() {
 
   const fetchLogs = useCallback(async (page = 1) => {
     setLoading(true);
+    setError(null);
     try {
-      const response = await api.get('/admin/audit-logs', { 
+      const response = await api.get('/admin/audit-logs', {
         params: { ...filters, page, limit: pagination.limit }
       });
       // response.data -> { success, data: { logs: [], pagination: {} } }
@@ -40,9 +43,10 @@ export default function AuditLogs() {
       } else {
          setLogs([]);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to fetch audit logs:', error);
-      setLogs([]); 
+      setError(error?.response?.data?.message || 'We couldn\'t load audit logs right now.');
+      setLogs([]);
     } finally {
       setLoading(false);
     }
@@ -146,7 +150,15 @@ export default function AuditLogs() {
                 </tr>
               ))}
 
-              {logs.length === 0 && (
+              {error && (
+                <tr>
+                  <td colSpan={5} className="px-6 py-12">
+                    <ErrorState message={error} onRetry={() => fetchLogs(pagination.page)} />
+                  </td>
+                </tr>
+              )}
+
+              {!error && logs.length === 0 && (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center text-sv-text-secondary">
                     No audit logs found matching criteria.
