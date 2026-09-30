@@ -2,10 +2,12 @@ import { useEffect, useState, useCallback } from 'react';
 import { adminService, CourtCase } from '../api/admin.service';
 import { FiFileText } from 'react-icons/fi';
 import CourtCaseDetailsModal from '../components/CourtCaseDetailsModal';
+import { ErrorState } from '../components/ErrorState';
 
 export default function CourtCases() {
   const [cases, setCases] = useState<CourtCase[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState('');
   const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
   const [pagination, setPagination] = useState({
@@ -17,6 +19,7 @@ export default function CourtCases() {
 
   const fetchCases = useCallback(async (page = 1) => {
     setLoading(true);
+    setError(null);
     try {
       const data = await adminService.getCourtCases({
         status: statusFilter,
@@ -31,8 +34,9 @@ export default function CourtCases() {
       } else {
          setCases([]);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to fetch court cases:', error);
+      setError(error.response?.data?.message || 'We couldn\'t load court cases right now.');
     } finally {
       setLoading(false);
     }
@@ -70,7 +74,7 @@ export default function CourtCases() {
             onChange={(e) => setStatusFilter(e.target.value)}
             className="px-4 py-2 border border-sv-border rounded-lg focus:outline-none focus:ring-2 focus:ring-sv-primary bg-sv-surface"
           >
-            <option value="">All Costs</option>
+            <option value="">All Cases</option>
             <option value="open">Open</option>
             <option value="closed">Closed</option>
           </select>
@@ -133,7 +137,15 @@ export default function CourtCases() {
                 </tr>
               ))}
               
-              {cases.length === 0 && (
+              {error && (
+                <tr>
+                  <td colSpan={5} className="px-6 py-12">
+                    <ErrorState message={error} onRetry={() => fetchCases(pagination.page)} />
+                  </td>
+                </tr>
+              )}
+
+              {!error && cases.length === 0 && (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center text-sv-text-secondary">
                     No court cases found.

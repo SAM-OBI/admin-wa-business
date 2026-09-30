@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Vendor } from '../api/admin.service';
 import { FiShield, FiAlertTriangle } from 'react-icons/fi';
 import api from '../api/axios';
+import { ErrorState } from '../components/ErrorState';
 
 interface HighRiskVendor extends Vendor {
   riskFactors: string[];
@@ -13,29 +14,38 @@ interface HighRiskVendor extends Vendor {
 export default function RiskManagement() {
   const [vendors, setVendors] = useState<HighRiskVendor[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState(''); // 'critical' | 'high'
+  const [recalculatingId, setRecalculatingId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchHighRiskVendors();
   }, []);
 
   const fetchHighRiskVendors = async () => {
+    setError(null);
     try {
       const response = await api.get('/admin/risk/high-risk-vendors');
       setVendors(response.data.data || []);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to fetch high risk vendors:', error);
+      setError(error.response?.data?.message || 'We couldn\'t load high-risk vendors right now.');
     } finally {
       setLoading(false);
     }
   };
 
   const handleRecalculate = async (id: string) => {
+    if (recalculatingId) return;
+    setRecalculatingId(id);
     try {
       await api.patch(`/admin/risk/vendors/${id}/recalculate`);
       fetchHighRiskVendors();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to recalculate risk:', error);
+      alert(error.response?.data?.message || 'Failed to recalculate risk score.');
+    } finally {
+      setRecalculatingId(null);
     }
   };
 
@@ -127,17 +137,26 @@ export default function RiskManagement() {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <button 
+                    <button
                       onClick={() => handleRecalculate(vendor._id)}
-                      className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      disabled={recalculatingId === vendor._id}
+                      className="text-blue-600 hover:text-blue-800 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Recalculate Score
+                      {recalculatingId === vendor._id ? 'Recalculating...' : 'Recalculate Score'}
                     </button>
                   </td>
                 </tr>
               ))}
-              
-              {filteredVendors.length === 0 && (
+
+              {error && (
+                <tr>
+                  <td colSpan={4} className="px-6 py-12">
+                    <ErrorState message={error} onRetry={fetchHighRiskVendors} />
+                  </td>
+                </tr>
+              )}
+
+              {!error && filteredVendors.length === 0 && (
                 <tr>
                   <td colSpan={4} className="px-6 py-12 text-center text-sv-text-secondary">
                     No high risk vendors matches filter.

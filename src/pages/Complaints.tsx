@@ -4,11 +4,15 @@ import { FiAlertCircle, FiCheckCircle } from 'react-icons/fi';
 import { HardenedSearchInput } from '../components/search/HardenedSearchInput';
 import ComplaintDetailsModal from '../components/ComplaintDetailsModal';
 import api from '../api/axios';
+import { ErrorState } from '../components/ErrorState';
 
 export default function Complaints() {
   const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedComplaint, setSelectedComplaint] = useState<any>(null);
+  const [search, setSearch] = useState('');
+  const [resolvingId, setResolvingId] = useState<string | null>(null);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 20,
@@ -22,10 +26,12 @@ export default function Complaints() {
 
   const fetchComplaints = useCallback(async (page = 1) => {
     setLoading(true);
+    setError(null);
     try {
       const data = await adminService.getComplaints({
         status: filters.status,
         priority: filters.priority,
+        search,
         page,
         limit: pagination.limit
       });
@@ -37,12 +43,13 @@ export default function Complaints() {
       } else {
          setComplaints([]);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to fetch complaints:', error);
+      setError(error.response?.data?.message || 'We couldn\'t load complaints right now.');
     } finally {
       setLoading(false);
     }
-  }, [filters.status, filters.priority, pagination.limit]);
+  }, [filters.status, filters.priority, search, pagination.limit]);
 
   useEffect(() => {
     fetchComplaints(1);
@@ -55,13 +62,32 @@ export default function Complaints() {
   };
 
   const handleResolve = async (id: string) => {
+    if (resolvingId) return;
+    setResolvingId(id);
     try {
       await adminService.resolveComplaint(id);
       setComplaints(complaints.map(c =>
         c._id === id ? { ...c, status: 'RESOLVED' } : c
       ));
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to resolve complaint:', error);
+      // 🛡️ [KNOWN GAP] The backend gates /admin/complaints/:id/resolve
+      // behind requireSensitiveAction('RESOLVE_COMPLAINT'), which always
+      // 403s without a fresh x-security-challenge-token header
+      // (rbac.middleware.ts) - this service call never sends one, so this
+      // action currently cannot succeed at all. Wiring the real challenge
+      // flow (AdminSecurityChallengeModal, same pattern VendorDetails.tsx
+      // uses for subscription overrides) is explicitly marked as a
+      // separate, not-yet-authorized task in that modal's own doc comment
+      // - not attempting it here. This alert at least makes the failure
+      // visible instead of silent.
+      if (error.response?.data?.data?.requiresStepUp) {
+        alert('This action requires a security verification step that is not yet available on this page. The complaint was not resolved.');
+      } else {
+        alert(error.response?.data?.message || 'Failed to resolve complaint.');
+      }
+    } finally {
+      setResolvingId(null);
     }
   };
 
@@ -94,10 +120,8 @@ export default function Complaints() {
 
         <div className="flex flex-col sm:flex-row gap-3">
           <HardenedSearchInput
-            value=""
-            onChange={() => {
-              // Implementation would involve adding search param to fetchComplaints
-            }}
+            value={search}
+            onChange={setSearch}
             placeholder="SEARCH ISSUES..."
             className="w-full sm:w-64"
             context="ADMIN"
@@ -183,16 +207,25 @@ export default function Complaints() {
                     {complaint.status !== 'RESOLVED' && complaint.status !== 'DISMISSED' && (
                       <button
                         onClick={() => handleResolve(complaint._id)}
-                        className="text-green-600 hover:text-green-800 text-sm font-medium"
+                        disabled={resolvingId === complaint._id}
+                        className="text-green-600 hover:text-green-800 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        Resolve
+                        {resolvingId === complaint._id ? 'Resolving...' : 'Resolve'}
                       </button>
                     )}
                   </td>
                 </tr>
               ))}
-              
-              {complaints.length === 0 && (
+
+              {error && (
+                <tr>
+                  <td colSpan={6} className="px-6 py-12">
+                    <ErrorState message={error} onRetry={() => fetchComplaints(pagination.page)} />
+                  </td>
+                </tr>
+              )}
+
+              {!error && complaints.length === 0 && (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-sv-text-secondary">
                     No complaints found.

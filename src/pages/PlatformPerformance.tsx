@@ -3,6 +3,7 @@ import { FiTrendingUp, FiActivity, FiGlobe, FiFeather, FiFilter, FiDownload, FiD
 import { adminService } from '../api/admin.service';
 import { logger } from '../utils/logger';
 import PageLoader from '../components/PageLoader';
+import { ErrorState } from '../components/ErrorState';
 
 interface ROIStat {
   _id: 'pulse' | 'blog' | 'discover';
@@ -22,10 +23,12 @@ export default function PlatformPerformance() {
   const [stats, setStats] = useState<ROIStat[]>([]);
   const [topContent, setTopContent] = useState<TopContent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState('all-time'); // all-time, 7d, 30d
 
   const fetchROIData = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const params: any = {};
       if (dateRange !== 'all-time') {
@@ -40,8 +43,9 @@ export default function PlatformPerformance() {
         setStats(res.data.stats || []);
         setTopContent(res.data.topContent || []);
       }
-    } catch (err) {
+    } catch (err: any) {
       logger.error('Failed to load platform ROI stats', err);
+      setError(err.response?.data?.message || 'We couldn\'t load platform performance data right now.');
     } finally {
       setLoading(false);
     }
@@ -65,7 +69,47 @@ export default function PlatformPerformance() {
     return ((conversions / clicks) * 100).toFixed(1);
   };
 
+  const handleExport = () => {
+    const rows = [
+      ['Source', 'Clicks', 'Conversions', 'Conversion Rate (%)', 'Value (NGN)'],
+      ...stats.map(s => [
+        s._id,
+        String(s.totalClicks),
+        String(s.totalConversions),
+        calculateConversionRate(s.totalClicks, s.totalConversions),
+        (s.totalValue / 100).toFixed(2)
+      ]),
+      [],
+      ['Top Content', 'Source', 'Clicks', 'Conversions', 'Value (NGN)'],
+      ...topContent.map(c => [
+        c._id.contentId,
+        c._id.source,
+        String(c.totalClicks),
+        String(c.totalConversions),
+        (c.totalValue / 100).toFixed(2)
+      ])
+    ];
+    const csv = rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `platform-performance-${dateRange}-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   if (loading && stats.length === 0) return <PageLoader />;
+
+  if (error && stats.length === 0) {
+    return (
+      <div className="w-full max-w-7xl mx-auto py-12">
+        <ErrorState message={error} onRetry={fetchROIData} />
+      </div>
+    );
+  }
 
   const aggregateTotals = {
     value: stats.reduce((acc, curr) => acc + curr.totalValue, 0),
@@ -95,7 +139,11 @@ export default function PlatformPerformance() {
                 <option value="7d">Last 7 Days</option>
             </select>
             
-            <button className="bg-sv-primary text-sv-text-inverse px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-sv-primary-hover transition-colors flex items-center gap-2">
+            <button
+                onClick={handleExport}
+                disabled={stats.length === 0 && topContent.length === 0}
+                className="bg-sv-primary text-sv-text-inverse px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-sv-primary-hover transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
                 <FiDownload /> Export
             </button>
         </div>

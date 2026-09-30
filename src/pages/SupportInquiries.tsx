@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { adminService } from '../api/admin.service';
 import { FiMail, FiCalendar, FiShield, FiExternalLink, FiSearch } from 'react-icons/fi';
+import { ErrorState } from '../components/ErrorState';
 
 export default function SupportInquiries() {
     const [inquiries, setInquiries] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
@@ -16,14 +18,16 @@ export default function SupportInquiries() {
 
     const fetchInquiries = async () => {
         setLoading(true);
+        setError(null);
         try {
             const response = await adminService.getSupportInquiries({ page, limit: 10 });
             if (response.data) {
                 setInquiries(response.data.inquiries);
                 setTotalPages(response.data.pagination.pages);
             }
-        } catch {
-            console.error('Failed to fetch support inquiries');
+        } catch (error: any) {
+            console.error('Failed to fetch support inquiries', error);
+            setError(error.response?.data?.message || 'We couldn\'t load support inquiries right now.');
         } finally {
             setLoading(false);
         }
@@ -70,6 +74,8 @@ export default function SupportInquiries() {
                  <div className="flex justify-center p-12">
                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                  </div>
+            ) : error ? (
+                <ErrorState message={error} onRetry={fetchInquiries} />
             ) : (
                 <div className="space-y-4">
                     {filteredInquiries.length === 0 ? (
@@ -125,11 +131,6 @@ export default function SupportInquiries() {
                                         </div>
                                     </div>
 
-                                    <div className="shrink-0 w-full md:w-auto">
-                                        <button className="w-full md:w-auto px-6 py-3 bg-gray-50 border border-gray-200 rounded-[5px] text-[10px] font-black uppercase tracking-widest text-gray-600 hover:bg-gray-900 hover:text-white transition-all">
-                                            Resolve Ticket
-                                        </button>
-                                    </div>
                                 </div>
                             </div>
                         ))

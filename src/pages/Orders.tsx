@@ -4,10 +4,12 @@ import { FiShoppingBag } from 'react-icons/fi';
 import { HardenedSearchInput } from '../components/search/HardenedSearchInput';
 import OrderDetailsModal from '../components/OrderDetailsModal';
 import api from '../api/axios';
+import { ErrorState } from '../components/ErrorState';
 
 export default function Orders() {
   const [orders, setOrders] = useState<OrderListItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   // 🛡️ [#8D] Fetched alongside order details, not blocking the modal's
@@ -29,6 +31,7 @@ export default function Orders() {
 
   const fetchOrders = useCallback(async (page = 1) => {
     setLoading(true);
+    setError(null);
     try {
       const data = await adminService.getOrders({
         search: searchTerm,
@@ -46,8 +49,9 @@ export default function Orders() {
       } else {
           setOrders([]);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to fetch orders:', error);
+      setError(error.response?.data?.message || 'We couldn\'t load orders right now.');
     } finally {
       setLoading(false);
     }
@@ -209,7 +213,15 @@ export default function Orders() {
                 </tr>
               ))}
               
-              {orders.length === 0 && (
+              {error && (
+                <tr>
+                  <td colSpan={6} className="px-8 py-24">
+                    <ErrorState message={error} onRetry={() => fetchOrders(pagination.page)} />
+                  </td>
+                </tr>
+              )}
+
+              {!error && orders.length === 0 && (
                 <tr>
                   <td colSpan={6} className="px-8 py-24 text-center">
                     <div className="flex flex-col items-center gap-4">
