@@ -42,7 +42,6 @@ const CourtCases = lazy(() => import(/* webpackChunkName: "support" */ './pages/
 const PlatformFeedback = lazy(() => import(/* webpackChunkName: "support" */ './pages/PlatformFeedback'));
 const PlatformReviews = lazy(() => import(/* webpackChunkName: "support" */ './pages/PlatformReviews'));
 const SupportInquiries = lazy(() => import(/* webpackChunkName: "support" */ './pages/SupportInquiries'));
-const SupportWorkspace = lazy(() => import(/* webpackChunkName: "support" */ './pages/SupportWorkspace'));
 const ErrorLogs = lazy(() => import(/* webpackChunkName: "diagnostics" */ './pages/ErrorLogs'));
 const DeadLetterQueue = lazy(() => import(/* webpackChunkName: "diagnostics" */ './pages/DeadLetterQueue'));
 const AuditLogs = lazy(() => import(/* webpackChunkName: "diagnostics" */ './pages/AuditLogs'));
@@ -141,7 +140,18 @@ function App() {
             <Route path="feedback" element={<PlatformFeedback />} />
             <Route path="platform-reviews" element={<PlatformReviews />} />
             <Route path="support-inquiries" element={<SupportInquiries />} />
-            <Route path="support" element={<SupportWorkspace />} />
+            {/* 🛡️ [FIX] SupportWorkspace.tsx is fully mocked (fake ticket
+                queue, fake stats, reply textarea not even wired to state) —
+                it was sitting right next to the real "Support Inquiries"
+                nav entry with an identical icon and the shorter, more
+                clickable label "Support". A real customer's Contact-form
+                submission was never seen because the admin who went
+                looking for "the helpdesk" landed here instead of on
+                support-inquiries, which is where it actually was.
+                Redirecting rather than deleting the route/file - the real
+                build (a genuine ticketing backend) is a separate, larger
+                task, not attempted here. */}
+            <Route path="support" element={<Navigate to="/dashboard/support-inquiries" replace />} />
             <Route path="risk-management" element={<RiskManagement />} />
             <Route path="security" element={<CorporateSecurity />} />
             <Route path="audit-logs" element={<AuditLogs />} />

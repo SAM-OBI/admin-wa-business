@@ -50,7 +50,6 @@ export const navigationGroups: { label: string; items: { name: string; to: strin
     label: 'Support',
     items: [
       { name: 'Support Inquiries', to: '/dashboard/support-inquiries', icon: FiMail },
-      { name: 'Support', to: '/dashboard/support', icon: FiMail },
     ]
   },
   {
