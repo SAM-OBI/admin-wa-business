@@ -3,6 +3,7 @@ import api from '../api/axios';
 import { FiLock, FiCheckCircle, FiSlash, FiTrendingUp } from 'react-icons/fi';
 import Swal from 'sweetalert2';
 import { useAdminGovernanceStepUp } from '../hooks/useAdminGovernanceStepUp';
+import { showError } from '../utils/swal';
 
 interface SettlementDashboard {
   totalSettlementValue: number;
@@ -56,6 +57,10 @@ export default function SettlementManagement() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'overview' | 'vendors' | 'transactions'>('overview');
   const [filterStatus, setFilterStatus] = useState<string>('all');
+  // 🛡️ Force-release/hold are real fund-moving mutations with no in-flight
+  // guard today — executeWithStepUp only handles MFA-freshness retry, not
+  // double-submit protection.
+  const [processingOrderId, setProcessingOrderId] = useState<string | null>(null);
 
   const fetchDashboard = useCallback(async () => {
     try {
@@ -65,6 +70,7 @@ export default function SettlementManagement() {
       }
     } catch (error) {
       console.error('Failed to fetch dashboard:', error);
+      showError('Could not load the settlement dashboard. Figures shown may be stale or incomplete.');
     }
   }, []);
 
@@ -79,6 +85,7 @@ export default function SettlementManagement() {
       }
     } catch (error) {
       console.error('Failed to fetch vendors:', error);
+      showError('Could not load vendor settlement balances.');
     }
   }, [filterStatus]);
 
@@ -94,6 +101,7 @@ export default function SettlementManagement() {
       }
     } catch (error) {
       console.error('Failed to fetch transactions:', error);
+      showError('Could not load settlement transactions. The list shown may be incomplete or stale.');
     } finally {
       setLoading(false);
     }
@@ -116,6 +124,7 @@ export default function SettlementManagement() {
   }, [fetchTransactions]);
 
   const handleForceRelease = async (orderId: string, orderIdDisplay: string) => {
+    if (processingOrderId) return;
     const { value: reason } = await Swal.fire({
       title: 'Force Release Settlement',
       html: `
@@ -139,6 +148,7 @@ export default function SettlementManagement() {
     });
 
     if (reason) {
+      setProcessingOrderId(orderId);
       try {
         const res = await executeWithStepUp(() => api.post(`/admin/settlement/${orderId}/release`, { reason }));
 
@@ -150,11 +160,14 @@ export default function SettlementManagement() {
         }
       } catch (error: any) {
         Swal.fire('Error', error.response?.data?.message || 'Failed to release funds', 'error');
+      } finally {
+        setProcessingOrderId(null);
       }
     }
   };
 
   const handleHoldSettlement = async (orderId: string, orderIdDisplay: string) => {
+    if (processingOrderId) return;
     const { value: reason } = await Swal.fire({
       title: 'Hold Settlement',
       html: `
@@ -176,6 +189,7 @@ export default function SettlementManagement() {
     });
 
     if (reason) {
+      setProcessingOrderId(orderId);
       try {
         const res = await executeWithStepUp(() => api.post(`/admin/settlement/${orderId}/hold`, { reason }));
 
@@ -185,6 +199,8 @@ export default function SettlementManagement() {
         }
       } catch (error: any) {
         Swal.fire('Error', error.response?.data?.message || 'Failed to apply hold', 'error');
+      } finally {
+        setProcessingOrderId(null);
       }
     }
   };
@@ -217,7 +233,7 @@ export default function SettlementManagement() {
               <FiLock className="text-orange-500" size={18} />
             </div>
             <div className="text-2xl font-black text-gray-900">
-              ₦{(dashboard.totalSettlementValue ?? dashboard.totalInProcess ?? 0).toLocaleString()}
+              ₦{((dashboard.totalSettlementValue ?? dashboard.totalInProcess ?? 0) / 100).toLocaleString()}
             </div>
             <p className="text-[10px] text-gray-400 font-medium mt-1">
               {dashboard.pendingRelease} awaiting SLA maturity
@@ -230,7 +246,7 @@ export default function SettlementManagement() {
               <FiCheckCircle className="text-green-500" size={18} />
             </div>
             <div className="text-2xl font-black text-gray-900">
-              ₦{(dashboard.totalSettlementReleased ?? dashboard.totalReleased ?? 0).toLocaleString()}
+              ₦{((dashboard.totalSettlementReleased ?? dashboard.totalReleased ?? 0) / 100).toLocaleString()}
             </div>
           </div>
 
@@ -240,7 +256,7 @@ export default function SettlementManagement() {
               <FiSlash className="text-red-500" size={18} />
             </div>
             <div className="text-2xl font-black text-gray-900">
-              ₦{(dashboard.totalSettlementDisputed ?? dashboard.totalDisputed ?? 0).toLocaleString()}
+              ₦{((dashboard.totalSettlementDisputed ?? dashboard.totalDisputed ?? 0) / 100).toLocaleString()}
             </div>
           </div>
 
@@ -250,7 +266,7 @@ export default function SettlementManagement() {
               <FiTrendingUp className="text-blue-500" size={18} />
             </div>
             <div className="text-2xl font-black text-gray-900">
-              ₦{( (dashboard.totalSettlementValue ?? dashboard.totalInProcess ?? 0) + (dashboard.totalSettlementReleased ?? dashboard.totalReleased ?? 0) ).toLocaleString()}
+              ₦{( ((dashboard.totalSettlementValue ?? dashboard.totalInProcess ?? 0) + (dashboard.totalSettlementReleased ?? dashboard.totalReleased ?? 0)) / 100 ).toLocaleString()}
             </div>
           </div>
         </div>
@@ -307,7 +323,7 @@ export default function SettlementManagement() {
                       <div className="text-[10px] text-gray-400 font-bold uppercase">{status.count} orders</div>
                     </div>
                     <div className="text-right">
-                      <div className="font-black text-gray-900">₦{status.amount.toLocaleString()}</div>
+                      <div className="font-black text-gray-900">₦{(status.amount / 100).toLocaleString()}</div>
                     </div>
                   </div>
                 ))}
@@ -343,10 +359,10 @@ export default function SettlementManagement() {
                           </div>
                         </td>
                         <td className="px-4 py-3 font-black text-orange-600 text-sm">
-                          ₦{vendor.totalInProcess.toLocaleString()}
+                          ₦{(vendor.totalInProcess / 100).toLocaleString()}
                         </td>
                         <td className="px-4 py-3 font-black text-green-600 text-sm">
-                          ₦{vendor.totalReleased.toLocaleString()}
+                          ₦{(vendor.totalReleased / 100).toLocaleString()}
                         </td>
                         <td className="px-4 py-3 text-sm font-bold text-sv-text-secondary">
                           {vendor.orderCount}
@@ -404,7 +420,7 @@ export default function SettlementManagement() {
                           <div className="text-xs font-medium text-sv-text-secondary">{tx.vendor.name}</div>
                         </td>
                         <td className="px-4 py-3 font-black text-sv-text-primary text-sm">
-                          ₦{tx.totalAmount.toLocaleString()}
+                          ₦{(tx.totalAmount / 100).toLocaleString()}
                         </td>
                         <td className="px-4 py-3">
                           {/* 🛡️ [BATCH-11] Expanded to the real 6-value canonical enum. */}
@@ -425,24 +441,27 @@ export default function SettlementManagement() {
                               <>
                                 <button
                                   onClick={() => handleForceRelease(tx._id, tx.orderId)}
-                                  className="px-2 py-1 text-[9px] font-black uppercase bg-sv-success-soft text-sv-success rounded hover:opacity-80"
+                                  disabled={!!processingOrderId}
+                                  className="px-2 py-1 text-[9px] font-black uppercase bg-sv-success-soft text-sv-success rounded hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                  Release
+                                  {processingOrderId === tx._id ? '...' : 'Release'}
                                 </button>
                                 <button
                                   onClick={() => handleHoldSettlement(tx._id, tx.orderId)}
-                                  className="px-2 py-1 text-[9px] font-black uppercase bg-sv-warning-soft text-sv-warning rounded hover:opacity-80"
+                                  disabled={!!processingOrderId}
+                                  className="px-2 py-1 text-[9px] font-black uppercase bg-sv-warning-soft text-sv-warning rounded hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                  Hold
+                                  {processingOrderId === tx._id ? '...' : 'Hold'}
                                 </button>
                               </>
                             )}
                             {tx.settlementState === 'DISPUTED' && (
                               <button
                                 onClick={() => handleForceRelease(tx._id, tx.orderId)}
-                                className="px-2 py-1 text-[9px] font-black uppercase bg-sv-success-soft text-sv-success rounded hover:opacity-80"
+                                disabled={!!processingOrderId}
+                                className="px-2 py-1 text-[9px] font-black uppercase bg-sv-success-soft text-sv-success rounded hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
                               >
-                                Resolve {'->'} Release
+                                {processingOrderId === tx._id ? '...' : <>Resolve {'->'} Release</>}
                               </button>
                             )}
                           </div>

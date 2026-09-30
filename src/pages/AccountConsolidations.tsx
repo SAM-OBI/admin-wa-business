@@ -23,6 +23,7 @@ export default function AccountConsolidations() {
   const [requests, setRequests] = useState<ConsolidationRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('ALL');
+  const [processingId, setProcessingId] = useState<string | null>(null);
 
   const fetchRequests = useCallback(async () => {
     setLoading(true);
@@ -43,6 +44,7 @@ export default function AccountConsolidations() {
   }, [fetchRequests]);
 
   const handleApprove = async (id: string) => {
+    if (processingId) return;
     const { value: justification } = await Swal.fire({
       title: 'Approve Consolidation',
       input: 'textarea',
@@ -56,17 +58,21 @@ export default function AccountConsolidations() {
     });
 
     if (justification) {
+      setProcessingId(id);
       try {
         await api.post('/admin/consolidation/approve', { requestId: id, justification });
         Swal.fire('Approved', 'Consolidation request approved.', 'success');
         fetchRequests();
       } catch (error: any) {
         Swal.fire('Error', error.response?.data?.message || 'Approval failed.', 'error');
+      } finally {
+        setProcessingId(null);
       }
     }
   };
 
   const handleExecute = async (id: string) => {
+    if (processingId) return;
     const result = await Swal.fire({
       title: 'Execute Transactional Merge?',
       text: "This will move all balances and assets. This action is IRREVERSIBLE.",
@@ -78,12 +84,15 @@ export default function AccountConsolidations() {
     });
 
     if (result.isConfirmed) {
+      setProcessingId(id);
       try {
         await api.post(`/admin/consolidation/${id}/execute`);
         Swal.fire('Executed', 'Account consolidation COMPLETED successfully.', 'success');
         fetchRequests();
       } catch (error: any) {
         Swal.fire('Execution Failed', error.response?.data?.message || 'Transaction aborted.', 'error');
+      } finally {
+        setProcessingId(null);
       }
     }
   };
@@ -181,19 +190,21 @@ export default function AccountConsolidations() {
                   <td className="px-6 py-6 text-right">
                     <div className="flex justify-end gap-2">
                         {req.status === 'REQUESTED' && (
-                            <button 
+                            <button
                                 onClick={() => handleApprove(req._id)}
-                                className="flex items-center gap-1.5 px-3 py-1.5 bg-sv-primary text-sv-text-inverse rounded-lg text-xs font-bold hover:bg-sv-primary-hover transition"
+                                disabled={!!processingId}
+                                className="flex items-center gap-1.5 px-3 py-1.5 bg-sv-primary text-sv-text-inverse rounded-lg text-xs font-bold hover:bg-sv-primary-hover transition disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                <FiCheckCircle size={14} /> Approve
+                                <FiCheckCircle size={14} /> {processingId === req._id ? 'Approving...' : 'Approve'}
                             </button>
                         )}
                         {req.status === 'APPROVED' && (
-                            <button 
+                            <button
                                 onClick={() => handleExecute(req._id)}
-                                className="flex items-center gap-1.5 px-3 py-1.5 bg-sv-success text-sv-text-inverse rounded-lg text-xs font-bold hover:opacity-90 transition"
+                                disabled={!!processingId}
+                                className="flex items-center gap-1.5 px-3 py-1.5 bg-sv-success text-sv-text-inverse rounded-lg text-xs font-bold hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                <FiShield size={14} /> Execute Merge
+                                <FiShield size={14} /> {processingId === req._id ? 'Executing...' : 'Execute Merge'}
                             </button>
                         )}
                         {(req.status === 'COMPLETED' || req.status === 'FAILED') && (
