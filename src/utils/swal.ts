@@ -1,4 +1,5 @@
 import Swal from 'sweetalert2';
+import confetti from 'canvas-confetti';
 
 // ShopVia Color System v2 confirm-button palette. SweetAlert2 renders through
 // its own injected stylesheet outside our Tailwind/CSS-variable pipeline, so
@@ -11,17 +12,43 @@ const colors = {
   light: '#F5F5DC'
 };
 
+// 🛡️ [MODAL-MOBILE-1] showConfirm/showLoading/celebrate (the blocking-modal
+// category) target these classes via customClass + buttonsStyling:false —
+// see index.css for the actual mobile-first sizing/touch-target/typography
+// rules. showSuccess/showError/showWarning/showInfo below were converted
+// from full centered modals to toasts (see their own comment) so they don't
+// need this treatment.
+const MODAL_CUSTOM_CLASS = {
+  popup: 'sv-swal-popup',
+  title: 'sv-swal-title',
+  htmlContainer: 'sv-swal-html-container',
+  actions: 'sv-swal-actions',
+  input: 'sv-swal-input',
+  confirmButton: 'sv-swal-confirm-btn',
+  cancelButton: 'sv-swal-cancel-btn'
+};
+
 /**
  * Show success message
+ *
+ * 🛡️ [MODAL-MOBILE-1] Was a full centered modal (confirmButtonColor,
+ * timerProgressBar, no toast:true) — the one place in the whole app where a
+ * routine success notice popped as a large blocking dialog instead of the
+ * small top-end toast every other success/error/warning/info uses (the main
+ * app's own SweetAlertNotificationAdapter.ts, and this file's own
+ * showToast() below). Confirmed safe to change: none of this function's 9
+ * call sites await its return value or otherwise depend on a user clicking
+ * a button before continuing — every one is fire-and-forget.
  */
 export const showSuccess = (message: string, title: string = 'Success!') => {
   return Swal.fire({
+    toast: true,
+    position: 'top-end',
     icon: 'success',
     title,
     text: message,
-    confirmButtonColor: colors.primary,
-    confirmButtonText: 'OK',
-    timer: 3000,
+    showConfirmButton: false,
+    timer: 4000,
     timerProgressBar: true
   });
 };
@@ -31,11 +58,14 @@ export const showSuccess = (message: string, title: string = 'Success!') => {
  */
 export const showError = (message: string, title: string = 'Error!') => {
   return Swal.fire({
+    toast: true,
+    position: 'top-end',
     icon: 'error',
     title,
     text: message,
-    confirmButtonColor: colors.primary,
-    confirmButtonText: 'OK'
+    showConfirmButton: false,
+    timer: 4000,
+    timerProgressBar: true
   });
 };
 
@@ -44,11 +74,14 @@ export const showError = (message: string, title: string = 'Error!') => {
  */
 export const showWarning = (message: string, title: string = 'Warning!') => {
   return Swal.fire({
+    toast: true,
+    position: 'top-end',
     icon: 'warning',
     title,
     text: message,
-    confirmButtonColor: colors.primary,
-    confirmButtonText: 'OK'
+    showConfirmButton: false,
+    timer: 4000,
+    timerProgressBar: true
   });
 };
 
@@ -57,11 +90,14 @@ export const showWarning = (message: string, title: string = 'Warning!') => {
  */
 export const showInfo = (message: string, title: string = 'Info') => {
   return Swal.fire({
+    toast: true,
+    position: 'top-end',
     icon: 'info',
     title,
     text: message,
-    confirmButtonColor: colors.primary,
-    confirmButtonText: 'Got it'
+    showConfirmButton: false,
+    timer: 4000,
+    timerProgressBar: true
   });
 };
 
@@ -79,10 +115,10 @@ export const showConfirm = (
     title,
     text: message,
     showCancelButton: true,
-    confirmButtonColor: colors.primary,
-    cancelButtonColor: '#6c757d',
     confirmButtonText: confirmText,
-    cancelButtonText: cancelText
+    cancelButtonText: cancelText,
+    buttonsStyling: false,
+    customClass: MODAL_CUSTOM_CLASS
   });
 };
 
@@ -97,7 +133,8 @@ export const showLoading = (message: string = 'Please wait...') => {
     showConfirmButton: false,
     willOpen: () => {
       Swal.showLoading();
-    }
+    },
+    customClass: { popup: 'sv-swal-popup', title: 'sv-swal-title' }
   });
 };
 
@@ -130,5 +167,29 @@ export const showToast = (
   Toast.fire({
     icon,
     title: message
+  });
+};
+
+/**
+ * 🛡️ [MODAL-MOBILE-1] Modal + confetti celebration for a genuine success
+ * moment — mirrors the main app's SweetAlertNotificationAdapter.celebrate(),
+ * same brand-green/gold burst, this app's own primary color rather than the
+ * main app's --color-primary token (separate palettes).
+ */
+export const celebrate = (title: string, text?: string) => {
+  return Swal.fire({
+    title,
+    text,
+    confirmButtonText: 'Awesome!',
+    buttonsStyling: false,
+    customClass: MODAL_CUSTOM_CLASS,
+    didOpen: () => {
+      const end = Date.now() + 1200;
+      (function frame() {
+        confetti({ particleCount: 4, angle: 60, spread: 55, origin: { x: 0 }, colors: [colors.primary, '#C89B2C', '#ffffff'] });
+        confetti({ particleCount: 4, angle: 120, spread: 55, origin: { x: 1 }, colors: [colors.primary, '#C89B2C', '#ffffff'] });
+        if (Date.now() < end) requestAnimationFrame(frame);
+      })();
+    }
   });
 };
