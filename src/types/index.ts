@@ -339,6 +339,14 @@ export interface TreasuryHealth {
   liquidityScore: number;
   totalEscrowValue: number;
   totalWalletLiability: number;
+  totalRefundLiability: number;
+  platformRevenue: {
+    adRevenue: number;
+    subscriptionRevenue: number;
+    protectionFeeRevenue: number;
+    total: number;
+  };
+  netSpendableBalance: number;
   exposureRatio: number;
   liquidityRatio: number;
   drilldown?: {

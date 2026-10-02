@@ -83,43 +83,53 @@ body {
   --border-subtle: var(--sv-surface-muted);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --sv-bg: #0D1512;
-    --sv-surface: #14201B;
-    --sv-surface-muted: #182620;
-    --sv-surface-elevated: #192720;
-    --sv-border: #26362F;
+/* 🛡️ [THEME-TOGGLE-1] Was OS-only (@media prefers-color-scheme), so a
+   vendor couldn't override their system setting — just silently followed
+   whatever the OS said, invisibly to this page. Class-based now (toggled by
+   themeStore.ts via the inline bootstrap script in index.html, before first
+   paint), matching the sibling vendor frontend's own existing convention
+   (whatsappvendors stores/src/index.css) exactly. Values unchanged. */
+.dark {
+  --sv-bg: #0D1512;
+  --sv-surface: #14201B;
+  --sv-surface-muted: #182620;
+  --sv-surface-elevated: #192720;
+  --sv-border: #26362F;
 
-    --sv-text-primary: #F3F7F5;
-    --sv-text-secondary: #A7B5AE;
-    --sv-text-muted: #7F9188;
-    --sv-text-inverse: #0D1512;
+  --sv-text-primary: #F3F7F5;
+  --sv-text-secondary: #A7B5AE;
+  --sv-text-muted: #7F9188;
+  --sv-text-inverse: #0D1512;
 
-    --sv-primary: #55B98A;
-    --sv-primary-hover: #6BC79A;
-    --sv-accent: #9AD968;
-    --sv-accent-soft: #1E3327;
-    --sv-gold: #D5AA3A;
-    --sv-gold-soft: #2B2413;
+  --sv-primary: #55B98A;
+  --sv-primary-hover: #6BC79A;
+  --sv-accent: #9AD968;
+  --sv-accent-soft: #1E3327;
+  --sv-gold: #D5AA3A;
+  --sv-gold-soft: #2B2413;
 
-    --sv-success: #55C58A;
-    --sv-success-soft: #16281F;
-    --sv-warning: #D5A84A;
-    --sv-warning-soft: #2B2413;
-    --sv-danger: #EF6B6B;
-    --sv-danger-soft: #2E1B1B;
-    --sv-info: #6FA9DF;
-    --sv-info-soft: #16232E;
+  --sv-success: #55C58A;
+  --sv-success-soft: #16281F;
+  --sv-warning: #D5A84A;
+  --sv-warning-soft: #2B2413;
+  --sv-danger: #EF6B6B;
+  --sv-danger-soft: #2E1B1B;
+  --sv-info: #6FA9DF;
+  --sv-info-soft: #16232E;
 
-    --sv-tag: #A78BFA;
-    --sv-tag-soft: #241B36;
-  }
+  --sv-tag: #A78BFA;
+  --sv-tag-soft: #241B36;
 }
 
 body {
   background-color: var(--sv-bg);
   color: var(--sv-text-secondary);
+}
+
+/* 🛡️ [THEME-TOGGLE-1] Suppresses transition flash during a programmatic
+   theme switch (removed after paint by themeStore.ts's applyTheme). */
+.no-theme-transition * {
+  transition: none !important;
 }
 
 /* Token-driven form-control text color (replaces a prior hardcoded

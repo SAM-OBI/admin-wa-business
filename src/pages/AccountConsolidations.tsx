@@ -1,11 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
-import { 
-  FiGitPullRequest, FiCheckCircle, FiXCircle, 
+import {
+  FiGitPullRequest, FiCheckCircle, FiXCircle,
   FiArrowRight, FiShield, FiClock, FiFileText, FiRefreshCw
 } from 'react-icons/fi';
 import api from '../api/axios';
 import { logger } from '../utils/logger';
 import Swal from 'sweetalert2';
+import { useAdminGovernanceStepUp } from '../hooks/useAdminGovernanceStepUp';
+import AdminSecurityChallengeModal from '../components/AdminSecurityChallengeModal';
 
 interface ConsolidationRequest {
   _id: string;
@@ -24,6 +26,17 @@ export default function AccountConsolidations() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('ALL');
   const [processingId, setProcessingId] = useState<string | null>(null);
+  // 🛡️ [CONSOLIDATION-STEP-UP-1] approve/execute are ADMIN_CRITICAL_POLICY
+  // (FORENSIC) — governanceGuard() session-freshness AND a separate
+  // requireSensitiveAction per-request challenge token, same double-gate
+  // shape as SettlementManagement.tsx's force-release/hold.
+  const { execute: executeWithStepUp, modal: governanceStepUpModal } = useAdminGovernanceStepUp();
+  const [actionChallenge, setActionChallenge] = useState<{
+    isOpen: boolean;
+    type: 'approve' | 'execute' | null;
+    requestId: string | null;
+    reason: string | null;
+  }>({ isOpen: false, type: null, requestId: null, reason: null });
 
   const fetchRequests = useCallback(async () => {
     setLoading(true);
@@ -45,7 +58,7 @@ export default function AccountConsolidations() {
 
   const handleApprove = async (id: string) => {
     if (processingId) return;
-    const { value: justification } = await Swal.fire({
+    const { value: reason } = await Swal.fire({
       title: 'Approve Consolidation',
       input: 'textarea',
       inputLabel: 'Justification',
@@ -57,43 +70,65 @@ export default function AccountConsolidations() {
       }
     });
 
-    if (justification) {
-      setProcessingId(id);
-      try {
-        await api.post('/admin/consolidation/approve', { requestId: id, justification });
-        Swal.fire('Approved', 'Consolidation request approved.', 'success');
-        fetchRequests();
-      } catch (error: any) {
-        Swal.fire('Error', error.response?.data?.message || 'Approval failed.', 'error');
-      } finally {
-        setProcessingId(null);
-      }
+    if (reason) {
+      setActionChallenge({ isOpen: true, type: 'approve', requestId: id, reason });
     }
   };
 
   const handleExecute = async (id: string) => {
     if (processingId) return;
-    const result = await Swal.fire({
+    const { value: reason } = await Swal.fire({
       title: 'Execute Transactional Merge?',
-      text: "This will move all balances and assets. This action is IRREVERSIBLE.",
+      html: `
+        <p class="mb-3">This will move all balances and assets. This action is <strong>IRREVERSIBLE</strong>.</p>
+        <textarea id="reason" class="swal2-textarea w-full" placeholder="Justification for execution (min 5 chars)..." rows="3"></textarea>
+      `,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, Execute Now!'
+      confirmButtonText: 'Yes, Execute Now!',
+      preConfirm: () => {
+        const value = (document.getElementById('reason') as HTMLTextAreaElement)?.value;
+        if (!value || value.trim().length < 5) {
+          Swal.showValidationMessage('A justification of at least 5 characters is required.');
+          return false;
+        }
+        return value;
+      }
     });
 
-    if (result.isConfirmed) {
-      setProcessingId(id);
-      try {
-        await api.post(`/admin/consolidation/${id}/execute`);
+    if (reason) {
+      setActionChallenge({ isOpen: true, type: 'execute', requestId: id, reason });
+    }
+  };
+
+  const handleActionChallengeSuccess = async (challengeToken: string) => {
+    const { type, requestId, reason } = actionChallenge;
+    if (!type || !requestId || !reason) return;
+    setProcessingId(requestId);
+    try {
+      if (type === 'approve') {
+        await executeWithStepUp(() => api.post('/admin/consolidation/approve', {
+          requestId,
+          reason,
+          mfaFingerprint: challengeToken
+        }, {
+          headers: { 'x-security-challenge-token': challengeToken }
+        }));
+        Swal.fire('Approved', 'Consolidation request approved.', 'success');
+      } else {
+        await executeWithStepUp(() => api.post(`/admin/consolidation/${requestId}/execute`, { reason }, {
+          headers: { 'x-security-challenge-token': challengeToken }
+        }));
         Swal.fire('Executed', 'Account consolidation COMPLETED successfully.', 'success');
-        fetchRequests();
-      } catch (error: any) {
-        Swal.fire('Execution Failed', error.response?.data?.message || 'Transaction aborted.', 'error');
-      } finally {
-        setProcessingId(null);
       }
+      fetchRequests();
+    } catch (error: any) {
+      Swal.fire('Error', error.response?.data?.message || (type === 'approve' ? 'Approval failed.' : 'Transaction aborted.'), 'error');
+    } finally {
+      setProcessingId(null);
+      setActionChallenge({ isOpen: false, type: null, requestId: null, reason: null });
     }
   };
 
@@ -261,6 +296,14 @@ export default function AccountConsolidations() {
               </p>
           </div>
       </div>
+
+      {governanceStepUpModal}
+      <AdminSecurityChallengeModal
+        isOpen={actionChallenge.isOpen}
+        onClose={() => setActionChallenge({ isOpen: false, type: null, requestId: null, reason: null })}
+        action={actionChallenge.type === 'execute' ? 'EXECUTE_CONSOLIDATION' : 'APPROVE_CONSOLIDATION'}
+        onSuccess={handleActionChallengeSuccess}
+      />
     </div>
   );
 }

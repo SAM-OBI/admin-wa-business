@@ -3,6 +3,7 @@ import { FiMenu, FiChevronLeft, FiSettings } from 'react-icons/fi';
 import { useState } from 'react';
 // useState imported above
 import UpgradeModal from './UpgradeModal';
+import { useAuthStore } from '../store/authStore';
 
 import { navigationGroups } from './navigation.config';
 
@@ -15,6 +16,17 @@ interface SidebarProps {
 
 export default function Sidebar({ isDesktopCollapsed, toggleDesktop, isMobileOpen, closeMobile }: SidebarProps) {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  // 🛡️ [ADMIN-STAFF-SCOPING-1] Empty/undefined allowedSections = every
+  // admin today, until someone is deliberately scoped — matches the
+  // backend's own fail-open default exactly (SovereignRouter.register()).
+  // 'Overview' (Dashboard) is never scoped out — same reasoning as a
+  // vendor always being able to see their own Dashboard regardless of
+  // staff role.
+  const admin = useAuthStore((s) => s.admin);
+  const allowedSections: string[] = admin?.capabilities?.allowedSections || [];
+  const visibleGroups = allowedSections.length === 0
+    ? navigationGroups
+    : navigationGroups.filter((group) => group.label === 'Overview' || allowedSections.includes(group.label));
 
   return (
     <>
@@ -68,7 +80,7 @@ export default function Sidebar({ isDesktopCollapsed, toggleDesktop, isMobileOpe
 
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-sv-border hover:scrollbar-thumb-sv-text-muted">
-          {navigationGroups.map((group) => (
+          {visibleGroups.map((group) => (
             <div key={group.label} className="space-y-1.5">
               {!isDesktopCollapsed && (
                 <p className="px-4 pt-2 pb-1 text-[9px] font-black uppercase tracking-[0.2em] text-sv-text-muted">

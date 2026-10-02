@@ -3,6 +3,7 @@ import { adminService, Vendor, VerificationStatus } from '../api/admin.service';
 import { FiShield, FiExternalLink, FiCheckCircle, FiXCircle, FiAlertCircle } from 'react-icons/fi';
 import { HardenedSearchInput } from '../components/search/HardenedSearchInput';
 import { ErrorState } from '../components/ErrorState';
+import AdminSecurityChallengeModal from '../components/AdminSecurityChallengeModal';
 import { logger } from '../utils/logger';
 import { Link } from 'react-router-dom';
 import { showError } from '../utils/swal';
@@ -16,6 +17,12 @@ export default function Vendors() {
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [togglingVendorId, setTogglingVendorId] = useState<string | null>(null);
+  // 🛡️ [ADMIN-STEP-UP-REPLICATE-1] /admin/vendors/:id/suspend is gated by
+  // requireSensitiveAction('SUSPEND_VENDOR') — same gap as VendorDetails.tsx
+  // had, same fix (challenge first, retry with token).
+  const [suspendChallenge, setSuspendChallenge] = useState<{ isOpen: boolean; vendor: Vendor | null; reason: string | null }>({
+    isOpen: false, vendor: null, reason: null
+  });
 
   const [filters, setFilters] = useState({
     status: '',
@@ -74,17 +81,7 @@ export default function Vendors() {
     if (vendor.isActive) {
       const reason = prompt('Enter reason for suspension:');
       if (!reason) return;
-      setTogglingVendorId(vendor._id);
-      try {
-        await adminService.suspendVendor(vendor._id, reason);
-        setVendors(vendors.map(v => v._id === vendor._id ? { ...v, isActive: false } : v));
-      } catch (error: any) {
-        logger.error('Failed to suspend vendor:', error);
-        showError(error.response?.data?.message || 'Failed to suspend vendor');
-        fetchVendors();
-      } finally {
-        setTogglingVendorId(null);
-      }
+      setSuspendChallenge({ isOpen: true, vendor, reason });
     } else {
       setTogglingVendorId(vendor._id);
       try {
@@ -97,6 +94,23 @@ export default function Vendors() {
       } finally {
         setTogglingVendorId(null);
       }
+    }
+  };
+
+  const handleSuspendChallengeSuccess = async (challengeToken: string) => {
+    const { vendor, reason } = suspendChallenge;
+    if (!vendor || !reason) return;
+    setTogglingVendorId(vendor._id);
+    try {
+      await adminService.suspendVendor(vendor._id, reason, challengeToken);
+      setVendors(vendors.map(v => v._id === vendor._id ? { ...v, isActive: false } : v));
+    } catch (error: any) {
+      logger.error('Failed to suspend vendor:', error);
+      showError(error.response?.data?.message || 'Failed to suspend vendor');
+      fetchVendors();
+    } finally {
+      setTogglingVendorId(null);
+      setSuspendChallenge({ isOpen: false, vendor: null, reason: null });
     }
   };
 
@@ -370,6 +384,13 @@ export default function Vendors() {
           </div>
         </div>
       </div>
+
+      <AdminSecurityChallengeModal
+        isOpen={suspendChallenge.isOpen}
+        onClose={() => setSuspendChallenge({ isOpen: false, vendor: null, reason: null })}
+        action="SUSPEND_VENDOR"
+        onSuccess={handleSuspendChallengeSuccess}
+      />
     </div>
   );
 }

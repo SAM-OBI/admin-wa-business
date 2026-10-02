@@ -4,6 +4,8 @@ import {
 } from 'react-icons/fi';
 import { adminService } from '../api/admin.service';
 import { MultiSigRequest } from '../types';
+import AdminSecurityChallengeModal from '../components/AdminSecurityChallengeModal';
+import { useAdminGovernanceStepUp } from '../hooks/useAdminGovernanceStepUp';
 
 export default function Governance() {
     const [requests, setRequests] = useState<MultiSigRequest[]>([]);
@@ -13,6 +15,23 @@ export default function Governance() {
     const [pajLogs, setPajLogs] = useState<any[]>([]);
     const [anchors, setAnchors] = useState<any[]>([]);
     const [isAnchoring, setIsAnchoring] = useState(false);
+    // 🛡️ [ADMIN-STEP-UP-REPLICATE-1] /admin/multisig/approve/:id is gated by
+    // requireSensitiveAction('APPROVE_MULTISIG') + requireJustification —
+    // was called with neither a token nor a reason, so approval always 403'd
+    // (and would have 400'd on justification even past that).
+    // 🛡️ [GOVERNANCE-ANCHOR-1] Widened to also drive execute's own
+    // EXECUTE_MULTISIG challenge — same shape, different action/endpoint.
+    const [approveChallenge, setApproveChallenge] = useState<{ isOpen: boolean; type: 'approve' | 'execute'; id: string | null; reason: string | null }>({
+        isOpen: false, type: 'approve', id: null, reason: null
+    });
+    // 🛡️ [GOVERNANCE-ANCHOR-1] /admin/governance/anchor/manual is
+    // ADMIN_CRITICAL_POLICY — governanceGuard() freshness AND a separate
+    // requireSensitiveAction challenge token, same double-gate shape as
+    // Settlement/Consolidation's fund-moving actions.
+    const { execute: executeWithStepUp, modal: governanceStepUpModal } = useAdminGovernanceStepUp();
+    const [anchorChallenge, setAnchorChallenge] = useState<{ isOpen: boolean; reason: string | null }>({
+        isOpen: false, reason: null
+    });
 
 
 
@@ -63,47 +82,101 @@ export default function Governance() {
 
     const handleManualAnchor = async () => {
         const Swal = (await import('sweetalert2')).default;
-        const result = await Swal.fire({
+        const { value: reason } = await Swal.fire({
             title: 'Trigger Manual Anchor?',
-            text: 'This will freeze the current forensic chain and anchor it to the immutable ledger.',
+            html: `
+                <p class="mb-3">This forces a forensic-chain anchor point now, outside the normal adaptive schedule.</p>
+                <textarea id="reason" class="swal2-textarea w-full" placeholder="Justification (min 5 chars)..." rows="3"></textarea>
+            `,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Yes, Anchor Now',
-            confirmButtonColor: '#0f172a'
+            confirmButtonColor: '#0f172a',
+            preConfirm: () => {
+                const value = (document.getElementById('reason') as HTMLTextAreaElement)?.value;
+                if (!value || value.trim().length < 5) {
+                    Swal.showValidationMessage('A justification of at least 5 characters is required.');
+                    return false;
+                }
+                return value;
+            }
         });
 
-        if (result.isConfirmed) {
-            setIsAnchoring(true);
-            try {
-                await adminService.triggerManualAnchor();
-                Swal.fire('Anchored!', 'The forensic chain has been successfully anchored.', 'success');
-                fetchData();
-            } catch (err: any) {
-                Swal.fire('Failed', err.message || 'Anchoring failed', 'error');
-            } finally {
-                setIsAnchoring(false);
-            }
+        if (reason) {
+            setAnchorChallenge({ isOpen: true, reason });
+        }
+    };
+
+    const handleAnchorChallengeSuccess = async (challengeToken: string) => {
+        const { reason } = anchorChallenge;
+        if (!reason) return;
+        const Swal = (await import('sweetalert2')).default;
+        setIsAnchoring(true);
+        try {
+            await executeWithStepUp(() => adminService.triggerManualAnchor(reason, challengeToken));
+            Swal.fire('Anchored!', 'The forensic chain has been successfully anchored.', 'success');
+            fetchData();
+        } catch (err: any) {
+            Swal.fire('Failed', err.response?.data?.message || err.message || 'Anchoring failed', 'error');
+        } finally {
+            setIsAnchoring(false);
+            setAnchorChallenge({ isOpen: false, reason: null });
         }
     };
 
     const handleApprove = async (id: string) => {
+        const Swal = (await import('sweetalert2')).default;
+        const { value: reason } = await Swal.fire({
+            title: 'Approve Multi-Sig Request',
+            input: 'textarea',
+            inputLabel: 'Justification (min 5 characters)',
+            inputPlaceholder: 'Type your justification here...',
+            showCancelButton: true,
+            inputValidator: (value) => {
+                if (!value || value.trim().length < 5) return 'A valid justification (minimum 5 characters) is required.';
+                return null;
+            }
+        });
+        if (!reason) return;
+        setApproveChallenge({ isOpen: true, type: 'approve', id, reason });
+    };
+
+    const handleApproveChallengeSuccess = async (challengeToken: string) => {
+        const { type, id, reason } = approveChallenge;
+        if (!id || !reason) return;
         try {
-            await adminService.approveMultiSigRequest(id);
+            if (type === 'approve') {
+                await adminService.approveMultiSigRequest(id, reason, challengeToken);
+            } else {
+                await adminService.executeMultiSigRequest(id, reason, challengeToken);
+            }
             fetchData();
         } catch (err: any) {
             const Swal = (await import('sweetalert2')).default;
-            Swal.fire('Failed', err.message || 'Approval failed', 'error');
+            Swal.fire('Failed', err.response?.data?.message || err.message || (type === 'approve' ? 'Approval failed' : 'Execution failed'), 'error');
+        } finally {
+            setApproveChallenge({ isOpen: false, type: 'approve', id: null, reason: null });
         }
     };
 
     const handleExecute = async (id: string) => {
-        try {
-            await adminService.executeMultiSigRequest(id);
-            fetchData();
-        } catch (err: any) {
-            const Swal = (await import('sweetalert2')).default;
-            Swal.fire('Failed', err.message || 'Execution failed', 'error');
-        }
+        const Swal = (await import('sweetalert2')).default;
+        const { value: reason } = await Swal.fire({
+            title: 'Execute Governance Action',
+            text: 'This performs the actual mutation that was approved. It cannot be undone.',
+            input: 'textarea',
+            inputLabel: 'Justification (min 5 characters)',
+            inputPlaceholder: 'Type your justification here...',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Continue',
+            inputValidator: (value) => {
+                if (!value || value.trim().length < 5) return 'A valid justification (minimum 5 characters) is required.';
+                return null;
+            }
+        });
+        if (!reason) return;
+        setApproveChallenge({ isOpen: true, type: 'execute', id, reason });
     };
 
     useEffect(() => {
@@ -139,31 +212,40 @@ export default function Governance() {
                 </div>
             </div>
 
-            {/* 📊 GOVERNANCE METRICS */}
+            {/* 📊 GOVERNANCE METRICS
+                🛡️ [FIX] These three cards used to be hardcoded literals
+                ("100%" / "Verified" / "Clean, 0 Inconsistencies") regardless
+                of real state — an admin reading this page had no way to
+                know the numbers never moved. No backend endpoint computes
+                a quorum rate, a forensic-chain verification result, or a
+                PAJ inconsistency count (confirmed: no such field exists
+                anywhere in admin.controller.ts). Replaced with real counts
+                derived from the data this page already fetches (requests/
+                pajLogs) instead of inventing new backend work. */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
                     <div className="flex justify-between items-center mb-4">
                         <div className="p-3 bg-blue-50 text-blue-600 rounded-xl"><FiUsers size={24} /></div>
-                        <span className="text-[10px] font-black text-slate-400 uppercase">Quorum Rate</span>
+                        <span className="text-[10px] font-black text-slate-400 uppercase">Pending Requests</span>
                     </div>
-                    <h3 className="text-2xl font-black text-slate-800">100%</h3>
-                    <p className="text-xs text-slate-500 mt-1 font-medium">Dual-Authorization enforced on all mutations</p>
+                    <h3 className="text-2xl font-black text-slate-800">{requests.filter(r => r.status === 'PENDING').length}</h3>
+                    <p className="text-xs text-slate-500 mt-1 font-medium">Awaiting dual-authorization signature</p>
                 </div>
                 <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
                     <div className="flex justify-between items-center mb-4">
                         <div className="p-3 bg-purple-50 text-purple-600 rounded-xl"><FiLock size={24} /></div>
-                        <span className="text-[10px] font-black text-slate-400 uppercase">Forensic Chain</span>
+                        <span className="text-[10px] font-black text-slate-400 uppercase">In Cooldown</span>
                     </div>
-                    <h3 className="text-2xl font-black text-slate-800">Verified</h3>
-                    <p className="text-xs text-slate-500 mt-1 font-medium">Hash-chain anchored with Adaptive Trigger</p>
+                    <h3 className="text-2xl font-black text-slate-800">{requests.filter(r => r.status === 'COOLDOWN').length}</h3>
+                    <p className="text-xs text-slate-500 mt-1 font-medium">Approved, pending time-lock expiry</p>
                 </div>
                 <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
                     <div className="flex justify-between items-center mb-4">
                         <div className="p-3 bg-orange-50 text-orange-600 rounded-xl"><FiActivity size={24} /></div>
-                        <span className="text-[10px] font-black text-slate-400 uppercase">PAJ Health</span>
+                        <span className="text-[10px] font-black text-slate-400 uppercase">PAJ Entries (buffer)</span>
                     </div>
-                    <h3 className="text-2xl font-black text-slate-800">Clean</h3>
-                    <p className="text-xs text-slate-500 mt-1 font-medium">0 Inconsistencies in Privileged Journal</p>
+                    <h3 className="text-2xl font-black text-slate-800">{pajLogs.length}</h3>
+                    <p className="text-xs text-slate-500 mt-1 font-medium">No automated consistency check exists yet</p>
                 </div>
             </div>
 
@@ -416,30 +498,38 @@ export default function Governance() {
                                 </button>
                             </div>
 
+                            {/* 🛡️ [FIX] All 4 tiles below used to be hardcoded literals
+                                (42 / ~14m / v107.6 / WORM+"S3 Object Lock: ON"). Anchors
+                                Recorded/Last Anchor/Anchoring Schedule are now real,
+                                backed by AuditLog.isAnchor data that ForensicChainService
+                                has been writing continuously via its own adaptive
+                                threshold (GOVERNANCE-ANCHOR-1) — only External Proof
+                                stays "Not tracked", since no WORM/external-ledger
+                                integration exists anywhere in this codebase, confirmed. */}
                             <div className="p-8 rounded-3xl bg-slate-50 border border-slate-100 relative overflow-hidden">
                                 <div className="absolute top-0 right-0 p-4">
                                     <FiActivity className="text-slate-200" size={64} />
                                 </div>
                                 <div className="relative z-10 grid grid-cols-1 md:grid-cols-4 gap-8">
                                     <div className="space-y-1">
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Unanchored Entries</p>
-                                        <p className="text-3xl font-black text-slate-800">42</p>
-                                        <p className="text-[10px] text-emerald-500 font-bold uppercase">Below Threshold</p>
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Anchors Recorded</p>
+                                        <p className="text-3xl font-black text-slate-800">{anchors.length}</p>
+                                        <p className="text-[10px] text-slate-400 font-bold uppercase">Total in history</p>
                                     </div>
                                     <div className="space-y-1">
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Next Auto-Anchor</p>
-                                        <p className="text-3xl font-black text-slate-800">~14m</p>
-                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Or Priority Event</p>
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Last Anchor</p>
+                                        <p className="text-3xl font-black text-slate-800">{anchors[0]?.createdAt ? new Date(anchors[0].createdAt).toLocaleTimeString() : '—'}</p>
+                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{anchors.length ? 'Most recent' : 'None yet'}</p>
                                     </div>
                                     <div className="space-y-1">
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Anchoring Depth</p>
-                                        <p className="text-3xl font-black text-slate-800">v107.6</p>
-                                        <p className="text-[10px] text-blue-500 font-bold uppercase tracking-widest">Merkle-Chained</p>
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Anchoring Schedule</p>
+                                        <p className="text-xl font-black text-slate-800">Adaptive</p>
+                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Every 100 entries or 5 min, plus manual</p>
                                     </div>
                                     <div className="space-y-1">
                                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">External Proof</p>
-                                        <p className="text-3xl font-black text-slate-800">WORM</p>
-                                        <p className="text-[10px] text-emerald-500 font-bold uppercase tracking-widest">S3 Object Lock: ON</p>
+                                        <p className="text-xl font-black text-slate-400">Not tracked</p>
+                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">No WORM integration yet</p>
                                     </div>
                                 </div>
                             </div>
@@ -457,8 +547,8 @@ export default function Governance() {
                                                 </div>
                                             </div>
                                             <div className="text-right">
-                                                <p className="text-[10px] font-black text-slate-800">{item.entryCount} Entries</p>
-                                                <p className="text-[8px] text-slate-400 uppercase font-black">Finalized {new Date(item.createdAt).toLocaleTimeString()} ago</p>
+                                                <p className="text-[10px] font-black text-slate-800">{item.entryCount != null ? `${item.entryCount} Entries` : '—'}</p>
+                                                <p className="text-[8px] text-slate-400 uppercase font-black">Finalized {new Date(item.createdAt).toLocaleTimeString()}</p>
                                             </div>
                                         </div>
                                     )) : (
@@ -488,6 +578,20 @@ export default function Governance() {
                     </p>
                 </div>
             </div>
+
+            <AdminSecurityChallengeModal
+                isOpen={approveChallenge.isOpen}
+                onClose={() => setApproveChallenge({ isOpen: false, type: 'approve', id: null, reason: null })}
+                action={approveChallenge.type === 'execute' ? 'EXECUTE_MULTISIG' : 'APPROVE_MULTISIG'}
+                onSuccess={handleApproveChallengeSuccess}
+            />
+            {governanceStepUpModal}
+            <AdminSecurityChallengeModal
+                isOpen={anchorChallenge.isOpen}
+                onClose={() => setAnchorChallenge({ isOpen: false, reason: null })}
+                action="GOVERNANCE_MANUAL_ANCHOR"
+                onSuccess={handleAnchorChallengeSuccess}
+            />
         </div>
     );
 }

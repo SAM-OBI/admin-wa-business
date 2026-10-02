@@ -1,6 +1,7 @@
 import { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './store/authStore';
+import { useThemeStore } from './store/themeStore';
 import PageLoader from './components/PageLoader';
 import CookieConsentBanner from './components/CookieConsentBanner';
 
@@ -22,6 +23,7 @@ const FinancialAudit = lazy(() => import(/* webpackChunkName: "finance" */ './pa
 const Orders = lazy(() => import(/* webpackChunkName: "orders" */ './pages/Orders'));
 const AppLedLogistics = lazy(() => import(/* webpackChunkName: "orders" */ './pages/AppLedLogistics'));
 const SettlementManagement = lazy(() => import(/* webpackChunkName: "finance" */ './pages/SettlementManagement'));
+const DirectTransferResolutionQueue = lazy(() => import(/* webpackChunkName: "finance" */ './pages/DirectTransferResolutionQueue'));
 const AccountConsolidations = lazy(() => import(/* webpackChunkName: "management" */ './pages/AccountConsolidations'));
 const CashApplicationWorkbench = lazy(() => import(/* webpackChunkName: "finance" */ './pages/CashApplicationWorkbench'));
 const ReconciliationWorkbench = lazy(() => import(/* webpackChunkName: "finance" */ './pages/ReconciliationWorkbench'));
@@ -73,11 +75,16 @@ const prefetchPriorityRoutes = () => {
 };
 
 function App() {
-  const { isLoading, checkAuth, isAuthenticated } = useAuthStore();
+  const { checkAuth, isAuthenticated } = useAuthStore();
+  const initSystemListener = useThemeStore((state) => state.initSystemListener);
 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
+
+  useEffect(() => {
+    return initSystemListener();
+  }, [initSystemListener]);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -89,10 +96,6 @@ function App() {
         }
     }
   }, [isAuthenticated]);
-
-  if (isLoading) {
-    return <PageLoader />;
-  }
 
   return (
     <BrowserRouter>
@@ -160,6 +163,7 @@ function App() {
             <Route path="performance" element={<PlatformPerformance />} />
             <Route path="promo-hub" element={<PromoHub />} />
             <Route path="financial-audit" element={<FinancialAudit />} />
+            <Route path="dt-resolution-queue" element={<DirectTransferResolutionQueue />} />
             <Route path="ar-cash-application" element={<CashApplicationWorkbench />} />
             <Route path="ar-reconciliation" element={<ReconciliationWorkbench />} />
             <Route path="settlement" element={<SettlementManagement />} />

@@ -3,6 +3,7 @@ import api from '../api/axios';
 import { FiLock, FiCheckCircle, FiSlash, FiTrendingUp } from 'react-icons/fi';
 import Swal from 'sweetalert2';
 import { useAdminGovernanceStepUp } from '../hooks/useAdminGovernanceStepUp';
+import AdminSecurityChallengeModal from '../components/AdminSecurityChallengeModal';
 import { showError } from '../utils/swal';
 
 interface SettlementDashboard {
@@ -44,13 +45,30 @@ interface SettlementTransaction {
 }
 
 export default function SettlementManagement() {
-  // 🛡️ [MFA-P0-PHASE-2A] Settlement's force-release/hold are both
+  // 🛡️ [MFA-P0-PHASE-2A] Settlement's force-release/hold are
   // ADMIN_CRITICAL_POLICY (FORENSIC) — gated by governanceGuard()'s MFA
   // freshness check. Wrapping with `execute` lets a stale/missing MFA
   // session get refreshed via the same governance step-up modal, then
   // transparently retries the original request (no token to attach — once
   // refreshed, the session itself satisfies governanceGuard()).
   const { execute: executeWithStepUp, modal: governanceStepUpModal } = useAdminGovernanceStepUp();
+  // 🛡️ [ADMIN-STEP-UP-REPLICATE-1] The SAME routes are ALSO independently
+  // gated by requireSensitiveAction('FORCE_RELEASE_ESCROW'/'HOLD_ESCROW')
+  // (admin.routes.ts), which needs its own per-request
+  // x-security-challenge-token — a completely separate gate from
+  // governanceGuard() above (different 403 shape: nested under
+  // response.data.data, not top-level, so useAdminGovernanceStepUp's catch
+  // never even recognized it). Without this, force-release/hold could never
+  // actually succeed — they'd always fail the second gate even with a fresh
+  // governance session. Confirmed via the backend route chain + sendResponse's
+  // actual JSON shape, not assumed.
+  const [actionChallenge, setActionChallenge] = useState<{
+    isOpen: boolean;
+    type: 'release' | 'hold' | null;
+    orderId: string | null;
+    orderIdDisplay: string | null;
+    reason: string | null;
+  }>({ isOpen: false, type: null, orderId: null, orderIdDisplay: null, reason: null });
   const [dashboard, setDashboard] = useState<SettlementDashboard | null>(null);
   const [vendors, setVendors] = useState<VendorSettlement[]>([]);
   const [transactions, setTransactions] = useState<SettlementTransaction[]>([]);
@@ -148,21 +166,7 @@ export default function SettlementManagement() {
     });
 
     if (reason) {
-      setProcessingOrderId(orderId);
-      try {
-        const res = await executeWithStepUp(() => api.post(`/admin/settlement/${orderId}/release`, { reason }));
-
-        if (res.data.success) {
-          Swal.fire('Released!', 'Settlement released successfully.', 'success');
-          fetchDashboard();
-          fetchVendors();
-          fetchTransactions();
-        }
-      } catch (error: any) {
-        Swal.fire('Error', error.response?.data?.message || 'Failed to release funds', 'error');
-      } finally {
-        setProcessingOrderId(null);
-      }
+      setActionChallenge({ isOpen: true, type: 'release', orderId, orderIdDisplay, reason });
     }
   };
 
@@ -189,19 +193,35 @@ export default function SettlementManagement() {
     });
 
     if (reason) {
-      setProcessingOrderId(orderId);
-      try {
-        const res = await executeWithStepUp(() => api.post(`/admin/settlement/${orderId}/hold`, { reason }));
+      setActionChallenge({ isOpen: true, type: 'hold', orderId, orderIdDisplay, reason });
+    }
+  };
 
-        if (res.data.success) {
+  const handleActionChallengeSuccess = async (challengeToken: string) => {
+    const { type, orderId, reason } = actionChallenge;
+    if (!type || !orderId || !reason) return;
+    setProcessingOrderId(orderId);
+    try {
+      const url = `/admin/settlement/${orderId}/${type === 'release' ? 'release' : 'hold'}`;
+      const res = await executeWithStepUp(() => api.post(url, { reason }, {
+        headers: { 'x-security-challenge-token': challengeToken }
+      }));
+
+      if (res.data.success) {
+        if (type === 'release') {
+          Swal.fire('Released!', 'Settlement released successfully.', 'success');
+          fetchDashboard();
+          fetchVendors();
+        } else {
           Swal.fire('Hold Applied!', 'Safe Settlement is now HELD.', 'success');
-          fetchTransactions();
         }
-      } catch (error: any) {
-        Swal.fire('Error', error.response?.data?.message || 'Failed to apply hold', 'error');
-      } finally {
-        setProcessingOrderId(null);
+        fetchTransactions();
       }
+    } catch (error: any) {
+      Swal.fire('Error', error.response?.data?.message || `Failed to ${type === 'release' ? 'release funds' : 'apply hold'}`, 'error');
+    } finally {
+      setProcessingOrderId(null);
+      setActionChallenge({ isOpen: false, type: null, orderId: null, orderIdDisplay: null, reason: null });
     }
   };
 
@@ -481,6 +501,12 @@ export default function SettlementManagement() {
         </div>
       </div>
       {governanceStepUpModal}
+      <AdminSecurityChallengeModal
+        isOpen={actionChallenge.isOpen}
+        onClose={() => setActionChallenge({ isOpen: false, type: null, orderId: null, orderIdDisplay: null, reason: null })}
+        action={actionChallenge.type === 'hold' ? 'HOLD_ESCROW' : 'FORCE_RELEASE_ESCROW'}
+        onSuccess={handleActionChallengeSuccess}
+      />
     </div>
   );
 }

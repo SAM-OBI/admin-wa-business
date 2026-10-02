@@ -8,6 +8,11 @@ import ForensicAuditPanel from '../components/ForensicAuditPanel';
 import AutonomousAIControl from '../components/AutonomousAIControl';
 import { showError, showSuccess, showLoading, closeLoading } from '../utils/swal';
 
+// 🛡️ [ADMIN-STAFF-SCOPING-1] Mirrors adminSections.constants.ts's
+// ADMIN_SECTIONS exactly — 'Overview' is deliberately excluded there too
+// (never scopable, every admin always sees the Dashboard landing page).
+const ADMIN_SECTIONS = ['Commerce', 'Trust & Safety', 'Engagement', 'Support', 'Marketing & Ads', 'Finance', 'System'];
+
 interface SecurityAlert {
   _id: string;
   type: string;
@@ -114,7 +119,13 @@ export default function SecurityDashboard() {
     e.preventDefault();
     const emailInput = document.getElementById('inviteEmail') as HTMLInputElement;
     const capabilitySelect = document.getElementById('inviteCapability') as HTMLSelectElement;
-    
+    // 🛡️ [ADMIN-STAFF-SCOPING-1] Unchecked = allowedSections stays empty =
+    // unrestricted (matches the backend's fail-open default). Checking one
+    // or more scopes this invite to exactly those sections.
+    const allowedSections = ADMIN_SECTIONS.filter((section) =>
+      (document.getElementById(`inviteSection-${section}`) as HTMLInputElement)?.checked
+    );
+
     if (!emailInput?.value) return;
 
     try {
@@ -122,7 +133,8 @@ export default function SecurityDashboard() {
       const capabilities = {
           canInviteAdmins: capabilitySelect.value === 'FULL' || capabilitySelect.value === 'SECURITY',
           canManageSecurity: capabilitySelect.value === 'FULL' || capabilitySelect.value === 'SECURITY',
-          canManageFinance: capabilitySelect.value === 'FULL' || capabilitySelect.value === 'FINANCE'
+          canManageFinance: capabilitySelect.value === 'FULL' || capabilitySelect.value === 'FINANCE',
+          allowedSections
       };
 
       const res = await adminService.issueAdminInvite({ email: emailInput.value, capabilities });
@@ -134,6 +146,47 @@ export default function SecurityDashboard() {
       emailInput.value = '';
     } catch (error: any) {
       showError(error.response?.data?.message || 'Failed to issue invitation.');
+    } finally {
+      closeLoading();
+    }
+  };
+
+  // 🛡️ [ADMIN-STAFF-SCOPING-1] Re-scope an already-redeemed admin. Uses the
+  // invite record's own redeemedBy (already present in governanceData.invites
+  // — no separate admin-user-list endpoint exists, and this avoids building
+  // one just for this).
+  const handleEditSections = async (invite: any) => {
+    const current: string[] = invite.assignedCapabilities?.allowedSections || [];
+    const checkboxesHtml = ADMIN_SECTIONS.map((section) => `
+      <label style="display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px;text-align:left;">
+        <input type="checkbox" id="editSection-${section}" ${current.includes(section) ? 'checked' : ''} />
+        ${section}
+      </label>
+    `).join('');
+
+    const { isConfirmed } = await (window as any).Swal.fire({
+      title: `Re-scope ${invite.email}`,
+      html: `
+        <p style="font-size:12px;color:#64748b;margin-bottom:8px;">Leave all unchecked for unrestricted access.</p>
+        <div style="text-align:left;">${checkboxesHtml}</div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Save',
+    });
+
+    if (!isConfirmed) return;
+
+    const allowedSections = ADMIN_SECTIONS.filter((section) =>
+      (document.getElementById(`editSection-${section}`) as HTMLInputElement)?.checked
+    );
+
+    try {
+      showLoading('Updating section scoping...');
+      await adminService.updateAdminSections(invite.redeemedBy, allowedSections);
+      showSuccess('Section scoping updated', `${invite.email} is now ${allowedSections.length === 0 ? 'unrestricted' : `scoped to: ${allowedSections.join(', ')}`}.`);
+      fetchGovernanceData();
+    } catch (error: any) {
+      showError(error.response?.data?.message || 'Failed to update section scoping.');
     } finally {
       closeLoading();
     }
@@ -416,24 +469,44 @@ export default function SecurityDashboard() {
                         <button onClick={() => setGeneratedToken(null)} className="w-full py-2 bg-white text-slate-900 rounded-lg text-[10px] font-black uppercase">I have secured the token</button>
                       </div>
                     ) : (
-                      <form className="flex gap-4 items-end" onSubmit={handleIssueInvite}>
-                        <div className="flex-1"><label className="text-[10px] font-bold text-sv-text-secondary uppercase">Email</label><input type="email" id="inviteEmail" className="w-full px-4 py-2 rounded-xl border border-sv-border outline-none text-sm focus:ring-2 focus:ring-sv-primary/20 focus:border-sv-primary" /></div>
-                        <div><label className="text-[10px] font-bold text-sv-text-secondary uppercase">Capabilities</label><select id="inviteCapability" className="px-4 py-2 rounded-xl border border-sv-border text-sm focus:ring-2 focus:ring-sv-primary/20 focus:border-sv-primary"><option value="FULL">Full (CRITICAL)</option><option value="SECURITY">Security (HIGH)</option><option value="FINANCE">Finance (CRITICAL)</option></select></div>
-                        <button className="bg-sv-primary text-sv-text-inverse px-6 py-2 rounded-xl font-bold hover:bg-sv-primary-hover">Issue</button>
+                      <form className="space-y-4" onSubmit={handleIssueInvite}>
+                        <div className="flex gap-4 items-end">
+                          <div className="flex-1"><label className="text-[10px] font-bold text-sv-text-secondary uppercase">Email</label><input type="email" id="inviteEmail" className="w-full px-4 py-2 rounded-xl border border-sv-border outline-none text-sm focus:ring-2 focus:ring-sv-primary/20 focus:border-sv-primary" /></div>
+                          <div><label className="text-[10px] font-bold text-sv-text-secondary uppercase">Capabilities</label><select id="inviteCapability" className="px-4 py-2 rounded-xl border border-sv-border text-sm focus:ring-2 focus:ring-sv-primary/20 focus:border-sv-primary"><option value="FULL">Full (CRITICAL)</option><option value="SECURITY">Security (HIGH)</option><option value="FINANCE">Finance (CRITICAL)</option></select></div>
+                          <button className="bg-sv-primary text-sv-text-inverse px-6 py-2 rounded-xl font-bold hover:bg-sv-primary-hover">Issue</button>
+                        </div>
+                        {/* 🛡️ [ADMIN-STAFF-SCOPING-1] Leave every box unchecked for a
+                            full, unrestricted admin (today's default for everyone) —
+                            check one or more to scope this invite to only those
+                            dashboard sections. */}
+                        <div>
+                          <label className="text-[10px] font-bold text-sv-text-secondary uppercase block mb-2">Dashboard Sections (leave all unchecked = unrestricted)</label>
+                          <div className="flex flex-wrap gap-3">
+                            {ADMIN_SECTIONS.map((section) => (
+                              <label key={section} className="flex items-center gap-1.5 text-xs font-semibold text-sv-text-secondary cursor-pointer bg-white px-3 py-1.5 rounded-lg border border-sv-border">
+                                <input type="checkbox" id={`inviteSection-${section}`} className="w-3.5 h-3.5" />
+                                {section}
+                              </label>
+                            ))}
+                          </div>
+                        </div>
                       </form>
                     )}
                   </div>
                   <table className="w-full">
                     <thead className="bg-sv-surface-muted text-[10px] font-black uppercase text-sv-text-muted">
-                      <tr><th className="px-6 py-4 text-left">Status</th><th className="px-6 py-4 text-left">Recipient</th><th className="px-6 py-4 text-left">Expires</th><th className="px-6 py-4 text-left">Action</th></tr>
+                      <tr><th className="px-6 py-4 text-left">Status</th><th className="px-6 py-4 text-left">Recipient</th><th className="px-6 py-4 text-left">Sections</th><th className="px-6 py-4 text-left">Expires</th><th className="px-6 py-4 text-left">Action</th></tr>
                     </thead>
                     <tbody className="divide-y divide-sv-border">
-                      {governanceData.invites.map((invite: any, i: number) => (
+                      {governanceData.invites.map((invite: any, i: number) => {
+                        const sections: string[] = invite.assignedCapabilities?.allowedSections || [];
+                        return (
                         <tr key={i} className="hover:bg-sv-surface-muted">
                           <td className="px-6 py-4"><span className={`text-[9px] font-black px-2 py-1 rounded ${invite.status === 'PENDING' ? 'bg-yellow-500' : 'bg-green-500'} text-white`}>{invite.status}</span></td>
                           <td className="px-6 py-4 text-xs font-bold">{invite.email}</td>
+                          <td className="px-6 py-4 text-[10px] text-sv-text-secondary">{sections.length === 0 ? 'Unrestricted' : sections.join(', ')}</td>
                           <td className="px-6 py-4 text-xs">{new Date(invite.expiresAt).toLocaleString()}</td>
-                          <td className="px-6 py-4">
+                          <td className="px-6 py-4 flex gap-3">
                             {invite.status === 'PENDING' && (
                               <button
                                 onClick={() => handleRevokeInvite(invite)}
@@ -443,9 +516,18 @@ export default function SecurityDashboard() {
                                 {revokingInviteId === invite._id ? 'Revoking...' : 'Revoke'}
                               </button>
                             )}
+                            {invite.status === 'REDEEMED' && invite.redeemedBy && (
+                              <button
+                                onClick={() => handleEditSections(invite)}
+                                className="text-sv-primary text-[10px] font-black uppercase"
+                              >
+                                Edit Sections
+                              </button>
+                            )}
                           </td>
                         </tr>
-                      ))}
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
@@ -478,13 +560,26 @@ export default function SecurityDashboard() {
               <div className="flex justify-between"><span>Sovereign Telemetry</span><span className="text-green-600 font-bold">Synced</span></div>
               <div className="flex justify-between"><span>Legal Hold Registry</span><span className="text-green-600 font-bold">Synced</span></div>
               <div className="flex justify-between"><span>Encryption Layer</span><span className="text-green-600 font-bold">256-bit</span></div>
-              <div className="pt-4 border-t"><p className="text-[10px] font-black uppercase text-gray-400 mb-2">Security Score</p><div className="flex items-end gap-2"><span className="text-3xl font-black text-gray-800">98</span><span className="text-sm font-bold text-green-500 mb-1">/ 100</span></div><div className="w-full h-2 bg-gray-100 rounded-full mt-3"><div className="h-full bg-green-500 w-[98%] rounded-full"></div></div></div>
+              {/* 🛡️ [FIX] Was a hardcoded "98/100" score with a hardcoded
+                  98%-filled bar — no backend endpoint computes an aggregate
+                  security score anywhere in this codebase. Removed rather
+                  than inventing a fake number; a real score needs a defined
+                  methodology (which signals, what weighting) before it can
+                  be shown, which is a separate decision, not a display fix. */}
+              <div className="pt-4 border-t"><p className="text-[10px] font-black uppercase text-gray-400 mb-2">Security Score</p><p className="text-xs text-gray-400 font-medium">Not computed — no scoring methodology defined yet</p></div>
             </div>
           </div>
-          <div className="bg-primary text-white rounded-2xl p-6 shadow-xl shadow-primary/20">
-            <h3 className="font-bold text-lg mb-2">Automated Resilience</h3>
-            <p className="text-xs opacity-80 mb-4">Our background "Chaos Engine" runs daily to simulate network failures and database outages, ensuring 99.9% uptime.</p>
-            <div className="flex items-center gap-3 bg-white/10 rounded-xl p-3"><FiActivity className="animate-pulse" /><div className="text-[10px] font-black uppercase">Last Test: PASS (14m ago)</div></div>
+          {/* 🛡️ [FIX] Was a fabricated "Chaos Engine runs daily... Last Test:
+              PASS (14m ago)" card — this codebase does have a real chaos
+              test suite (`npm run test:chaos`), but nothing wires its
+              results to this dashboard; the card was inventing a result
+              every admin would have read as a live, passing automated
+              check. Replaced with an honest description of what actually
+              exists today. */}
+          <div className="bg-sv-surface rounded-2xl p-6 shadow-sm border border-sv-border">
+            <h3 className="font-bold text-lg mb-2 text-gray-800">Automated Resilience</h3>
+            <p className="text-xs text-gray-500 mb-4">A chaos test suite exists in the codebase but is not yet wired to run on a schedule or report its results here.</p>
+            <div className="flex items-center gap-3 bg-gray-50 rounded-xl p-3 border border-gray-100"><FiActivity className="text-gray-400" /><div className="text-[10px] font-black uppercase text-gray-500">Not connected to live telemetry</div></div>
           </div>
 
           <div className={`rounded-2xl p-6 border transition-all ${govMode !== 'NORMAL' ? 'bg-red-50 border-red-200' : 'bg-slate-50 border-slate-200'}`}>

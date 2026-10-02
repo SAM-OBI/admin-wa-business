@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { FiTruck, FiSave } from 'react-icons/fi';
 import { adminService } from '../api/admin.service';
 import { HardenedSearchInput } from '../components/search/HardenedSearchInput';
+import AdminSecurityChallengeModal from '../components/AdminSecurityChallengeModal';
 
 interface AppLedOrder {
   _id: string;
@@ -34,6 +35,12 @@ export default function AppLedLogistics() {
   const [savingId, setSavingId] = useState<string | null>(null);
   const [drafts, setDrafts] = useState<Record<string, { carrier: string; trackingNumber: string; status: string }>>({});
   const [pagination, setPagination] = useState({ total: 0, hasMore: false });
+  // 🛡️ [ADMIN-STEP-UP-REPLICATE-1] /admin/logistics/app-led/:orderId is
+  // gated by requireSensitiveAction('UPDATE_APP_LED_DELIVERY') — was called
+  // with no challenge token at all, so Save always 403'd.
+  const [saveChallenge, setSaveChallenge] = useState<{ isOpen: boolean; orderId: string | null }>({
+    isOpen: false, orderId: null
+  });
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
@@ -59,17 +66,24 @@ export default function AppLedLogistics() {
     return () => clearTimeout(timer);
   }, [fetchOrders]);
 
-  const handleSave = async (orderId: string) => {
-    const draft = drafts[orderId];
-    if (!draft) return;
+  const handleSave = (orderId: string) => {
+    if (!drafts[orderId]) return;
+    setSaveChallenge({ isOpen: true, orderId });
+  };
+
+  const handleSaveChallengeSuccess = async (challengeToken: string) => {
+    const orderId = saveChallenge.orderId;
+    const draft = orderId ? drafts[orderId] : null;
+    if (!orderId || !draft) return;
     setSavingId(orderId);
     try {
-      await adminService.updateAppLedDelivery(orderId, draft);
+      await adminService.updateAppLedDelivery(orderId, draft, challengeToken);
       await fetchOrders();
     } catch (error) {
       console.error('Failed to update App-Led delivery:', error);
     } finally {
       setSavingId(null);
+      setSaveChallenge({ isOpen: false, orderId: null });
     }
   };
 
@@ -210,6 +224,13 @@ export default function AppLedLogistics() {
           </div>
         </div>
       </div>
+
+      <AdminSecurityChallengeModal
+        isOpen={saveChallenge.isOpen}
+        onClose={() => setSaveChallenge({ isOpen: false, orderId: null })}
+        action="UPDATE_APP_LED_DELIVERY"
+        onSuccess={handleSaveChallengeSuccess}
+      />
     </div>
   );
 }

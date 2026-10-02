@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
-import { FiMenu } from 'react-icons/fi';
+import { useThemeStore } from '../store/themeStore';
+import { FiMenu, FiMoon, FiSun } from 'react-icons/fi';
 import { UserProfileDropdown } from './UserProfileDropdown';
 import { HardenedSearchInput } from './search/HardenedSearchInput';
 import { GlobalSearchOverlay } from './search/GlobalSearchOverlay';
@@ -41,6 +42,11 @@ const getPageTitle = (pathname: string): string => {
 
 export default function Header({ toggleMobileSidebar }: HeaderProps) {
   const { admin, logout } = useAuthStore();
+  // 🛡️ [FIX] `theme` (raw preference) stays 'system' forever unless
+  // explicitly toggled; `resolvedTheme` is what's actually applied — using
+  // the raw preference here would make the icon/click silently no-op for
+  // anyone still on the default who happens to be on a dark-OS system.
+  const { resolvedTheme: theme, toggleTheme } = useThemeStore();
   const location = useLocation();
   const pageTitle = getPageTitle(location.pathname);
   const [showSearch, setShowSearch] = useState(false);
@@ -97,6 +103,14 @@ export default function Header({ toggleMobileSidebar }: HeaderProps) {
             aggregation (what actionable things exist right now), not a
             notification feed. When that exists, it belongs in this slot.
           */}
+
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-lg hover:bg-sv-surface-muted text-sv-text-muted hover:text-sv-text-primary transition-colors"
+            title="Toggle theme"
+          >
+            {theme === 'dark' ? <FiSun size={18} /> : <FiMoon size={18} />}
+          </button>
 
           <div className="h-6 w-px bg-sv-border mx-2 hidden md:block" />
 

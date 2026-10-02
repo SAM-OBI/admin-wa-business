@@ -15,6 +15,7 @@ import { TreasuryPulseChart } from '../components/TreasuryPulseChart';
 import { MultiSigInbox } from '../components/MultiSigInbox';
 import { ResilientSocketWatcher } from '../components/ResilientSocketWatcher';
 import PageLoader from '../components/PageLoader';
+import AdminSecurityChallengeModal from '../components/AdminSecurityChallengeModal';
 
 interface FinancialOverview {
     systemBalances: {
@@ -39,6 +40,21 @@ interface WithdrawalLog {
     description: string;
 }
 
+// 🛡️ [NOMBA-RECONCILE-1]
+interface IntegrityIncident {
+    _id: string;
+    incidentId: string;
+    type: string;
+    severity: string;
+    status: string;
+    storeId?: { name?: string; slug?: string } | string | null;
+    userId?: { name?: string; email?: string } | string | null;
+    delta?: number;
+    causationId?: string;
+    metadata?: Record<string, any>;
+    detectedAt: string;
+}
+
 const FinancialAudit: React.FC = () => {
     const [overview, setOverview] = useState<FinancialOverview | null>(null);
     const [reconciliation, setReconciliation] = useState<any>(null);
@@ -47,6 +63,15 @@ const FinancialAudit: React.FC = () => {
     const [multiSigRequests, setMultiSigRequests] = useState<MultiSigRequest[]>([]);
     const [loading, setLoading] = useState(true);
     const [currency, setCurrency] = useState('NGN');
+    // 🛡️ [NOMBA-RECONCILE-1]
+    const [incidents, setIncidents] = useState<IntegrityIncident[]>([]);
+    const [incidentStatusFilter, setIncidentStatusFilter] = useState('PENDING');
+    // 🛡️ [ADMIN-STEP-UP-REPLICATE-1] /admin/multisig/approve/:id is gated by
+    // requireSensitiveAction('APPROVE_MULTISIG') + requireJustification —
+    // same gap as Governance.tsx's own multisig approval, separate call site.
+    const [approveChallenge, setApproveChallenge] = useState<{ isOpen: boolean; id: string | null; reason: string | null }>({
+        isOpen: false, id: null, reason: null
+    });
 
     // 🛡️ [BATCH-10] Was a single fetchData keyed on [currency] that
     // Promise.all'd all 4 calls — only reconciliation's query actually uses
@@ -90,14 +115,47 @@ const FinancialAudit: React.FC = () => {
         fetchReconciliation();
     }, [fetchReconciliation]);
 
-    const handleApprove = async (id: string) => {
+    // 🛡️ [NOMBA-RECONCILE-1] Admin oversight for every FinanceIntegrityIncident
+    // (ShopVia-vs-Nomba mismatches across withdrawal/subscription/ads-funding/
+    // checkout, plus the pre-existing VENDOR_BALANCE_DRIFT type) — previously
+    // these only ever reached an admin via a CRITICAL-only alert, with no
+    // browsable view for any severity.
+    const fetchIncidents = useCallback(async () => {
         try {
-            await adminService.approveMultiSigRequest(id);
+            const params = incidentStatusFilter ? `?status=${incidentStatusFilter}` : '';
+            const res = await api.get(`/admin/oversight/finance/integrity-incidents${params}`);
+            if (res.data.success) setIncidents(res.data.data.incidents);
+        } catch (error) {
+            logger.error('Failed to fetch finance integrity incidents:', error);
+            toast.error('Failed to load finance integrity incidents');
+        }
+    }, [incidentStatusFilter]);
+
+    useEffect(() => {
+        fetchIncidents();
+    }, [fetchIncidents]);
+
+    const handleApprove = async (id: string) => {
+        const reason = window.prompt('Enter justification for this approval (min 5 characters):');
+        if (!reason || reason.trim().length < 5) {
+            if (reason !== null) toast.error('A valid justification (minimum 5 characters) is required.');
+            return;
+        }
+        setApproveChallenge({ isOpen: true, id, reason });
+    };
+
+    const handleApproveChallengeSuccess = async (challengeToken: string) => {
+        const { id, reason } = approveChallenge;
+        if (!id || !reason) return;
+        try {
+            await adminService.approveMultiSigRequest(id, reason, challengeToken);
             toast.success('Consensus vote recorded');
             fetchStaticData();
             fetchReconciliation();
         } catch (err: any) {
-            toast.error(err.normalized?.message || 'Approval failed');
+            toast.error(err.normalized?.message || err.response?.data?.message || 'Approval failed');
+        } finally {
+            setApproveChallenge({ isOpen: false, id: null, reason: null });
         }
     };
 
@@ -313,6 +371,94 @@ const FinancialAudit: React.FC = () => {
                     </table>
                 </div>
             </div>
+
+            {/* 🛡️ [NOMBA-RECONCILE-1] Finance Integrity Incidents — every
+                ShopVia-vs-Nomba and ShopVia-vs-ShopVia mismatch the
+                reconciliation sweeps have raised, across every money flow. */}
+            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-white/5 overflow-hidden">
+                <div className="p-6 border-b border-gray-100 dark:border-white/5 flex items-center justify-between flex-wrap gap-3">
+                    <h3 className="text-lg font-black text-gray-900 dark:text-white font-display uppercase tracking-widest">Finance Integrity Incidents</h3>
+                    <select
+                        value={incidentStatusFilter}
+                        onChange={(e) => setIncidentStatusFilter(e.target.value)}
+                        className="bg-sv-surface-muted border-none rounded-xl px-4 py-2 font-black text-[10px] uppercase tracking-widest text-sv-text-primary focus:ring-1 focus:ring-primary/50 cursor-pointer"
+                    >
+                        <option value="PENDING">Pending</option>
+                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="RESOLVED">Resolved</option>
+                        <option value="">All</option>
+                    </select>
+                </div>
+
+                <div className="overflow-x-auto">
+                    <table className="w-full">
+                        <thead className="bg-gray-50/50 dark:bg-black/20 border-b border-gray-100 dark:border-white/5">
+                            <tr>
+                                <th className="px-6 py-4 text-left text-[9px] font-black text-gray-400 uppercase tracking-widest">Type / Flow</th>
+                                <th className="px-6 py-4 text-left text-[9px] font-black text-gray-400 uppercase tracking-widest">Severity</th>
+                                <th className="px-6 py-4 text-left text-[9px] font-black text-gray-400 uppercase tracking-widest">Identity</th>
+                                <th className="px-6 py-4 text-left text-[9px] font-black text-gray-400 uppercase tracking-widest">Amount</th>
+                                <th className="px-6 py-4 text-left text-[9px] font-black text-gray-400 uppercase tracking-widest">Reference</th>
+                                <th className="px-6 py-4 text-right text-[9px] font-black text-gray-400 uppercase tracking-widest">Detected</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100 dark:divide-white/5">
+                            {incidents.length === 0 ? (
+                                <tr><td colSpan={6} className="px-6 py-10 text-center text-xs text-gray-400 font-bold">No incidents for this filter.</td></tr>
+                            ) : incidents.map((incident) => (
+                                <tr key={incident._id} className="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                                    <td className="px-6 py-4">
+                                        <p className="font-bold text-gray-900 dark:text-white text-xs">{incident.type}</p>
+                                        {incident.metadata?.flow && (
+                                            <p className="text-[9px] text-gray-400 uppercase tracking-widest">{incident.metadata.flow}</p>
+                                        )}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <span className={`px-2 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border ${
+                                            incident.severity === 'CRITICAL'
+                                                ? 'bg-sv-danger-soft text-sv-danger border-sv-danger/30'
+                                                : incident.severity === 'HIGH'
+                                                    ? 'bg-sv-warning-soft text-sv-warning border-sv-warning/30'
+                                                    : 'bg-sv-info-soft text-sv-info border-sv-info/30'
+                                        }`}>
+                                            {incident.severity}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <p className="font-bold text-gray-900 dark:text-white text-xs">
+                                            {typeof incident.userId === 'object' ? (incident.userId?.name || incident.userId?.email) : '—'}
+                                        </p>
+                                        <p className="text-[9px] text-gray-400">
+                                            {typeof incident.storeId === 'object' ? incident.storeId?.name : '—'}
+                                        </p>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <span className="font-black text-gray-900 dark:text-white text-xs">
+                                            {typeof incident.delta === 'number' ? `₦${(Math.abs(incident.delta) / 100).toLocaleString()}` : '—'}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <p className="font-mono text-[10px] text-gray-500 truncate max-w-[160px]">{incident.causationId || incident.incidentId.slice(0, 12)}</p>
+                                        {incident.metadata?.nombaRawStatus && (
+                                            <p className="text-[9px] text-gray-400">ShopVia: {incident.metadata.shopviaStatus} / Nomba: {incident.metadata.nombaRawStatus}</p>
+                                        )}
+                                    </td>
+                                    <td className="px-6 py-4 text-right">
+                                        <p className="text-[10px] font-bold text-gray-500">{new Date(incident.detectedAt).toLocaleString()}</p>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <AdminSecurityChallengeModal
+                isOpen={approveChallenge.isOpen}
+                onClose={() => setApproveChallenge({ isOpen: false, id: null, reason: null })}
+                action="APPROVE_MULTISIG"
+                onSuccess={handleApproveChallengeSuccess}
+            />
         </div>
     );
 };

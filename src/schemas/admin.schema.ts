@@ -6,6 +6,17 @@ export const TreasuryHealthSchema = z.object({
   totalEscrowValue: z.number().default(0),
   totalWalletLiability: z.number().default(0),
   exposureRatio: z.number().default(0),
+  // 🛡️ [WALLET-LIABILITY-1] Zod strips unknown keys by default — without
+  // these, getTreasuryHealth's new fields would be silently dropped right
+  // here, before TreasuryMetrics ever sees them.
+  totalRefundLiability: z.number().default(0),
+  platformRevenue: z.object({
+    adRevenue: z.number().default(0),
+    subscriptionRevenue: z.number().default(0),
+    protectionFeeRevenue: z.number().default(0),
+    total: z.number().default(0),
+  }).default({ adRevenue: 0, subscriptionRevenue: 0, protectionFeeRevenue: 0, total: 0 }),
+  netSpendableBalance: z.number().default(0),
 });
 
 export const DashboardStatsSchema = z.object({

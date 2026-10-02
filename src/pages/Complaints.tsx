@@ -3,6 +3,7 @@ import { adminService, Complaint } from '../api/admin.service';
 import { FiAlertCircle, FiCheckCircle } from 'react-icons/fi';
 import { HardenedSearchInput } from '../components/search/HardenedSearchInput';
 import ComplaintDetailsModal from '../components/ComplaintDetailsModal';
+import AdminSecurityChallengeModal from '../components/AdminSecurityChallengeModal';
 import api from '../api/axios';
 import { ErrorState } from '../components/ErrorState';
 
@@ -13,6 +14,8 @@ export default function Complaints() {
   const [selectedComplaint, setSelectedComplaint] = useState<any>(null);
   const [search, setSearch] = useState('');
   const [resolvingId, setResolvingId] = useState<string | null>(null);
+  const [isChallengeOpen, setIsChallengeOpen] = useState(false);
+  const [challengeComplaintId, setChallengeComplaintId] = useState<string | null>(null);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 20,
@@ -61,33 +64,32 @@ export default function Complaints() {
     }
   };
 
-  const handleResolve = async (id: string) => {
+  const handleResolve = (id: string) => {
     if (resolvingId) return;
+    // 🛡️ [ADMIN-STEP-UP-REPLICATE-1] /admin/complaints/:id/resolve is gated
+    // behind requireSensitiveAction('RESOLVE_COMPLAINT'), which always 403s
+    // without a fresh x-security-challenge-token (rbac.middleware.ts) - so
+    // the challenge must run before the resolve call, same proactive
+    // pattern VendorDetails.tsx uses for OVERRIDE_SUBSCRIPTION.
+    setChallengeComplaintId(id);
+    setIsChallengeOpen(true);
+  };
+
+  const handleChallengeSuccess = async (challengeToken: string) => {
+    const id = challengeComplaintId;
+    if (!id) return;
     setResolvingId(id);
     try {
-      await adminService.resolveComplaint(id);
+      await adminService.resolveComplaint(id, challengeToken);
       setComplaints(complaints.map(c =>
         c._id === id ? { ...c, status: 'RESOLVED' } : c
       ));
     } catch (error: any) {
       console.error('Failed to resolve complaint:', error);
-      // 🛡️ [KNOWN GAP] The backend gates /admin/complaints/:id/resolve
-      // behind requireSensitiveAction('RESOLVE_COMPLAINT'), which always
-      // 403s without a fresh x-security-challenge-token header
-      // (rbac.middleware.ts) - this service call never sends one, so this
-      // action currently cannot succeed at all. Wiring the real challenge
-      // flow (AdminSecurityChallengeModal, same pattern VendorDetails.tsx
-      // uses for subscription overrides) is explicitly marked as a
-      // separate, not-yet-authorized task in that modal's own doc comment
-      // - not attempting it here. This alert at least makes the failure
-      // visible instead of silent.
-      if (error.response?.data?.data?.requiresStepUp) {
-        alert('This action requires a security verification step that is not yet available on this page. The complaint was not resolved.');
-      } else {
-        alert(error.response?.data?.message || 'Failed to resolve complaint.');
-      }
+      alert(error.response?.data?.message || 'Failed to resolve complaint.');
     } finally {
       setResolvingId(null);
+      setChallengeComplaintId(null);
     }
   };
 
@@ -274,6 +276,16 @@ export default function Complaints() {
           }}
         />
       )}
+
+      <AdminSecurityChallengeModal
+        isOpen={isChallengeOpen}
+        onClose={() => {
+          setIsChallengeOpen(false);
+          setChallengeComplaintId(null);
+        }}
+        action="RESOLVE_COMPLAINT"
+        onSuccess={handleChallengeSuccess}
+      />
     </div>
   );
 }

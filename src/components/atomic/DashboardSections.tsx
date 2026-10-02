@@ -10,6 +10,14 @@ interface TreasuryProps {
         liquidityScore: number;
         totalEscrowValue: number;
         totalWalletLiability: number;
+        totalRefundLiability: number;
+        platformRevenue: {
+            adRevenue: number;
+            subscriptionRevenue: number;
+            protectionFeeRevenue: number;
+            total: number;
+        };
+        netSpendableBalance: number;
         exposureRatio: number;
     };
 }
@@ -43,12 +51,13 @@ export const TreasuryMetrics: React.FC<TreasuryProps> = memo(({ data }) => (
             </div>
 
             <div>
-                <p className="text-[10px] font-black text-muted uppercase tracking-[0.2em] mb-3">Wallet Liability</p>
-                {/* 🛡️ [BATCH-11] No backend source exists for this metric yet
-                    (needs its own accounting-scope decision — see decision
-                    ledger) — showing a placeholder rather than a broken
-                    currency string from an undefined value. */}
-                <MetricValue value={data.totalWalletLiability != null ? formatCurrency(data.totalWalletLiability) : '—'} label="Wallet Liability" color="text-muted" />
+                <p className="text-[10px] font-black text-muted uppercase tracking-[0.2em] mb-3">Vendor Wallet Liability</p>
+                {/* 🛡️ [WALLET-LIABILITY-1] Vendor money only now — sum of
+                    every store's walletBalance. The buyer/guest side moved
+                    to its own tile below (Refund Liability), since that's
+                    the real, currently-active obligation — not buyer
+                    User.walletBalance, which reads ~0 in practice today. */}
+                <MetricValue value={data.totalWalletLiability != null ? formatCurrency(data.totalWalletLiability) : '—'} label="Vendor Wallet Liability" color="text-muted" />
             </div>
 
             <div>
@@ -58,6 +67,38 @@ export const TreasuryMetrics: React.FC<TreasuryProps> = memo(({ data }) => (
                     label="Exposure Ratio"
                     color={data.exposureRatio > 1 ? 'text-red-500' : 'text-emerald-500'}
                     trend={data.exposureRatio > 1 ? 'up' : 'down'}
+                />
+            </div>
+        </div>
+
+        {/* 🛡️ [WALLET-LIABILITY-1] Second row: ShopVia's own earned revenue
+            (ads + subscriptions + buyer-protection fee — real money ShopVia
+            keeps, broken down by source), the buyer/guest refund obligation
+            (RefundCase rows not yet sent to the gateway), and what's left
+            over once both liabilities are subtracted from the real bank
+            balance — the actual "safe to spend" figure. */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mt-10 pt-10 border-t border-subtle">
+            <div>
+                <p className="text-[10px] font-black text-muted uppercase tracking-[0.2em] mb-3">Platform Revenue</p>
+                <MetricValue value={formatCurrency(data.platformRevenue?.total ?? 0)} label="Platform Revenue" color="text-emerald-500" />
+                <div className="mt-3 space-y-1.5 text-[10px] font-bold text-muted">
+                    <div className="flex justify-between gap-4"><span>Ads</span><span className="text-heading">{formatCurrency(data.platformRevenue?.adRevenue ?? 0)}</span></div>
+                    <div className="flex justify-between gap-4"><span>Subscriptions</span><span className="text-heading">{formatCurrency(data.platformRevenue?.subscriptionRevenue ?? 0)}</span></div>
+                    <div className="flex justify-between gap-4"><span>Buyer Protection Fee</span><span className="text-heading">{formatCurrency(data.platformRevenue?.protectionFeeRevenue ?? 0)}</span></div>
+                </div>
+            </div>
+
+            <div>
+                <p className="text-[10px] font-black text-muted uppercase tracking-[0.2em] mb-3">Refund Liability (Buyer/Guest)</p>
+                <MetricValue value={formatCurrency(data.totalRefundLiability ?? 0)} label="Refund Liability" color={data.totalRefundLiability > 0 ? 'text-amber-500' : 'text-muted'} />
+            </div>
+
+            <div>
+                <p className="text-[10px] font-black text-muted uppercase tracking-[0.2em] mb-3">Net Spendable Balance</p>
+                <MetricValue
+                    value={formatCurrency(data.netSpendableBalance ?? 0)}
+                    label="Net Spendable Balance"
+                    color={data.netSpendableBalance < 0 ? 'text-red-500' : 'text-emerald-500'}
                 />
             </div>
         </div>

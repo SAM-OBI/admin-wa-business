@@ -6,6 +6,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <title>Shopvia Admin | Control Center</title>
+    <script>
+      // 🛡️ [THEME-TOGGLE-1] Pre-hydration theme bootstrap — reads the single
+      // primitive key (sv_admin_theme_v1) before first paint and applies the
+      // resolved .light/.dark class, so there's no flash of the wrong theme
+      // while React/Zustand boot. Mirrors the sibling vendor frontend's own
+      // index.html bootstrap exactly (whatsappvendors stores/index.html).
+      (function () {
+        try {
+          var h = document.documentElement;
+          var stored = '';
+          try { stored = localStorage.getItem('sv_admin_theme_v1') || ''; } catch (e) {}
+          var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var dark = stored === 'dark' || (!stored && systemDark);
+
+          h.classList.remove('light', 'dark');
+          h.classList.add(dark ? 'dark' : 'light');
+          h.style.colorScheme = dark ? 'dark' : 'light';
+
+          h.classList.add('no-theme-transition');
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+              h.classList.remove('no-theme-transition');
+            });
+          });
+        } catch (e) {
+          // Safari private mode or CSP — degrade silently, light mode fallback
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { adminService } from '../api/admin.service';
 import { FiFilter, FiUser, FiCalendar, FiStar } from 'react-icons/fi';
 import Swal from 'sweetalert2';
+import AdminSecurityChallengeModal from '../components/AdminSecurityChallengeModal';
 
 export default function PlatformReviews() {
     const [reviews, setReviews] = useState<any[]>([]);
@@ -9,6 +10,12 @@ export default function PlatformReviews() {
     const [filterStatus, setFilterStatus] = useState<string>('');
     const [cursor, setCursor] = useState<string | undefined>(undefined);
     const [hasMore, setHasMore] = useState(false);
+    // 🛡️ [ADMIN-STEP-UP-REPLICATE-1] /admin/platform-reviews/:id is gated by
+    // requireSensitiveAction('MODERATE_PLATFORM_REVIEW') — was called with no
+    // challenge token at all, so every moderation action always 403'd.
+    const [moderateChallenge, setModerateChallenge] = useState<{ isOpen: boolean; id: string | null; newStatus: string | null }>({
+        isOpen: false, id: null, newStatus: null
+    });
 
     const fetchReviews = useCallback(async (reset: boolean) => {
         setLoading(true);
@@ -45,9 +52,15 @@ export default function PlatformReviews() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filterStatus]);
 
-    const handleStatusUpdate = async (id: string, newStatus: string) => {
+    const handleStatusUpdate = (id: string, newStatus: string) => {
+        setModerateChallenge({ isOpen: true, id, newStatus });
+    };
+
+    const handleModerateChallengeSuccess = async (challengeToken: string) => {
+        const { id, newStatus } = moderateChallenge;
+        if (!id || !newStatus) return;
         try {
-            await adminService.moderatePlatformReview(id, newStatus);
+            await adminService.moderatePlatformReview(id, newStatus, undefined, challengeToken);
             setReviews(prev => prev.map(r => r._id === id ? { ...r, status: newStatus } : r));
             Swal.fire({
                 icon: 'success',
@@ -58,6 +71,8 @@ export default function PlatformReviews() {
             });
         } catch {
             Swal.fire('Error', 'Failed to update status', 'error');
+        } finally {
+            setModerateChallenge({ isOpen: false, id: null, newStatus: null });
         }
     };
 
@@ -163,6 +178,13 @@ export default function PlatformReviews() {
                     </button>
                 </div>
             )}
+
+            <AdminSecurityChallengeModal
+                isOpen={moderateChallenge.isOpen}
+                onClose={() => setModerateChallenge({ isOpen: false, id: null, newStatus: null })}
+                action="MODERATE_PLATFORM_REVIEW"
+                onSuccess={handleModerateChallengeSuccess}
+            />
         </div>
     );
 }

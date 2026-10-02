@@ -102,8 +102,10 @@ export const adminService = {
     return response.data;
   },
 
-  suspendVendor: async (id: string, reason: string): Promise<ApiResponse<any>> => {
-    const response = await api.patch(`/admin/vendors/${id}/suspend`, { reason });
+  suspendVendor: async (id: string, reason: string, challengeToken: string): Promise<ApiResponse<any>> => {
+    const response = await api.patch(`/admin/vendors/${id}/suspend`, { reason }, {
+      headers: { 'x-security-challenge-token': challengeToken }
+    });
     return response.data;
   },
 
@@ -148,8 +150,10 @@ export const adminService = {
     return response.data;
   },
 
-  updateAppLedDelivery: async (orderId: string, updates: { status?: string; carrier?: string; trackingNumber?: string }): Promise<ApiResponse<any>> => {
-    const response = await api.patch(`/admin/logistics/app-led/${orderId}`, updates);
+  updateAppLedDelivery: async (orderId: string, updates: { status?: string; carrier?: string; trackingNumber?: string }, challengeToken: string): Promise<ApiResponse<any>> => {
+    const response = await api.patch(`/admin/logistics/app-led/${orderId}`, updates, {
+      headers: { 'x-security-challenge-token': challengeToken }
+    });
     return response.data;
   },
 
@@ -159,8 +163,10 @@ export const adminService = {
     return response.data;
   },
 
-  resolveComplaint: async (id: string): Promise<ApiResponse<any>> => {
-    const response = await api.patch(`/admin/complaints/${id}/resolve`);
+  resolveComplaint: async (id: string, challengeToken: string): Promise<ApiResponse<any>> => {
+    const response = await api.patch(`/admin/complaints/${id}/resolve`, {}, {
+      headers: { 'x-security-challenge-token': challengeToken }
+    });
     return response.data;
   },
 
@@ -181,8 +187,10 @@ export const adminService = {
     return response.data;
   },
 
-  moderatePlatformReview: async (id: string, status: string, moderationReason?: string): Promise<ApiResponse<any>> => {
-    const response = await api.patch(`/admin/platform-reviews/${id}`, { status, moderationReason });
+  moderatePlatformReview: async (id: string, status: string, moderationReason: string | undefined, challengeToken: string): Promise<ApiResponse<any>> => {
+    const response = await api.patch(`/admin/platform-reviews/${id}`, { status, moderationReason }, {
+      headers: { 'x-security-challenge-token': challengeToken }
+    });
     return response.data;
   },
 
@@ -296,8 +304,10 @@ export const adminService = {
     return response.data;
   },
 
-  overrideVendorTrust: async (id: string, data: { newScore: number; reason: string; justification: string }): Promise<ApiResponse<any>> => {
-    const response = await api.patch(`/admin/trust/vendors/${id}/override`, data);
+  overrideVendorTrust: async (id: string, data: { newScore: number; reason: string; justification: string }, challengeToken: string): Promise<ApiResponse<any>> => {
+    const response = await api.patch(`/admin/trust/vendors/${id}/override`, data, {
+      headers: { 'x-security-challenge-token': challengeToken }
+    });
     return response.data;
   },
 
@@ -398,13 +408,17 @@ export const adminService = {
     return response.data;
   },
 
-  approveMultiSigRequest: async (id: string): Promise<ApiResponse<any>> => {
-    const response = await api.post(`/admin/multisig/approve/${id}`);
+  approveMultiSigRequest: async (id: string, reason: string, challengeToken: string): Promise<ApiResponse<any>> => {
+    const response = await api.post(`/admin/multisig/approve/${id}`, { reason }, {
+      headers: { 'x-security-challenge-token': challengeToken }
+    });
     return response.data;
   },
 
-  executeMultiSigRequest: async (id: string): Promise<ApiResponse<any>> => {
-    const response = await api.post(`/admin/multisig/execute/${id}`);
+  executeMultiSigRequest: async (id: string, reason: string, challengeToken: string): Promise<ApiResponse<any>> => {
+    const response = await api.post(`/admin/multisig/execute/${id}`, { reason }, {
+      headers: { 'x-security-challenge-token': challengeToken }
+    });
     return response.data;
   },
 
@@ -462,6 +476,12 @@ export const adminService = {
     return response.data;
   },
 
+  // 🛡️ [ADMIN-STAFF-SCOPING-1]
+  updateAdminSections: async (userId: string, allowedSections: string[]): Promise<ApiResponse<any>> => {
+    const response = await api.patch(`/auth/admin/${userId}/sections`, { allowedSections });
+    return response.data;
+  },
+
   getGovernanceMode: async (): Promise<ApiResponse<any>> => {
     const response = await api.get('/admin/governance/mode');
     return response.data;
@@ -473,8 +493,10 @@ export const adminService = {
   },
 
   // 🛡️ [v10.0] Institutional Governance & Resilience
-  revokeVendorVerification: async (id: string, data: { reason: string; category: string; multisigId?: string }): Promise<ApiResponse<any>> => {
-    const response = await api.post(`/admin/vendors/${id}/revoke-verification`, data);
+  revokeVendorVerification: async (id: string, data: { reason: string; category: string; multisigId?: string }, challengeToken: string): Promise<ApiResponse<any>> => {
+    const response = await api.post(`/admin/vendors/${id}/revoke-verification`, data, {
+      headers: { 'x-security-challenge-token': challengeToken }
+    });
     return response.data;
   },
 
@@ -493,8 +515,10 @@ export const adminService = {
     return response.data;
   },
 
-  triggerManualAnchor: async (): Promise<ApiResponse<any>> => {
-    const response = await api.post('/admin/governance/anchor/manual');
+  triggerManualAnchor: async (reason: string, challengeToken: string): Promise<ApiResponse<any>> => {
+    const response = await api.post('/admin/governance/anchor/manual', { reason }, {
+      headers: { 'x-security-challenge-token': challengeToken }
+    });
     return response.data;
   }
 };

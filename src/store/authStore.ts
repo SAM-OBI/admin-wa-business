@@ -13,6 +13,14 @@ interface AdminUser {
     status: 'active' | 'inactive';
   };
   isTwoFactorEnabled?: boolean;
+  // 🛡️ [ADMIN-STAFF-SCOPING-1] Empty/undefined = unrestricted.
+  capabilities?: {
+    canInviteAdmins?: boolean;
+    canExportAudits?: boolean;
+    canManageFinance?: boolean;
+    canManageSecurity?: boolean;
+    allowedSections?: string[];
+  };
 }
 
 interface AuthState {

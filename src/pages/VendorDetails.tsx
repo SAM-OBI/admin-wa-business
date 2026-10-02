@@ -28,7 +28,14 @@ export default function VendorDetails() {
 
   // Subscription Override State
   const [isChallengeOpen, setIsChallengeOpen] = useState(false);
-  const [challengeActionType, setChallengeActionType] = useState<'SET' | 'CLEAR'>('SET');
+  // 🛡️ [ADMIN-STEP-UP-REPLICATE-1] Widened from the original 'SET'|'CLEAR'
+  // (subscription override only) to also drive the SAME proven
+  // challenge->retry-with-token flow for the other requireSensitiveAction
+  // mutations on this page that were calling their endpoints directly with
+  // no token at all (TRUST_OVERRIDE/SUSPEND_VENDOR/REVOKE_VENDOR_VERIFICATION
+  // all always-403'd before this).
+  const [challengeActionType, setChallengeActionType] = useState<'SET' | 'CLEAR' | 'TRUST_OVERRIDE' | 'SUSPEND' | 'REVOKE'>('SET');
+  const [pendingParams, setPendingParams] = useState<Record<string, any>>({});
   const [overridePlan, setOverridePlan] = useState('premium');
   const [overrideExpiresAt, setOverrideExpiresAt] = useState('');
   const [overrideReason, setOverrideReason] = useState('');
@@ -79,7 +86,7 @@ export default function VendorDetails() {
     }
   }, [id, fetchVendorDetails, fetchTrustHistory, fetchRevenueLedger]);
 
-  const handleTrustOverride = async () => {
+  const handleTrustOverride = () => {
     const newScoreStr = prompt('Enter new trust score (0-100):');
     if (newScoreStr === null) return;
     const newScore = parseInt(newScoreStr);
@@ -92,14 +99,9 @@ export default function VendorDetails() {
     const justification = prompt('Enter mandatory justification for policy audit:');
     if (!justification) return;
 
-    try {
-      await adminService.overrideVendorTrust(id!, { newScore, reason, justification });
-      fetchVendorDetails();
-      fetchTrustHistory();
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Trust override failed');
-      console.error('Trust override failed:', error);
-    }
+    setPendingParams({ newScore, reason, justification });
+    setChallengeActionType('TRUST_OVERRIDE');
+    setIsChallengeOpen(true);
   };
 
   const initSetOverride = () => {
@@ -120,6 +122,8 @@ export default function VendorDetails() {
   };
 
   const handleChallengeSuccess = async (challengeToken: string) => {
+    if (actionPending) return;
+    setActionPending(true);
     try {
       if (challengeActionType === 'SET') {
         await adminService.overrideSubscription(id!, {
@@ -127,35 +131,49 @@ export default function VendorDetails() {
           expiresAt: overrideExpiresAt,
           reason: overrideReason
         }, challengeToken);
-      } else {
+        setOverrideReason('');
+        setOverrideExpiresAt('');
+      } else if (challengeActionType === 'CLEAR') {
         await adminService.clearSubscriptionOverride(id!, {
           reason: overrideReason
         }, challengeToken);
+        setOverrideReason('');
+      } else if (challengeActionType === 'TRUST_OVERRIDE') {
+        await adminService.overrideVendorTrust(id!, {
+          newScore: pendingParams.newScore,
+          reason: pendingParams.reason,
+          justification: pendingParams.justification
+        }, challengeToken);
+        fetchTrustHistory();
+      } else if (challengeActionType === 'SUSPEND') {
+        await adminService.suspendVendor(id!, pendingParams.reason, challengeToken);
+      } else if (challengeActionType === 'REVOKE') {
+        const response = await adminService.revokeVendorVerification(id!, {
+          reason: pendingParams.reason,
+          category: pendingParams.category
+        }, challengeToken);
+        if (response.data.requiresQuorum) {
+          alert(`Dual-Control Proposal Created: ${response.data.multisigId}. Awaiting second administrator approval.`);
+        } else {
+          alert('Verification revoked and store placed on monitored probation.');
+        }
       }
-      // Refresh state
-      setOverrideReason('');
-      setOverrideExpiresAt('');
       fetchVendorDetails();
-    } catch (error) {
-      console.error('Subscription override failed:', error);
-      alert('Subscription override failed.');
+    } catch (error: any) {
+      console.error(`${challengeActionType} failed:`, error);
+      alert(error.response?.data?.message || 'Action failed.');
+    } finally {
+      setActionPending(false);
+      setPendingParams({});
     }
   };
 
-  const handleSuspend = async () => {
+  const handleSuspend = () => {
     const reason = prompt('Enter reason for suspension:');
     if (!reason) return;
-    if (actionPending) return;
-    setActionPending(true);
-    try {
-      await adminService.suspendVendor(id!, reason);
-      fetchVendorDetails();
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to suspend vendor');
-      console.error('Failed to suspend vendor:', error);
-    } finally {
-      setActionPending(false);
-    }
+    setPendingParams({ reason });
+    setChallengeActionType('SUSPEND');
+    setIsChallengeOpen(true);
   };
 
   const handleActivate = async () => {
@@ -208,7 +226,7 @@ export default function VendorDetails() {
     }
   };
 
-  const handleRevoke = async () => {
+  const handleRevoke = () => {
     const categories = ['POLICY_VIOLATION', 'IDENTITY_MISMATCH', 'REPUTATION_MANIPULATION', 'LEGAL_COMPLIANCE'];
     const category = prompt(`Select Enforcement Category:\n${categories.join('\n')}`, 'POLICY_VIOLATION');
     if (!category || !categories.includes(category)) {
@@ -218,26 +236,10 @@ export default function VendorDetails() {
 
     const reason = prompt('Enter mandatory revocation reason for forensic audit:');
     if (!reason) return;
-    if (actionPending) return;
-    setActionPending(true);
 
-    try {
-      const response = await adminService.revokeVendorVerification(id!, {
-        reason,
-        category
-      });
-
-      if (response.data.requiresQuorum) {
-        alert(`Dual-Control Proposal Created: ${response.data.multisigId}. Awaiting second administrator approval.`);
-      } else {
-        alert('Verification revoked and store placed on monitored probation.');
-      }
-      fetchVendorDetails();
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Revocation failed');
-    } finally {
-      setActionPending(false);
-    }
+    setPendingParams({ reason, category });
+    setChallengeActionType('REVOKE');
+    setIsChallengeOpen(true);
   };
 
   const handleImpersonate = async () => {
@@ -1256,8 +1258,13 @@ export default function VendorDetails() {
       </div>
       <AdminSecurityChallengeModal
         isOpen={isChallengeOpen}
-        onClose={() => setIsChallengeOpen(false)}
-        action="OVERRIDE_SUBSCRIPTION"
+        onClose={() => { setIsChallengeOpen(false); setPendingParams({}); }}
+        action={
+          challengeActionType === 'TRUST_OVERRIDE' ? 'TRUST_OVERRIDE' :
+          challengeActionType === 'SUSPEND' ? 'SUSPEND_VENDOR' :
+          challengeActionType === 'REVOKE' ? 'REVOKE_VENDOR_VERIFICATION' :
+          'OVERRIDE_SUBSCRIPTION'
+        }
         onSuccess={handleChallengeSuccess}
       />
     </div>

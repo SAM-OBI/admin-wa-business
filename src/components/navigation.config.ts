@@ -66,6 +66,7 @@ export const navigationGroups: { label: string; items: { name: string; to: strin
     items: [
       { name: 'Financial Audit', to: '/dashboard/financial-audit', icon: FiTrendingUp },
       { name: 'Settlement', to: '/dashboard/settlement', icon: FiLock },
+      { name: 'DT Resolution Queue', to: '/dashboard/dt-resolution-queue', icon: FiFlag },
     ]
   },
   {
