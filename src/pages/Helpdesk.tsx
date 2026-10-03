@@ -2,14 +2,20 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   FaHeadset, FaTicketAlt, FaUsers, FaExclamationTriangle,
-  FaCheckCircle, FaClock, FaFilter, FaInbox,
+  FaCheckCircle, FaClock, FaInbox,
   FaFire, FaChevronRight, FaBell, FaCircle
 } from 'react-icons/fa';
 import api from '../api/axios';
 import { toast } from 'react-hot-toast';
 import TicketDetail from '../components/helpdesk/TicketDetail';
 import AgentManagement from '../components/helpdesk/AgentManagement';
-import QueueRulesEditor from '../components/helpdesk/QueueRulesEditor';
+// 🛡️ [SUPPORT-PHASE-G-1] QueueRulesEditor ('Routing Rules' tab) is 100%
+// mock — MOCK_WORKFLOWS, a setTimeout fake fetch, and a "Publish Version"
+// button whose handler just shows a toast claiming success. Shipping it
+// alongside the two real tabs below would let an admin believe they just
+// edited live routing logic when nothing happened. Left out of this mount;
+// a real routing-rules admin UI (on top of QueueRoutingService.route(),
+// which already exists and works) is a separate, larger feature.
 
 type TicketStatus   = 'OPEN' | 'IN_PROGRESS' | 'PENDING' | 'RESOLVED' | 'ESCALATED';
 type TicketPriority = 'low' | 'normal' | 'high' | 'urgent';
@@ -42,7 +48,7 @@ interface HelpdeskStats {
   avgResolutionMins: number;
 }
 
-type ActiveTab = 'queue' | 'agents' | 'rules';
+type ActiveTab = 'queue' | 'agents';
 
 const PRIORITY_CONFIG: Record<TicketPriority, { label: string; color: string; dot: string }> = {
   urgent: { label: 'Urgent',  color: 'bg-sv-danger-soft text-sv-danger border-sv-danger/30',    dot: 'bg-sv-danger'    },
@@ -75,7 +81,11 @@ export default function Helpdesk() {
         api.get('/support/admin/tickets'),
         api.get('/support/admin/stats'),
       ]);
-      setTickets(ticketsRes.data.data || []);
+      // 🛡️ [SUPPORT-PHASE-G-1] getTickets nests the array as
+      // `data.tickets` (alongside `data.pagination`), not `data` itself —
+      // this was reading the wrong shape and would have thrown on
+      // `tickets.filter(...)` below the moment this page was ever mounted.
+      setTickets(ticketsRes.data.data?.tickets || []);
       setStats(statsRes.data.data || null);
     } catch {
       toast.error('Failed to load helpdesk data');
@@ -126,7 +136,6 @@ export default function Helpdesk() {
             {([
               { id: 'queue',  label: 'Ticket Queue',  icon: FaInbox   },
               { id: 'agents', label: 'Agents',         icon: FaUsers   },
-              { id: 'rules',  label: 'Routing Rules',  icon: FaFilter  },
             ] as const).map(({ id, label, icon: Icon }) => (
               <button
                 key={id}
@@ -282,12 +291,6 @@ export default function Helpdesk() {
           {activeTab === 'agents' && (
             <motion.div key="agents" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
               <AgentManagement onRefresh={fetchData} />
-            </motion.div>
-          )}
-
-          {activeTab === 'rules' && (
-            <motion.div key="rules" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-              <QueueRulesEditor />
             </motion.div>
           )}
         </AnimatePresence>

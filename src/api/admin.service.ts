@@ -157,6 +157,21 @@ export const adminService = {
     return response.data;
   },
 
+  // 🛡️ [CANCEL-TO-ADMIN-QUEUE-1] Refund case review queue — mounted at
+  // /api/v1/refunds (not under /admin), same backend router the buyer's
+  // own cancel-order flow creates cases through.
+  getRefundCases: async <T = any>(params?: { status?: string; page?: number; limit?: number }): Promise<ApiResponse<T>> => {
+    const response = await api.get('/refunds', { params });
+    return response.data;
+  },
+
+  resolveRefundCase: async (caseId: string, resolution: 'APPROVED' | 'REJECTED', note: string, challengeToken: string): Promise<ApiResponse<any>> => {
+    const response = await api.post(`/refunds/${caseId}/resolve`, { resolution, note }, {
+      headers: { 'x-security-challenge-token': challengeToken }
+    });
+    return response.data;
+  },
+
   // Complaints
   getComplaints: async (params?: any): Promise<ApiResponse<any>> => {
     const response = await api.get('/admin/complaints', { params });

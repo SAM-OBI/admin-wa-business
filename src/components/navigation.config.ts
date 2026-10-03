@@ -2,7 +2,8 @@ import {
   FiHome, FiPackage, FiUsers, FiShoppingBag,
   FiAlertCircle, FiMessageSquare, FiStar,
   FiShield, FiFileText, FiTrendingUp, FiMail,
-  FiLock, FiTerminal, FiHash, FiSend, FiGitPullRequest, FiTruck, FiFlag
+  FiLock, FiTerminal, FiHash, FiSend, FiGitPullRequest, FiTruck, FiFlag,
+  FiHeadphones
 } from 'react-icons/fi';
 
 export const navigationGroups: { label: string; items: { name: string; to: string; icon: typeof FiHome }[] }[] = [
@@ -50,6 +51,11 @@ export const navigationGroups: { label: string; items: { name: string; to: strin
     label: 'Support',
     items: [
       { name: 'Support Inquiries', to: '/dashboard/support-inquiries', icon: FiMail },
+      // 🛡️ [SUPPORT-PHASE-G-1] The real ticket system (Helpdesk.tsx, backed
+      // by the actual support.routes.ts /admin/tickets + /admin/stats
+      // endpoints) existed fully built but had no nav entry or route at
+      // all — unreachable even by typing a URL.
+      { name: 'Helpdesk', to: '/dashboard/helpdesk', icon: FiHeadphones },
     ]
   },
   {
@@ -67,6 +73,7 @@ export const navigationGroups: { label: string; items: { name: string; to: strin
       { name: 'Financial Audit', to: '/dashboard/financial-audit', icon: FiTrendingUp },
       { name: 'Settlement', to: '/dashboard/settlement', icon: FiLock },
       { name: 'DT Resolution Queue', to: '/dashboard/dt-resolution-queue', icon: FiFlag },
+      { name: 'Refund Case Queue', to: '/dashboard/refund-cases', icon: FiFlag },
     ]
   },
   {

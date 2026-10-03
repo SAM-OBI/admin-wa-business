@@ -24,6 +24,7 @@ const Orders = lazy(() => import(/* webpackChunkName: "orders" */ './pages/Order
 const AppLedLogistics = lazy(() => import(/* webpackChunkName: "orders" */ './pages/AppLedLogistics'));
 const SettlementManagement = lazy(() => import(/* webpackChunkName: "finance" */ './pages/SettlementManagement'));
 const DirectTransferResolutionQueue = lazy(() => import(/* webpackChunkName: "finance" */ './pages/DirectTransferResolutionQueue'));
+const RefundCaseQueue = lazy(() => import(/* webpackChunkName: "finance" */ './pages/RefundCaseQueue'));
 const AccountConsolidations = lazy(() => import(/* webpackChunkName: "management" */ './pages/AccountConsolidations'));
 const CashApplicationWorkbench = lazy(() => import(/* webpackChunkName: "finance" */ './pages/CashApplicationWorkbench'));
 const ReconciliationWorkbench = lazy(() => import(/* webpackChunkName: "finance" */ './pages/ReconciliationWorkbench'));
@@ -44,6 +45,7 @@ const CourtCases = lazy(() => import(/* webpackChunkName: "support" */ './pages/
 const PlatformFeedback = lazy(() => import(/* webpackChunkName: "support" */ './pages/PlatformFeedback'));
 const PlatformReviews = lazy(() => import(/* webpackChunkName: "support" */ './pages/PlatformReviews'));
 const SupportInquiries = lazy(() => import(/* webpackChunkName: "support" */ './pages/SupportInquiries'));
+const Helpdesk = lazy(() => import(/* webpackChunkName: "support" */ './pages/Helpdesk'));
 const ErrorLogs = lazy(() => import(/* webpackChunkName: "diagnostics" */ './pages/ErrorLogs'));
 const DeadLetterQueue = lazy(() => import(/* webpackChunkName: "diagnostics" */ './pages/DeadLetterQueue'));
 const AuditLogs = lazy(() => import(/* webpackChunkName: "diagnostics" */ './pages/AuditLogs'));
@@ -143,18 +145,18 @@ function App() {
             <Route path="feedback" element={<PlatformFeedback />} />
             <Route path="platform-reviews" element={<PlatformReviews />} />
             <Route path="support-inquiries" element={<SupportInquiries />} />
-            {/* 🛡️ [FIX] SupportWorkspace.tsx is fully mocked (fake ticket
-                queue, fake stats, reply textarea not even wired to state) —
-                it was sitting right next to the real "Support Inquiries"
-                nav entry with an identical icon and the shorter, more
-                clickable label "Support". A real customer's Contact-form
-                submission was never seen because the admin who went
-                looking for "the helpdesk" landed here instead of on
-                support-inquiries, which is where it actually was.
-                Redirecting rather than deleting the route/file - the real
-                build (a genuine ticketing backend) is a separate, larger
-                task, not attempted here. */}
+            {/* 🛡️ [SUPPORT-PHASE-G-1] SupportWorkspace.tsx (the previous
+                occupant of this path) was fully mocked and hit a
+                non-existent /api/cop/* backend — the comment it replaced
+                explained the earlier interim fix (redirecting here to
+                support-inquiries). The REAL ticket system (Helpdesk.tsx)
+                was already fully built against real, working endpoints
+                (support.routes.ts /admin/tickets, /admin/stats) but had no
+                route anywhere. Mounted it at its own path instead of this
+                one, since it's a distinct system from Support Inquiries,
+                not a replacement for it. */}
             <Route path="support" element={<Navigate to="/dashboard/support-inquiries" replace />} />
+            <Route path="helpdesk" element={<Helpdesk />} />
             <Route path="risk-management" element={<RiskManagement />} />
             <Route path="security" element={<CorporateSecurity />} />
             <Route path="audit-logs" element={<AuditLogs />} />
@@ -164,6 +166,7 @@ function App() {
             <Route path="promo-hub" element={<PromoHub />} />
             <Route path="financial-audit" element={<FinancialAudit />} />
             <Route path="dt-resolution-queue" element={<DirectTransferResolutionQueue />} />
+            <Route path="refund-cases" element={<RefundCaseQueue />} />
             <Route path="ar-cash-application" element={<CashApplicationWorkbench />} />
             <Route path="ar-reconciliation" element={<ReconciliationWorkbench />} />
             <Route path="settlement" element={<SettlementManagement />} />
