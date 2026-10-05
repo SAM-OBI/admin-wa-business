@@ -20,6 +20,7 @@ interface RefundCaseRow {
         status?: string;
         paymentInfo?: { method?: string };
         store?: { name?: string; slug?: string };
+        cancellationReason?: string;
     };
 }
 
@@ -142,6 +143,11 @@ export default function RefundCaseQueue() {
                                     <td className="px-6 py-4 max-w-[260px]">
                                         <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{c.reasonCode}</p>
                                         <p className="text-xs text-gray-700 dark:text-gray-300 mt-0.5">{c.description}</p>
+                                        {c.order?.cancellationReason && (
+                                            <p className="text-[10px] text-red-500/80 mt-1 italic font-medium leading-relaxed">
+                                                Reason: "{c.order.cancellationReason}"
+                                            </p>
+                                        )}
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className="font-black text-gray-900 dark:text-white text-xs">₦{(c.refundAmount / 100).toLocaleString()}</span>
