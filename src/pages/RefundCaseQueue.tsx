@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { FaCheckCircle, FaTimesCircle, FaClock } from 'react-icons/fa';
+import { FaCheckCircle, FaTimesCircle, FaClock, FaExclamationTriangle, FaStore, FaUser } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import { adminService } from '../api/admin.service';
 import { logger } from '../utils/logger';
@@ -13,6 +13,11 @@ interface RefundCaseRow {
     description: string;
     refundAmount: number;
     createdAt: string;
+    // 🛡️ [VENDOR-CANCEL-REFUND-1]
+    initiatedBy?: 'BUYER' | 'VENDOR' | 'SYSTEM';
+    flaggedForAbuseReview?: boolean;
+    flagReason?: string;
+    vendorReasonCode?: 'OUT_OF_STOCK' | 'BUYER_REQUESTED' | 'UNSERVICEABLE_ADDRESS' | 'OTHER';
     vendor?: { name?: string; email?: string };
     order?: {
         _id: string;
@@ -23,6 +28,16 @@ interface RefundCaseRow {
         cancellationReason?: string;
     };
 }
+
+// 🛡️ [VENDOR-CANCEL-REASON-ENUM-1] Same vocabulary the vendor dashboard's
+// CancellationModal/DT reject dropdown send — vendorReasonCode is only ever
+// set when initiatedBy === 'VENDOR'.
+const VENDOR_REASON_LABELS: Record<string, string> = {
+    OUT_OF_STOCK: 'Out of stock',
+    BUYER_REQUESTED: 'Buyer requested cancellation',
+    UNSERVICEABLE_ADDRESS: 'Unserviceable address',
+    OTHER: 'Other'
+};
 
 /**
  * 🛡️ [CANCEL-TO-ADMIN-QUEUE-1] Before this, a buyer's free-cancellation
@@ -131,17 +146,28 @@ export default function RefundCaseQueue() {
                                     Nothing in this state right now.
                                 </td></tr>
                             ) : cases.map((c) => (
-                                <tr key={c._id} className="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors align-top">
+                                <tr key={c._id} className={`hover:bg-gray-50 dark:hover:bg-white/5 transition-colors align-top ${c.flaggedForAbuseReview ? 'bg-amber-50/60 dark:bg-amber-900/10' : ''}`}>
                                     <td className="px-6 py-4">
                                         <p className="font-mono font-bold text-gray-900 dark:text-white text-xs">#{c.order?.orderId || c.order?._id?.slice(-6).toUpperCase()}</p>
                                         <p className="text-[9px] text-gray-400 uppercase tracking-widest mt-1">{c.order?.paymentInfo?.method || 'nomba'}</p>
+                                        <span className={`inline-flex items-center gap-1 mt-1.5 px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${c.initiatedBy === 'VENDOR' ? 'bg-orange-50 text-orange-600 dark:bg-orange-900/20' : 'bg-blue-50 text-blue-600 dark:bg-blue-900/20'}`}>
+                                            {c.initiatedBy === 'VENDOR' ? <FaStore size={8} /> : <FaUser size={8} />}
+                                            {c.initiatedBy === 'VENDOR' ? 'Vendor-cancelled' : 'Buyer-initiated'}
+                                        </span>
+                                        {c.flaggedForAbuseReview && (
+                                            <p className="flex items-center gap-1 mt-1.5 text-[9px] font-bold text-amber-600">
+                                                <FaExclamationTriangle size={9} /> {c.flagReason || 'Flagged for review'}
+                                            </p>
+                                        )}
                                     </td>
                                     <td className="px-6 py-4">
                                         <p className="font-bold text-gray-900 dark:text-white text-xs">{c.order?.store?.name || 'Unknown store'}</p>
                                         <p className="text-[9px] text-gray-400">{c.vendor?.name} · {c.vendor?.email}</p>
                                     </td>
                                     <td className="px-6 py-4 max-w-[260px]">
-                                        <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{c.reasonCode}</p>
+                                        <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">
+                                            {c.vendorReasonCode ? VENDOR_REASON_LABELS[c.vendorReasonCode] : c.reasonCode}
+                                        </p>
                                         <p className="text-xs text-gray-700 dark:text-gray-300 mt-0.5">{c.description}</p>
                                         {c.order?.cancellationReason && (
                                             <p className="text-[10px] text-red-500/80 mt-1 italic font-medium leading-relaxed">
