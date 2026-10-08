@@ -1,5 +1,6 @@
 import { FiX, FiPackage, FiCalendar, FiDollarSign, FiMapPin, FiUser, FiTruck, FiAlertCircle } from 'react-icons/fi';
 import { Order, OrderAuditTrail } from '../api/admin.service';
+import OrderLifecycleTimeline from './OrderLifecycleTimeline';
 
 interface OrderDetailsModalProps {
   order: Order;
@@ -217,6 +218,11 @@ export default function OrderDetailsModal({ order, onClose, auditTrail, auditTra
               </div>
             </div>
           </div>
+
+          {/* 🛡️ [DISPUTE-COUNTDOWN-GAP-5] Structured lifecycle view — see
+              OrderLifecycleTimeline.tsx. Sits above the raw chronological
+              event log below, which stays for full audit detail. */}
+          <OrderLifecycleTimeline order={order} />
 
           {/* Timeline */}
           {order.timeline && order.timeline.length > 0 && (

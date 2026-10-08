@@ -241,6 +241,25 @@ export interface Order {
   vendorFirstActionAt?: string;
   directTransferFundsReceivedAt?: string;
   cancellationReason?: string;
+  // 🛡️ [DISPUTE-COUNTDOWN-GAP-5] order.service.ts's own payment→protection→
+  // delivery→inspection→release lifecycle fields — already returned by
+  // GET /admin/orders/:orderId/details (Order.findById has no .select()
+  // restriction) but never declared here, so OrderLifecycleTimeline below
+  // is the first thing to actually read them on this dashboard.
+  escrowState?: 'HELD' | 'DISPUTED' | 'ELIGIBLE_FOR_RELEASE' | 'RELEASED' | 'FROZEN' | 'REFUNDED';
+  settlementState?: 'HELD' | 'DISPUTED' | 'RELEASE_PENDING' | 'RELEASED' | 'REFUND_PENDING' | 'REFUNDED';
+  settlementReleaseAt?: string;
+  disputeDeadline?: string;
+  deliveredAt?: string;
+  dates?: {
+    processedAt?: string;
+    shippedAt?: string;
+    deliveredAt?: string;
+    cancelledAt?: string;
+    returnedAt?: string;
+    receivedAt?: string;
+  };
+  serverTime?: string;
 }
 
 export type OrderListItem = Order;

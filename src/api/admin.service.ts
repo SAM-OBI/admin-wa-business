@@ -157,6 +157,50 @@ export const adminService = {
     return response.data;
   },
 
+  // 🛡️ [LOGISTICS-SHIPMENT-SHELL-1]
+  getLogisticsProviders: async <T = any>(): Promise<ApiResponse<T>> => {
+    const response = await api.get('/admin/logistics/providers');
+    return response.data;
+  },
+
+  createLogisticsProvider: async (
+    data: { name: string; providerCode: string; serviceAreaStates?: string[]; apiKey?: string; apiSecret?: string; pricingRule?: { type: 'FLAT' | 'PER_KG'; baseFeeKobo?: number; perKgFeeKobo?: number } },
+    challengeToken: string
+  ): Promise<ApiResponse<any>> => {
+    const response = await api.post('/admin/logistics/providers', data, {
+      headers: { 'x-security-challenge-token': challengeToken }
+    });
+    return response.data;
+  },
+
+  updateLogisticsProvider: async (
+    configId: string,
+    updates: Partial<{ name: string; isActive: boolean; serviceAreaStates: string[]; apiKey: string; apiSecret: string; pricingRule: { type: 'FLAT' | 'PER_KG'; baseFeeKobo?: number; perKgFeeKobo?: number } }>,
+    challengeToken: string
+  ): Promise<ApiResponse<any>> => {
+    const response = await api.patch(`/admin/logistics/providers/${configId}`, updates, {
+      headers: { 'x-security-challenge-token': challengeToken }
+    });
+    return response.data;
+  },
+
+  deleteLogisticsProvider: async (configId: string, challengeToken: string): Promise<ApiResponse<any>> => {
+    const response = await api.delete(`/admin/logistics/providers/${configId}`, {
+      headers: { 'x-security-challenge-token': challengeToken }
+    });
+    return response.data;
+  },
+
+  getShipments: async <T = any>(params?: { status?: string; storeId?: string; page?: number; limit?: number }): Promise<ApiResponse<T>> => {
+    const response = await api.get('/admin/logistics/shipments', { params });
+    return response.data;
+  },
+
+  getShipmentsOverview: async <T = any>(): Promise<ApiResponse<T>> => {
+    const response = await api.get('/admin/logistics/shipments/overview');
+    return response.data;
+  },
+
   // 🛡️ [CANCEL-TO-ADMIN-QUEUE-1] Refund case review queue — mounted at
   // /api/v1/refunds (not under /admin), same backend router the buyer's
   // own cancel-order flow creates cases through.
@@ -206,6 +250,11 @@ export const adminService = {
     const response = await api.patch(`/admin/platform-reviews/${id}`, { status, moderationReason }, {
       headers: { 'x-security-challenge-token': challengeToken }
     });
+    return response.data;
+  },
+
+  replyToPlatformReview: async (id: string, comment: string): Promise<ApiResponse<any>> => {
+    const response = await api.put(`/admin/platform-reviews/${id}/reply`, { comment });
     return response.data;
   },
 

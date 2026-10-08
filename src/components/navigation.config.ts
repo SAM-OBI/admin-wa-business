@@ -19,6 +19,8 @@ export const navigationGroups: { label: string; items: { name: string; to: strin
       { name: 'Products', to: '/dashboard/products', icon: FiPackage },
       { name: 'Orders', to: '/dashboard/orders', icon: FiShoppingBag },
       { name: 'App-Led Logistics', to: '/dashboard/logistics/app-led', icon: FiTruck },
+      { name: 'Logistics Providers', to: '/dashboard/logistics/providers', icon: FiTruck },
+      { name: 'Shipments', to: '/dashboard/logistics/shipments', icon: FiTruck },
       { name: 'Vendors', to: '/dashboard/vendors', icon: FiShoppingBag },
       { name: 'Users', to: '/dashboard/users', icon: FiUsers },
       { name: 'Product Moderation', to: '/dashboard/product-moderation', icon: FiPackage },

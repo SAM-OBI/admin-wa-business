@@ -22,6 +22,8 @@ const Dashboard = lazy(() => import(/* webpackChunkName: "dashboard" */ './pages
 const FinancialAudit = lazy(() => import(/* webpackChunkName: "finance" */ './pages/FinancialAudit'));
 const Orders = lazy(() => import(/* webpackChunkName: "orders" */ './pages/Orders'));
 const AppLedLogistics = lazy(() => import(/* webpackChunkName: "orders" */ './pages/AppLedLogistics'));
+const LogisticsProviders = lazy(() => import(/* webpackChunkName: "orders" */ './pages/LogisticsProviders'));
+const LogisticsShipments = lazy(() => import(/* webpackChunkName: "orders" */ './pages/LogisticsShipments'));
 const SettlementManagement = lazy(() => import(/* webpackChunkName: "finance" */ './pages/SettlementManagement'));
 const DirectTransferResolutionQueue = lazy(() => import(/* webpackChunkName: "finance" */ './pages/DirectTransferResolutionQueue'));
 const RefundCaseQueue = lazy(() => import(/* webpackChunkName: "finance" */ './pages/RefundCaseQueue'));
@@ -139,6 +141,8 @@ function App() {
             <Route path="subscriptions" element={<Subscriptions />} />
             <Route path="orders" element={<Orders />} />
             <Route path="logistics/app-led" element={<AppLedLogistics />} />
+            <Route path="logistics/providers" element={<LogisticsProviders />} />
+            <Route path="logistics/shipments" element={<LogisticsShipments />} />
             <Route path="complaints" element={<Complaints />} />
             <Route path="court-cases" element={<CourtCases />} />
             <Route path="reviews" element={<Reviews />} />

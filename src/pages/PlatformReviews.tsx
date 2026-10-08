@@ -16,6 +16,9 @@ export default function PlatformReviews() {
     const [moderateChallenge, setModerateChallenge] = useState<{ isOpen: boolean; id: string | null; newStatus: string | null }>({
         isOpen: false, id: null, newStatus: null
     });
+    const [replyDrafts, setReplyDrafts] = useState<Record<string, string>>({});
+    const [openReplyId, setOpenReplyId] = useState<string | null>(null);
+    const [submittingReplyId, setSubmittingReplyId] = useState<string | null>(null);
 
     const fetchReviews = useCallback(async (reset: boolean) => {
         setLoading(true);
@@ -73,6 +76,23 @@ export default function PlatformReviews() {
             Swal.fire('Error', 'Failed to update status', 'error');
         } finally {
             setModerateChallenge({ isOpen: false, id: null, newStatus: null });
+        }
+    };
+
+    const handleSubmitReply = async (id: string) => {
+        const comment = (replyDrafts[id] || '').trim();
+        if (!comment) return;
+        setSubmittingReplyId(id);
+        try {
+            await adminService.replyToPlatformReview(id, comment);
+            setReviews(prev => prev.map(r => r._id === id ? { ...r, adminReply: { comment, createdAt: new Date().toISOString() } } : r));
+            setOpenReplyId(null);
+            setReplyDrafts(prev => ({ ...prev, [id]: '' }));
+            Swal.fire({ icon: 'success', title: 'Reply posted', timer: 1500, showConfirmButton: false });
+        } catch (error: any) {
+            Swal.fire('Error', error.response?.data?.message || 'Failed to post reply', 'error');
+        } finally {
+            setSubmittingReplyId(null);
         }
     };
 
@@ -142,6 +162,47 @@ export default function PlatformReviews() {
                                                 <span className="font-semibold">{item.user?.name || 'Unknown User'}</span>
                                                 <span className="bg-gray-100 px-1.5 rounded text-gray-600">{item.user?.email}</span>
                                             </div>
+
+                                            {/* 🛡️ [PLATFORM-REVIEW-ADMIN-REPLY-1] Shopvia's own reply to this
+                                                review — shown publicly on the About page under the review. */}
+                                            {item.adminReply?.comment ? (
+                                                <div className="mt-3 ml-1 p-3 bg-sv-primary/5 border-l-2 border-sv-primary rounded-r-lg">
+                                                    <p className="text-[10px] font-bold uppercase tracking-wide text-sv-primary mb-1">↩ Shopvia replied</p>
+                                                    <p className="text-sm text-gray-700">{item.adminReply.comment}</p>
+                                                </div>
+                                            ) : openReplyId === item._id ? (
+                                                <div className="mt-3 space-y-2">
+                                                    <textarea
+                                                        value={replyDrafts[item._id] || ''}
+                                                        onChange={(e) => setReplyDrafts(prev => ({ ...prev, [item._id]: e.target.value }))}
+                                                        placeholder="Write Shopvia's reply..."
+                                                        className="w-full border border-sv-border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-sv-primary resize-y min-h-[70px]"
+                                                        maxLength={1000}
+                                                    />
+                                                    <div className="flex gap-2">
+                                                        <button
+                                                            onClick={() => handleSubmitReply(item._id)}
+                                                            disabled={submittingReplyId === item._id}
+                                                            className="px-3 py-1.5 bg-sv-primary text-white rounded-lg text-xs font-semibold disabled:opacity-50"
+                                                        >
+                                                            {submittingReplyId === item._id ? 'Posting...' : 'Post Reply'}
+                                                        </button>
+                                                        <button
+                                                            onClick={() => setOpenReplyId(null)}
+                                                            className="px-3 py-1.5 border border-sv-border rounded-lg text-xs font-semibold text-gray-600"
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <button
+                                                    onClick={() => setOpenReplyId(item._id)}
+                                                    className="mt-3 text-xs font-semibold text-sv-primary hover:underline"
+                                                >
+                                                    Reply as Shopvia
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
 
