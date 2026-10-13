@@ -26,6 +26,7 @@ const LogisticsProviders = lazy(() => import(/* webpackChunkName: "orders" */ '.
 const LogisticsShipments = lazy(() => import(/* webpackChunkName: "orders" */ './pages/LogisticsShipments'));
 const SettlementManagement = lazy(() => import(/* webpackChunkName: "finance" */ './pages/SettlementManagement'));
 const DirectTransferResolutionQueue = lazy(() => import(/* webpackChunkName: "finance" */ './pages/DirectTransferResolutionQueue'));
+const BankAppealQueue = lazy(() => import(/* webpackChunkName: "finance" */ './pages/BankAppealQueue'));
 const RefundCaseQueue = lazy(() => import(/* webpackChunkName: "finance" */ './pages/RefundCaseQueue'));
 const AccountConsolidations = lazy(() => import(/* webpackChunkName: "management" */ './pages/AccountConsolidations'));
 const CashApplicationWorkbench = lazy(() => import(/* webpackChunkName: "finance" */ './pages/CashApplicationWorkbench'));
@@ -170,6 +171,7 @@ function App() {
             <Route path="promo-hub" element={<PromoHub />} />
             <Route path="financial-audit" element={<FinancialAudit />} />
             <Route path="dt-resolution-queue" element={<DirectTransferResolutionQueue />} />
+            <Route path="bank-appeals" element={<BankAppealQueue />} />
             <Route path="refund-cases" element={<RefundCaseQueue />} />
             <Route path="ar-cash-application" element={<CashApplicationWorkbench />} />
             <Route path="ar-reconciliation" element={<ReconciliationWorkbench />} />

@@ -76,6 +76,7 @@ export const navigationGroups: { label: string; items: { name: string; to: strin
       { name: 'Settlement', to: '/dashboard/settlement', icon: FiLock },
       { name: 'DT Resolution Queue', to: '/dashboard/dt-resolution-queue', icon: FiFlag },
       { name: 'Refund Case Queue', to: '/dashboard/refund-cases', icon: FiFlag },
+      { name: 'Bank Appeal Queue', to: '/dashboard/bank-appeals', icon: FiShield },
     ]
   },
   {

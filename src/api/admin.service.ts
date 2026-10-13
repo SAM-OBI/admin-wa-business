@@ -102,6 +102,23 @@ export const adminService = {
     return response.data;
   },
 
+  // 🛡️ [BANK-APPEAL-RESOLUTION-1] Resolves a vendor's bank-account
+  // name-mismatch appeal (securityMonitoring.controller.ts's
+  // getReviewQueue/resolveBankAccountAppeal — previously unmounted, no
+  // admin UI at all; a pending appeal had no way to ever be resolved).
+  getBankAppealQueue: async (): Promise<ApiResponse<any>> => {
+    const response = await api.get('/admin/security/bank-appeals');
+    return response.data;
+  },
+
+  // `reason` (not `note`) on the wire — this route is gated by
+  // requireJustification (admin.routes.ts), which specifically reads
+  // req.body.reason; the controller stores it as appealReviewNote.
+  resolveBankAppeal: async (userId: string, accountId: string, decision: 'approve' | 'reject', reason: string): Promise<ApiResponse<any>> => {
+    const response = await api.patch(`/admin/security/bank-appeals/${userId}/${accountId}`, { decision, reason });
+    return response.data;
+  },
+
   suspendVendor: async (id: string, reason: string, challengeToken: string): Promise<ApiResponse<any>> => {
     const response = await api.patch(`/admin/vendors/${id}/suspend`, { reason }, {
       headers: { 'x-security-challenge-token': challengeToken }
