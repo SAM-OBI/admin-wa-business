@@ -6,7 +6,11 @@ import {
   FiHeadphones
 } from 'react-icons/fi';
 
-export const navigationGroups: { label: string; items: { name: string; to: string; icon: typeof FiHome }[] }[] = [
+// 🛡️ [P3-ADMIN-BADGE-COUNTS] `badge` is injected at render time by
+// Sidebar.tsx from live dashboard-stats counts (pendingComplaints/
+// openDisputes) -- never set statically here. Matches the vendor
+// sidebar's own badge pattern (VendorLayout.tsx).
+export const navigationGroups: { label: string; items: { name: string; to: string; icon: typeof FiHome; badgeKey?: 'pendingComplaints' | 'openDisputes' }[] }[] = [
   {
     label: 'Overview',
     items: [
@@ -29,8 +33,9 @@ export const navigationGroups: { label: string; items: { name: string; to: strin
   {
     label: 'Trust & Safety',
     items: [
-      { name: 'Complaints', to: '/dashboard/complaints', icon: FiAlertCircle },
-      { name: 'Disputes', to: '/dashboard/disputes', icon: FiFlag },
+      { name: 'Complaints', to: '/dashboard/complaints', icon: FiAlertCircle, badgeKey: 'pendingComplaints' },
+      { name: 'Withdrawal Security Flags', to: '/dashboard/withdrawal-security-flags', icon: FiAlertCircle },
+      { name: 'Disputes', to: '/dashboard/disputes', icon: FiFlag, badgeKey: 'openDisputes' },
       { name: 'Court Cases', to: '/dashboard/court-cases', icon: FiMessageSquare },
       { name: 'Risk Management', to: '/dashboard/risk-management', icon: FiShield },
       { name: 'Security SOC', to: '/dashboard/security', icon: FiShield },

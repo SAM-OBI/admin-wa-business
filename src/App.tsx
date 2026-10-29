@@ -44,6 +44,7 @@ const BlogModeration = lazy(() => import(/* webpackChunkName: "governance" */ '.
 
 // Tier 3: Support & Logs
 const Complaints = lazy(() => import(/* webpackChunkName: "support" */ './pages/Complaints'));
+const WithdrawalSecurityFlags = lazy(() => import(/* webpackChunkName: "finance" */ './pages/WithdrawalSecurityFlags'));
 const CourtCases = lazy(() => import(/* webpackChunkName: "support" */ './pages/CourtCases'));
 const PlatformFeedback = lazy(() => import(/* webpackChunkName: "support" */ './pages/PlatformFeedback'));
 const PlatformReviews = lazy(() => import(/* webpackChunkName: "support" */ './pages/PlatformReviews'));
@@ -145,6 +146,7 @@ function App() {
             <Route path="logistics/providers" element={<LogisticsProviders />} />
             <Route path="logistics/shipments" element={<LogisticsShipments />} />
             <Route path="complaints" element={<Complaints />} />
+            <Route path="withdrawal-security-flags" element={<WithdrawalSecurityFlags />} />
             <Route path="court-cases" element={<CourtCases />} />
             <Route path="reviews" element={<Reviews />} />
             <Route path="feedback" element={<PlatformFeedback />} />

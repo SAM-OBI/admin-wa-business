@@ -180,11 +180,17 @@ api.interceptors.response.use(
       return api(originalRequest);
     }
 
-    const isAuthCheck = originalRequest.url?.includes('/auth/me');
     const isOnLoginPage = window.location.pathname === "/login";
 
+    // 🛡️ [FIX] This used to exclude /auth/me from the refresh-and-retry
+    // flow entirely — checkAuth() (called on every app mount, and after
+    // MFA setup/settings saves) hit its own simpler catch block that
+    // treated ANY 401 as "not authenticated", with no attempt to use the
+    // refresh-token cookie first. Every other endpoint already silently
+    // refreshes and retries once on a stale access token; /auth/me is no
+    // different and deserves the same chance before giving up.
     // Handle 401 Unauthorized with unified coordination authority
-    if (status === 401 && !isAuthCheck && !isOnLoginPage) {
+    if (status === 401 && !isOnLoginPage) {
       if (originalRequest._retryCount && originalRequest._retryCount > 0) {
         console.error(`[Admin:Auth] Loop detected for ${originalRequest.url}.`);
         return Promise.reject(error);

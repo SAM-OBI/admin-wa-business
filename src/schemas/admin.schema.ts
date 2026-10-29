@@ -27,6 +27,11 @@ export const DashboardStatsSchema = z.object({
   pendingComplaints: z.number().default(0),
   activeCourtCases: z.number().default(0),
   unverifiedVendors: z.number().default(0),
+  // 🛡️ [P3-ADMIN-BADGE-COUNTS] Zod strips unknown keys by default --
+  // without this, the sidebar's new Disputes badge count would be
+  // silently dropped right here, same trap WALLET-LIABILITY-1 already
+  // hit above.
+  openDisputes: z.number().default(0),
   revenue: z.object({
     today: z.number().default(0),
     week: z.number().default(0),

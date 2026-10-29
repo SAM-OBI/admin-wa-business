@@ -903,6 +903,40 @@ export default function VendorDetails() {
               </div>
             </div>
           )}
+
+          {/* 🛡️ [P3-VENDOR-PROFILE-DISPUTES] This vendor-profile page
+              previously showed complaints only -- admin had no way to see
+              this vendor's Buyer Protection disputes without separately
+              opening the global Disputes page and manually filtering by
+              vendor name. */}
+          {vendor.recentDisputes && vendor.recentDisputes.length > 0 && (
+            <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
+              <h2 className="text-lg font-black text-white uppercase tracking-widest mb-6">Buyer Protection Disputes</h2>
+              <div className="space-y-3">
+                {vendor.recentDisputes.map((dispute: any) => (
+                  <div key={dispute._id} className="p-4 bg-zinc-800/30 border border-white/5 rounded-xl">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <p className="text-sm font-black text-white uppercase tracking-tight">{dispute.reason}</p>
+                        <p className="text-xs text-zinc-500 mt-1">Order: {dispute.order?.orderId || dispute.order}</p>
+                      </div>
+                      <span className={`px-2.5 py-1 text-[10px] font-black uppercase rounded border ${
+                        dispute.status?.startsWith('RESOLVED') ? 'bg-sv-success-soft text-sv-success border-sv-success/30' :
+                        dispute.status === 'WITHDRAWN' ? 'bg-sv-info-soft text-sv-info border-sv-info/30' :
+                        (dispute.status === 'OPEN' || dispute.status === 'UNDER_REVIEW' || dispute.status === 'PROPOSAL_SENT') ? 'bg-sv-warning-soft text-sv-warning border-sv-warning/30' :
+                        'bg-sv-danger-soft text-sv-danger border-sv-danger/30'
+                      }`}>
+                        {dispute.status}
+                      </span>
+                    </div>
+                    <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest mt-3">
+                      Opened: {new Date(dispute.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Right Column */}

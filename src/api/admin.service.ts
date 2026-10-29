@@ -246,6 +246,19 @@ export const adminService = {
     return response.data;
   },
 
+  // 🛡️ [WITHDRAWAL-RISK-FLAG-1] Withdrawal attempts blocked by the 24h
+  // post-PIN/password-change hold — withdrawal.controller.ts still hard-
+  // blocks the vendor; this is purely the admin visibility + contact layer.
+  getWithdrawalSecurityFlags: async (params?: any): Promise<ApiResponse<any>> => {
+    const response = await api.get('/admin/withdrawal-security-flags', { params });
+    return response.data;
+  },
+
+  updateWithdrawalSecurityFlag: async (id: string, status: string, notes?: string): Promise<ApiResponse<any>> => {
+    const response = await api.patch(`/admin/withdrawal-security-flags/${id}`, { status, notes });
+    return response.data;
+  },
+
   // Feedback
   getFeedbacks: async (params?: any): Promise<ApiResponse<any>> => {
     const response = await api.get('/feedback', { params });

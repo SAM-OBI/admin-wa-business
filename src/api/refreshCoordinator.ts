@@ -77,15 +77,36 @@ class AdminRefreshCoordinator {
         }
 
         this.transitionTo(AuthState.REFRESHING);
-        
+
         this.inflight = this.executeRefresh(context);
-        
+
         try {
             const result = await this.inflight;
             this.transitionTo(AuthState.AUTHENTICATED);
             return result;
         } catch (err: any) {
-            this.transitionTo(AuthState.TERMINAL_FAILURE);
+            // 🛡️ [FIX] Every refresh failure used to go straight to
+            // TERMINAL_FAILURE — a one-way state with zero legal exits
+            // (see transitionTo's legalTransitions map). Since axios.ts
+            // short-circuits every subsequent 401 straight to a forced
+            // /login redirect once TERMINAL_FAILURE is set, a single
+            // transient failure (network blip, the refresh-rate-limiter's
+            // 429, auth.service.ts's 503/409 "DB unready"/"concurrent
+            // refresh, please retry" responses) permanently logged the
+            // vendor out of the whole session on the very next 401,
+            // regardless of whether the backend had already recovered.
+            // auth.controller.ts's refresh() only ever returns 401 for a
+            // definitively dead session (expired/revoked/invalid refresh
+            // token, version mismatch, absolute lifetime exceeded) — every
+            // other status it can return (403/409/429/503, or no response
+            // at all for a pure network failure) is explicitly retryable
+            // by its own error messages ("please retry", "try again").
+            // DEGRADED is the one state that can both receive this failure
+            // and legally transition back to REFRESHING on the next call,
+            // so only a genuine 401 earns the permanent lock.
+            const status = err?.response?.status;
+            const isDefinitivelyDead = status === 401;
+            this.transitionTo(isDefinitivelyDead ? AuthState.TERMINAL_FAILURE : AuthState.DEGRADED);
             throw err;
         } finally {
             this.inflight = null;

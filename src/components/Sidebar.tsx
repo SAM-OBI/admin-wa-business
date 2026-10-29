@@ -4,6 +4,8 @@ import { useState } from 'react';
 // useState imported above
 import UpgradeModal from './UpgradeModal';
 import { useAuthStore } from '../store/authStore';
+import { useQuery } from '../hooks/useQuery';
+import { adminService } from '../api/admin.service';
 
 import { navigationGroups } from './navigation.config';
 
@@ -27,6 +29,20 @@ export default function Sidebar({ isDesktopCollapsed, toggleDesktop, isMobileOpe
   const visibleGroups = allowedSections.length === 0
     ? navigationGroups
     : navigationGroups.filter((group) => group.label === 'Overview' || allowedSections.includes(group.label));
+
+  // 🛡️ [P3-ADMIN-BADGE-COUNTS] Same queryKey Dashboard.tsx uses for its own
+  // stats fetch -- useQuery's cache is a shared module-level Map keyed by
+  // JSON.stringify(queryKey), so mounting both on the same page (the normal
+  // case) dedupes to one network call, not two.
+  const { data: dashboardStats } = useQuery({
+    queryKey: ['dashboard', 'stats'],
+    queryFn: async () => {
+      const res = await adminService.getDashboardStats();
+      return res.data;
+    },
+    staleTime: 60000,
+    refetchInterval: 300000
+  });
 
   return (
     <>
@@ -89,6 +105,7 @@ export default function Sidebar({ isDesktopCollapsed, toggleDesktop, isMobileOpe
               )}
               {group.items.map((item) => {
                 const isLocked = false;
+                const badge = item.badgeKey ? (dashboardStats?.stats?.[item.badgeKey] as number | undefined) : undefined;
 
                 return (
                   <NavLink
@@ -127,6 +144,15 @@ export default function Sidebar({ isDesktopCollapsed, toggleDesktop, isMobileOpe
                         {!isDesktopCollapsed && isLocked && (
                           <span className="ml-auto bg-sv-surface-muted text-sv-text-muted text-[8px] font-black px-1.5 py-0.5 border border-sv-border rounded-sm">
                             RESTRICTED
+                          </span>
+                        )}
+
+                        {/* 🛡️ [P3-ADMIN-BADGE-COUNTS] Live open-item count,
+                            same red-pill pattern VendorLayout.tsx already
+                            uses for the vendor sidebar's own badges. */}
+                        {!!badge && badge > 0 && (
+                          <span className={`${isDesktopCollapsed ? 'absolute -top-1 -right-1' : 'ml-auto'} bg-red-500 text-white text-[9px] font-black min-w-[18px] h-[18px] flex items-center justify-center rounded-full px-1`}>
+                            {badge > 99 ? '99+' : badge}
                           </span>
                         )}
                       </>

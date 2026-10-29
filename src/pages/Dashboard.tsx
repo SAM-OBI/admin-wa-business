@@ -22,6 +22,8 @@ interface DashboardViewModel {
     pendingComplaints: number;
     activeCourtCases: number;
     unverifiedVendors: number;
+    // 🛡️ [P3-ADMIN-BADGE-COUNTS] Mirrors pendingComplaints.
+    openDisputes: number;
     revenue: {
       today: number;
       week: number;
@@ -294,6 +296,7 @@ export default function Dashboard() {
               {[
                 { label: 'Verify Vendors', link: '/dashboard/vendors?status=pending', count: viewModel?.stats.unverifiedVendors, color: 'amber' as const },
                 { label: 'Review Complaints', link: '/dashboard/complaints', count: viewModel?.stats.pendingComplaints, color: 'red' as const },
+                { label: 'Review Disputes', link: '/dashboard/disputes', count: viewModel?.stats.openDisputes, color: 'red' as const },
                 { label: 'Security Domain', link: '/dashboard/security', color: 'blue' as const }
               ].map((action, i) => {
                 // 🛡️ [FIX] Tailwind's build-time scanner can't see class names assembled via

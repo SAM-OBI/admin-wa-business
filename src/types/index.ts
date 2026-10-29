@@ -155,6 +155,9 @@ export interface VendorDetails extends Vendor {
     manualOverrideExpiresAt?: string;
   };
   recentComplaints?: any[];
+  // 🛡️ [P3-VENDOR-PROFILE-DISPUTES] Buyer Protection disputes for this
+  // vendor, scoped by Dispute.vendor (the store owner's User id) directly.
+  recentDisputes?: any[];
   governmentIdUrl?: string;
   blogCount?: number;
   flaggedBlogReports?: number;
@@ -281,8 +284,12 @@ export interface Complaint {
   description: string;
   priority: 'low' | 'medium' | 'high';
   // 🛡️ [BATCH-11] Canonicalized to the real, uppercase backend enum
-  // (OPEN|INVESTIGATING|RESOLVED|DISMISSED) — no separate ESCALATED value;
-  // an escalated complaint is RESOLVED with a non-null `courtCase` ref.
+  // (OPEN|INVESTIGATING|RESOLVED|DISMISSED) — no separate ESCALATED value.
+  // 🛡️ [P3-COURTCASE-RESOLVED-TIMING-FIX] An escalated-to-court complaint
+  // is INVESTIGATING with a non-null `courtCase` ref (previously this was
+  // RESOLVED at the moment arbitration began, which was backwards) — it
+  // only becomes RESOLVED once admin.service.ts::submitJudgment actually
+  // delivers a judgment on the linked CourtCase.
   status: 'OPEN' | 'INVESTIGATING' | 'RESOLVED' | 'DISMISSED';
   createdAt: string;
   // 🛡️ [#8D] Both already sent by the backend (complaint.controller.ts /
