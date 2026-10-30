@@ -15,11 +15,11 @@ interface Stage {
 }
 
 const STATUS_STYLE: Record<StageStatus, { dot: string; line: string; text: string }> = {
-  done: { dot: 'bg-emerald-500 border-emerald-500', line: 'bg-emerald-500/40', text: 'text-emerald-400' },
-  current: { dot: 'bg-amber-500 border-amber-500 animate-pulse', line: 'bg-zinc-700', text: 'text-amber-400' },
-  pending: { dot: 'bg-zinc-800 border-zinc-700', line: 'bg-zinc-800', text: 'text-zinc-500' },
-  frozen: { dot: 'bg-red-500 border-red-500', line: 'bg-red-500/40', text: 'text-red-400' },
-  skipped: { dot: 'bg-zinc-800 border-zinc-700', line: 'bg-zinc-800', text: 'text-zinc-600' }
+  done: { dot: 'bg-sv-success border-sv-success', line: 'bg-sv-success/40', text: 'text-sv-success' },
+  current: { dot: 'bg-sv-warning border-sv-warning animate-pulse', line: 'bg-sv-border', text: 'text-sv-warning' },
+  pending: { dot: 'bg-sv-surface-muted border-sv-border', line: 'bg-sv-border', text: 'text-sv-text-muted' },
+  frozen: { dot: 'bg-sv-danger border-sv-danger', line: 'bg-sv-danger/40', text: 'text-sv-danger' },
+  skipped: { dot: 'bg-sv-surface-muted border-sv-border', line: 'bg-sv-border', text: 'text-sv-text-muted' }
 };
 
 /**
@@ -57,7 +57,7 @@ function StageCountdown({ deadline, serverTime }: { deadline?: string; serverTim
   const remaining = useLiveCountdown(deadline, serverTime);
   if (!remaining) return null;
   return (
-    <p className="text-[10px] font-black uppercase tracking-widest text-amber-400 mt-1">
+    <p className="text-[10px] font-black uppercase tracking-widest text-sv-warning mt-1">
       ⏱ {remaining === 'expired' ? 'Window closed' : remaining}
     </p>
   );
@@ -154,15 +154,15 @@ export default function OrderLifecycleTimeline({ order }: { order: Order }) {
   }
 
   return (
-    <div className="bg-gray-50 rounded-lg p-4">
-      <h3 className="font-semibold text-gray-900 mb-4">Buyer Protection Lifecycle</h3>
+    <div className="bg-sv-surface-muted border border-sv-border rounded-xl p-4 sm:p-5">
+      <h3 className="font-semibold text-sv-text-primary mb-4">Buyer Protection Lifecycle</h3>
       <div className="flex flex-col md:flex-row md:items-start gap-4 md:gap-0">
         {stages.map((stage, i) => {
           const style = STATUS_STYLE[stage.status];
           return (
             <div key={stage.key} className="flex md:flex-col md:flex-1 items-start gap-3 md:gap-0">
               <div className="flex md:flex-col items-center md:w-full">
-                <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-white shrink-0 ${style.dot}`}>
+                <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-sv-text-inverse shrink-0 ${style.dot}`}>
                   {stage.status === 'frozen' ? <FiAlertTriangle size={14} /> : stage.status === 'skipped' ? <FiSlash size={14} /> : stage.icon}
                 </div>
                 {i < stages.length - 1 && (
@@ -171,9 +171,9 @@ export default function OrderLifecycleTimeline({ order }: { order: Order }) {
               </div>
               <div className="md:mt-2 md:text-center md:px-2">
                 <p className={`text-xs font-bold uppercase tracking-widest ${style.text}`}>{stage.label}</p>
-                <p className="text-xs text-gray-600 mt-0.5">{stage.detail}</p>
+                <p className="text-xs text-sv-text-secondary mt-0.5">{stage.detail}</p>
                 {stage.timestamp && (
-                  <p className="text-[10px] text-gray-400 mt-0.5">{new Date(stage.timestamp).toLocaleString()}</p>
+                  <p className="text-[10px] text-sv-text-muted mt-0.5">{new Date(stage.timestamp).toLocaleString()}</p>
                 )}
                 {stage.countdownTo && (
                   <StageCountdown deadline={stage.countdownTo} serverTime={order.serverTime} />

@@ -71,10 +71,10 @@ export const ResilientSocketWatcher: React.FC<Props> = ({ onPulse, fallbackActio
     return (
         <div className="flex items-center gap-2">
             <div className={`w-2 h-2 rounded-full ${
-                status === 'LIVE' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)] animate-pulse' : 
-                status === 'DEGRADED' ? 'bg-amber-500' : 'bg-red-500'
+                status === 'LIVE' ? 'bg-sv-success shadow-[0_0_8px_rgba(46,125,50,0.6)] animate-pulse' : 
+                status === 'DEGRADED' ? 'bg-sv-warning' : 'bg-sv-danger'
             }`} />
-            <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">
+            <span className="text-[10px] font-black uppercase tracking-widest text-sv-text-muted">
                 System: {status}
             </span>
         </div>

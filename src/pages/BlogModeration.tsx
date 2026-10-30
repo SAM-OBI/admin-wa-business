@@ -101,29 +101,29 @@ export default function BlogModeration() {
   };
 
   return (
-    <div className="p-6 space-y-6 max-w-[1600px] mx-auto pb-24">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
       {/* Header Area */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#0F0F0F] p-6 rounded-2xl border border-zinc-800/50 shadow-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-sv-surface p-6 rounded-2xl border border-sv-border shadow-sm">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center border border-white/10">
-              <FiFileText className="text-white text-xl" />
+            <div className="w-10 h-10 bg-sv-surface-muted rounded-xl flex items-center justify-center border border-sv-border">
+              <FiFileText className="text-sv-text-primary text-xl" />
             </div>
-            <h1 className="text-2xl font-black text-white uppercase tracking-tighter">Journal Moderation</h1>
+            <h1 className="text-2xl sm:text-3xl font-black text-sv-text-primary uppercase tracking-tight">Journal Moderation</h1>
           </div>
-          <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest pl-13">Platform Editorial & Governance Hub</p>
+          <p className="text-sv-text-muted text-xs font-bold uppercase tracking-widest pl-13">Platform Editorial & Governance Hub</p>
         </div>
 
-        <div className="flex bg-black/40 p-1 rounded-xl border border-zinc-800/50">
+        <div className="flex bg-sv-surface-muted p-1 rounded-xl border border-sv-border">
           <button 
             onClick={() => setActiveTab('articles')}
-            className={`px-6 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'articles' ? 'bg-white text-black shadow-lg' : 'text-zinc-500 hover:text-white'}`}
+            className={`px-5 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'articles' ? 'bg-sv-primary text-sv-text-inverse shadow-sm' : 'text-sv-text-muted hover:text-sv-text-primary'}`}
           >
             Articles
           </button>
           <button 
             onClick={() => setActiveTab('reports')}
-            className={`px-6 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'reports' ? 'bg-white text-black shadow-lg' : 'text-zinc-500 hover:text-white'}`}
+            className={`px-5 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'reports' ? 'bg-sv-primary text-sv-text-inverse shadow-sm' : 'text-sv-text-muted hover:text-sv-text-primary'}`}
           >
             Community Flags
           </button>
@@ -133,20 +133,20 @@ export default function BlogModeration() {
       {activeTab === 'articles' && (
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
           {/* Filters Bar */}
-          <div className="lg:col-span-4 flex flex-wrap items-center gap-3 bg-[#0A0A0A] p-4 rounded-xl border border-zinc-800/40">
-            <div className="relative flex-1 min-w-[300px]">
-              <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" />
+          <div className="lg:col-span-4 flex flex-wrap items-center gap-3 bg-sv-surface p-4 rounded-xl border border-sv-border">
+            <div className="relative flex-1 min-w-[260px]">
+              <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-sv-text-muted" />
               <input 
                 type="text"
                 placeholder="SEARCH BY ARTICLE TITLE..."
-                className="w-full bg-black border border-zinc-800/50 rounded-xl py-3 pl-11 pr-4 text-[10px] font-bold text-white uppercase tracking-widest focus:border-sv-primary transition-all outline-none"
+                className="w-full bg-sv-surface-muted border border-sv-border rounded-xl py-2.5 pl-11 pr-4 text-[10px] font-bold text-sv-text-primary uppercase tracking-widest focus:border-sv-primary transition-all outline-none"
                 value={filters.search}
                 onChange={(e) => setFilters({ ...filters, search: e.target.value })}
               />
             </div>
             
             <select 
-              className="bg-black border border-zinc-800/50 rounded-xl px-4 py-3 text-[10px] font-black text-white uppercase tracking-widest outline-none focus:border-sv-primary"
+              className="w-full sm:w-auto bg-sv-surface-muted border border-sv-border rounded-xl px-4 py-2.5 text-[10px] font-black text-sv-text-secondary uppercase tracking-widest outline-none focus:border-sv-primary cursor-pointer"
               value={filters.status}
               onChange={(e) => setFilters({ ...filters, status: e.target.value })}
             >
@@ -158,7 +158,7 @@ export default function BlogModeration() {
 
             <button 
               onClick={() => setFilters({ ...filters, reported: filters.reported === 'true' ? 'false' : 'true' })}
-              className={`px-4 py-3 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${filters.reported === 'true' ? 'bg-red-500/10 border-red-500 text-red-500' : 'bg-black border-zinc-800/50 text-zinc-500 hover:text-white'}`}
+              className={`w-full sm:w-auto px-4 py-2.5 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${filters.reported === 'true' ? 'bg-sv-danger-soft border-sv-danger/30 text-sv-danger' : 'bg-sv-surface-muted border-sv-border text-sv-text-muted hover:text-sv-text-primary'}`}
             >
               <FiFlag />
               {filters.reported === 'true' ? 'SHOWING REPORTED' : 'FILTER REPORTED'}
@@ -166,134 +166,136 @@ export default function BlogModeration() {
           </div>
 
           {/* Articles Table/Grid */}
-          <div className="lg:col-span-4 overflow-x-auto rounded-2xl border border-sv-border">
-            <table className="w-full text-left border-collapse min-w-[1000px]">
-              <thead className="bg-sv-surface-elevated">
-                <tr>
-                  <th className="px-6 py-4 text-[9px] font-black text-sv-text-muted uppercase tracking-[0.2em] border-b border-sv-border">Article</th>
-                  <th className="px-6 py-4 text-[9px] font-black text-sv-text-muted uppercase tracking-[0.2em] border-b border-sv-border">Vendor / Author</th>
-                  <th className="px-6 py-4 text-[9px] font-black text-sv-text-muted uppercase tracking-[0.2em] border-b border-sv-border">Stats</th>
-                  <th className="px-6 py-4 text-[9px] font-black text-sv-text-muted uppercase tracking-[0.2em] border-b border-sv-border">Status</th>
-                  <th className="px-6 py-4 text-[9px] font-black text-sv-text-muted uppercase tracking-[0.2em] border-b border-sv-border text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-sv-surface divide-y divide-sv-border">
-                <AnimatePresence mode="popLayout">
-                  {blogs.map((blog) => (
-                    <motion.tr 
-                      layout
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      key={blog._id} 
-                      className="group hover:bg-sv-surface-muted transition-all duration-300"
-                    >
-                      <td className="px-6 py-5">
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-xl bg-zinc-900 overflow-hidden border border-zinc-800/50 relative">
-                            {blog.coverImage ? (
-                              <img src={blog.coverImage} className="w-full h-full object-cover" alt="" />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center text-zinc-700">
-                                <FiFileText size={20} />
+          <div className="lg:col-span-4 bg-sv-surface rounded-2xl border border-sv-border overflow-hidden shadow-sm">
+            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-sv-border">
+              <table className="w-full text-left border-collapse min-w-[750px]">
+                <thead className="bg-sv-surface-muted/50 border-b border-sv-border">
+                  <tr>
+                    <th className="px-6 py-4 text-[9px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Article</th>
+                    <th className="px-6 py-4 text-[9px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Vendor / Author</th>
+                    <th className="px-6 py-4 text-[9px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Stats</th>
+                    <th className="px-6 py-4 text-[9px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Status</th>
+                    <th className="px-6 py-4 text-[9px] font-black text-sv-text-muted uppercase tracking-[0.2em] text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-sv-border">
+                  <AnimatePresence mode="popLayout">
+                    {blogs.map((blog) => (
+                      <motion.tr 
+                        layout
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        key={blog._id} 
+                        className="group hover:bg-sv-surface-muted/60 transition-all duration-300"
+                      >
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-xl bg-sv-surface-muted overflow-hidden border border-sv-border relative shrink-0">
+                              {blog.coverImage ? (
+                                <img src={blog.coverImage} className="w-full h-full object-cover" alt="" />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-sv-text-muted">
+                                  <FiFileText size={20} />
+                                </div>
+                              )}
+                              {blog.isFeatured && (
+                                <div className="absolute top-0 right-0 p-1 bg-sv-warning text-sv-text-inverse rounded-bl-lg shadow-sm">
+                                  <FiStar size={10} />
+                                </div>
+                              )}
+                            </div>
+                            <div className="space-y-1 max-w-[300px]">
+                              <h3 className="text-xs font-bold text-sv-text-primary uppercase tracking-tight truncate group-hover:text-sv-primary transition-colors">
+                                {blog.title}
+                              </h3>
+                              <div className="flex items-center gap-2 text-[9px] font-black text-sv-text-muted uppercase tracking-widest">
+                                <FiClock />
+                                {format(new Date(blog.createdAt), 'MMM dd, yyyy')}
+                                <span className="text-sv-border">|</span>
+                                <span>{blog.readingTime || 3} MINS</span>
                               </div>
-                            )}
-                            {blog.isFeatured && (
-                              <div className="absolute top-0 right-0 p-1 bg-yellow-500 text-black rounded-bl-lg shadow-lg">
-                                <FiStar size={10} />
-                              </div>
-                            )}
-                          </div>
-                          <div className="space-y-1 max-w-[300px]">
-                            <h3 className="text-xs font-bold text-sv-text-primary uppercase tracking-tight truncate group-hover:text-sv-primary transition-colors uppercase">
-                              {blog.title}
-                            </h3>
-                            <div className="flex items-center gap-2 text-[9px] font-black text-sv-text-muted uppercase tracking-widest">
-                              <FiClock />
-                              {format(new Date(blog.createdAt), 'MMM dd, yyyy')}
-                              <span className="text-sv-text-muted">|</span>
-                              <span>{blog.readingTime || 3} MINS</span>
                             </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-5">
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-1.5 text-[10px] font-bold text-sv-text-primary uppercase">
-                            <FiShoppingBag className="text-sv-text-muted" />
-                            {blog.store?.name}
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-1.5 text-[10px] font-bold text-sv-text-primary uppercase">
+                              <FiShoppingBag className="text-sv-text-muted" />
+                              {blog.store?.name}
+                            </div>
+                            <div className="flex items-center gap-1.5 text-[9px] font-black text-sv-text-muted uppercase tracking-widest">
+                              <FiUser size={12} />
+                              {blog.author?.name}
+                            </div>
                           </div>
-                          <div className="flex items-center gap-1.5 text-[9px] font-black text-sv-text-muted uppercase tracking-widest">
-                            <FiUser size={12} />
-                            {blog.author?.name}
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-4">
+                            <div className="text-center">
+                              <p className="text-[10px] font-black text-sv-text-primary">{blog.views || 0}</p>
+                              <p className="text-[8px] font-black text-sv-text-muted uppercase tracking-tighter">Views</p>
+                            </div>
+                            <div className="h-6 w-[1px] bg-sv-border" />
+                            <div className="text-center">
+                              <p className="text-[10px] font-black text-sv-text-primary">{blog.likes || 0}</p>
+                              <p className="text-[8px] font-black text-sv-text-muted uppercase tracking-tighter">Likes</p>
+                            </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-5">
-                        <div className="flex items-center gap-4">
-                          <div className="text-center">
-                            <p className="text-[10px] font-black text-sv-text-primary">{blog.views || 0}</p>
-                            <p className="text-[8px] font-black text-sv-text-muted uppercase tracking-tighter">Views</p>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-[0.2em] border shadow-sm ${
+                            blog.status === 'published' ? 'bg-sv-success-soft text-sv-success border-sv-success/30' :
+                            blog.status === 'removed' ? 'bg-sv-danger-soft text-sv-danger border-sv-danger/30' :
+                            'bg-sv-surface-muted text-sv-text-secondary border-sv-border'
+                          }`}>
+                            {blog.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              onClick={() => handleFeature(blog)}
+                              disabled={!!featuringId}
+                              className={`p-2 rounded-lg border transition-all disabled:opacity-50 disabled:cursor-not-allowed ${blog.isFeatured ? 'bg-sv-warning-soft border-sv-warning/30 text-sv-warning' : 'bg-sv-surface-muted border-sv-border hover:border-sv-primary text-sv-text-muted hover:text-sv-text-primary'}`}
+                              title={blog.isFeatured ? "Unfeature" : "Feature"}
+                            >
+                              <FiStar size={14} />
+                            </button>
+                            <button 
+                              onClick={() => {
+                                setSelectedItem(blog);
+                                setNewStatus('removed');
+                                setShowModModal(true);
+                              }}
+                              className="p-2 bg-sv-surface-muted border border-sv-border rounded-lg hover:border-sv-danger hover:text-sv-danger text-sv-text-muted transition-all"
+                              title="Remove Post"
+                            >
+                              <FiXCircle size={14} />
+                            </button>
+                            <a 
+                              href={`${import.meta.env.VITE_STOREFRONT_URL || 'https://shopvia.ng'}/blog/${blog.slug}`}
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="p-2 bg-sv-surface-muted border border-sv-border rounded-lg hover:border-sv-primary hover:text-sv-primary text-sv-text-muted transition-all"
+                            >
+                              <FiExternalLink size={14} />
+                            </a>
                           </div>
-                          <div className="h-6 w-[1px] bg-sv-border" />
-                          <div className="text-center">
-                            <p className="text-[10px] font-black text-sv-text-primary">{blog.likes || 0}</p>
-                            <p className="text-[8px] font-black text-sv-text-muted uppercase tracking-tighter">Likes</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-5">
-                        <span className={`px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-[0.2em] border shadow-sm ${
-                          blog.status === 'published' ? 'bg-sv-success-soft text-sv-success border-sv-success/30' :
-                          blog.status === 'removed' ? 'bg-sv-danger-soft text-sv-danger border-sv-danger/30' :
-                          'bg-zinc-800/50 text-zinc-400 border-zinc-700/50'
-                        }`}>
-                          {blog.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-5 text-right">
-                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button
-                            onClick={() => handleFeature(blog)}
-                            disabled={!!featuringId}
-                            className={`p-2 rounded-lg border transition-all disabled:opacity-50 disabled:cursor-not-allowed ${blog.isFeatured ? 'bg-yellow-500/20 border-yellow-500 text-yellow-500' : 'bg-black border-zinc-800 hover:border-zinc-500 text-zinc-500'}`}
-                            title={blog.isFeatured ? "Unfeature" : "Feature"}
-                          >
-                            <FiStar size={14} />
-                          </button>
-                          <button 
-                            onClick={() => {
-                              setSelectedItem(blog);
-                              setNewStatus('removed');
-                              setShowModModal(true);
-                            }}
-                            className="p-2 bg-black border border-zinc-800 rounded-lg hover:border-red-500 hover:text-red-500 text-zinc-500 transition-all"
-                            title="Remove Post"
-                          >
-                            <FiXCircle size={14} />
-                          </button>
-                          <a 
-                            href={`${import.meta.env.VITE_STOREFRONT_URL || 'https://shopvia.ng'}/blog/${blog.slug}`}
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="p-2 bg-black border border-zinc-800 rounded-lg hover:border-white hover:text-white text-zinc-500 transition-all"
-                          >
-                            <FiExternalLink size={14} />
-                          </a>
-                        </div>
-                      </td>
-                    </motion.tr>
-                  ))}
-                </AnimatePresence>
-              </tbody>
-            </table>
-            
-            {blogs.length === 0 && !isLoading && (
-              <div className="py-24 text-center space-y-3">
-                <FiFileText className="text-4xl text-zinc-800 mx-auto" />
-                <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">No articles found matching filters</p>
-              </div>
-            )}
+                        </td>
+                      </motion.tr>
+                    ))}
+                  </AnimatePresence>
+                </tbody>
+              </table>
+              
+              {blogs.length === 0 && !isLoading && (
+                <div className="py-24 text-center space-y-3">
+                  <FiFileText className="text-4xl text-sv-text-muted mx-auto" />
+                  <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">No articles found matching filters</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -301,45 +303,45 @@ export default function BlogModeration() {
       {activeTab === 'reports' && (
         <div className="space-y-4">
           {reports.map((report) => (
-            <div key={report._id} className="bg-[#0F0F0F] border border-zinc-800/50 rounded-2xl p-6 hover:border-red-500/30 transition-all flex flex-col md:flex-row gap-6">
+            <div key={report._id} className="bg-sv-surface border border-sv-border rounded-2xl p-6 shadow-sm hover:border-sv-danger/30 transition-all flex flex-col md:flex-row gap-6">
               <div className="flex-1 space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="bg-red-500/10 p-2 rounded-lg">
-                      <FiAlertTriangle className="text-red-500" />
+                    <div className="bg-sv-danger-soft p-2 rounded-lg border border-sv-danger/20">
+                      <FiAlertTriangle className="text-sv-danger" />
                     </div>
-                    <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Pending Report</span>
+                    <span className="text-[10px] font-black text-sv-danger uppercase tracking-widest">Pending Report</span>
                   </div>
-                  <span className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">{format(new Date(report.createdAt), 'MMM dd, HH:mm')}</span>
+                  <span className="text-[9px] font-black text-sv-text-muted uppercase tracking-widest">{format(new Date(report.createdAt), 'MMM dd, HH:mm')}</span>
                 </div>
 
                 <div className="space-y-1">
-                  <h3 className="text-sm font-bold text-white uppercase tracking-tight">{report.blogId?.title}</h3>
-                  <div className="flex items-center gap-2 text-[9px] font-black text-zinc-500 uppercase tracking-widest">
+                  <h3 className="text-sm font-bold text-sv-text-primary uppercase tracking-tight">{report.blogId?.title}</h3>
+                  <div className="flex items-center gap-2 text-[9px] font-black text-sv-text-muted uppercase tracking-widest">
                     <FiShoppingBag />
                     {report.blogId?.store?.name}
-                    <span className="text-zinc-800">|</span>
+                    <span className="text-sv-border">|</span>
                     <FiUser />
                     Reported by: {report.reportedBy?.name}
                   </div>
                 </div>
 
-                <div className="bg-black/40 p-4 rounded-xl border border-zinc-800/30">
-                  <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest mb-1.5 opacity-50">Report Reason</p>
-                  <p className="text-[11px] font-medium text-white italic">"{report.reason}"</p>
+                <div className="bg-sv-surface-muted p-4 rounded-xl border border-sv-border">
+                  <p className="text-[9px] font-black text-sv-text-muted uppercase tracking-widest mb-1.5 opacity-70">Report Reason</p>
+                  <p className="text-[11px] font-medium text-sv-text-primary italic">"{report.reason}"</p>
                 </div>
               </div>
 
-              <div className="flex md:flex-col justify-end gap-2 shrink-0 border-t md:border-t-0 md:border-l border-zinc-800/50 pt-4 md:pt-0 md:pl-6">
+              <div className="flex md:flex-col justify-end gap-2 shrink-0 border-t md:border-t-0 md:border-l border-sv-border pt-4 md:pt-0 md:pl-6">
                 <button 
                    onClick={() => handleResolveReport(report._id, 'resolved')}
-                   className="flex-1 md:w-[140px] px-4 py-2.5 bg-red-500 text-black text-[10px] font-black uppercase tracking-widest rounded-lg hover:scale-105 transition-all flex items-center justify-center gap-2"
+                   className="flex-1 md:w-[140px] px-4 py-2.5 bg-sv-danger text-sv-text-inverse text-[10px] font-black uppercase tracking-widest rounded-lg hover:opacity-90 transition-all flex items-center justify-center gap-2"
                 >
                   Confirm & Moderate
                 </button>
                 <button 
                   onClick={() => handleResolveReport(report._id, 'dismissed')}
-                  className="flex-1 md:w-[140px] px-4 py-2.5 bg-zinc-800 text-white text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-zinc-700 transition-all"
+                  className="flex-1 md:w-[140px] px-4 py-2.5 bg-sv-surface-muted text-sv-text-primary border border-sv-border text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-sv-surface transition-all"
                 >
                   Dismiss Report
                 </button>
@@ -348,9 +350,9 @@ export default function BlogModeration() {
           ))}
 
           {reports.length === 0 && !isLoading && (
-            <div className="py-32 text-center bg-[#0A0A0A] rounded-2xl border border-zinc-800/40">
-              <FiCheckCircle className="text-emerald-500 text-4xl mb-4 mx-auto" />
-              <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Moderation queue cleared. No pending reports.</p>
+            <div className="py-24 text-center bg-sv-surface rounded-2xl border border-sv-border shadow-sm">
+              <FiCheckCircle className="text-sv-success text-4xl mb-4 mx-auto" />
+              <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Moderation queue cleared. No pending reports.</p>
             </div>
           )}
         </div>
@@ -365,35 +367,35 @@ export default function BlogModeration() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowModModal(false)}
-              className="absolute inset-0 bg-black/80 backdrop-blur-md"
+              className="absolute inset-0 bg-sv-bg/80 backdrop-blur-md"
             />
             <motion.div 
-              initial={{ scale: 0.9, opacity: 0 }}
+              initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="relative w-full max-w-lg bg-[#192720] rounded-2xl border border-[#26362F] shadow-2xl overflow-hidden p-8"
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative w-full max-w-lg bg-sv-surface rounded-2xl border border-sv-border shadow-2xl overflow-y-auto max-h-[90vh] p-6 sm:p-8"
             >
               <div className="space-y-6">
                 <div className="space-y-2 text-center">
-                  <div className="w-16 h-16 bg-[#2E1B1B] rounded-2xl flex items-center justify-center mx-auto border border-[#EF6B6B]/20">
-                    <FiAlertTriangle className="text-[#EF6B6B] text-3xl" />
+                  <div className="w-16 h-16 bg-sv-danger-soft rounded-2xl flex items-center justify-center mx-auto border border-sv-danger/30">
+                    <FiAlertTriangle className="text-sv-danger text-3xl" />
                   </div>
-                  <h2 className="text-xl font-black text-[#F3F7F5] uppercase tracking-tighter">Hardened Moderation Action</h2>
-                  <p className="text-[#7F9188] text-[10px] font-black uppercase tracking-[0.2em]">Action will be immutably recorded in Admin Audit Logs</p>
+                  <h2 className="text-xl font-black text-sv-text-primary uppercase tracking-tight">Hardened Moderation Action</h2>
+                  <p className="text-sv-text-muted text-[10px] font-black uppercase tracking-[0.2em]">Action will be immutably recorded in Admin Audit Logs</p>
                 </div>
 
                 <div className="space-y-4">
                   <div className="space-y-1.5">
-                    <label className="text-[9px] font-black text-[#7F9188] uppercase tracking-[0.2em] ml-1">Target Article</label>
-                    <div className="bg-[#0D1512] border border-[#26362F] p-4 rounded-xl text-[11px] font-bold text-[#F3F7F5] uppercase">
+                    <label className="text-[9px] font-black text-sv-text-muted uppercase tracking-[0.2em] ml-1">Target Article</label>
+                    <div className="bg-sv-surface-muted border border-sv-border p-4 rounded-xl text-[11px] font-bold text-sv-text-primary uppercase">
                       {selectedItem?.title}
                     </div>
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[9px] font-black text-[#7F9188] uppercase tracking-[0.2em] ml-1">Justification Reason (Mandatory)</label>
+                    <label className="text-[9px] font-black text-sv-text-muted uppercase tracking-[0.2em] ml-1">Justification Reason (Mandatory)</label>
                     <textarea
-                      className="w-full bg-[#0D1512] border border-[#26362F] rounded-xl p-4 text-xs text-[#F3F7F5] placeholder:text-[#4A5A52] focus:border-sv-primary transition-all outline-none h-32"
+                      className="w-full bg-sv-surface-muted border border-sv-border rounded-xl p-4 text-xs text-sv-text-primary placeholder:text-sv-text-muted focus:border-sv-primary transition-all outline-none h-32"
                       placeholder="ENTER DETAILED REASON FOR MODERATION..."
                       value={modReason}
                       onChange={(e) => setModReason(e.target.value)}
@@ -404,14 +406,14 @@ export default function BlogModeration() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => setShowModModal(false)}
-                    className="flex-1 py-4 bg-[#0D1512] text-[#7F9188] text-[10px] font-black uppercase tracking-widest rounded-xl hover:text-[#F3F7F5] transition-all"
+                    className="flex-1 py-3 bg-sv-surface-muted text-sv-text-muted border border-sv-border text-[10px] font-black uppercase tracking-widest rounded-xl hover:text-sv-text-primary transition-all"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleModerate}
                     disabled={moderating}
-                    className="flex-1 py-4 bg-sv-danger text-sv-text-inverse text-[10px] font-black uppercase tracking-widest rounded-xl hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 py-3 bg-sv-danger text-sv-text-inverse text-[10px] font-black uppercase tracking-widest rounded-xl hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {moderating ? 'Processing...' : 'Confirm Action'}
                   </button>

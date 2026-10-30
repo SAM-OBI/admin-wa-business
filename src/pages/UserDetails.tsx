@@ -164,18 +164,18 @@ export default function UserDetails() {
 
   if (loading) {
     return (
-      <div className="p-6 flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="p-4 sm:p-6 lg:p-8 flex items-center justify-center min-h-[60vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sv-primary"></div>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="p-8 flex items-center justify-center min-h-[60vh]">
+      <div className="p-4 sm:p-6 lg:p-8 flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <h2 className="text-2xl font-black text-white uppercase tracking-tight">Identity Not Found</h2>
-          <Link to="/dashboard/users" className="text-zinc-500 hover:text-white mt-4 inline-block text-xs font-black uppercase tracking-widest transition-colors">
+          <h2 className="text-2xl font-black text-sv-text-primary uppercase tracking-tight">Identity Not Found</h2>
+          <Link to="/dashboard/users" className="text-sv-text-secondary hover:text-sv-text-primary mt-4 inline-block text-xs font-black uppercase tracking-widest transition-colors">
             ← Return to Registry
           </Link>
         </div>
@@ -186,23 +186,23 @@ export default function UserDetails() {
   const defaultAddress = user.addresses?.find(addr => addr.isDefault);
 
   return (
-    <div className="w-full max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="mb-6">
+      <div>
         <Link
           to="/dashboard/users"
-          className="inline-flex items-center text-zinc-400 hover:text-white mb-4 transition-colors"
+          className="inline-flex items-center text-sv-text-secondary hover:text-sv-text-primary mb-4 transition-colors text-sm"
         >
           <FiArrowLeft className="mr-2" />
           Back to Users
         </Link>
 
-        <div className="flex justify-between items-start">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-black text-white tracking-tight">{user.name}</h1>
-            <p className="text-zinc-500 font-medium mt-1 uppercase text-xs tracking-widest">{user.email}</p>
+            <h1 className="text-2xl sm:text-3xl font-black text-sv-text-primary tracking-tight">{user.name}</h1>
+            <p className="text-sv-text-muted font-medium mt-1 uppercase text-xs tracking-widest">{user.email}</p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <button
                onClick={handleImpersonate}
                disabled={actionPending}
@@ -211,7 +211,7 @@ export default function UserDetails() {
                <FiShield /> Login As
             </button>
             {(user as any).legalHold && (
-               <div className="flex items-center gap-1 bg-sv-danger-soft text-sv-danger px-3 py-1 rounded-full text-xs font-bold">
+               <div className="flex items-center gap-1 bg-sv-danger-soft text-sv-danger px-3 py-1 rounded-full text-xs font-bold border border-sv-danger/30">
                   <FiLock /> Legal Hold Active
                </div>
             )}
@@ -219,7 +219,7 @@ export default function UserDetails() {
                 <button
                   onClick={handleUnlock}
                   disabled={actionPending}
-                  className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition flex items-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 bg-sv-warning text-sv-text-inverse rounded-lg hover:opacity-90 transition flex items-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed font-bold"
                 >
                   <FiUnlock /> Unlock Account
                 </button>
@@ -229,8 +229,8 @@ export default function UserDetails() {
                disabled={actionPending}
                className={`px-4 py-2 rounded-lg transition-all flex items-center gap-2 text-sm font-bold border disabled:opacity-50 disabled:cursor-not-allowed ${
                   (user as any).legalHold 
-                  ? 'bg-zinc-800 text-white border-white/10 hover:bg-zinc-700' 
-                  : 'bg-transparent text-red-500 border-red-500/20 hover:bg-red-500/10'
+                  ? 'bg-sv-surface-muted text-sv-text-primary border-sv-border hover:bg-sv-surface-elevated' 
+                  : 'bg-transparent text-sv-danger border-sv-danger/30 hover:bg-sv-danger-soft'
                }`}
             >
                {(user as any).legalHold ? <FiUnlock /> : <FiLock />}
@@ -241,53 +241,53 @@ export default function UserDetails() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Total Orders</p>
-              <p className="text-3xl font-black text-white mt-1">{user.orderStats?.totalOrders || 0}</p>
+              <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Total Orders</p>
+              <p className="text-2xl sm:text-3xl font-black text-sv-text-primary mt-1">{user.orderStats?.totalOrders || 0}</p>
             </div>
-            <div className="h-10 w-10 bg-zinc-800 rounded-xl flex items-center justify-center border border-white/5">
-              <FiShoppingCart className="text-zinc-400" size={18} />
+            <div className="h-10 w-10 bg-sv-surface-muted rounded-xl flex items-center justify-center border border-sv-border">
+              <FiShoppingCart className="text-sv-text-secondary" size={18} />
             </div>
           </div>
         </div>
 
-        <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
+        <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Total Spent</p>
-              <p className="text-3xl font-black text-white mt-1">
+              <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Total Spent</p>
+              <p className="text-2xl sm:text-3xl font-black text-sv-text-primary mt-1">
                 ₦{(user.orderStats?.totalSpent || 0).toLocaleString()}
               </p>
             </div>
-            <div className="h-10 w-10 bg-zinc-800 rounded-xl flex items-center justify-center border border-white/5">
-              <FiDollarSign className="text-zinc-400" size={18} />
+            <div className="h-10 w-10 bg-sv-surface-muted rounded-xl flex items-center justify-center border border-sv-border">
+              <FiDollarSign className="text-sv-text-secondary" size={18} />
             </div>
           </div>
         </div>
 
-        <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
+        <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Reviews</p>
-              <p className="text-3xl font-black text-white mt-1">{user.reviewStats?.totalReviews || 0}</p>
+              <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Reviews</p>
+              <p className="text-2xl sm:text-3xl font-black text-sv-text-primary mt-1">{user.reviewStats?.totalReviews || 0}</p>
             </div>
-            <div className="h-10 w-10 bg-zinc-800 rounded-xl flex items-center justify-center border border-white/5">
-              <FiStar className="text-zinc-400" size={18} />
+            <div className="h-10 w-10 bg-sv-surface-muted rounded-xl flex items-center justify-center border border-sv-border">
+              <FiStar className="text-sv-text-secondary" size={18} />
             </div>
           </div>
         </div>
 
-        <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
+        <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Account Age</p>
-              <p className="text-3xl font-black text-white mt-1">{user.accountAge}d</p>
+              <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Account Age</p>
+              <p className="text-2xl sm:text-3xl font-black text-sv-text-primary mt-1">{user.accountAge}d</p>
             </div>
-            <div className="h-10 w-10 bg-zinc-800 rounded-xl flex items-center justify-center border border-white/5">
-              <FiCalendar className="text-zinc-400" size={18} />
+            <div className="h-10 w-10 bg-sv-surface-muted rounded-xl flex items-center justify-center border border-sv-border">
+              <FiCalendar className="text-sv-text-secondary" size={18} />
             </div>
           </div>
         </div>
@@ -295,37 +295,37 @@ export default function UserDetails() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column */}
-        <div className="lg:col-span-2 space-y-4">
+        <div className="lg:col-span-2 space-y-6">
           {/* Personal Information */}
-          <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
-            <h2 className="text-lg font-black text-white uppercase tracking-widest mb-6">Identity Profile</h2>
-            <div className="grid grid-cols-2 gap-6">
+          <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border">
+            <h2 className="text-base sm:text-lg font-black text-sv-text-primary uppercase tracking-widest mb-6">Identity Profile</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               <div className="flex items-center gap-3">
-                <FiUser className="text-zinc-500" />
+                <FiUser className="text-sv-text-muted" />
                 <div>
-                  <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Legal Name</p>
-                  <p className="text-sm font-bold text-white">{user.name}</p>
+                  <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Legal Name</p>
+                  <p className="text-sm font-bold text-sv-text-primary">{user.name}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <FiMail className="text-zinc-500" />
+                <FiMail className="text-sv-text-muted" />
                 <div>
-                  <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Email Address</p>
-                  <p className="text-sm font-bold text-white">{user.email}</p>
+                  <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Email Address</p>
+                  <p className="text-sm font-bold text-sv-text-primary break-all">{user.email}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <FiPhone className="text-zinc-500" />
+                <FiPhone className="text-sv-text-muted" />
                 <div>
-                  <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Phone Number</p>
-                  <p className="text-sm font-bold text-white">{user.phone || 'N/A'}</p>
+                  <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Phone Number</p>
+                  <p className="text-sm font-bold text-sv-text-primary">{user.phone || 'N/A'}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <FiCalendar className="text-zinc-500" />
+                <FiCalendar className="text-sv-text-muted" />
                 <div>
-                  <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Joined On</p>
-                  <p className="text-sm font-bold text-white">
+                  <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Joined On</p>
+                  <p className="text-sm font-bold text-sv-text-primary">
                     {new Date(user.createdAt).toLocaleDateString()}
                   </p>
                 </div>
@@ -333,12 +333,12 @@ export default function UserDetails() {
             </div>
 
             {defaultAddress && (
-              <div className="mt-6 pt-6 border-t border-zinc-800/60">
+              <div className="mt-6 pt-6 border-t border-sv-border">
                 <div className="flex items-start gap-3">
-                  <FiMapPin className="text-zinc-500 mt-1" />
+                  <FiMapPin className="text-sv-text-muted mt-1" />
                   <div>
-                    <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Primary Shipping</p>
-                    <p className="text-sm font-bold text-white">
+                    <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Primary Shipping</p>
+                    <p className="text-sm font-bold text-sv-text-primary">
                       {defaultAddress.street}, {defaultAddress.city}, {defaultAddress.state}, {defaultAddress.country}
                     </p>
                   </div>
@@ -349,25 +349,25 @@ export default function UserDetails() {
 
           {/* Order History */}
           {user.recentOrders && user.recentOrders.length > 0 && (
-            <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
-              <h2 className="text-lg font-black text-white uppercase tracking-widest mb-6">Recent Activity</h2>
-              <div className="space-y-2">
+            <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border">
+              <h2 className="text-base sm:text-lg font-black text-sv-text-primary uppercase tracking-widest mb-6">Recent Activity</h2>
+              <div className="space-y-3">
                 {user.recentOrders.map((order: any) => (
-                  <div key={order._id} className="p-4 border border-zinc-800/40 rounded-xl hover:bg-white/5 transition-colors">
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-lg bg-zinc-800 flex items-center justify-center border border-white/5">
-                            <FiShoppingCart className="text-zinc-500" size={16} />
+                  <div key={order._id} className="p-4 border border-sv-border rounded-xl hover:bg-sv-surface-muted transition-colors">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="flex items-center gap-3 sm:gap-4">
+                        <div className="w-10 h-10 rounded-lg bg-sv-surface-muted flex items-center justify-center border border-sv-border shrink-0">
+                            <FiShoppingCart className="text-sv-text-secondary" size={16} />
                         </div>
                         <div>
-                            <p className="text-xs font-black text-white uppercase tracking-widest">Order #{order._id.slice(-6)}</p>
-                            <p className="text-[10px] text-zinc-500 font-bold uppercase mt-0.5">
+                            <p className="text-xs font-black text-sv-text-primary uppercase tracking-widest">Order #{order._id.slice(-6)}</p>
+                            <p className="text-[10px] text-sv-text-muted font-bold uppercase mt-0.5">
                                 {order.store?.name || 'Unknown Store'} • {new Date(order.createdAt).toLocaleDateString()}
                             </p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-sm font-black text-white tracking-tight">₦{order.totalAmount.toLocaleString()}</p>
+                      <div className="text-left sm:text-right">
+                        <p className="text-sm font-black text-sv-text-primary tracking-tight">₦{order.totalAmount.toLocaleString()}</p>
                         <span className={`inline-block px-2 py-0.5 text-[9px] font-black uppercase rounded-full mt-1 ${
                           order.status === 'delivered' ? 'bg-sv-success-soft text-sv-success border border-sv-success/30' :
                           order.status === 'pending' ? 'bg-sv-warning-soft text-sv-warning border border-sv-warning/30' :
@@ -385,24 +385,24 @@ export default function UserDetails() {
 
           {/* Recent Reviews */}
           {user.recentReviews && user.recentReviews.length > 0 && (
-            <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
-              <h2 className="text-lg font-black text-white uppercase tracking-widest mb-6">Feedback Archive</h2>
+            <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border">
+              <h2 className="text-base sm:text-lg font-black text-sv-text-primary uppercase tracking-widest mb-6">Feedback Archive</h2>
               <div className="space-y-3">
                 {user.recentReviews.map((review: any) => (
-                  <div key={review._id} className="p-4 border border-zinc-800/40 rounded-xl">
+                  <div key={review._id} className="p-4 border border-sv-border rounded-xl">
                     <div className="flex items-start gap-3">
-                      <div className="p-2 bg-zinc-800 rounded-lg">
-                        <FiStar className="text-amber-500" size={14} />
+                      <div className="p-2 bg-sv-surface-muted rounded-lg shrink-0">
+                        <FiStar className="text-sv-warning" size={14} />
                       </div>
                       <div className="flex-1">
-                        <div className="flex justify-between items-center">
-                          <p className="text-xs font-black text-white uppercase tracking-widest">{review.product?.name}</p>
-                          <span className="text-[10px] font-black text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                          <p className="text-xs font-black text-sv-text-primary uppercase tracking-widest">{review.product?.name}</p>
+                          <span className="text-[10px] font-black text-sv-warning bg-sv-warning-soft px-2 py-0.5 rounded-full border border-sv-warning/20 w-fit">
                             {review.rating}/5
                           </span>
                         </div>
-                        <p className="text-sm text-zinc-400 mt-2 font-medium line-clamp-2">{review.comment}</p>
-                        <p className="text-[9px] text-zinc-600 font-black uppercase mt-2">
+                        <p className="text-sm text-sv-text-secondary mt-2 font-medium line-clamp-2">{review.comment}</p>
+                        <p className="text-[9px] text-sv-text-muted font-black uppercase mt-2">
                           {new Date(review.createdAt).toLocaleDateString()}
                         </p>
                       </div>
@@ -415,15 +415,15 @@ export default function UserDetails() {
 
           {/* Complaints */}
           {user.complaints && user.complaints.length > 0 && (
-            <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
-              <h2 className="text-lg font-black text-white uppercase tracking-widest mb-6">Grievance Ledger</h2>
+            <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border">
+              <h2 className="text-base sm:text-lg font-black text-sv-text-primary uppercase tracking-widest mb-6">Grievance Ledger</h2>
               <div className="space-y-3">
                 {user.complaints.map((complaint: any) => (
-                  <div key={complaint._id} className="p-4 border border-zinc-800/40 rounded-xl hover:bg-white/5 transition-colors">
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1 pr-4">
-                        <p className="font-black text-white text-xs uppercase tracking-widest">{complaint.title}</p>
-                        <p className="text-xs text-zinc-500 font-medium mt-1.5 line-clamp-2">{complaint.description}</p>
+                  <div key={complaint._id} className="p-4 border border-sv-border rounded-xl hover:bg-sv-surface-muted transition-colors">
+                    <div className="flex justify-between items-start gap-3">
+                      <div className="flex-1 pr-2">
+                        <p className="font-black text-sv-text-primary text-xs uppercase tracking-widest">{complaint.title}</p>
+                        <p className="text-xs text-sv-text-muted font-medium mt-1.5 line-clamp-2">{complaint.description}</p>
                       </div>
                       {/* 🛡️ [BATCH-11] Canonical status is uppercase OPEN|INVESTIGATING|RESOLVED|DISMISSED. */}
                       <span className={`px-2.5 py-1 text-[9px] font-black uppercase rounded border shrink-0 ${
@@ -434,7 +434,7 @@ export default function UserDetails() {
                         {complaint.status}
                       </span>
                     </div>
-                    <p className="text-[9px] text-zinc-600 font-black uppercase tracking-widest mt-3">
+                    <p className="text-[9px] text-sv-text-muted font-black uppercase tracking-widest mt-3">
                       {new Date(complaint.createdAt).toLocaleDateString()}
                     </p>
                   </div>
@@ -445,13 +445,13 @@ export default function UserDetails() {
         </div>
 
         {/* Right Column */}
-        <div className="space-y-4">
+        <div className="space-y-6">
           {/* Account Status */}
-          <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
-            <h2 className="text-lg font-black text-white uppercase tracking-widest mb-6">Security Context</h2>
+          <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border">
+            <h2 className="text-base sm:text-lg font-black text-sv-text-primary uppercase tracking-widest mb-6">Security Context</h2>
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Access Role</span>
+                <span className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Access Role</span>
                 <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-tight border ${
                   user.role === 'ADMIN' ? 'bg-sv-tag-soft text-sv-tag border-sv-tag/20' :
                   user.role === 'VENDORS' ? 'bg-sv-success-soft text-sv-success border-sv-success/30' :
@@ -462,7 +462,7 @@ export default function UserDetails() {
               </div>
 
               <div className="flex justify-between items-center">
-                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Active State</span>
+                <span className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Active State</span>
                 <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-black uppercase rounded-md border ${
                   user.isActive ? 'bg-sv-success-soft text-sv-success border-sv-success/30' : 'bg-sv-danger-soft text-sv-danger border-sv-danger/30'
                 }`}>
@@ -472,7 +472,7 @@ export default function UserDetails() {
               </div>
 
               <div className="flex justify-between items-center">
-                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Onboarding State</span>
+                <span className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Onboarding State</span>
                 <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-black uppercase rounded-md border ${
                   (user as any).onboardingState === 'ACTIVE' ? 'bg-sv-success-soft text-sv-success border-sv-success/30' :
                   (user as any).onboardingState === 'KYC_PENDING' ? 'bg-sv-warning-soft text-sv-warning border-sv-warning/30' :
@@ -484,14 +484,14 @@ export default function UserDetails() {
               </div>
 
               <div className="flex justify-between items-center">
-                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Onboarding Persona</span>
-                <span className="text-[10px] font-black text-white uppercase tracking-tight">
+                <span className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Onboarding Persona</span>
+                <span className="text-[10px] font-black text-sv-text-primary uppercase tracking-tight">
                   {(user as any).onboardingPersona || 'N/A'}
                 </span>
               </div>
               
               <div className="flex justify-between items-center">
-                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">KYC Verification</span>
+                <span className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">KYC Verification</span>
                 <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-black uppercase rounded-md border ${
                   user.verification?.status === 'verified' ? 'bg-sv-success-soft text-sv-success border-sv-success/30' :
                   user.verification?.status === 'pending' ? 'bg-sv-warning-soft text-sv-warning border-sv-warning/30' :
@@ -506,7 +506,7 @@ export default function UserDetails() {
               </div>
 
               <div className="flex justify-between items-center">
-                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Email Identity</span>
+                <span className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Email Identity</span>
                 <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-black uppercase rounded-md border ${
                   user.isVerified ? 'bg-sv-success-soft text-sv-success border-sv-success/30' : 'bg-sv-danger-soft text-sv-danger border-sv-danger/30'
                 }`}>
@@ -516,18 +516,18 @@ export default function UserDetails() {
               </div>
 
               {user.verification && (
-                <div className="space-y-3 pt-4 border-t border-zinc-800/60">
-                  <p className="text-[9px] font-black text-white uppercase tracking-widest mb-2 opacity-50">Government Attestations</p>
+                <div className="space-y-3 pt-4 border-t border-sv-border">
+                  <p className="text-[9px] font-black text-sv-text-muted uppercase tracking-widest mb-2">Government Attestations</p>
                   
-                  <div className="flex justify-between items-center bg-zinc-800/30 p-2.5 rounded-lg border border-zinc-800/40">
+                  <div className="flex justify-between items-center bg-sv-surface-muted p-2.5 rounded-lg border border-sv-border">
                     <div>
-                      <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest block">BVN</span>
-                      <span className="font-bold text-white text-xs">
+                      <span className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest block">BVN</span>
+                      <span className="font-bold text-sv-text-primary text-xs">
                         {user.governmentId?.bvn || 'NOT PROVIDED'}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                       <span className={`text-[9px] font-black uppercase ${user.verification.bvnVerified ? 'text-emerald-500' : 'text-zinc-600'}`}>
+                       <span className={`text-[9px] font-black uppercase ${user.verification.bvnVerified ? 'text-sv-success' : 'text-sv-text-muted'}`}>
                         {user.verification.bvnVerified && '✓ Trusted'}
                       </span>
                       {!user.verification.bvnVerified && user.governmentId?.bvn && (
@@ -541,15 +541,15 @@ export default function UserDetails() {
                     </div>
                   </div>
 
-                  <div className="flex justify-between items-center bg-zinc-800/30 p-2.5 rounded-lg border border-zinc-800/40">
+                  <div className="flex justify-between items-center bg-sv-surface-muted p-2.5 rounded-lg border border-sv-border">
                     <div>
-                      <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest block">NIN</span>
-                      <span className="font-bold text-white text-xs">
+                      <span className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest block">NIN</span>
+                      <span className="font-bold text-sv-text-primary text-xs">
                         {user.governmentId?.nin || 'NOT PROVIDED'}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className={`text-[9px] font-black uppercase ${user.verification.ninVerified ? 'text-emerald-500' : 'text-zinc-600'}`}>
+                      <span className={`text-[9px] font-black uppercase ${user.verification.ninVerified ? 'text-sv-success' : 'text-sv-text-muted'}`}>
                          {user.verification.ninVerified && '✓ Trusted'}
                       </span>
                       {!user.verification.ninVerified && user.governmentId?.nin && (
@@ -563,15 +563,15 @@ export default function UserDetails() {
                     </div>
                   </div>
 
-                  <div className="flex justify-between items-center bg-zinc-800/30 p-2.5 rounded-lg border border-zinc-800/40">
+                  <div className="flex justify-between items-center bg-sv-surface-muted p-2.5 rounded-lg border border-sv-border">
                     <div>
-                      <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest block">Voter's Card</span>
-                      <span className="font-bold text-white text-xs">
+                      <span className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest block">Voter's Card</span>
+                      <span className="font-bold text-sv-text-primary text-xs">
                         {user.governmentId?.votersCard || 'NOT PROVIDED'}
                       </span>
                     </div>
                      <div className="flex items-center gap-2">
-                      <span className={`text-[9px] font-black uppercase ${user.verification.votersVerified ? 'text-emerald-500' : 'text-zinc-600'}`}>
+                      <span className={`text-[9px] font-black uppercase ${user.verification.votersVerified ? 'text-sv-success' : 'text-sv-text-muted'}`}>
                         {user.verification.votersVerified && '✓ Trusted'}
                       </span>
                       {!user.verification.votersVerified && user.governmentId?.votersCard && (
@@ -590,28 +590,28 @@ export default function UserDetails() {
           </div>
 
           {/* Activity Summary */}
-          <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
-            <h2 className="text-lg font-black text-white uppercase tracking-widest mb-6">Execution Metrics</h2>
+          <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border">
+            <h2 className="text-base sm:text-lg font-black text-sv-text-primary uppercase tracking-widest mb-6">Execution Metrics</h2>
             <div className="space-y-4">
               <div className="flex justify-between">
-                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Account Age</span>
-                <span className="text-sm font-black text-white">{user.accountAge} Cycles</span>
+                <span className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Account Age</span>
+                <span className="text-sm font-black text-sv-text-primary">{user.accountAge} Cycles</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Gross Volume</span>
-                <span className="text-sm font-black text-white">₦{(user.orderStats?.totalSpent || 0).toLocaleString()}</span>
+                <span className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Gross Volume</span>
+                <span className="text-sm font-black text-sv-text-primary">₦{(user.orderStats?.totalSpent || 0).toLocaleString()}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Fulfillment Rate</span>
-                <span className="text-sm font-black text-emerald-500">
+                <span className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Fulfillment Rate</span>
+                <span className="text-sm font-black text-sv-success">
                     {user.orderStats?.totalOrders ? Math.round((user.orderStats.completedOrders / user.orderStats.totalOrders) * 100) : 0}%
                 </span>
               </div>
               {user.reviewStats && user.reviewStats.totalReviews > 0 && (
-                <div className="pt-4 border-t border-zinc-800/60">
+                <div className="pt-4 border-t border-sv-border">
                     <div className="flex justify-between">
-                        <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Reputation Score</span>
-                        <span className="text-sm font-black text-amber-500">
+                        <span className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Reputation Score</span>
+                        <span className="text-sm font-black text-sv-warning">
                         {user.reviewStats.averageRating.toFixed(1)}/5.0
                         </span>
                     </div>
@@ -622,30 +622,30 @@ export default function UserDetails() {
 
           {/* Addresses */}
           {user.addresses && user.addresses.length > 0 && (
-            <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
-              <h2 className="text-lg font-black text-white uppercase tracking-widest mb-6">Logistic Hubs</h2>
+            <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border">
+              <h2 className="text-base sm:text-lg font-black text-sv-text-primary uppercase tracking-widest mb-6">Logistic Hubs</h2>
               <div className="space-y-3">
                 {user.addresses.map((address: Address, index: number) => (
                   <div 
                     key={index} 
                     className={`p-4 rounded-xl border ${
                       address.isDefault 
-                        ? 'bg-zinc-800/50 border-white/20' 
-                        : 'bg-zinc-800/20 border-zinc-800/40'
+                        ? 'bg-sv-surface-muted border-sv-primary/40' 
+                        : 'bg-sv-surface-muted border-sv-border'
                     }`}
                   >
                     <div className="flex justify-between items-start mb-2">
-                         <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Entry #{index + 1}</p>
+                         <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Entry #{index + 1}</p>
                         {address.isDefault && (
-                        <span className="text-[9px] font-black text-white bg-zinc-700 px-2 py-0.5 rounded uppercase tracking-widest">
+                        <span className="text-[9px] font-black text-sv-primary bg-sv-primary/10 px-2 py-0.5 rounded uppercase tracking-widest border border-sv-primary/20">
                             Primary
                         </span>
                         )}
                     </div>
-                    <p className="text-sm font-bold text-white mb-1">
+                    <p className="text-sm font-bold text-sv-text-primary mb-1">
                       {address.street}
                     </p>
-                    <p className="text-xs text-zinc-500 font-medium lowercase">
+                    <p className="text-xs text-sv-text-muted font-medium lowercase">
                       {address.city}, {address.state} • {address.country}
                     </p>
                   </div>

@@ -137,12 +137,12 @@ export default function VerifyChallengeModal({
     };
 
     return (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 font-sans">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 font-sans">
             <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                className="bg-sv-surface rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-sv-border"
+                className="bg-sv-surface rounded-3xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-sv-border"
             >
                 {/* Header Section */}
                 <div className="bg-sv-surface-muted px-6 py-6 sm:px-8 sm:py-8 border-b border-sv-border relative overflow-hidden">
@@ -207,7 +207,7 @@ export default function VerifyChallengeModal({
                                 }}
                                 placeholder="••••••"
                                 maxLength={6}
-                                className="w-full px-4 py-5 text-center text-3xl sm:text-4xl font-black tracking-[0.4em] sm:tracking-[0.6em] rounded-2xl border-2 border-sv-border bg-sv-surface-muted focus:bg-sv-surface focus:border-sv-primary focus:ring-4 focus:ring-sv-primary/10 transition-all outline-none placeholder:text-slate-200 placeholder:tracking-normal group-hover:border-sv-border"
+                                className="w-full px-4 py-5 text-center text-3xl sm:text-4xl font-black tracking-[0.4em] sm:tracking-[0.6em] rounded-2xl border-2 border-sv-border bg-sv-surface-muted focus:bg-sv-surface focus:border-sv-primary focus:ring-4 focus:ring-sv-primary/10 transition-all outline-none placeholder:text-sv-text-muted/40 placeholder:tracking-normal group-hover:border-sv-border"
                                 autoFocus
                                 disabled={loading}
                             />

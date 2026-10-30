@@ -273,19 +273,19 @@ export default function VendorDetails() {
 
   if (loading) {
     return (
-      <div className="p-6 flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="p-4 sm:p-6 lg:p-8 flex items-center justify-center min-h-[60vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sv-primary"></div>
       </div>
     );
   }
 
   if (!vendor) {
     return (
-      <div className="p-6">
+      <div className="p-4 sm:p-6 lg:p-8 flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-sv-text-primary">Vendor not found</h2>
-          <Link to="/dashboard/vendors" className="text-blue-600 hover:underline mt-4 inline-block">
-            Back to Vendors
+          <Link to="/dashboard/vendors" className="text-sv-primary hover:underline mt-4 inline-block text-sm font-bold">
+            ← Return to Vendors
           </Link>
         </div>
       </div>
@@ -303,37 +303,37 @@ export default function VendorDetails() {
   const getRiskBadge = () => {
     const level = vendor.riskProfile?.level || 'low';
     const colors = {
-      low: 'bg-sv-success-soft text-sv-success',
-      medium: 'bg-sv-warning-soft text-sv-warning',
-      high: 'bg-sv-warning-soft text-sv-warning',
-      critical: 'bg-sv-danger-soft text-sv-danger'
+      low: 'bg-sv-success-soft text-sv-success border border-sv-success/30',
+      medium: 'bg-sv-warning-soft text-sv-warning border border-sv-warning/30',
+      high: 'bg-sv-warning-soft text-sv-warning border border-sv-warning/30',
+      critical: 'bg-sv-danger-soft text-sv-danger border border-sv-danger/30'
     };
     return (
-      <span className={`px-3 py-1 rounded-full text-sm font-semibold ${colors[level]}`}>
+      <span className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider ${colors[level]}`}>
         {level.toUpperCase()}
       </span>
     );
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="mb-8">
+      <div>
         <Link
           to="/dashboard/vendors"
-          className="inline-flex items-center text-zinc-400 hover:text-white mb-4 transition-colors"
+          className="inline-flex items-center text-sv-text-secondary hover:text-sv-text-primary mb-4 transition-colors text-sm"
         >
           <FiArrowLeft className="mr-2" />
           Back to Vendors
         </Link>
         
-        <div className="flex justify-between items-start">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-black text-white tracking-tight">{vendor.name}</h1>
-            <p className="text-zinc-500 font-medium mt-1 uppercase text-xs tracking-widest">{vendor.email}</p>
+            <h1 className="text-2xl sm:text-3xl font-black text-sv-text-primary tracking-tight">{vendor.name}</h1>
+            <p className="text-sv-text-muted font-medium mt-1 uppercase text-xs tracking-widest">{vendor.email}</p>
           </div>
           
-          <div className="flex gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <button
                onClick={handleImpersonate}
                disabled={actionPending}
@@ -345,13 +345,13 @@ export default function VendorDetails() {
               <>
                 <button
                   onClick={() => handleVerification('verified')}
-                  className="px-4 py-2 bg-sv-success text-sv-text-inverse rounded-lg hover:opacity-90 transition"
+                  className="px-4 py-2 bg-sv-success text-sv-text-inverse rounded-lg hover:opacity-90 transition font-bold text-sm"
                 >
                   Approve Verification
                 </button>
                 <button
                   onClick={() => handleVerification('rejected')}
-                  className="px-4 py-2 bg-sv-danger text-sv-text-inverse rounded-lg hover:opacity-90 transition"
+                  className="px-4 py-2 bg-sv-danger text-sv-text-inverse rounded-lg hover:opacity-90 transition font-bold text-sm"
                 >
                   Reject Verification
                 </button>
@@ -361,7 +361,7 @@ export default function VendorDetails() {
               <button
                 onClick={handleRevoke}
                 disabled={actionPending}
-                className="px-4 py-2 bg-transparent text-orange-500 border border-orange-500/20 rounded-lg hover:bg-orange-500/10 transition text-sm font-bold flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 bg-transparent text-sv-warning border border-sv-warning/30 rounded-lg hover:bg-sv-warning-soft transition text-sm font-bold flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <FiShield /> Revoke Verification
               </button>
@@ -369,7 +369,7 @@ export default function VendorDetails() {
             {vendor.verification?.status === 'locked' && (
               <button
                 onClick={() => handleVerification('unverified')}
-                className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition flex items-center gap-2"
+                className="px-4 py-2 bg-sv-warning text-sv-text-inverse rounded-lg hover:opacity-90 transition flex items-center gap-2 text-sm font-bold"
               >
                 <FiShield /> Unlock Account
               </button>
@@ -378,7 +378,7 @@ export default function VendorDetails() {
               <button
                 onClick={handleSuspend}
                 disabled={actionPending}
-                className="px-4 py-2 bg-transparent text-red-500 border border-red-500/20 rounded-lg hover:bg-red-500/10 transition text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 bg-transparent text-sv-danger border border-sv-danger/30 rounded-lg hover:bg-sv-danger-soft transition text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Suspend Vendor
               </button>
@@ -396,66 +396,66 @@ export default function VendorDetails() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
-        <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Inventory</p>
-              <p className="text-3xl font-black text-white mt-1">{vendor.productCount || 0}</p>
+              <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Inventory</p>
+              <p className="text-2xl sm:text-3xl font-black text-sv-text-primary mt-1">{vendor.productCount || 0}</p>
             </div>
-            <div className="h-10 w-10 bg-zinc-800 rounded-xl flex items-center justify-center border border-white/5">
-              <FiPackage className="text-zinc-400" size={18} />
+            <div className="h-10 w-10 bg-sv-surface-muted rounded-xl flex items-center justify-center border border-sv-border">
+              <FiPackage className="text-sv-text-secondary" size={18} />
             </div>
           </div>
         </div>
 
-        <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
+        <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Orders</p>
-              <p className="text-3xl font-black text-white mt-1">{vendor.orderStats?.totalOrders || 0}</p>
+              <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Orders</p>
+              <p className="text-2xl sm:text-3xl font-black text-sv-text-primary mt-1">{vendor.orderStats?.totalOrders || 0}</p>
             </div>
-            <div className="h-10 w-10 bg-zinc-800 rounded-xl flex items-center justify-center border border-white/5">
-              <FiShoppingCart className="text-zinc-400" size={18} />
+            <div className="h-10 w-10 bg-sv-surface-muted rounded-xl flex items-center justify-center border border-sv-border">
+              <FiShoppingCart className="text-sv-text-secondary" size={18} />
             </div>
           </div>
         </div>
 
-        <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
+        <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Gross Volume</p>
-              <p className="text-3xl font-black text-white mt-1">
+              <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Gross Volume</p>
+              <p className="text-2xl sm:text-3xl font-black text-sv-text-primary mt-1">
                 ₦{(vendor.orderStats?.totalRevenue || 0).toLocaleString()}
               </p>
             </div>
-            <div className="h-10 w-10 bg-zinc-800 rounded-xl flex items-center justify-center border border-white/5">
-              <FiDollarSign className="text-zinc-400" size={18} />
+            <div className="h-10 w-10 bg-sv-surface-muted rounded-xl flex items-center justify-center border border-sv-border">
+              <FiDollarSign className="text-sv-text-secondary" size={18} />
             </div>
           </div>
         </div>
 
-        <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm shadow-[0_0_30px_rgba(59,130,246,0.1)]">
+        <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-black text-blue-500/50 uppercase tracking-widest">Activity</p>
-              <p className="text-3xl font-black text-white mt-1">{vendor.activityScore || 0}</p>
-              <p className="text-[8px] text-blue-500 font-bold uppercase tracking-[0.2em] mt-1">Growth Pts</p>
+              <p className="text-[10px] font-black text-sv-info uppercase tracking-widest">Activity</p>
+              <p className="text-2xl sm:text-3xl font-black text-sv-text-primary mt-1">{vendor.activityScore || 0}</p>
+              <p className="text-[8px] text-sv-info font-bold uppercase tracking-[0.2em] mt-1">Growth Pts</p>
             </div>
-            <div className="h-10 w-10 bg-blue-500/10 rounded-xl flex items-center justify-center border border-blue-500/20 text-blue-400">
+            <div className="h-10 w-10 bg-sv-info-soft rounded-xl flex items-center justify-center border border-sv-info/30 text-sv-info">
               <FiCheckCircle size={18} />
             </div>
           </div>
         </div>
 
-        <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm shadow-[0_0_30px_rgba(239,68,68,0.1)]">
+        <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-black text-red-500/50 uppercase tracking-widest">Journal</p>
-              <p className="text-3xl font-black text-white mt-1">{vendor.blogCount || 0}</p>
-              <p className="text-[8px] text-red-500 font-bold uppercase tracking-[0.2em] mt-1">{vendor.flaggedBlogReports || 0} Flags Pending</p>
+              <p className="text-[10px] font-black text-sv-danger uppercase tracking-widest">Journal</p>
+              <p className="text-2xl sm:text-3xl font-black text-sv-text-primary mt-1">{vendor.blogCount || 0}</p>
+              <p className="text-[8px] text-sv-danger font-bold uppercase tracking-[0.2em] mt-1">{vendor.flaggedBlogReports || 0} Flags Pending</p>
             </div>
-            <div className="h-10 w-10 bg-red-500/10 rounded-xl flex items-center justify-center border border-red-500/20 text-red-400">
+            <div className="h-10 w-10 bg-sv-danger-soft rounded-xl flex items-center justify-center border border-sv-danger/30 text-sv-danger">
               <FiFileText size={18} />
             </div>
           </div>
@@ -466,43 +466,43 @@ export default function VendorDetails() {
         {/* Left Column */}
         <div className="lg:col-span-2 space-y-6">
           {/* Personal Information */}
-          <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
-            <h2 className="text-lg font-black text-white uppercase tracking-widest mb-6 tracking-tight">Vendor Identity</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border">
+            <h2 className="text-base sm:text-lg font-black text-sv-text-primary uppercase tracking-widest mb-6 tracking-tight">Vendor Identity</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               <div className="flex items-center gap-4">
-                <div className="h-10 w-10 bg-zinc-800 rounded-lg flex items-center justify-center border border-white/5">
-                   <FiUser className="text-zinc-400" />
+                <div className="h-10 w-10 bg-sv-surface-muted rounded-lg flex items-center justify-center border border-sv-border">
+                   <FiUser className="text-sv-text-secondary" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Signatory</p>
-                  <p className="font-bold text-white text-sm">{vendor.name}</p>
+                  <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Signatory</p>
+                  <p className="font-bold text-sv-text-primary text-sm">{vendor.name}</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <div className="h-10 w-10 bg-zinc-800 rounded-lg flex items-center justify-center border border-white/5">
-                   <FiMail className="text-zinc-400" />
+                <div className="h-10 w-10 bg-sv-surface-muted rounded-lg flex items-center justify-center border border-sv-border">
+                   <FiMail className="text-sv-text-secondary" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Digital Contact</p>
-                  <p className="font-bold text-white text-sm">{vendor.email}</p>
+                  <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Digital Contact</p>
+                  <p className="font-bold text-sv-text-primary text-sm break-all">{vendor.email}</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <div className="h-10 w-10 bg-zinc-800 rounded-lg flex items-center justify-center border border-white/5">
-                   <FiPhone className="text-zinc-400" />
+                <div className="h-10 w-10 bg-sv-surface-muted rounded-lg flex items-center justify-center border border-sv-border">
+                   <FiPhone className="text-sv-text-secondary" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Voice Link</p>
-                  <p className="font-bold text-white text-sm">{vendor.phone || 'N/A'}</p>
+                  <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Voice Link</p>
+                  <p className="font-bold text-sv-text-primary text-sm">{vendor.phone || 'N/A'}</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <div className="h-10 w-10 bg-zinc-800 rounded-lg flex items-center justify-center border border-white/5">
-                   <FiCalendar className="text-zinc-400" />
+                <div className="h-10 w-10 bg-sv-surface-muted rounded-lg flex items-center justify-center border border-sv-border">
+                   <FiCalendar className="text-sv-text-secondary" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Protocol Intake</p>
-                  <p className="font-bold text-white text-sm">
+                  <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Protocol Intake</p>
+                  <p className="font-bold text-sv-text-primary text-sm">
                     {new Date(vendor.createdAt).toLocaleDateString()}
                   </p>
                 </div>
@@ -511,45 +511,43 @@ export default function VendorDetails() {
           </div>
 
           {/* Viral Distribution & Growth */}
-          <div className="bg-white/5 p-6 rounded-[2rem] border border-white/10 relative overflow-hidden group backdrop-blur-md">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-zinc-500/10 blur-[40px] rounded-full -mr-16 -mt-16 group-hover:bg-white/5 transition-all" />
-            
+          <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border relative overflow-hidden group">
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-white font-black text-lg tracking-tight uppercase">Distribution Metrics</h3>
+                <h3 className="text-sv-text-primary font-black text-base sm:text-lg tracking-tight uppercase">Distribution Metrics</h3>
                 {vendor.isFeatured && (
-                   <span className="px-3 py-1 bg-white text-black rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
+                   <span className="px-3 py-1 bg-sv-primary text-sv-text-inverse rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
                       <FiCheckCircle className="w-3 h-3" /> Featured Verified
                    </span>
                 )}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                 <div className="p-5 bg-black/40 border border-white/5 rounded-2xl">
-                    <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mb-1">Total Viral Views</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                 <div className="p-4 sm:p-5 bg-sv-surface-muted border border-sv-border rounded-xl">
+                    <p className="text-[10px] text-sv-text-muted font-bold uppercase tracking-widest mb-1">Total Viral Views</p>
                     <div className="flex items-end gap-2">
-                       <span className="text-3xl font-black text-white">{vendor.store?.analytics?.totalViralViews || 0}</span>
-                       <span className="text-[10px] font-black text-zinc-600 uppercase mb-1">Organic</span>
+                       <span className="text-2xl sm:text-3xl font-black text-sv-text-primary">{vendor.store?.analytics?.totalViralViews || 0}</span>
+                       <span className="text-[10px] font-black text-sv-text-muted uppercase mb-1">Organic</span>
                     </div>
                  </div>
 
-                 <div className="p-5 bg-black/40 border border-white/5 rounded-2xl">
-                    <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mb-1">Social Velocity</p>
+                 <div className="p-4 sm:p-5 bg-sv-surface-muted border border-sv-border rounded-xl">
+                    <p className="text-[10px] text-sv-text-muted font-bold uppercase tracking-widest mb-1">Social Velocity</p>
                     <div className="flex items-end gap-2">
-                       <span className="text-3xl font-black text-white">{vendor.store?.analytics?.totalSocialShares || 0}</span>
-                       <span className="text-[10px] font-black text-emerald-500 uppercase mb-1">High</span>
+                       <span className="text-2xl sm:text-3xl font-black text-sv-text-primary">{vendor.store?.analytics?.totalSocialShares || 0}</span>
+                       <span className="text-[10px] font-black text-sv-success uppercase mb-1">High</span>
                     </div>
                  </div>
               </div>
 
-              <div className="mt-6 p-4 bg-white/5 border border-white/10 rounded-2xl">
+              <div className="mt-6 p-4 bg-sv-surface-muted border border-sv-border rounded-xl">
                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-[10px] font-black text-white uppercase tracking-widest">Reputation Progress</span>
-                    <span className="text-[10px] font-black text-zinc-500 uppercase">{vendor.activityScore || 0} / { (vendor.sellerLevel || 1) * 1000} XP</span>
+                    <span className="text-[10px] font-black text-sv-text-primary uppercase tracking-widest">Reputation Progress</span>
+                    <span className="text-[10px] font-black text-sv-text-muted uppercase">{vendor.activityScore || 0} / { (vendor.sellerLevel || 1) * 1000} XP</span>
                  </div>
-                 <div className="h-1.5 bg-black/40 rounded-full overflow-hidden border border-white/5">
+                 <div className="h-1.5 bg-sv-bg rounded-full overflow-hidden border border-sv-border">
                     <div 
-                      className="h-full bg-white transition-all duration-1000"
+                      className="h-full bg-sv-primary transition-all duration-1000"
                       style={{ width: `${Math.min(((vendor.activityScore || 0) / ((vendor.sellerLevel || 1) * 1000)) * 100, 100)}%` }}
                     />
                  </div>
@@ -559,27 +557,27 @@ export default function VendorDetails() {
 
           {/* Store Information */}
           {vendor.store && (
-            <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
-              <h2 className="text-lg font-black text-white uppercase tracking-widest mb-6">Store Configuration</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border">
+              <h2 className="text-base sm:text-lg font-black text-sv-text-primary uppercase tracking-widest mb-6">Store Configuration</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div>
-                    <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Store Registry</p>
-                    <p className="font-bold text-white text-md">{vendor.store.name}</p>
+                    <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Store Registry</p>
+                    <p className="font-bold text-sv-text-primary text-base">{vendor.store.name}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Platform Slug</p>
-                    <p className="font-mono text-xs text-zinc-400 font-bold bg-zinc-800/50 px-2.5 py-1 rounded w-fit border border-white/5">{vendor.store.slug}</p>
+                    <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Platform Slug</p>
+                    <p className="font-mono text-xs text-sv-text-primary font-bold bg-sv-surface-muted px-2.5 py-1 rounded w-fit border border-sv-border">{vendor.store.slug}</p>
                   </div>
                 </div>
                 <div>
-                   <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-3">Bonus Capabilities</p>
+                   <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest mb-3">Bonus Capabilities</p>
                    <div className="flex flex-wrap gap-2">
                       <span className="px-2.5 py-1 bg-sv-surface-muted text-sv-text-secondary border border-sv-border rounded text-[10px] font-black uppercase tracking-tighter">
                          +{vendor.store.bonusProductSlots || 0} Product Slots
                       </span>
                       {vendor.store.isFeatured && (
-                        <span className="px-2.5 py-1 bg-white text-black rounded text-[10px] font-black uppercase tracking-tighter">
+                        <span className="px-2.5 py-1 bg-sv-tag-soft text-sv-tag border border-sv-tag/20 rounded text-[10px] font-black uppercase tracking-tighter">
                            Priority Discoverability
                         </span>
                       )}
@@ -590,23 +588,23 @@ export default function VendorDetails() {
           )}
 
           {/* Risk Profile */}
-          <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
+          <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-lg font-black text-white uppercase tracking-widest">Threat Assessment</h2>
+              <h2 className="text-base sm:text-lg font-black text-sv-text-primary uppercase tracking-widest">Threat Assessment</h2>
               {getRiskBadge()}
             </div>
             
             <div className="mb-6">
-              <div className="flex justify-between text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">
+              <div className="flex justify-between text-[10px] font-black text-sv-text-muted uppercase tracking-widest mb-2">
                 <span>Risk Index</span>
-                <span className="text-white">{vendor.riskProfile?.score || 0}%</span>
+                <span className="text-sv-text-primary font-bold">{vendor.riskProfile?.score || 0}%</span>
               </div>
-              <div className="w-full bg-zinc-800 rounded-full h-1.5 border border-white/5 overflow-hidden">
+              <div className="w-full bg-sv-surface-muted rounded-full h-1.5 border border-sv-border overflow-hidden">
                 <div 
                   className={`h-full transition-all duration-500 ${
-                    (vendor.riskProfile?.score || 0) < 30 ? 'bg-emerald-500' :
-                    (vendor.riskProfile?.score || 0) < 70 ? 'bg-amber-500' :
-                    'bg-red-500'
+                    (vendor.riskProfile?.score || 0) < 30 ? 'bg-sv-success' :
+                    (vendor.riskProfile?.score || 0) < 70 ? 'bg-sv-warning' :
+                    'bg-sv-danger'
                   }`}
                   style={{ width: `${vendor.riskProfile?.score || 0}%` }}
                 ></div>
@@ -615,17 +613,17 @@ export default function VendorDetails() {
 
             {vendor.riskProfile?.flags && vendor.riskProfile.flags.length > 0 && (
               <div>
-                <h3 className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-3">Anomalies Detected</h3>
+                <h3 className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest mb-3">Anomalies Detected</h3>
                 <div className="space-y-2">
                   {vendor.riskProfile.flags.map((flag, index) => (
-                    <div key={index} className="flex items-start gap-3 p-3 bg-red-500/5 border border-red-500/10 rounded-xl">
-                      <FiAlertTriangle className="text-red-500 mt-0.5" />
+                    <div key={index} className="flex items-start gap-3 p-3 bg-sv-danger-soft/20 border border-sv-danger/20 rounded-xl">
+                      <FiAlertTriangle className="text-sv-danger mt-0.5 shrink-0" />
                       <div className="flex-1">
-                        <p className="text-xs font-black text-white uppercase tracking-tight">{flag.type.replace(/_/g, ' ')}</p>
-                        <p className="text-xs text-zinc-400 mt-1">{flag.description}</p>
+                        <p className="text-xs font-black text-sv-text-primary uppercase tracking-tight">{flag.type.replace(/_/g, ' ')}</p>
+                        <p className="text-xs text-sv-text-secondary mt-1">{flag.description}</p>
                         <div className="flex items-center gap-2 mt-2">
-                           <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest">{new Date(flag.date).toLocaleDateString()}</span>
-                           {flag.resolved && <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Resolved</span>}
+                           <span className="text-[9px] font-black text-sv-text-muted uppercase tracking-widest">{new Date(flag.date).toLocaleDateString()}</span>
+                           {flag.resolved && <span className="text-[9px] font-black text-sv-success uppercase tracking-widest">Resolved</span>}
                         </div>
                       </div>
                     </div>
@@ -636,12 +634,12 @@ export default function VendorDetails() {
           </div>
 
           {/* Journal Oversight (Phase 19) */}
-          <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
+          <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border">
             <div className="flex justify-between items-center mb-6">
-               <h2 className="text-lg font-black text-white uppercase tracking-widest tracking-tight">Recent Journal Articles</h2>
+               <h2 className="text-base sm:text-lg font-black text-sv-text-primary uppercase tracking-widest tracking-tight">Recent Journal Articles</h2>
                <Link 
                  to="/dashboard/journal" 
-                 className="text-[10px] font-black text-zinc-500 hover:text-white uppercase tracking-widest border border-white/5 px-2 py-1 rounded"
+                 className="text-[10px] font-black text-sv-text-muted hover:text-sv-text-primary uppercase tracking-widest border border-sv-border px-2 py-1 rounded bg-sv-surface-muted transition-colors"
                >
                  View All Hub
                </Link>
@@ -650,25 +648,25 @@ export default function VendorDetails() {
             <div className="space-y-3">
                {vendor.recentBlogs && vendor.recentBlogs.length > 0 ? (
                  vendor.recentBlogs.map((blog: any) => (
-                   <div key={blog._id} className="p-4 bg-zinc-800/20 border border-white/5 rounded-xl hover:border-zinc-700 transition-all flex items-center justify-between group">
+                   <div key={blog._id} className="p-4 bg-sv-surface-muted border border-sv-border rounded-xl hover:border-sv-primary/40 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 group">
                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800">
+                        <div className="w-10 h-10 bg-sv-surface rounded-lg overflow-hidden border border-sv-border shrink-0">
                            {blog.coverImage ? (
                              <img src={blog.coverImage} className="w-full h-full object-cover" alt="" />
                            ) : (
-                             <div className="w-full h-full flex items-center justify-center text-zinc-700">
+                             <div className="w-full h-full flex items-center justify-center text-sv-text-muted">
                                <FiFileText size={16} />
                              </div>
                            )}
                         </div>
                         <div>
-                          <p className="text-xs font-bold text-white uppercase tracking-tight truncate max-w-[200px]">{blog.title}</p>
+                          <p className="text-xs font-bold text-sv-text-primary uppercase tracking-tight truncate max-w-[200px]">{blog.title}</p>
                           <div className="flex items-center gap-3 mt-1">
-                             <span className={`text-[8px] font-black uppercase tracking-widest ${blog.status === 'published' ? 'text-emerald-500' : 'text-zinc-500'}`}>
+                             <span className={`text-[8px] font-black uppercase tracking-widest ${blog.status === 'published' ? 'text-sv-success' : 'text-sv-text-muted'}`}>
                                {blog.status}
                              </span>
-                             <span className="text-[8px] font-black text-zinc-700 uppercase">|</span>
-                             <div className="flex items-center gap-1 text-[8px] font-black text-zinc-600 uppercase">
+                             <span className="text-[8px] font-black text-sv-border uppercase">|</span>
+                             <div className="flex items-center gap-1 text-[8px] font-black text-sv-text-muted uppercase">
                                <FiClock size={10} />
                                {new Date(blog.createdAt).toLocaleDateString()}
                              </div>
@@ -686,7 +684,7 @@ export default function VendorDetails() {
                                fetchVendorDetails();
                              } catch { alert('Action failed'); }
                            }}
-                           className="p-1.5 bg-black border border-white/5 rounded-md hover:border-red-500/50 hover:text-red-500 text-zinc-500"
+                           className="p-1.5 bg-sv-surface border border-sv-border rounded-md hover:border-sv-danger hover:text-sv-danger text-sv-text-muted transition-colors"
                         >
                            <FiXCircle size={14} />
                         </button>
@@ -694,7 +692,7 @@ export default function VendorDetails() {
                           href={`${import.meta.env.VITE_STOREFRONT_URL || 'https://shopvia.ng'}/blog/${blog.slug}`}
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="p-1.5 bg-black border border-white/5 rounded-md hover:border-white hover:text-white text-zinc-500"
+                          className="p-1.5 bg-sv-surface border border-sv-border rounded-md hover:text-sv-text-primary text-sv-text-muted transition-colors"
                         >
                            <FiExternalLink size={14} />
                         </a>
@@ -702,7 +700,7 @@ export default function VendorDetails() {
                    </div>
                  ))
                ) : (
-                 <div className="py-6 text-center text-[10px] font-black text-zinc-600 uppercase tracking-widest italic border border-zinc-800/30 rounded-xl bg-black/20">
+                 <div className="py-6 text-center text-[10px] font-black text-sv-text-muted uppercase tracking-widest italic border border-sv-border rounded-xl bg-sv-surface-muted">
                     No articles published yet.
                  </div>
                )}
@@ -710,9 +708,9 @@ export default function VendorDetails() {
           </div>
 
           {/* Trust & Reputation Oversight */}
-          <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
+          <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-lg font-black text-white uppercase tracking-widest">Reputation Matrix</h2>
+              <h2 className="text-base sm:text-lg font-black text-sv-text-primary uppercase tracking-widest">Reputation Matrix</h2>
               <button 
                 onClick={handleTrustOverride}
                 className="text-[9px] font-black uppercase px-2 py-1 bg-sv-surface-muted text-sv-text-secondary hover:text-sv-text-primary rounded border border-sv-border transition-colors"
@@ -721,58 +719,58 @@ export default function VendorDetails() {
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="p-4 bg-zinc-800/50 rounded-xl border border-white/5">
-                <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">Score Index</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+              <div className="p-4 bg-sv-surface-muted rounded-xl border border-sv-border">
+                <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest mb-1">Score Index</p>
                 <div className="flex items-end gap-2">
-                  <span className="text-3xl font-black text-white">{vendor.reputation?.score ?? 50}</span>
-                  <span className="text-[10px] font-black text-zinc-600 mb-1 uppercase">Aggregate</span>
+                  <span className="text-2xl sm:text-3xl font-black text-sv-text-primary">{vendor.reputation?.score ?? 50}</span>
+                  <span className="text-[10px] font-black text-sv-text-muted mb-1 uppercase">Aggregate</span>
                 </div>
               </div>
-              <div className="p-4 bg-zinc-800/50 rounded-xl border border-white/5">
-                <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">Status Class</p>
+              <div className="p-4 bg-sv-surface-muted rounded-xl border border-sv-border">
+                <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest mb-1">Status Class</p>
                 <div className="flex items-center gap-2">
-                  <span className={`text-3xl font-black ${
-                     vendor.reputation?.level === 'excellent' ? 'text-emerald-500' : 
-                     vendor.reputation?.level === 'high' ? 'text-white' :
-                     vendor.reputation?.level === 'medium' ? 'text-zinc-400' :
-                     'text-red-500'
+                  <span className={`text-2xl sm:text-3xl font-black ${
+                     vendor.reputation?.level === 'excellent' ? 'text-sv-success' : 
+                     vendor.reputation?.level === 'high' ? 'text-sv-text-primary' :
+                     vendor.reputation?.level === 'medium' ? 'text-sv-text-secondary' :
+                     'text-sv-danger'
                   }`}>
                     {vendor.reputation?.level === 'excellent' ? 'A+' : 
                      vendor.reputation?.level === 'high' ? 'A' :
                      vendor.reputation?.level === 'medium' ? 'B' :
                      vendor.reputation?.level === 'low' ? 'C' : 'N'}
                   </span>
-                  <span className="text-[10px] font-black text-zinc-600 uppercase">
+                  <span className="text-[10px] font-black text-sv-text-muted uppercase">
                     {vendor.reputation?.level || 'NEW'}
                   </span>
                 </div>
               </div>
             </div>
 
-            <h3 className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-4">Reputation Delta Log</h3>
-            <div className="space-y-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+            <h3 className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest mb-4">Reputation Delta Log</h3>
+            <div className="space-y-3 max-h-60 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-sv-border">
               {trustLoading ? (
-                <div className="text-center py-4 text-zinc-500 text-[10px] font-black uppercase italic">Retrieving logs...</div>
+                <div className="text-center py-4 text-sv-text-muted text-[10px] font-black uppercase italic">Retrieving logs...</div>
               ) : trustHistory.length > 0 ? (
                 trustHistory.map((log: any, idx: number) => (
-                  <div key={idx} className="p-3 bg-zinc-800/30 border border-white/5 rounded-xl">
+                  <div key={idx} className="p-3 bg-sv-surface-muted border border-sv-border rounded-xl">
                     <div className="flex justify-between items-center mb-1">
-                      <span className="text-[10px] font-black text-white uppercase tracking-tight">{log.triggerEvent?.replace(/_/g, ' ') || 'SYSTEM RECALC'}</span>
-                      <span className="text-[9px] font-black text-zinc-600 uppercase">{new Date(log.createdAt).toLocaleDateString()}</span>
+                      <span className="text-[10px] font-black text-sv-text-primary uppercase tracking-tight">{log.triggerEvent?.replace(/_/g, ' ') || 'SYSTEM RECALC'}</span>
+                      <span className="text-[9px] font-black text-sv-text-muted uppercase">{new Date(log.createdAt).toLocaleDateString()}</span>
                     </div>
-                    <p className="text-xs text-zinc-500 mb-2">{log.reason}</p>
+                    <p className="text-xs text-sv-text-secondary mb-2">{log.reason}</p>
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-black text-zinc-700 bg-zinc-800 px-1.5 py-0.5 rounded">{log.previousScore}</span>
-                      <span className="text-zinc-600">→</span>
-                      <span className={`text-[10px] font-black px-1.5 py-0.5 rounded ${log.newScore > log.previousScore ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}`}>
+                      <span className="text-[10px] font-black text-sv-text-secondary bg-sv-surface px-1.5 py-0.5 rounded border border-sv-border">{log.previousScore}</span>
+                      <span className="text-sv-text-muted">→</span>
+                      <span className={`text-[10px] font-black px-1.5 py-0.5 rounded border ${log.newScore > log.previousScore ? 'bg-sv-success-soft text-sv-success border-sv-success/30' : 'bg-sv-danger-soft text-sv-danger border-sv-danger/30'}`}>
                         {log.newScore}
                       </span>
                     </div>
                   </div>
                 ))
               ) : (
-                <div className="text-center py-4 text-zinc-600 text-[10px] font-black uppercase italic">No reputation shifts detected.</div>
+                <div className="text-center py-4 text-sv-text-muted text-[10px] font-black uppercase italic">No reputation shifts detected.</div>
               )}
             </div>
           </div>
@@ -780,33 +778,33 @@ export default function VendorDetails() {
           {/* 🛡️ [AR-REVENUE-MIRROR-1] First real UI surface for the AR
               engine's actual data - one CustomerInvoice per order whose
               escrow was released to this vendor. */}
-          <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
+          <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-lg font-black text-white uppercase tracking-widest flex items-center gap-2">
-                <FiBookOpen className="text-emerald-500" size={16} /> Revenue Ledger
+              <h2 className="text-base sm:text-lg font-black text-sv-text-primary uppercase tracking-widest flex items-center gap-2">
+                <FiBookOpen className="text-sv-success" size={16} /> Revenue Ledger
               </h2>
-              <span className="text-[9px] font-black uppercase text-zinc-600 tracking-widest">Most Recent 10</span>
+              <span className="text-[9px] font-black uppercase text-sv-text-muted tracking-widest">Most Recent 10</span>
             </div>
 
             {revenueLoading ? (
-              <div className="text-center py-4 text-zinc-500 text-[10px] font-black uppercase italic">Loading ledger...</div>
+              <div className="text-center py-4 text-sv-text-muted text-[10px] font-black uppercase italic">Loading ledger...</div>
             ) : revenueError ? (
               <ErrorState message={revenueError} onRetry={fetchRevenueLedger} className="py-4" />
             ) : revenueLedger.length === 0 ? (
-              <div className="text-center py-6 text-zinc-600 text-[10px] font-black uppercase italic">
+              <div className="text-center py-6 text-sv-text-muted text-[10px] font-black uppercase italic">
                 No settled revenue recorded yet for this vendor.
               </div>
             ) : (
-              <div className="space-y-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+              <div className="space-y-3 max-h-60 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-sv-border">
                 {revenueLedger.map((invoice: any) => (
-                  <div key={invoice._id} className="p-3 bg-zinc-800/30 border border-white/5 rounded-xl flex justify-between items-center">
+                  <div key={invoice._id} className="p-3 bg-sv-surface-muted border border-sv-border rounded-xl flex justify-between items-center">
                     <div>
-                      <span className="text-[10px] font-black text-white uppercase tracking-tight block">{invoice.invoiceNumber}</span>
-                      <span className="text-[9px] font-bold text-zinc-600 uppercase">{new Date(invoice.invoiceDate).toLocaleDateString()}</span>
+                      <span className="text-[10px] font-black text-sv-text-primary uppercase tracking-tight block">{invoice.invoiceNumber}</span>
+                      <span className="text-[9px] font-bold text-sv-text-muted uppercase">{new Date(invoice.invoiceDate).toLocaleDateString()}</span>
                     </div>
                     <div className="text-right">
-                      <span className="text-sm font-black text-emerald-500">₦{(invoice.totalAmount / 100).toLocaleString()}</span>
-                      <span className="text-[9px] font-black text-zinc-500 uppercase block">{invoice.status}</span>
+                      <span className="text-sm font-black text-sv-success">₦{(invoice.totalAmount / 100).toLocaleString()}</span>
+                      <span className="text-[9px] font-black text-sv-text-muted uppercase block">{invoice.status}</span>
                     </div>
                   </div>
                 ))}
@@ -817,56 +815,56 @@ export default function VendorDetails() {
 
           {/* 🛡️ [v10.0] Monitored Probation Tracker */}
           {vendor.verification?.recoveryState?.isRecovering && (
-            <div className="bg-orange-500/5 p-6 rounded-2xl border border-orange-500/20 backdrop-blur-sm shadow-[0_0_40px_rgba(249,115,22,0.05)]">
+            <div className="bg-sv-warning-soft/20 p-5 sm:p-6 rounded-2xl border border-sv-warning/30">
                <div className="flex justify-between items-start mb-6">
                  <div>
-                   <h3 className="text-lg font-black text-orange-500 uppercase tracking-widest tracking-tight">Monitored Probation</h3>
-                   <p className="text-[10px] text-orange-500/60 font-bold uppercase mt-1">Trust Restoration in Progress</p>
+                   <h3 className="text-base sm:text-lg font-black text-sv-warning uppercase tracking-widest tracking-tight">Monitored Probation</h3>
+                   <p className="text-[10px] text-sv-warning/80 font-bold uppercase mt-1">Trust Restoration in Progress</p>
                  </div>
                  <div className="flex flex-col items-end">
-                    <span className="text-xl font-black text-white">
+                    <span className="text-xl font-black text-sv-text-primary">
                        {Math.round(((vendor.reputation?.score || 0) / (vendor.verification.recoveryState.originalScore || 100)) * 100)}%
                     </span>
-                    <span className="text-[8px] text-zinc-500 font-bold uppercase">Restored</span>
+                    <span className="text-[8px] text-sv-text-muted font-bold uppercase">Restored</span>
                  </div>
                </div>
 
                <div className="space-y-6">
                   <div>
-                     <div className="flex justify-between text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">
+                     <div className="flex justify-between text-[10px] font-black text-sv-text-muted uppercase tracking-widest mb-2">
                         <span>Discovery Score Recovery</span>
-                        <span className="text-white">
+                        <span className="text-sv-text-primary font-bold">
                           {Math.round(vendor.reputation?.score || 0)} / {vendor.verification.recoveryState.originalScore}
                         </span>
                      </div>
-                     <div className="w-full bg-zinc-800 rounded-full h-2 border border-white/5 overflow-hidden">
+                     <div className="w-full bg-sv-surface-muted rounded-full h-2 border border-sv-border overflow-hidden">
                         <div 
-                           className="h-full bg-orange-500 transition-all duration-1000 shadow-[0_0_10px_rgba(249,115,22,0.5)]"
+                           className="h-full bg-sv-warning transition-all duration-1000"
                            style={{ width: `${Math.min(((vendor.reputation?.score || 0) / (vendor.verification.recoveryState.originalScore || 100)) * 100, 100)}%` }}
                         />
                      </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                     <div className="p-4 bg-zinc-900/40 rounded-xl border border-white/5">
-                        <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest mb-1">Probation Ends</p>
-                        <p className="text-sm font-bold text-white">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                     <div className="p-4 bg-sv-surface rounded-xl border border-sv-border">
+                        <p className="text-[9px] font-black text-sv-text-muted uppercase tracking-widest mb-1">Probation Ends</p>
+                        <p className="text-sm font-bold text-sv-text-primary">
                            {vendor.verification?.recoveryState?.probationEndsAt 
                              ? new Date(vendor.verification.recoveryState.probationEndsAt).toLocaleDateString() 
                              : 'N/A'}
                         </p>
                      </div>
-                     <div className="p-4 bg-zinc-900/40 rounded-xl border border-white/5">
-                        <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest mb-1">Penalty Class</p>
-                        <p className="text-sm font-bold text-orange-500 uppercase">
+                     <div className="p-4 bg-sv-surface rounded-xl border border-sv-border">
+                        <p className="text-[9px] font-black text-sv-text-muted uppercase tracking-widest mb-1">Penalty Class</p>
+                        <p className="text-sm font-bold text-sv-warning uppercase">
                            {vendor.verification?.enforcementCategory || 'RESTRICTED'}
                         </p>
                      </div>
                   </div>
 
-                  <div className="p-4 bg-black/40 rounded-xl border border-orange-500/10 flex items-center gap-3">
-                     <FiAlertTriangle className="text-orange-500 shrink-0" />
-                     <p className="text-[10px] text-zinc-400 font-medium leading-relaxed">
+                  <div className="p-4 bg-sv-surface-muted rounded-xl border border-sv-warning/20 flex items-center gap-3">
+                     <FiAlertTriangle className="text-sv-warning shrink-0" />
+                     <p className="text-[10px] text-sv-text-secondary font-medium leading-relaxed">
                         Store is currently under algorithmic suppression. Discoverability is capped at 50%. Restoration is linear and contingent on zero-complaint behavior.
                      </p>
                   </div>
@@ -876,18 +874,18 @@ export default function VendorDetails() {
 
           {/* Internal Friction Logs (Complaints) */}
           {vendor.recentComplaints && vendor.recentComplaints.length > 0 && (
-            <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
-              <h2 className="text-lg font-black text-white uppercase tracking-widest mb-6">Internal Friction Logs</h2>
+            <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border">
+              <h2 className="text-base sm:text-lg font-black text-sv-text-primary uppercase tracking-widest mb-6">Internal Friction Logs</h2>
               <div className="space-y-3">
                 {vendor.recentComplaints.map((complaint: any) => (
-                  <div key={complaint._id} className="p-4 bg-zinc-800/30 border border-white/5 rounded-xl">
-                    <div className="flex justify-between items-start mb-2">
+                  <div key={complaint._id} className="p-4 bg-sv-surface-muted border border-sv-border rounded-xl">
+                    <div className="flex justify-between items-start mb-2 gap-3">
                       <div>
-                        <p className="text-sm font-black text-white uppercase tracking-tight">{complaint.title}</p>
-                        <p className="text-xs text-zinc-500 mt-1">{complaint.description}</p>
+                        <p className="text-sm font-black text-sv-text-primary uppercase tracking-tight">{complaint.title}</p>
+                        <p className="text-xs text-sv-text-muted mt-1">{complaint.description}</p>
                       </div>
                       {/* 🛡️ [BATCH-11] Canonical status is uppercase OPEN|INVESTIGATING|RESOLVED|DISMISSED. */}
-                      <span className={`px-2.5 py-1 text-[10px] font-black uppercase rounded border ${
+                      <span className={`px-2.5 py-1 text-[10px] font-black uppercase rounded border shrink-0 ${
                         complaint.status === 'RESOLVED' ? 'bg-sv-success-soft text-sv-success border-sv-success/30' :
                         (complaint.status === 'OPEN' || complaint.status === 'INVESTIGATING') ? 'bg-sv-warning-soft text-sv-warning border-sv-warning/30' :
                         'bg-sv-danger-soft text-sv-danger border-sv-danger/30'
@@ -895,7 +893,7 @@ export default function VendorDetails() {
                         {complaint.status}
                       </span>
                     </div>
-                    <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest mt-3">
+                    <p className="text-[9px] font-black text-sv-text-muted uppercase tracking-widest mt-3">
                       Logged: {new Date(complaint.createdAt).toLocaleDateString()}
                     </p>
                   </div>
@@ -910,17 +908,17 @@ export default function VendorDetails() {
               opening the global Disputes page and manually filtering by
               vendor name. */}
           {vendor.recentDisputes && vendor.recentDisputes.length > 0 && (
-            <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
-              <h2 className="text-lg font-black text-white uppercase tracking-widest mb-6">Buyer Protection Disputes</h2>
+            <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border">
+              <h2 className="text-base sm:text-lg font-black text-sv-text-primary uppercase tracking-widest mb-6">Buyer Protection Disputes</h2>
               <div className="space-y-3">
                 {vendor.recentDisputes.map((dispute: any) => (
-                  <div key={dispute._id} className="p-4 bg-zinc-800/30 border border-white/5 rounded-xl">
-                    <div className="flex justify-between items-start mb-2">
+                  <div key={dispute._id} className="p-4 bg-sv-surface-muted border border-sv-border rounded-xl">
+                    <div className="flex justify-between items-start mb-2 gap-3">
                       <div>
-                        <p className="text-sm font-black text-white uppercase tracking-tight">{dispute.reason}</p>
-                        <p className="text-xs text-zinc-500 mt-1">Order: {dispute.order?.orderId || dispute.order}</p>
+                        <p className="text-sm font-black text-sv-text-primary uppercase tracking-tight">{dispute.reason}</p>
+                        <p className="text-xs text-sv-text-muted mt-1">Order: {dispute.order?.orderId || dispute.order}</p>
                       </div>
-                      <span className={`px-2.5 py-1 text-[10px] font-black uppercase rounded border ${
+                      <span className={`px-2.5 py-1 text-[10px] font-black uppercase rounded border shrink-0 ${
                         dispute.status?.startsWith('RESOLVED') ? 'bg-sv-success-soft text-sv-success border-sv-success/30' :
                         dispute.status === 'WITHDRAWN' ? 'bg-sv-info-soft text-sv-info border-sv-info/30' :
                         (dispute.status === 'OPEN' || dispute.status === 'UNDER_REVIEW' || dispute.status === 'PROPOSAL_SENT') ? 'bg-sv-warning-soft text-sv-warning border-sv-warning/30' :
@@ -929,7 +927,7 @@ export default function VendorDetails() {
                         {dispute.status}
                       </span>
                     </div>
-                    <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest mt-3">
+                    <p className="text-[9px] font-black text-sv-text-muted uppercase tracking-widest mt-3">
                       Opened: {new Date(dispute.createdAt).toLocaleDateString()}
                     </p>
                   </div>
@@ -942,11 +940,11 @@ export default function VendorDetails() {
         {/* Right Column */}
         <div className="space-y-6">
           {/* Access Protocol */}
-          <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
-            <h2 className="text-lg font-black text-white uppercase tracking-widest mb-6 tracking-tight">Access Protocol</h2>
+          <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border">
+            <h2 className="text-base sm:text-lg font-black text-sv-text-primary uppercase tracking-widest mb-6 tracking-tight">Access Protocol</h2>
             <div className="space-y-4">
-              <div className="flex justify-between items-center bg-zinc-800/30 p-3 rounded-xl border border-white/5">
-                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Active Status</span>
+              <div className="flex justify-between items-center bg-sv-surface-muted p-3 rounded-xl border border-sv-border">
+                <span className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Active Status</span>
                 <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-black uppercase rounded-md border ${
                   vendor.isActive ? 'bg-sv-success-soft text-sv-success border-sv-success/30' : 'bg-sv-danger-soft text-sv-danger border-sv-danger/30'
                 }`}>
@@ -955,33 +953,33 @@ export default function VendorDetails() {
                 </span>
               </div>
 
-              <div className="flex justify-between items-center bg-zinc-800/30 p-3 rounded-xl border border-white/5">
-                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Onboarding State</span>
+              <div className="flex justify-between items-center bg-sv-surface-muted p-3 rounded-xl border border-sv-border">
+                <span className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Onboarding State</span>
                 <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-black uppercase rounded-md border ${
                   (vendor as any).onboardingState === 'ACTIVE' ? 'bg-sv-success-soft text-sv-success border-sv-success/30' :
                   (vendor as any).onboardingState === 'KYC_PENDING' ? 'bg-sv-warning-soft text-sv-warning border-sv-warning/30' :
                   (vendor as any).onboardingState === 'EMAIL_FAILED' ? 'bg-sv-danger-soft text-sv-danger border-sv-danger/30' :
-                  'bg-sv-surface-muted text-sv-text-secondary'
+                  'bg-sv-surface-muted text-sv-text-secondary border-sv-border'
                 }`}>
                   {(vendor as any).onboardingState || 'IDLE'}
                 </span>
               </div>
 
-              <div className="flex justify-between items-center bg-zinc-800/30 p-3 rounded-xl border border-white/5">
-                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Persona</span>
-                <span className="text-[10px] font-black text-white uppercase tracking-tight">
+              <div className="flex justify-between items-center bg-sv-surface-muted p-3 rounded-xl border border-sv-border">
+                <span className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Persona</span>
+                <span className="text-[10px] font-black text-sv-text-primary uppercase tracking-tight">
                   {(vendor as any).onboardingPersona || 'MERCHANT_ELITE'}
                 </span>
               </div>
               
-              <div className="flex justify-between items-center bg-zinc-800/30 p-3 rounded-xl border border-white/5">
-                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Verification</span>
+              <div className="flex justify-between items-center bg-sv-surface-muted p-3 rounded-xl border border-sv-border">
+                <span className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Verification</span>
                 <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-black uppercase rounded-md border ${
                   vendor.verification?.status === 'verified' ? 'bg-sv-success-soft text-sv-success border-sv-success/30' :
                   vendor.verification?.status === 'pending' ? 'bg-sv-warning-soft text-sv-warning border-sv-warning/30' :
                   vendor.verification?.status === 'rejected' ? 'bg-sv-danger-soft text-sv-danger border-sv-danger/30' :
                   vendor.verification?.status === 'locked' ? 'bg-sv-warning-soft text-sv-warning border-sv-warning/30' :
-                  'bg-sv-surface-muted text-sv-text-secondary'
+                  'bg-sv-surface-muted text-sv-text-secondary border-sv-border'
                 }`}>
                   {vendor.verification?.status === 'verified' && <FiCheckCircle className="mr-1.5" />}
                   {(vendor.verification?.status === 'pending' || vendor.verification?.status === 'locked') && <FiShield className="mr-1.5" />}
@@ -992,12 +990,12 @@ export default function VendorDetails() {
 
               {cacEntry?.manualReviewDeadline && (
                 <div className={`mt-4 p-4 rounded-xl border ${
-                  cacEntry.slaStatus === 'BREACHED' ? 'bg-red-500/10 border-red-500/20' :
-                  cacEntry.slaStatus === 'URGENT' ? 'bg-orange-500/10 border-orange-500/20' :
-                  'bg-blue-500/10 border-blue-500/20'
+                  cacEntry.slaStatus === 'BREACHED' ? 'bg-sv-danger-soft/20 border-sv-danger/30' :
+                  cacEntry.slaStatus === 'URGENT' ? 'bg-sv-warning-soft/20 border-sv-warning/30' :
+                  'bg-sv-info-soft/20 border-sv-info/30'
                 }`}>
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">CAC SLA Accountability</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-sv-text-muted">CAC SLA Accountability</span>
                     <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded ${
                       cacEntry.slaStatus === 'BREACHED' ? 'bg-sv-danger text-sv-text-inverse' :
                       cacEntry.slaStatus === 'URGENT' ? 'bg-sv-warning text-sv-text-inverse' :
@@ -1006,11 +1004,11 @@ export default function VendorDetails() {
                       {cacEntry.slaStatus}
                     </span>
                   </div>
-                  <p className="text-xs text-white font-bold">
+                  <p className="text-xs text-sv-text-primary font-bold">
                     Deadline: {new Date(cacEntry.manualReviewDeadline).toLocaleString()}
                   </p>
                   {cacEntry.assignedAdminId && (
-                    <p className="text-[10px] text-zinc-400 mt-1 uppercase font-bold tracking-tight">
+                    <p className="text-[10px] text-sv-text-secondary mt-1 uppercase font-bold tracking-tight">
                       Handler ID: {cacEntry.assignedAdminId}
                     </p>
                   )}
@@ -1018,25 +1016,25 @@ export default function VendorDetails() {
               )}
 
               {vendor.verification?.status === 'locked' && (
-                <div className="mt-2 p-4 bg-orange-500/5 border border-orange-500/10 rounded-xl">
-                  <p className="text-[10px] font-black text-orange-500 uppercase tracking-widest mb-1 italic">Security Lockout</p>
-                  <p className="text-xs text-zinc-400 mt-1">
+                <div className="mt-2 p-4 bg-sv-warning-soft/20 border border-sv-warning/30 rounded-xl">
+                  <p className="text-[10px] font-black text-sv-warning uppercase tracking-widest mb-1 italic">Security Lockout</p>
+                  <p className="text-xs text-sv-text-secondary mt-1">
                     System locked after {vendor.verification.attempts || 5} unauthorized verification cycles.
                   </p>
                 </div>
               )}
 
               {vendor.verification?.status !== 'unverified' && (
-                <div className="pt-4 border-t border-zinc-800/60">
-                  <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-3">Identification Proof</p>
+                <div className="pt-4 border-t border-sv-border">
+                  <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest mb-3">Identification Proof</p>
                   
-                  <div className="flex justify-between items-center bg-zinc-800/20 p-2.5 rounded-lg border border-white/5">
-                     <span className="text-zinc-400 font-mono text-xs font-bold">
+                  <div className="flex justify-between items-center bg-sv-surface-muted p-2.5 rounded-lg border border-sv-border">
+                     <span className="text-sv-text-secondary font-mono text-xs font-bold">
                         {showId ? vendor.verification?.idNumber : '••••••••••••'}
                      </span>
                      <button 
                         onClick={() => setShowId(!showId)}
-                        className="text-[9px] font-black uppercase px-2 py-1 bg-zinc-800 text-zinc-400 rounded hover:text-white transition-colors"
+                        className="text-[9px] font-black uppercase px-2 py-1 bg-sv-surface text-sv-text-secondary rounded hover:text-sv-text-primary border border-sv-border transition-colors"
                      >
                         {showId ? 'Mask' : 'Decipher'}
                      </button>
@@ -1048,7 +1046,7 @@ export default function VendorDetails() {
                         href={vendor.verification?.documentUrl || (vendor as any).governmentIdUrl} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-[10px] font-black text-white hover:text-zinc-300 uppercase tracking-widest transition-colors"
+                        className="inline-flex items-center gap-2 text-[10px] font-black text-sv-text-primary hover:text-sv-primary uppercase tracking-widest transition-colors"
                       >
                          <FiExternalLink size={14} /> View Document
                       </a>
@@ -1058,30 +1056,22 @@ export default function VendorDetails() {
               )}
 
               {/* [v10.0] CAC Registry Oversight */}
-              {/* 🛡️ [FIX] CAC data lives on Store.verifications[type='cac'],
-                  not on the vendor's personal KYC object (vendor.verification
-                  is BVN/NIN identity — a separate, unrelated field). The old
-                  code read vendor.verification?.cacNumber (a field that does
-                  not exist anywhere in the schema) and gated the whole panel
-                  on vendor.verification?.status, so it always showed the
-                  'RC-XXXXXX' placeholder and was visible/hidden based on the
-                  wrong verification entirely. */}
               {(() => {
                 if (!cacEntry) return null;
                 const rcNumber = cacEntry.metadata?.rcNumber || cacEntry.metadata?.businessName;
                 return (
-                  <div className="pt-4 mt-4 border-t border-zinc-800/60 bg-blue-500/5 p-4 rounded-xl border border-blue-500/10">
-                     <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                  <div className="pt-4 mt-4 border-t border-sv-border bg-sv-info-soft/10 p-4 rounded-xl border border-sv-info/20">
+                     <p className="text-[10px] font-black text-sv-info uppercase tracking-widest mb-3 flex items-center gap-2">
                        <FiShield /> CAC Business Registry
-                       <span className="ml-auto text-[8px] px-2 py-0.5 rounded bg-white/5 text-zinc-400 normal-case tracking-normal">
+                       <span className="ml-auto text-[8px] px-2 py-0.5 rounded bg-sv-surface-muted text-sv-text-muted normal-case tracking-normal border border-sv-border">
                          {cacEntry.status}{cacEntry.level === 'format_only' && cacEntry.status === 'pending' ? ' · awaiting manual review' : ''}
                        </span>
                      </p>
 
-                     <div className="flex justify-between items-center bg-black/40 p-3 rounded-lg border border-white/5">
+                     <div className="flex justify-between items-center bg-sv-surface-muted p-3 rounded-lg border border-sv-border">
                         <div>
-                          <p className="text-[8px] font-black text-zinc-500 uppercase tracking-widest mb-1">Registration No.</p>
-                          <span className="text-white font-mono text-xs font-bold tracking-widest">
+                          <p className="text-[8px] font-black text-sv-text-muted uppercase tracking-widest mb-1">Registration No.</p>
+                          <span className="text-sv-text-primary font-mono text-xs font-bold tracking-widest">
                              {rcNumber || 'RC-XXXXXX'}
                           </span>
                         </div>
@@ -1100,14 +1090,14 @@ export default function VendorDetails() {
                            <button
                              onClick={() => handleCacReview('verified')}
                              disabled={actionPending}
-                             className="flex-1 py-2 bg-green-600/10 hover:bg-green-600/20 text-green-500 rounded text-[9px] font-black uppercase tracking-widest border border-green-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                             className="flex-1 py-2 bg-sv-success-soft hover:bg-sv-success/20 text-sv-success rounded text-[9px] font-black uppercase tracking-widest border border-sv-success/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                            >
                              Approve CAC
                            </button>
                            <button
                              onClick={() => handleCacReview('rejected')}
                              disabled={actionPending}
-                             className="flex-1 py-2 bg-red-600/10 hover:bg-red-600/20 text-red-500 rounded text-[9px] font-black uppercase tracking-widest border border-red-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                             className="flex-1 py-2 bg-sv-danger-soft hover:bg-sv-danger/20 text-sv-danger rounded text-[9px] font-black uppercase tracking-widest border border-sv-danger/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                            >
                              Reject CAC
                            </button>
@@ -1118,7 +1108,7 @@ export default function VendorDetails() {
                         <div className="mt-3 flex gap-2">
                            <button
                              onClick={() => handleRevoke()}
-                             className="w-full py-2 bg-red-600/10 hover:bg-red-600/20 text-red-500 rounded text-[9px] font-black uppercase tracking-widest border border-red-500/20 transition-all"
+                             className="w-full py-2 bg-sv-danger-soft hover:bg-sv-danger/20 text-sv-danger rounded text-[9px] font-black uppercase tracking-widest border border-sv-danger/30 transition-all"
                            >
                              Flag Integrity Alert
                            </button>
@@ -1131,16 +1121,16 @@ export default function VendorDetails() {
           </div>
 
           {/* Active Subscription */}
-          <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
-            <h2 className="text-lg font-black text-white uppercase tracking-widest mb-6 tracking-tight">Active Plan</h2>
+          <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border">
+            <h2 className="text-base sm:text-lg font-black text-sv-text-primary uppercase tracking-widest mb-6 tracking-tight">Active Plan</h2>
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Service Tier</span>
+                <span className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Service Tier</span>
                 <span className={`px-3 py-1 rounded-full text-[10px] font-black border uppercase tracking-widest ${
                   vendor.subscription?.plan === 'gold' ? 'bg-sv-warning-soft text-sv-warning border-sv-warning/30' :
                   vendor.subscription?.plan === 'premium' ? 'bg-sv-tag-soft text-sv-tag border-sv-tag/20' :
-                  vendor.subscription?.plan === 'basic' ? 'bg-white/10 text-white border-white/20' :
-                  'bg-sv-surface-muted text-sv-text-secondary'
+                  vendor.subscription?.plan === 'basic' ? 'bg-sv-surface-muted text-sv-text-primary border-sv-border' :
+                  'bg-sv-surface-muted text-sv-text-secondary border-sv-border'
                 }`}>
                   {vendor.subscription?.plan?.toUpperCase() || 'FREE'}
                 </span>
@@ -1148,9 +1138,9 @@ export default function VendorDetails() {
 
               {vendor.subscription?.productUsage !== undefined && (
                 <div>
-                  <div className="flex justify-between text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">
+                  <div className="flex justify-between text-[10px] font-black text-sv-text-muted uppercase tracking-widest mb-2">
                     <span>Quota Consumption</span>
-                    <span className="text-white">
+                    <span className="text-sv-text-primary font-bold">
                       {vendor.subscription.productUsage} / {
                         vendor.subscription.plan === 'gold' ? 'INFINITE' :
                         vendor.subscription.plan === 'premium' ? '100+' :
@@ -1158,9 +1148,9 @@ export default function VendorDetails() {
                       }
                     </span>
                   </div>
-                  <div className="w-full bg-zinc-800 rounded-full h-1.5 border border-white/5 overflow-hidden">
+                  <div className="w-full bg-sv-surface-muted rounded-full h-1.5 border border-sv-border overflow-hidden">
                     <div 
-                      className="h-full bg-white transition-all duration-500"
+                      className="h-full bg-sv-primary transition-all duration-500"
                       style={{ 
                         width: `${Math.min(
                           vendor.subscription.plan === 'gold' ? 100 :
@@ -1175,19 +1165,19 @@ export default function VendorDetails() {
                 </div>
               )}
 
-              <div className="grid grid-cols-2 gap-3 pt-2">
-                <div className="p-3 bg-zinc-800/50 rounded-xl border border-white/5">
-                   <p className="text-[9px] font-black text-zinc-600 uppercase mb-1">Cycle Activation</p>
-                   <p className="text-xs font-bold text-white italic">{vendor.subscription?.startDate ? new Date(vendor.subscription.startDate).toLocaleDateString() : 'N/A'}</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <div className="p-3 bg-sv-surface-muted rounded-xl border border-sv-border">
+                   <p className="text-[9px] font-black text-sv-text-muted uppercase mb-1">Cycle Activation</p>
+                   <p className="text-xs font-bold text-sv-text-primary italic">{vendor.subscription?.startDate ? new Date(vendor.subscription.startDate).toLocaleDateString() : 'N/A'}</p>
                 </div>
-                <div className="p-3 bg-zinc-800/50 rounded-xl border border-white/5">
-                   <p className="text-[9px] font-black text-zinc-600 uppercase mb-1">Cycle Expiry</p>
-                   <p className="text-xs font-bold text-zinc-400 italic">{vendor.subscription?.endDate ? new Date(vendor.subscription.endDate).toLocaleDateString() : 'FOREVER'}</p>
+                <div className="p-3 bg-sv-surface-muted rounded-xl border border-sv-border">
+                   <p className="text-[9px] font-black text-sv-text-muted uppercase mb-1">Cycle Expiry</p>
+                   <p className="text-xs font-bold text-sv-text-secondary italic">{vendor.subscription?.endDate ? new Date(vendor.subscription.endDate).toLocaleDateString() : 'FOREVER'}</p>
                 </div>
               </div>
 
               {/* Admin Override Details & Controls */}
-              <div className="mt-6 pt-6 border-t border-white/10 space-y-4">
+              <div className="mt-6 pt-6 border-t border-sv-border space-y-4">
                 {vendor.subscription?.manualOverridePlan ? (
                   <div className="p-4 bg-sv-warning-soft/20 border border-sv-warning/30 rounded-xl">
                     <div className="flex justify-between items-start mb-4">
@@ -1199,27 +1189,27 @@ export default function VendorDetails() {
                           Expires: {vendor.subscription.manualOverrideExpiresAt ? new Date(vendor.subscription.manualOverrideExpiresAt).toLocaleString() : 'N/A'}
                         </p>
                       </div>
-                      <span className="px-2 py-1 bg-sv-warning text-black rounded text-[10px] font-black uppercase tracking-widest">
+                      <span className="px-2 py-1 bg-sv-warning text-sv-text-inverse rounded text-[10px] font-black uppercase tracking-widest">
                         {vendor.subscription.manualOverridePlan}
                       </span>
                     </div>
                     <button 
                       onClick={initClearOverride}
-                      className="w-full py-2 bg-red-500/20 text-red-400 hover:bg-red-500/30 rounded font-black text-xs uppercase tracking-widest transition-colors"
+                      className="w-full py-2 bg-sv-danger-soft text-sv-danger border border-sv-danger/30 hover:bg-sv-danger/20 rounded font-black text-xs uppercase tracking-widest transition-colors"
                     >
                       Clear Override
                     </button>
                   </div>
                 ) : (
-                  <div className="p-4 bg-zinc-950/50 border border-white/5 rounded-xl space-y-3">
-                    <h4 className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Set Subscription Override</h4>
-                    <div className="grid grid-cols-2 gap-3">
+                  <div className="p-4 bg-sv-surface-muted border border-sv-border rounded-xl space-y-3">
+                    <h4 className="text-[10px] font-black text-sv-text-primary uppercase tracking-widest">Set Subscription Override</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-[10px] font-bold text-zinc-500 mb-1">Plan</label>
+                        <label className="block text-[10px] font-bold text-sv-text-muted mb-1">Plan</label>
                         <select 
                           value={overridePlan}
                           onChange={(e) => setOverridePlan(e.target.value)}
-                          className="w-full bg-zinc-900 border border-zinc-800 rounded p-2 text-xs text-white"
+                          className="w-full bg-sv-surface border border-sv-border rounded p-2 text-xs text-sv-text-primary focus:outline-none focus:ring-1 focus:ring-sv-primary"
                         >
                           <option value="basic">Basic</option>
                           <option value="premium">Premium</option>
@@ -1228,29 +1218,29 @@ export default function VendorDetails() {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-[10px] font-bold text-zinc-500 mb-1">Expires At</label>
+                        <label className="block text-[10px] font-bold text-sv-text-muted mb-1">Expires At</label>
                         <input 
                           type="datetime-local" 
                           value={overrideExpiresAt}
                           onChange={(e) => setOverrideExpiresAt(e.target.value)}
-                          className="w-full bg-zinc-900 border border-zinc-800 rounded p-2 text-xs text-white [color-scheme:dark]"
+                          className="w-full bg-sv-surface border border-sv-border rounded p-2 text-xs text-sv-text-primary focus:outline-none focus:ring-1 focus:ring-sv-primary"
                         />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold text-zinc-500 mb-1">Justification Reason</label>
+                      <label className="block text-[10px] font-bold text-sv-text-muted mb-1">Justification Reason</label>
                       <input 
                         type="text" 
                         value={overrideReason}
                         onChange={(e) => setOverrideReason(e.target.value)}
                         placeholder="Required for audit..."
-                        className="w-full bg-zinc-900 border border-zinc-800 rounded p-2 text-xs text-white"
+                        className="w-full bg-sv-surface border border-sv-border rounded p-2 text-xs text-sv-text-primary focus:outline-none focus:ring-1 focus:ring-sv-primary"
                       />
                     </div>
                     <button 
                       onClick={initSetOverride}
                       disabled={!overridePlan || !overrideExpiresAt || !overrideReason}
-                      className="w-full py-2 bg-sv-primary text-black disabled:opacity-50 hover:bg-sv-primary/90 rounded font-black text-xs uppercase tracking-widest transition-colors"
+                      className="w-full py-2 bg-sv-primary text-sv-text-inverse disabled:opacity-50 hover:bg-sv-primary-hover rounded font-black text-xs uppercase tracking-widest transition-colors"
                     >
                       Apply Override
                     </button>
@@ -1261,26 +1251,26 @@ export default function VendorDetails() {
           </div>
 
           {/* Execution Metrics */}
-          <div className="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/40 backdrop-blur-sm">
-            <h2 className="text-lg font-black text-white uppercase tracking-widest mb-6 tracking-tight">Execution Metrics</h2>
+          <div className="bg-sv-surface p-5 sm:p-6 rounded-2xl border border-sv-border">
+            <h2 className="text-base sm:text-lg font-black text-sv-text-primary uppercase tracking-widest mb-6 tracking-tight">Execution Metrics</h2>
             <div className="space-y-4">
               <div className="flex justify-between">
-                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Global Order Volume</span>
-                <span className="text-sm font-black text-white">{vendor.orderStats?.totalOrders || 0}</span>
+                <span className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Global Order Volume</span>
+                <span className="text-sm font-black text-sv-text-primary">{vendor.orderStats?.totalOrders || 0}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Successful Terminations</span>
-                <span className="text-sm font-black text-emerald-500">{vendor.orderStats?.completedOrders || 0}</span>
+                <span className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Successful Terminations</span>
+                <span className="text-sm font-black text-sv-success">{vendor.orderStats?.completedOrders || 0}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Gross Revenue (NGN)</span>
-                <span className="text-sm font-black text-white">
+                <span className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Gross Revenue (NGN)</span>
+                <span className="text-sm font-black text-sv-text-primary">
                   ₦{(vendor.orderStats?.totalRevenue || 0).toLocaleString()}
                 </span>
               </div>
-              <div className="flex justify-between pt-4 border-t border-zinc-800/60">
-                <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Fulfillment Reliability</span>
-                <span className="text-sm font-black text-white">
+              <div className="flex justify-between pt-4 border-t border-sv-border">
+                <span className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Fulfillment Reliability</span>
+                <span className="text-sm font-black text-sv-text-primary">
                   {vendor.orderStats?.totalOrders 
                     ? Math.round((vendor.orderStats.completedOrders / vendor.orderStats.totalOrders) * 100)
                     : 0}%

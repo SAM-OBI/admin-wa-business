@@ -132,26 +132,26 @@ export default function Users() {
 
   if (loading) {
     return (
-      <div className="p-6 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="p-8 flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sv-primary"></div>
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-7xl mx-auto">
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-white tracking-tight uppercase">Registry Oversight</h1>
-          <p className="text-zinc-500 font-medium mt-1 uppercase text-xs tracking-[0.2em]">Platform Identity & Access Governance</p>
+          <h1 className="text-2xl sm:text-3xl font-black text-sv-text-primary tracking-tight uppercase">Registry Oversight</h1>
+          <p className="text-sv-text-muted font-medium mt-1 uppercase text-xs tracking-[0.2em]">Platform Identity & Access Governance</p>
         </div>
         
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
+          <div className="grid grid-cols-2 sm:flex gap-2 w-full sm:w-auto">
             <select
               value={filters.role}
               onChange={(e) => setFilters(prev => ({ ...prev, role: e.target.value }))}
-              className="px-4 py-2 bg-sv-surface-elevated/50 border border-sv-border text-sv-text-muted text-xs font-black uppercase tracking-widest rounded-xl focus:outline-none focus:border-sv-primary transition-all cursor-pointer"
+              className="flex-1 min-w-0 px-3 sm:px-4 py-2 bg-sv-surface-muted border border-sv-border text-sv-text-secondary text-xs font-black uppercase tracking-widest rounded-xl focus:outline-none focus:border-sv-primary transition-all cursor-pointer"
             >
               <option value="">All Roles</option>
               <option value="USERS">Users</option>
@@ -162,7 +162,7 @@ export default function Users() {
             <select
               value={filters.status}
               onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
-              className="px-4 py-2 bg-sv-surface-elevated/50 border border-sv-border text-sv-text-muted text-xs font-black uppercase tracking-widest rounded-xl focus:outline-none focus:border-sv-primary transition-all cursor-pointer"
+              className="flex-1 min-w-0 px-3 sm:px-4 py-2 bg-sv-surface-muted border border-sv-border text-sv-text-secondary text-xs font-black uppercase tracking-widest rounded-xl focus:outline-none focus:border-sv-primary transition-all cursor-pointer"
             >
               <option value="">All Status</option>
               <option value="active">Active</option>
@@ -180,22 +180,22 @@ export default function Users() {
         </div>
       </div>
 
-      <div className="bg-sv-surface-elevated/50 rounded-2xl border border-sv-border backdrop-blur-sm overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+      <div className="bg-sv-surface rounded-2xl border border-sv-border overflow-hidden shadow-sm">
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-sv-border">
+          <table className="w-full text-left border-collapse min-w-[700px]">
             <thead>
-              <tr className="border-b border-sv-border bg-sv-surface/5">
-                <th className="px-8 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Identity Profile</th>
-                <th className="px-8 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Authorization</th>
-                <th className="px-8 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Trust Signal</th>
-                <th className="px-8 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Access State</th>
-                <th className="px-8 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em] text-right">Execution</th>
+              <tr className="border-b border-sv-border bg-sv-surface-muted/50">
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Identity Profile</th>
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Authorization</th>
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Trust Signal</th>
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Access State</th>
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em] text-right">Execution</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-sv-border">
               {filteredUsers.map((user) => (
-                <tr key={user._id} className="hover:bg-sv-surface-muted transition-colors group">
-                  <td className="px-8 py-6">
+                <tr key={user._id} className="hover:bg-sv-surface-muted/60 transition-colors group">
+                  <td className="px-6 py-4">
                     <div className="flex items-center">
                       <div className="h-12 w-12 rounded-xl bg-sv-surface-muted flex items-center justify-center text-sv-text-secondary font-black border border-sv-border group-hover:border-sv-primary/30 transition-all text-lg shadow-inner">
                         {user.name.charAt(0).toUpperCase()}
@@ -206,7 +206,7 @@ export default function Users() {
                       </div>
                     </div>
                   </td>
-                  <td className="px-8 py-6">
+                  <td className="px-6 py-4">
                     <span className={`inline-flex px-2.5 py-1 text-[9px] font-black uppercase rounded border ${
                       user.role === 'ADMIN' ? 'bg-sv-tag-soft text-sv-tag border-sv-tag/20' :
                       user.role === 'VENDORS' ? 'bg-sv-info-soft text-sv-info border-sv-info/30' :
@@ -215,23 +215,23 @@ export default function Users() {
                       {user.role}
                     </span>
                   </td>
-                  <td className="px-8 py-6">
+                  <td className="px-6 py-4">
                     {getVerificationBadge(user.verification)}
                   </td>
-                  <td className="px-8 py-6">
+                  <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
-                      <div className={`w-1.5 h-1.5 rounded-full ${user.isActive ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]'}`} />
-                      <span className={`text-[10px] font-black uppercase tracking-widest ${user.isActive ? 'text-emerald-500' : 'text-red-500'}`}>
+                      <div className={`w-1.5 h-1.5 rounded-full ${user.isActive ? 'bg-sv-success' : 'bg-sv-danger'}`} />
+                      <span className={`text-[10px] font-black uppercase tracking-widest ${user.isActive ? 'text-sv-success' : 'text-sv-danger'}`}>
                         {user.isActive ? 'Active' : 'Halted'}
                       </span>
                     </div>
                     <div className="text-[9px] text-sv-text-muted font-black uppercase mt-1 tracking-tighter">Joined {new Date(user.createdAt).toLocaleDateString()}</div>
                   </td>
-                  <td className="px-8 py-6 text-right">
+                  <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-3">
                       <Link
                         to={`/dashboard/users/${user._id}`}
-                        className="text-[10px] font-black uppercase text-white hover:text-zinc-300 flex items-center gap-1.5 transition-colors border border-white/5 px-3 py-1.5 rounded-lg bg-white/[0.03]"
+                        className="text-[10px] font-black uppercase text-sv-text-primary hover:text-sv-primary flex items-center gap-1.5 transition-colors border border-sv-border px-3 py-1.5 rounded-lg bg-sv-surface-muted"
                       >
                         Deep Dive <FiExternalLink size={12} />
                       </Link>
@@ -240,8 +240,8 @@ export default function Users() {
                         disabled={togglingUserId === user._id}
                         className={`text-[10px] font-black uppercase px-3 py-1.5 rounded-lg transition-all border disabled:opacity-50 disabled:cursor-not-allowed ${
                           user.isActive
-                            ? 'text-red-500 border-red-500/20 hover:bg-red-500/10'
-                            : 'text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/10'
+                            ? 'text-sv-danger border-sv-danger/30 hover:bg-sv-danger-soft'
+                            : 'text-sv-success border-sv-success/30 hover:bg-sv-success-soft'
                         }`}
                       >
                         {togglingUserId === user._id ? '...' : (user.isActive ? 'Suspend' : 'Revive')}
@@ -259,7 +259,7 @@ export default function Users() {
                 </tr>
               ) : filteredUsers.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-8 py-24 text-center">
+                  <td colSpan={5} className="px-6 py-16 text-center">
                     <div className="flex flex-col items-center gap-4">
                       <FiAlertCircle className="text-sv-text-muted w-12 h-12" />
                       <p className="text-sv-text-muted text-[10px] font-black uppercase tracking-[0.3em] italic">No matching identities in registry.</p>
@@ -272,7 +272,7 @@ export default function Users() {
         </div>
         
         {/* Global Pagination Hub */}
-        <div className="px-8 py-6 border-t border-sv-border bg-sv-surface/5 flex items-center justify-between">
+        <div className="px-6 py-4 border-t border-sv-border bg-sv-surface-muted/30 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">
             Registry Index <span className="text-sv-text-primary mx-1">{filteredUsers.length}</span> of <span className="text-sv-text-primary mx-1">{pagination.total}</span> Identities
           </div>
@@ -280,7 +280,7 @@ export default function Users() {
             <button
               onClick={() => handlePageChange(pagination.page - 1)}
               disabled={pagination.page <= 1}
-              className="p-2 border border-sv-border rounded-lg text-sv-text-primary disabled:opacity-20 disabled:cursor-not-allowed hover:bg-sv-surface-muted transition-all"
+              className="p-2 border border-sv-border rounded-lg text-sv-text-primary disabled:opacity-20 disabled:cursor-not-allowed hover:bg-sv-surface-muted transition-all text-xs font-bold"
             >
               PREV
             </button>
@@ -290,7 +290,7 @@ export default function Users() {
             <button
               onClick={() => handlePageChange(pagination.page + 1)}
               disabled={pagination.page >= pagination.pages}
-              className="p-2 border border-sv-border rounded-lg text-sv-text-primary disabled:opacity-20 disabled:cursor-not-allowed hover:bg-sv-surface-muted transition-all"
+              className="p-2 border border-sv-border rounded-lg text-sv-text-primary disabled:opacity-20 disabled:cursor-not-allowed hover:bg-sv-surface-muted transition-all text-xs font-bold"
             >
               NEXT
             </button>

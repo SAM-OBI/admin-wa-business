@@ -54,25 +54,25 @@ export default function CourtCases() {
 
   if (loading) {
     return (
-      <div className="p-6 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="p-4 sm:p-6 lg:p-8 flex items-center justify-center min-h-[300px]">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-sv-primary"></div>
       </div>
     );
   }
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-sv-text-primary">Court Cases</h1>
-          <p className="text-gray-500 text-sm mt-1">Legal disputes and arbitrations</p>
+          <h1 className="text-2xl sm:text-3xl font-black text-sv-text-primary tracking-tight">Court Cases</h1>
+          <p className="text-sv-text-muted text-sm mt-1">Legal disputes and arbitrations</p>
         </div>
 
         <div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 border border-sv-border rounded-lg focus:outline-none focus:ring-2 focus:ring-sv-primary bg-sv-surface"
+            className="w-full sm:w-auto px-4 py-2 border border-sv-border rounded-xl focus:outline-none focus:ring-2 focus:ring-sv-primary bg-sv-surface text-sv-text-primary text-sm shadow-xs"
           >
             <option value="">All Cases</option>
             <option value="open">Open</option>
@@ -81,16 +81,16 @@ export default function CourtCases() {
         </div>
       </div>
 
-      <div className="bg-sv-surface rounded-xl shadow-sm border border-sv-border overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
+      <div className="bg-sv-surface rounded-2xl shadow-xs border border-sv-border overflow-hidden">
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-sv-border">
+          <table className="w-full text-left min-w-[700px]">
             <thead className="bg-sv-surface-muted border-b border-sv-border">
               <tr>
-                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">Case Number</th>
-                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">Parties</th>
-                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">Filing Date</th>
-                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider text-right">Actions</th>
+                <th className="px-6 py-3.5 text-xs font-bold text-sv-text-secondary uppercase tracking-wider">Case Number</th>
+                <th className="px-6 py-3.5 text-xs font-bold text-sv-text-secondary uppercase tracking-wider">Parties</th>
+                <th className="px-6 py-3.5 text-xs font-bold text-sv-text-secondary uppercase tracking-wider">Filing Date</th>
+                <th className="px-6 py-3.5 text-xs font-bold text-sv-text-secondary uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3.5 text-xs font-bold text-sv-text-secondary uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-sv-border">
@@ -102,30 +102,30 @@ export default function CourtCases() {
                 >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <FiFileText className="text-sv-text-muted" />
-                      <span className="font-medium text-sv-text-primary">{courtCase.caseNumber}</span>
+                      <FiFileText className="text-sv-text-muted text-lg shrink-0" />
+                      <span className="font-semibold text-sv-text-primary">{courtCase.caseNumber}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="text-sm">
-                      <span className="font-medium">{courtCase.plaintiff}</span>
-                      <span className="text-sv-text-secondary mx-2">vs</span>
-                      <span className="font-medium">{courtCase.defendant}</span>
+                      <span className="font-medium text-sv-text-primary">{courtCase.plaintiff}</span>
+                      <span className="text-sv-text-muted mx-2">vs</span>
+                      <span className="font-medium text-sv-text-primary">{courtCase.defendant}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sv-text-secondary">
+                  <td className="px-6 py-4 text-sm text-sv-text-secondary">
                     {new Date(courtCase.filingDate).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      courtCase.status === 'open' ? 'bg-sv-info-soft text-sv-info' : 'bg-sv-surface-muted text-sv-text-secondary'
+                    <span className={`inline-flex px-2.5 py-1 text-xs font-bold rounded-full ${
+                      courtCase.status === 'open' ? 'bg-sv-info-soft text-sv-info' : 'bg-sv-surface-muted text-sv-text-secondary border border-sv-border'
                     }`}>
                       {courtCase.status}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
                     <button 
-                      className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      className="text-sv-primary hover:text-sv-primary-hover text-sm font-semibold transition-colors"
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelectedCaseId(courtCase._id);
@@ -157,25 +157,25 @@ export default function CourtCases() {
         </div>
 
         {/* Pagination Footer */}
-        <div className="px-6 py-4 border-t border-sv-border flex items-center justify-between">
+        <div className="px-4 sm:px-6 py-4 border-t border-sv-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="text-sm text-sv-text-secondary">
-            Showing <span className="font-medium">{cases.length}</span> of <span className="font-medium">{pagination.total}</span> cases
+            Showing <span className="font-semibold text-sv-text-primary">{cases.length}</span> of <span className="font-semibold text-sv-text-primary">{pagination.total}</span> cases
           </div>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => handlePageChange(pagination.page - 1)}
               disabled={pagination.page <= 1}
-              className="px-3 py-1 border border-sv-border rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-sv-surface-muted"
+              className="px-3 py-1.5 border border-sv-border rounded-xl text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-sv-surface-muted text-sv-text-primary transition-colors"
             >
               Previous
             </button>
-            <span className="px-3 py-1 text-sm text-sv-text-secondary">
+            <span className="px-3 py-1.5 text-sm text-sv-text-secondary">
               Page {pagination.page} of {pagination.pages}
             </span>
             <button
               onClick={() => handlePageChange(pagination.page + 1)}
               disabled={pagination.page >= pagination.pages}
-              className="px-3 py-1 border border-sv-border rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-sv-surface-muted"
+              className="px-3 py-1.5 border border-sv-border rounded-xl text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-sv-surface-muted text-sv-text-primary transition-colors"
             >
               Next
             </button>

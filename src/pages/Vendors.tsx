@@ -168,36 +168,36 @@ export default function Vendors() {
 
   if (loading) {
     return (
-      <div className="p-6 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="p-8 flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sv-primary"></div>
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-7xl mx-auto">
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-white tracking-tight uppercase">Vendors Management</h1>
-          <p className="text-zinc-500 font-medium mt-1 uppercase text-xs tracking-[0.2em]">Institutional Oversight & Risk Governance</p>
+          <h1 className="text-2xl sm:text-3xl font-black text-sv-text-primary tracking-tight uppercase">Vendors Management</h1>
+          <p className="text-sv-text-muted font-medium mt-1 uppercase text-xs tracking-[0.2em]">Institutional Oversight & Risk Governance</p>
         </div>
         
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
+          <div className="grid grid-cols-2 sm:flex gap-2 w-full sm:w-auto">
             <select
               value={filters.status}
               onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
-              className="px-4 py-2 bg-sv-surface-elevated/50 border border-sv-border text-sv-text-muted text-xs font-black uppercase tracking-widest rounded-xl focus:outline-none focus:border-sv-primary transition-all cursor-pointer"
+              className="flex-1 min-w-0 px-3 sm:px-4 py-2 bg-sv-surface-muted border border-sv-border text-sv-text-secondary text-xs font-black uppercase tracking-widest rounded-xl focus:outline-none focus:border-sv-primary transition-all cursor-pointer"
             >
               <option value="">All Status</option>
               <option value="active">Active</option>
               <option value="suspended">Suspended</option>
             </select>
 
-             <select
+            <select
               value={filters.verificationStatus}
               onChange={(e) => setFilters(prev => ({ ...prev, verificationStatus: e.target.value }))}
-              className="px-4 py-2 bg-sv-surface-elevated/50 border border-sv-border text-sv-text-muted text-xs font-black uppercase tracking-widest rounded-xl focus:outline-none focus:border-sv-primary transition-all cursor-pointer"
+              className="flex-1 min-w-0 px-3 sm:px-4 py-2 bg-sv-surface-muted border border-sv-border text-sv-text-secondary text-xs font-black uppercase tracking-widest rounded-xl focus:outline-none focus:border-sv-primary transition-all cursor-pointer"
             >
               <option value="">All Verification</option>
               <option value="verified">Verified</option>
@@ -217,22 +217,22 @@ export default function Vendors() {
         </div>
       </div>
 
-      <div className="bg-sv-surface-elevated/50 rounded-2xl border border-sv-border backdrop-blur-sm overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] min-w-0">
-        <div className="overflow-x-auto min-w-0">
-          <table className="w-full text-left border-collapse">
+      <div className="bg-sv-surface rounded-2xl border border-sv-border overflow-hidden shadow-sm min-w-0">
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-sv-border min-w-0">
+          <table className="w-full text-left border-collapse min-w-[750px]">
             <thead>
-              <tr className="border-b border-sv-border bg-sv-surface/5">
-                <th className="px-8 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Identity Metadata</th>
-                <th className="px-8 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Registry Stats</th>
-                <th className="px-8 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Compliance</th>
-                <th className="px-8 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Risk & Level</th>
-                <th className="px-8 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em] text-right">Execution</th>
+              <tr className="border-b border-sv-border bg-sv-surface-muted/50">
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Identity Metadata</th>
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Registry Stats</th>
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Compliance</th>
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Risk & Level</th>
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em] text-right">Execution</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-sv-border">
               {filteredVendors.map((vendor) => (
-                <tr key={vendor._id} className="hover:bg-sv-surface-muted transition-colors group">
-                  <td className="px-8 py-6">
+                <tr key={vendor._id} className="hover:bg-sv-surface-muted/60 transition-colors group">
+                  <td className="px-6 py-4">
                     <div className="flex items-center">
                       <div className="h-12 w-12 rounded-xl bg-sv-surface-muted flex items-center justify-center text-sv-text-secondary font-black border border-sv-border group-hover:border-sv-primary/30 transition-all text-lg shadow-inner">
                         {vendor.name.charAt(0).toUpperCase()}
@@ -243,11 +243,11 @@ export default function Vendors() {
                       </div>
                     </div>
                   </td>
-                  <td className="px-8 py-6">
+                  <td className="px-6 py-4">
                     <div className="font-bold text-sv-text-secondary text-sm">{vendor.storeName || 'NATIVE_UNBOUND'}</div>
                     <div className="text-[10px] text-sv-text-muted font-black uppercase mt-1">INTAKE {new Date(vendor.createdAt).toLocaleDateString()}</div>
                   </td>
-                  <td className="px-8 py-6">
+                  <td className="px-6 py-4">
                     {/* 🛡️ [FIX] This column used to show only vendor.verification
                         (personal BVN/NIN KYC) under the label "Compliance" — CAC/
                         business-registration status, a completely separate field
@@ -265,7 +265,7 @@ export default function Vendors() {
                         <div className="flex gap-2 mt-1">
                           <button
                             onClick={() => handleVerification(vendor._id, 'verified')}
-                            className="text-[9px] font-black uppercase px-2 py-1 bg-emerald-500 text-black rounded hover:bg-emerald-400 transition-colors"
+                            className="text-[9px] font-black uppercase px-2 py-1 bg-sv-success text-sv-text-inverse rounded hover:opacity-90 transition-colors"
                           >
                             Approve
                           </button>
@@ -283,7 +283,7 @@ export default function Vendors() {
                       </div>
                     </div>
                   </td>
-                  <td className="px-8 py-6">
+                  <td className="px-6 py-4">
                     <div className="flex flex-col gap-3">
                       <div className="flex items-center gap-2">
                         <span className={`px-2.5 py-1 rounded text-[9px] font-black uppercase border ${
@@ -295,7 +295,7 @@ export default function Vendors() {
                           LEVEL {vendor.sellerLevel || 1}
                         </span>
                         {vendor.isFeatured && (
-                          <span className="px-2.5 py-1 bg-white text-black rounded text-[9px] font-black uppercase flex items-center gap-1 shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+                          <span className="px-2.5 py-1 bg-sv-primary text-sv-text-inverse rounded text-[9px] font-black uppercase flex items-center gap-1 shadow-sm">
                             <FiCheckCircle className="w-3 h-3" /> FEATURED
                           </span>
                         )}
@@ -303,20 +303,20 @@ export default function Vendors() {
                       <div className="flex items-center gap-3">
                         <div className="text-[10px] font-black text-sv-text-primary uppercase">{vendor.activityScore || 0} XP</div>
                         <div className={`text-[9px] px-2 py-0.5 rounded font-black uppercase border ${
-                          (vendor.riskProfile?.score || 0) < 30 ? 'text-emerald-500 border-emerald-500/20 bg-emerald-500/5' :
-                          (vendor.riskProfile?.score || 0) < 70 ? 'text-amber-500 border-amber-500/20 bg-amber-500/5' :
-                          'text-red-500 border-red-500/20 bg-red-500/5'
+                          (vendor.riskProfile?.score || 0) < 30 ? 'text-sv-success border-sv-success/30 bg-sv-success-soft' :
+                          (vendor.riskProfile?.score || 0) < 70 ? 'text-sv-warning border-sv-warning/30 bg-sv-warning-soft' :
+                          'text-sv-danger border-sv-danger/30 bg-sv-danger-soft'
                         }`}>
                           RISK_IDX {vendor.riskProfile?.score || 0}%
                         </div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-8 py-6 text-right">
+                  <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-3">
                       <Link
                         to={`/dashboard/vendors/${vendor._id}`}
-                        className="text-[10px] font-black uppercase text-white hover:text-zinc-300 flex items-center gap-1.5 transition-colors border border-white/5 px-3 py-1.5 rounded-lg bg-white/[0.03]"
+                        className="text-[10px] font-black uppercase text-sv-text-primary hover:text-sv-primary flex items-center gap-1.5 transition-colors border border-sv-border px-3 py-1.5 rounded-lg bg-sv-surface-muted"
                       >
                         ANALYZE <FiExternalLink size={12} />
                       </Link>
@@ -325,8 +325,8 @@ export default function Vendors() {
                         disabled={togglingVendorId === vendor._id}
                         className={`text-[10px] font-black uppercase px-3 py-1.5 rounded-lg transition-all border disabled:opacity-50 disabled:cursor-not-allowed ${
                           vendor.isActive
-                            ? 'text-red-500 border-red-500/20 hover:bg-red-500/10'
-                            : 'text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/10'
+                            ? 'text-sv-danger border-sv-danger/30 hover:bg-sv-danger-soft'
+                            : 'text-sv-success border-sv-success/30 hover:bg-sv-success-soft'
                         }`}
                       >
                         {togglingVendorId === vendor._id ? '...' : (vendor.isActive ? 'TERMINATE_SESSION' : 'REVIVE_ACCESS')}
@@ -346,7 +346,7 @@ export default function Vendors() {
                 </tr>
               ) : filteredVendors.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-8 py-24 text-center">
+                  <td colSpan={5} className="px-6 py-16 text-center">
                     <div className="flex flex-col items-center gap-4">
                       <FiAlertCircle className="text-sv-text-muted w-12 h-12" />
                       <p className="text-sv-text-muted text-[10px] font-black uppercase tracking-[0.3em] italic">No active entities detected in registry.</p>
@@ -359,7 +359,7 @@ export default function Vendors() {
         </div>
 
         {/* Global Pagination Hub */}
-        <div className="px-8 py-6 border-t border-sv-border bg-sv-surface/5 flex items-center justify-between">
+        <div className="px-6 py-4 border-t border-sv-border bg-sv-surface-muted/30 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">
             Registry Index <span className="text-sv-text-primary mx-1">{filteredVendors.length}</span> of <span className="text-sv-text-primary mx-1">{pagination.total}</span> Entities
           </div>
@@ -367,7 +367,7 @@ export default function Vendors() {
             <button
               onClick={() => handlePageChange(pagination.page - 1)}
               disabled={pagination.page <= 1}
-              className="p-2 border border-sv-border rounded-lg text-sv-text-primary disabled:opacity-20 disabled:cursor-not-allowed hover:bg-sv-surface-muted transition-all"
+              className="p-2 border border-sv-border rounded-lg text-sv-text-primary disabled:opacity-20 disabled:cursor-not-allowed hover:bg-sv-surface-muted transition-all text-xs font-bold"
             >
               PREV
             </button>
@@ -377,7 +377,7 @@ export default function Vendors() {
             <button
               onClick={() => handlePageChange(pagination.page + 1)}
               disabled={pagination.page >= pagination.pages}
-              className="p-2 border border-sv-border rounded-lg text-sv-text-primary disabled:opacity-20 disabled:cursor-not-allowed hover:bg-sv-surface-muted transition-all"
+              className="p-2 border border-sv-border rounded-lg text-sv-text-primary disabled:opacity-20 disabled:cursor-not-allowed hover:bg-sv-surface-muted transition-all text-xs font-bold"
             >
               NEXT
             </button>

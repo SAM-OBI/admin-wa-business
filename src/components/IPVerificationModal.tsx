@@ -125,7 +125,7 @@ export default function IPVerificationModal({ userId, onSuccess, onCancel }: IPV
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-sv-surface rounded-2xl shadow-xl max-w-md w-full p-8"
+                className="bg-sv-surface border border-sv-border rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8"
             >
                 {/* Header */}
                 <div className="text-center mb-8">

@@ -91,8 +91,8 @@ export default function AdsModeration() {
       'ACTIVE': 'bg-sv-success-soft text-sv-success border-sv-success/30',
       'REJECTED': 'bg-sv-danger-soft text-sv-danger border-sv-danger/30',
       'PAUSED': 'bg-sv-surface-muted text-sv-text-secondary border-sv-border',
-      'EXHAUSTED': 'bg-purple-100 text-purple-700 border-purple-200',
-      'LEARNING': 'bg-sky-100 text-sky-700 border-sky-200',
+      'EXHAUSTED': 'bg-sv-tag-soft text-sv-tag border-sv-tag/30',
+      'LEARNING': 'bg-sv-info-soft text-sv-info border-sv-info/30',
       'SYSTEM_SUSPENDED': 'bg-sv-danger-soft text-sv-danger border-sv-danger/30',
       'SYSTEM_COMPLIANCE_HOLD': 'bg-sv-warning-soft text-sv-warning border-sv-warning/30',
       'SYSTEM_SUBSCRIPTION_DOWNGRADE': 'bg-sv-warning-soft text-sv-warning border-sv-warning/30'
@@ -105,27 +105,27 @@ export default function AdsModeration() {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white shadow-lg shadow-blue-200">
+            <div className="w-8 h-8 bg-sv-primary/10 rounded-xl flex items-center justify-center text-sv-primary shadow-sm">
                <FiTrendingUp className="text-lg" />
             </div>
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight">Ads Moderation</h1>
+            <h1 className="text-2xl sm:text-3xl font-black text-sv-text-primary tracking-tight">Ads Moderation</h1>
           </div>
-          <p className="text-slate-500 font-medium tracking-tight">Review and approve vendor marketing campaigns</p>
+          <p className="text-sv-text-secondary font-medium tracking-tight text-sm">Review and approve vendor marketing campaigns</p>
         </div>
 
-        <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200 shadow-inner">
+        <div className="flex bg-sv-surface-muted p-1 rounded-xl border border-sv-border shadow-inner overflow-x-auto">
           {['PENDING_REVIEW', 'ACTIVE', 'REJECTED'].map((f) => (
             <button
               key={f}
               onClick={() => { setStatusFilter(f); setAds([]); hasFetched.current = false; }}
-              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all duration-200 ${
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all duration-200 whitespace-nowrap ${
                 statusFilter === f 
-                  ? 'bg-white text-blue-600 shadow-sm' 
-                  : 'text-slate-500 hover:text-slate-700'
+                  ? 'bg-sv-surface text-sv-primary shadow-sm' 
+                  : 'text-sv-text-secondary hover:text-sv-text-primary'
               }`}
             >
               {f.replace('_', ' ')}
@@ -150,52 +150,52 @@ export default function AdsModeration() {
                 <div className="flex-1">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-center text-xl">
-                        <FiLayout className="text-slate-400" />
+                      <div className="w-12 h-12 bg-sv-surface-muted rounded-xl border border-sv-border flex items-center justify-center text-xl">
+                        <FiLayout className="text-sv-text-muted" />
                       </div>
                       <div>
-                        <h3 className="font-black text-slate-900 leading-none mb-1">{ad.storeId?.name}</h3>
-                        <p className="text-xs text-slate-500 font-medium uppercase tracking-widest">{ad.type.replace('_', ' ')}</p>
+                        <h3 className="font-black text-sv-text-primary leading-none mb-1">{ad.storeId?.name}</h3>
+                        <p className="text-xs text-sv-text-secondary font-medium uppercase tracking-widest">{ad.type.replace('_', ' ')}</p>
                       </div>
                     </div>
                     {getStatusBadge(ad.status)}
                   </div>
 
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    <div className="bg-slate-50 rounded-xl p-3 border border-slate-100">
-                      <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Total Budget</p>
-                      <p className="text-sm font-black text-slate-900">₦{(ad.totalBudget / 100).toLocaleString()}</p>
+                    <div className="bg-sv-surface-muted rounded-xl p-3 border border-sv-border">
+                      <p className="text-[10px] font-bold text-sv-text-muted uppercase mb-1">Total Budget</p>
+                      <p className="text-sm font-black text-sv-text-primary">₦{(ad.totalBudget / 100).toLocaleString()}</p>
                     </div>
-                    <div className="bg-slate-50 rounded-xl p-3 border border-slate-100">
-                      <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Bid Price</p>
-                      <p className="text-sm font-black text-slate-900">₦{(ad.bidAmount / 100).toLocaleString()}</p>
+                    <div className="bg-sv-surface-muted rounded-xl p-3 border border-sv-border">
+                      <p className="text-[10px] font-bold text-sv-text-muted uppercase mb-1">Bid Price</p>
+                      <p className="text-sm font-black text-sv-text-primary">₦{(ad.bidAmount / 100).toLocaleString()}</p>
                     </div>
-                    <div className="bg-slate-50 rounded-xl p-3 border border-slate-100 hidden md:block">
-                      <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Status Date</p>
-                      <p className="text-sm font-black text-slate-900">{new Date(ad.createdAt).toLocaleDateString()}</p>
+                    <div className="bg-sv-surface-muted rounded-xl p-3 border border-sv-border hidden md:block">
+                      <p className="text-[10px] font-bold text-sv-text-muted uppercase mb-1">Status Date</p>
+                      <p className="text-sm font-black text-sv-text-primary">{new Date(ad.createdAt).toLocaleDateString()}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Health Guard Details */}
-                <div className="lg:w-72 bg-slate-50 rounded-2xl p-4 border border-slate-200 flex flex-col justify-between">
+                <div className="lg:w-72 bg-sv-surface-muted rounded-2xl p-4 border border-sv-border flex flex-col justify-between">
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold text-slate-500 uppercase">Marketing Balance</span>
-                      <span className={`text-xs font-black ${ad.storeId?.marketingBalance > 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                      <span className="text-[10px] font-bold text-sv-text-muted uppercase">Marketing Balance</span>
+                      <span className={`text-xs font-black ${ad.storeId?.marketingBalance > 0 ? 'text-sv-success' : 'text-sv-danger'}`}>
                         ₦{(ad.storeId?.marketingBalance / 100).toLocaleString()}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold text-slate-500 uppercase">Fraud State</span>
-                      <span className={`text-xs font-black ${ad.storeId?.fraudState === 'NORMAL' ? 'text-emerald-600' : 'text-rose-600'}`}>
+                      <span className="text-[10px] font-bold text-sv-text-muted uppercase">Fraud State</span>
+                      <span className={`text-xs font-black ${ad.storeId?.fraudState === 'NORMAL' ? 'text-sv-success' : 'text-sv-danger'}`}>
                         {ad.storeId?.fraudState}
                       </span>
                     </div>
                   </div>
 
                   {ad.status === 'PENDING_REVIEW' && (
-                    <div className="flex gap-2 mt-4 pt-4 border-t border-slate-200">
+                    <div className="flex gap-2 mt-4 pt-4 border-t border-sv-border">
                       <button
                         onClick={() => handleModerate(ad._id, 'ACTIVE')}
                         disabled={!!moderatingId}
@@ -219,9 +219,9 @@ export default function AdsModeration() {
         </AnimatePresence>
 
         {ads.length === 0 && !loading && (
-          <div className="text-center py-20 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
-            <FiInfo className="mx-auto text-4xl text-slate-300 mb-4" />
-            <p className="text-slate-500 font-bold">No ads found matching "{statusFilter}"</p>
+          <div className="text-center py-20 bg-sv-surface-muted rounded-2xl border-2 border-dashed border-sv-border">
+            <FiInfo className="mx-auto text-4xl text-sv-text-muted mb-4" />
+            <p className="text-sv-text-secondary font-bold">No ads found matching "{statusFilter}"</p>
           </div>
         )}
 
@@ -243,14 +243,14 @@ export default function AdsModeration() {
                initial={{ opacity: 0 }} 
                animate={{ opacity: 1 }} 
                exit={{ opacity: 0 }}
-               className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
                onClick={() => { setShowRejectModal(false); setModeratingId(null); }}
              />
              <motion.div
                initial={{ scale: 0.9, opacity: 0 }}
                animate={{ scale: 1, opacity: 1 }}
                exit={{ scale: 0.9, opacity: 0 }}
-               className="bg-sv-surface rounded-3xl shadow-2xl relative w-full max-w-md p-8"
+               className="bg-sv-surface rounded-2xl shadow-2xl relative w-full max-w-md p-6 sm:p-8 border border-sv-border"
              >
                <h2 className="text-2xl font-black text-sv-text-primary mb-2">Reject Campaign</h2>
                <p className="text-sv-text-secondary text-sm font-medium mb-6">Briefly explain why this ad was rejected so the vendor can fix it.</p>

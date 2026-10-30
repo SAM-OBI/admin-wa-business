@@ -32,12 +32,12 @@ export const WithCapability: React.FC<WithCapabilityProps> = ({
     if (fallback) return <>{fallback}</>;
 
     return (
-      <div className="flex items-center justify-center p-6 bg-slate-50 dark:bg-black/20 border border-dashed border-slate-300 dark:border-white/10 rounded-[5px] text-slate-400">
+      <div className="flex items-center justify-center p-6 bg-sv-surface-muted border border-dashed border-sv-border rounded-xl text-sv-text-muted">
         <div className="flex flex-col items-center gap-2">
-          <FaLock size={16} className="text-slate-300" />
+          <FaLock size={16} className="text-sv-text-muted/60" />
           <p className="text-[10px] font-black uppercase tracking-widest text-center">
             Missing Capability<br/>
-            <span className="text-red-500 opacity-70">{capability}</span>
+            <span className="text-sv-danger opacity-80">{capability}</span>
           </p>
         </div>
       </div>

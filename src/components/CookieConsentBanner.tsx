@@ -21,14 +21,14 @@ export default function CookieConsentBanner() {
 
   return (
     <div className="fixed bottom-4 inset-x-0 z-[200] px-4">
-      <div className="max-w-3xl mx-auto bg-white border border-slate-200 shadow-2xl rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-        <p className="text-xs text-slate-600 font-medium flex-1 leading-relaxed">
+      <div className="max-w-3xl mx-auto bg-sv-surface-elevated border border-sv-border shadow-2xl rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        <p className="text-xs text-sv-text-secondary font-medium flex-1 leading-relaxed">
           This admin console uses cookies to keep you signed in and protect your session. No tracking or advertising cookies are used.
         </p>
         <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
           <button
             onClick={() => decide('declined')}
-            className="flex-1 sm:flex-none px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-500 hover:bg-slate-50 transition-colors"
+            className="flex-1 sm:flex-none px-4 py-2 rounded-xl border border-sv-border text-xs font-bold text-sv-text-secondary hover:bg-sv-surface-muted hover:text-sv-text-primary transition-colors"
           >
             Decline
           </button>
@@ -42,7 +42,7 @@ export default function CookieConsentBanner() {
             onClick={() => setVisible(false)}
             title="Ask me later"
             aria-label="Dismiss"
-            className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:bg-slate-50 transition-colors shrink-0"
+            className="w-8 h-8 rounded-xl flex items-center justify-center text-sv-text-muted hover:bg-sv-surface-muted hover:text-sv-text-primary transition-colors shrink-0"
           >
             <FiX size={14} />
           </button>

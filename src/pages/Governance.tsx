@@ -189,109 +189,100 @@ export default function Governance() {
     }, []);
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-700">
+        <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto animate-in fade-in duration-700">
             {/* 🏛️ APEX HEADER */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900 text-white p-8 rounded-[2rem] shadow-2xl shadow-slate-900/20 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-sv-surface-elevated text-sv-text-primary p-6 sm:p-8 rounded-2xl border border-sv-border shadow-sm relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-sv-primary/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
                 <div className="relative z-10">
-                    <h1 className="text-3xl font-black tracking-tight flex items-center gap-3">
-                        <FiShield className="text-primary" /> Institutional Governance
+                    <h1 className="text-2xl sm:text-3xl font-black tracking-tight flex items-center gap-3">
+                        <FiShield className="text-sv-primary" /> Institutional Governance
                     </h1>
-                    <p className="text-slate-400 mt-2 font-medium">Sovereign Control Plane & Forensic Trust (v107.6 APEX)</p>
+                    <p className="text-sv-text-muted mt-2 font-medium text-sm">Sovereign Control Plane & Forensic Trust (v107.6 APEX)</p>
                 </div>
 
-                <div className={`relative z-10 flex items-center gap-4 px-6 py-3 rounded-2xl border transition-all duration-500 ${isDegraded ? 'bg-red-500/10 border-red-500/50 text-red-400' : 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'}`}>
+                <div className={`relative z-10 flex items-center gap-4 px-6 py-3 rounded-xl border transition-all duration-500 ${isDegraded ? 'bg-sv-danger-soft border-sv-danger/30 text-sv-danger' : 'bg-sv-success-soft border-sv-success/30 text-sv-success'}`}>
                     <div className="relative">
                         <FiCpu className={`text-2xl ${!isDegraded && 'animate-spin-slow'}`} />
-                        <div className={`absolute top-0 right-0 w-2 h-2 rounded-full ${isDegraded ? 'bg-red-500 animate-pulse' : 'bg-emerald-500 animate-ping'}`}></div>
+                        <div className={`absolute top-0 right-0 w-2 h-2 rounded-full ${isDegraded ? 'bg-sv-danger animate-pulse' : 'bg-sv-success animate-ping'}`}></div>
                     </div>
                     <div>
-                        <p className="text-[10px] font-black uppercase tracking-widest opacity-60">Sentinel Gateway</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest opacity-70">Sentinel Gateway</p>
                         <p className="font-bold text-sm uppercase">{isDegraded ? 'DEGRADED (READ-ONLY)' : 'Apex-Stabilized (ACTIVE)'}</p>
                     </div>
                 </div>
             </div>
 
-            {/* 📊 GOVERNANCE METRICS
-                🛡️ [FIX] These three cards used to be hardcoded literals
-                ("100%" / "Verified" / "Clean, 0 Inconsistencies") regardless
-                of real state — an admin reading this page had no way to
-                know the numbers never moved. No backend endpoint computes
-                a quorum rate, a forensic-chain verification result, or a
-                PAJ inconsistency count (confirmed: no such field exists
-                anywhere in admin.controller.ts). Replaced with real counts
-                derived from the data this page already fetches (requests/
-                pajLogs) instead of inventing new backend work. */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+            {/* 📊 GOVERNANCE METRICS */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+                <div className="bg-sv-surface p-6 rounded-2xl border border-sv-border shadow-sm">
                     <div className="flex justify-between items-center mb-4">
-                        <div className="p-3 bg-blue-50 text-blue-600 rounded-xl"><FiUsers size={24} /></div>
-                        <span className="text-[10px] font-black text-slate-400 uppercase">Pending Requests</span>
+                        <div className="p-3 bg-sv-primary/10 text-sv-primary rounded-xl"><FiUsers size={24} /></div>
+                        <span className="text-[10px] font-black text-sv-text-muted uppercase">Pending Requests</span>
                     </div>
-                    <h3 className="text-2xl font-black text-slate-800">{requests.filter(r => r.status === 'PENDING').length}</h3>
-                    <p className="text-xs text-slate-500 mt-1 font-medium">Awaiting dual-authorization signature</p>
+                    <h3 className="text-2xl font-black text-sv-text-primary">{requests.filter(r => r.status === 'PENDING').length}</h3>
+                    <p className="text-xs text-sv-text-secondary mt-1 font-medium">Awaiting dual-authorization signature</p>
                 </div>
-                <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                <div className="bg-sv-surface p-6 rounded-2xl border border-sv-border shadow-sm">
                     <div className="flex justify-between items-center mb-4">
-                        <div className="p-3 bg-purple-50 text-purple-600 rounded-xl"><FiLock size={24} /></div>
-                        <span className="text-[10px] font-black text-slate-400 uppercase">In Cooldown</span>
+                        <div className="p-3 bg-sv-info-soft text-sv-info rounded-xl"><FiLock size={24} /></div>
+                        <span className="text-[10px] font-black text-sv-text-muted uppercase">In Cooldown</span>
                     </div>
-                    <h3 className="text-2xl font-black text-slate-800">{requests.filter(r => r.status === 'COOLDOWN').length}</h3>
-                    <p className="text-xs text-slate-500 mt-1 font-medium">Approved, pending time-lock expiry</p>
+                    <h3 className="text-2xl font-black text-sv-text-primary">{requests.filter(r => r.status === 'COOLDOWN').length}</h3>
+                    <p className="text-xs text-sv-text-secondary mt-1 font-medium">Approved, pending time-lock expiry</p>
                 </div>
-                <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                <div className="bg-sv-surface p-6 rounded-2xl border border-sv-border shadow-sm">
                     <div className="flex justify-between items-center mb-4">
-                        <div className="p-3 bg-orange-50 text-orange-600 rounded-xl"><FiActivity size={24} /></div>
-                        <span className="text-[10px] font-black text-slate-400 uppercase">PAJ Entries (buffer)</span>
+                        <div className="p-3 bg-sv-warning-soft text-sv-warning rounded-xl"><FiActivity size={24} /></div>
+                        <span className="text-[10px] font-black text-sv-text-muted uppercase">PAJ Entries (buffer)</span>
                     </div>
-                    <h3 className="text-2xl font-black text-slate-800">{pajLogs.length}</h3>
-                    <p className="text-xs text-slate-500 mt-1 font-medium">No automated consistency check exists yet</p>
+                    <h3 className="text-2xl font-black text-sv-text-primary">{pajLogs.length}</h3>
+                    <p className="text-xs text-sv-text-secondary mt-1 font-medium">No automated consistency check exists yet</p>
                 </div>
             </div>
 
             {/* 📑 MAIN INTERFACE */}
-            <div className="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
-                <div className="flex border-b border-slate-50">
+            <div className="bg-sv-surface rounded-2xl border border-sv-border shadow-sm overflow-hidden">
+                <div className="flex border-b border-sv-border overflow-x-auto scrollbar-thin scrollbar-thumb-sv-border">
                     <button 
                         onClick={() => setActiveTab('quorum')}
-                        className={`flex-1 py-6 font-black uppercase text-xs tracking-widest transition-all ${activeTab === 'quorum' ? 'text-primary bg-primary/5 border-b-2 border-primary' : 'text-slate-400 hover:text-slate-600'}`}
+                        className={`flex-1 min-w-[140px] py-4 sm:py-6 font-black uppercase text-xs tracking-widest transition-all whitespace-nowrap ${activeTab === 'quorum' ? 'text-sv-primary bg-sv-primary/5 border-b-2 border-sv-primary' : 'text-sv-text-muted hover:text-sv-text-primary'}`}
                     >
                         Quorum Pipeline
                     </button>
                     <button 
                         onClick={() => setActiveTab('paj')}
-                        className={`flex-1 py-6 font-black uppercase text-xs tracking-widest transition-all ${activeTab === 'paj' ? 'text-primary bg-primary/5 border-b-2 border-primary' : 'text-slate-400 hover:text-slate-600'}`}
+                        className={`flex-1 min-w-[160px] py-4 sm:py-6 font-black uppercase text-xs tracking-widest transition-all whitespace-nowrap ${activeTab === 'paj' ? 'text-sv-primary bg-sv-primary/5 border-b-2 border-sv-primary' : 'text-sv-text-muted hover:text-sv-text-primary'}`}
                     >
                         Privileged Journal (PAJ)
                     </button>
                     <button 
                         onClick={() => setActiveTab('forensics')}
-                        className={`flex-1 py-6 font-black uppercase text-xs tracking-widest transition-all ${activeTab === 'forensics' ? 'text-primary bg-primary/5 border-b-2 border-primary' : 'text-slate-400 hover:text-slate-600'}`}
+                        className={`flex-1 min-w-[150px] py-4 sm:py-6 font-black uppercase text-xs tracking-widest transition-all whitespace-nowrap ${activeTab === 'forensics' ? 'text-sv-primary bg-sv-primary/5 border-b-2 border-sv-primary' : 'text-sv-text-muted hover:text-sv-text-primary'}`}
                     >
                         Adaptive Anchoring
                     </button>
                     <button 
                         onClick={() => setActiveTab('registry')}
-                        className={`flex-1 py-6 font-black uppercase text-xs tracking-widest transition-all ${activeTab === 'registry' ? 'text-primary bg-primary/5 border-b-2 border-primary' : 'text-slate-400 hover:text-slate-600'}`}
+                        className={`flex-1 min-w-[150px] py-4 sm:py-6 font-black uppercase text-xs tracking-widest transition-all whitespace-nowrap ${activeTab === 'registry' ? 'text-sv-primary bg-sv-primary/5 border-b-2 border-sv-primary' : 'text-sv-text-muted hover:text-sv-text-primary'}`}
                     >
                         Sovereign Registry
                     </button>
                 </div>
 
-                <div className="p-8">
+                <div className="p-4 sm:p-6 lg:p-8">
                     {activeTab === 'quorum' && (
                         <div className="space-y-6">
                             <div className="flex justify-between items-center">
                                 <div>
-                                    <h2 className="text-xl font-black text-slate-800">Quorum Pipeline</h2>
-                                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-1">Governed Multi-Sig Authorization Queue</p>
+                                    <h2 className="text-xl font-black text-sv-text-primary">Quorum Pipeline</h2>
+                                    <p className="text-[10px] text-sv-text-muted font-black uppercase tracking-widest mt-1">Governed Multi-Sig Authorization Queue</p>
                                 </div>
-                                <button onClick={fetchData} className="p-2 text-slate-400 hover:text-primary transition-all"><FiRefreshCw /></button>
+                                <button onClick={fetchData} className="p-2 text-sv-text-muted hover:text-sv-primary transition-all"><FiRefreshCw /></button>
                             </div>
 
                             <div className="grid grid-cols-1 gap-4">
                                 {requests.length > 0 ? requests.map((req, i) => (
-                                    <div key={req._id || i} className="p-6 rounded-2xl border border-slate-100 bg-slate-50/30 hover:bg-white hover:shadow-lg transition-all group">
+                                    <div key={req._id || i} className="p-4 sm:p-6 rounded-xl border border-sv-border bg-sv-surface-muted hover:bg-sv-surface transition-all">
                                         <div className="flex flex-col md:flex-row justify-between gap-6">
                                             <div className="flex-1 space-y-4">
                                                 <div className="flex items-center gap-3">
@@ -302,41 +293,41 @@ export default function Governance() {
                                                     }`}>
                                                         {req.status}
                                                     </span>
-                                                    <h3 className="font-black text-slate-800 uppercase tracking-tight">{req.actionType}</h3>
+                                                    <h3 className="font-black text-sv-text-primary uppercase tracking-tight">{req.actionType}</h3>
                                                 </div>
 
-                                                <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
-                                                    <p className="text-xs text-slate-500 font-medium leading-relaxed">{req.description}</p>
+                                                <div className="bg-sv-surface p-4 rounded-xl border border-sv-border shadow-sm">
+                                                    <p className="text-xs text-sv-text-secondary font-medium leading-relaxed">{req.description}</p>
                                                 </div>
 
                                                 <div className="flex items-center gap-6">
                                                     <div className="flex -space-x-2">
                                                         {req.approvals.map((a: any, idx: number) => (
-                                                            <div key={idx} title={a.role} className="w-8 h-8 rounded-full border-2 border-white bg-slate-900 flex items-center justify-center text-[10px] font-black text-white uppercase">
+                                                            <div key={idx} title={a.role} className="w-8 h-8 rounded-full border-2 border-sv-border bg-sv-surface-elevated flex items-center justify-center text-[10px] font-black text-sv-text-primary uppercase">
                                                                 {a.role[0]}
                                                             </div>
                                                         ))}
                                                         {Array.from({ length: req.requiredApprovals - req.approvals.length }).map((_, idx) => (
-                                                            <div key={idx} className="w-8 h-8 rounded-full border-2 border-dashed border-slate-200 bg-slate-50 flex items-center justify-center text-[10px] text-slate-300">
+                                                            <div key={idx} className="w-8 h-8 rounded-full border-2 border-dashed border-sv-border bg-sv-surface flex items-center justify-center text-[10px] text-sv-text-muted">
                                                                 ?
                                                             </div>
                                                         ))}
                                                     </div>
                                                     <div>
-                                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Signatures</p>
-                                                        <p className="text-xs font-black text-slate-700">{req.approvals.length} / {req.requiredApprovals}</p>
+                                                        <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Signatures</p>
+                                                        <p className="text-xs font-black text-sv-text-primary">{req.approvals.length} / {req.requiredApprovals}</p>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div className="flex flex-col justify-between items-end gap-4 min-w-[200px]">
-                                                <div className="text-right">
-                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center justify-end gap-1">
+                                            <div className="flex flex-col justify-between items-start md:items-end gap-4 min-w-[200px]">
+                                                <div className="md:text-right">
+                                                    <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest flex items-center md:justify-end gap-1">
                                                         <FiClock /> {req.status === 'COOLDOWN' ? 'Cooldown Active' : 'Expires In'}
                                                     </p>
-                                                    <p className="text-sm font-black text-slate-800">
+                                                    <p className="text-sm font-black text-sv-text-primary">
                                                         {req.status === 'COOLDOWN' ? (
-                                                            <span className="text-blue-600 animate-pulse">
+                                                            <span className="text-sv-info animate-pulse">
                                                                 {new Date(req.cooldownEnd || '').toLocaleTimeString()}
                                                             </span>
                                                         ) : (
@@ -349,7 +340,7 @@ export default function Governance() {
                                                     {req.status === 'PENDING' && (
                                                         <button 
                                                             onClick={() => handleApprove(req._id)}
-                                                            className="bg-primary text-white text-[10px] font-black uppercase px-6 py-3 rounded-xl hover:scale-105 transition-all shadow-lg shadow-primary/20"
+                                                            className="bg-sv-primary text-sv-text-inverse text-[10px] font-black uppercase px-6 py-3 rounded-xl hover:bg-sv-primary-hover active:scale-95 transition-all shadow-sm"
                                                         >
                                                             Sign Transaction
                                                         </button>
@@ -357,7 +348,7 @@ export default function Governance() {
                                                     {req.status === 'COOLDOWN' && (
                                                         <button 
                                                             onClick={() => handleExecute(req._id)}
-                                                            className="bg-sv-primary text-sv-text-inverse text-[10px] font-black uppercase px-6 py-3 rounded-xl hover:scale-105 transition-all flex items-center gap-2"
+                                                            className="bg-sv-primary text-sv-text-inverse text-[10px] font-black uppercase px-6 py-3 rounded-xl hover:bg-sv-primary-hover active:scale-95 transition-all flex items-center gap-2"
                                                         >
                                                             <FiLock /> Commit Mutation
                                                         </button>
@@ -367,8 +358,8 @@ export default function Governance() {
                                         </div>
                                     </div>
                                 )) : (
-                                    <div className="py-20 text-center text-slate-400 border-2 border-dashed border-slate-100 rounded-3xl">
-                                        <FiActivity className="mx-auto text-slate-200 w-12 h-12 mb-4 animate-pulse" />
+                                    <div className="py-20 text-center text-sv-text-muted border-2 border-dashed border-sv-border rounded-2xl bg-sv-surface-muted">
+                                        <FiActivity className="mx-auto text-sv-text-muted w-12 h-12 mb-4 animate-pulse" />
                                         <p className="text-[10px] font-black uppercase tracking-[0.3em]">Governance Pipeline Clear</p>
                                     </div>
                                 )}
@@ -377,14 +368,14 @@ export default function Governance() {
                     )}
                     {activeTab === 'paj' && (
                         <div className="space-y-6">
-                            <div className="flex justify-between items-center">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div>
-                                    <h2 className="text-xl font-black text-slate-800">Privileged Action Journal (PAJ)</h2>
-                                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-1">Immutable Ledger of Administrative Decisions</p>
+                                    <h2 className="text-xl font-black text-sv-text-primary">Privileged Action Journal (PAJ)</h2>
+                                    <p className="text-[10px] text-sv-text-muted font-black uppercase tracking-widest mt-1">Immutable Ledger of Administrative Decisions</p>
                                 </div>
                                 <div className="flex gap-2">
-                                    <button onClick={fetchData} className="p-2 text-slate-400 hover:text-primary transition-all"><FiRefreshCw /></button>
-                                    <button className="bg-slate-100 text-slate-600 text-[10px] font-black uppercase px-4 py-2 rounded-lg hover:bg-slate-200 transition-all">Verify Chain</button>
+                                    <button onClick={fetchData} className="p-2 text-sv-text-muted hover:text-sv-primary transition-all"><FiRefreshCw /></button>
+                                    <button className="bg-sv-surface-muted text-sv-text-secondary border border-sv-border text-[10px] font-black uppercase px-4 py-2 rounded-xl hover:bg-sv-border transition-all">Verify Chain</button>
                                 </div>
                             </div>
 
@@ -392,17 +383,17 @@ export default function Governance() {
                                 {pajLogs.length > 0 ? pajLogs.map((log: any, i) => (
                                     <div 
                                         key={log._id || i} 
-                                        className={`p-6 rounded-2xl border bg-slate-50/30 transition-all hover:bg-white hover:shadow-md ${
-                                            log.riskTier === 'CRITICAL' ? 'border-red-200 bg-red-50/30' :
-                                            log.riskTier === 'HIGH' ? 'border-orange-200 bg-orange-50/30' :
-                                            'border-slate-100'
+                                        className={`p-4 sm:p-6 rounded-xl border transition-all ${
+                                            log.riskTier === 'CRITICAL' ? 'border-sv-danger/30 bg-sv-danger-soft' :
+                                            log.riskTier === 'HIGH' ? 'border-sv-warning/30 bg-sv-warning-soft' :
+                                            'border-sv-border bg-sv-surface-muted'
                                         }`}
                                     >
-                                        <div className="flex items-start justify-between mb-4">
+                                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-4">
                                             <div className="flex items-center gap-4">
-                                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-sm shadow-sm ${
+                                                <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-black text-sm shadow-sm ${
                                                     log.riskTier === 'CRITICAL' ? 'bg-sv-danger text-sv-text-inverse' :
-                                                    log.riskTier === 'HIGH' ? 'bg-orange-500 text-white' :
+                                                    log.riskTier === 'HIGH' ? 'bg-sv-warning text-sv-text-inverse' :
                                                     'bg-sv-primary text-sv-text-inverse'
                                                 }`}>
                                                     {(log.admin?.name || 'S')[0]}
@@ -410,31 +401,31 @@ export default function Governance() {
                                                 <div>
                                                     <div className="flex items-center gap-2">
                                                         <span className={`text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-widest ${
-                                                            log.riskTier === 'CRITICAL' ? 'bg-sv-danger-soft text-sv-danger' :
-                                                            log.riskTier === 'HIGH' ? 'bg-sv-warning-soft text-sv-warning' :
-                                                            'bg-slate-200 text-slate-700'
+                                                            log.riskTier === 'CRITICAL' ? 'bg-sv-danger-soft text-sv-danger border border-sv-danger/30' :
+                                                            log.riskTier === 'HIGH' ? 'bg-sv-warning-soft text-sv-warning border border-sv-warning/30' :
+                                                            'bg-sv-surface text-sv-text-secondary border border-sv-border'
                                                         }`}>
                                                             {log.actionType}
                                                         </span>
-                                                        <p className="text-sm font-black text-slate-800">{log.admin?.name || 'System Actor'}</p>
+                                                        <p className="text-sm font-black text-sv-text-primary">{log.admin?.name || 'System Actor'}</p>
                                                     </div>
-                                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">
+                                                    <p className="text-[10px] text-sv-text-muted font-bold uppercase tracking-widest mt-1">
                                                         Risk Tier: <span className={
-                                                            log.riskTier === 'CRITICAL' ? 'text-red-600' :
-                                                            log.riskTier === 'HIGH' ? 'text-orange-600' :
-                                                            'text-slate-600'
+                                                            log.riskTier === 'CRITICAL' ? 'text-sv-danger' :
+                                                            log.riskTier === 'HIGH' ? 'text-sv-warning' :
+                                                            'text-sv-text-secondary'
                                                         }>{log.riskTier || 'NORMAL'}</span>
                                                     </p>
                                                 </div>
                                             </div>
-                                            <div className="text-right">
-                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{new Date(log.createdAt).toLocaleTimeString()}</p>
-                                                <div className="mt-2 flex items-center gap-2 justify-end">
-                                                    <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Anomaly</span>
+                                            <div className="sm:text-right">
+                                                <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">{new Date(log.createdAt).toLocaleTimeString()}</p>
+                                                <div className="mt-2 flex items-center gap-2 sm:justify-end">
+                                                    <span className="text-[8px] font-black text-sv-text-muted uppercase tracking-widest">Anomaly</span>
                                                     <span className={`text-xs font-black ${
-                                                        (log.anomalyScore || 0) > 70 ? 'text-red-600' :
-                                                        (log.anomalyScore || 0) > 40 ? 'text-orange-600' :
-                                                        'text-emerald-600'
+                                                        (log.anomalyScore || 0) > 70 ? 'text-sv-danger' :
+                                                        (log.anomalyScore || 0) > 40 ? 'text-sv-warning' :
+                                                        'text-sv-success'
                                                     }`}>
                                                         {log.anomalyScore || 0}%
                                                     </span>
@@ -444,27 +435,27 @@ export default function Governance() {
 
                                         {/* 🛡️ [v107.7] Semantic Summary & Risk Visualization */}
                                         <div className="bg-sv-surface rounded-xl border border-sv-border p-4 mb-4 shadow-sm">
-                                            <div className="text-[9px] font-black uppercase text-slate-400 tracking-[0.2em] mb-2">Intent Visualization</div>
-                                            <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                                            <div className="text-[9px] font-black uppercase text-sv-text-muted tracking-[0.2em] mb-2">Intent Visualization</div>
+                                            <p className="text-xs text-sv-text-secondary font-medium leading-relaxed">
                                                 {log.semanticSummary || log.description}
                                             </p>
                                         </div>
 
-                                        <div className="flex items-center justify-between">
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                             <div className="flex items-center gap-3">
                                                 <span className="px-2 py-1 bg-sv-success-soft text-sv-success rounded-lg text-[9px] font-black uppercase tracking-widest border border-sv-success/30 flex items-center gap-1">
                                                     <FiCheckCircle size={10} /> Attested
                                                 </span>
-                                                <span className="text-[10px] font-mono text-slate-300">
+                                                <span className="text-[10px] font-mono text-sv-text-muted">
                                                     {(log.entryHash || 'pending').substring(0, 16)}...
                                                 </span>
                                             </div>
-                                            <div className="w-32 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                            <div className="w-full sm:w-32 h-1.5 bg-sv-border rounded-full overflow-hidden">
                                                 <div 
                                                     className={`h-full transition-all duration-1000 ${
-                                                        (log.anomalyScore || 0) > 70 ? 'bg-red-500' :
-                                                        (log.anomalyScore || 0) > 40 ? 'bg-orange-500' :
-                                                        'bg-emerald-500'
+                                                        (log.anomalyScore || 0) > 70 ? 'bg-sv-danger' :
+                                                        (log.anomalyScore || 0) > 40 ? 'bg-sv-warning' :
+                                                        'bg-sv-success'
                                                     }`}
                                                     style={{ width: `${log.anomalyScore || 5}%` }}
                                                 />
@@ -472,8 +463,8 @@ export default function Governance() {
                                         </div>
                                     </div>
                                 )) : (
-                                    <div className="py-20 text-center text-slate-400 border-2 border-dashed border-slate-100 rounded-3xl">
-                                        <FiLock className="mx-auto text-slate-200 w-12 h-12 mb-4" />
+                                    <div className="py-20 text-center text-sv-text-muted border-2 border-dashed border-sv-border rounded-2xl bg-sv-surface-muted">
+                                        <FiLock className="mx-auto text-sv-text-muted w-12 h-12 mb-4" />
                                         <p className="text-[10px] font-black uppercase tracking-[0.3em]">No privileged logs in current buffer.</p>
                                     </div>
                                 )}
@@ -483,76 +474,68 @@ export default function Governance() {
 
                     {activeTab === 'forensics' && (
                         <div className="space-y-8">
-                            <div className="flex justify-between items-center">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div>
-                                    <h2 className="text-xl font-black text-slate-800">Adaptive Anchoring Pipeline</h2>
-                                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-1">Transaction-Bound Notarization Status</p>
+                                    <h2 className="text-xl font-black text-sv-text-primary">Adaptive Anchoring Pipeline</h2>
+                                    <p className="text-[10px] text-sv-text-muted font-black uppercase tracking-widest mt-1">Transaction-Bound Notarization Status</p>
                                 </div>
                                 <button 
                                     onClick={handleManualAnchor}
                                     disabled={isAnchoring}
-                                    className="bg-primary text-white text-[10px] font-black uppercase px-6 py-3 rounded-xl shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 disabled:opacity-50"
+                                    className="bg-sv-primary text-sv-text-inverse text-[10px] font-black uppercase px-6 py-3 rounded-xl hover:bg-sv-primary-hover active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-sm"
                                 >
                                     {isAnchoring ? <FiRefreshCw className="animate-spin" /> : <FiRefreshCw />}
                                     {isAnchoring ? 'Anchoring...' : 'Trigger Manual Anchor'}
                                 </button>
                             </div>
 
-                            {/* 🛡️ [FIX] All 4 tiles below used to be hardcoded literals
-                                (42 / ~14m / v107.6 / WORM+"S3 Object Lock: ON"). Anchors
-                                Recorded/Last Anchor/Anchoring Schedule are now real,
-                                backed by AuditLog.isAnchor data that ForensicChainService
-                                has been writing continuously via its own adaptive
-                                threshold (GOVERNANCE-ANCHOR-1) — only External Proof
-                                stays "Not tracked", since no WORM/external-ledger
-                                integration exists anywhere in this codebase, confirmed. */}
-                            <div className="p-8 rounded-3xl bg-slate-50 border border-slate-100 relative overflow-hidden">
+                            <div className="p-6 sm:p-8 rounded-2xl bg-sv-surface-muted border border-sv-border relative overflow-hidden">
                                 <div className="absolute top-0 right-0 p-4">
-                                    <FiActivity className="text-slate-200" size={64} />
+                                    <FiActivity className="text-sv-border" size={64} />
                                 </div>
-                                <div className="relative z-10 grid grid-cols-1 md:grid-cols-4 gap-8">
+                                <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                                     <div className="space-y-1">
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Anchors Recorded</p>
-                                        <p className="text-3xl font-black text-slate-800">{anchors.length}</p>
-                                        <p className="text-[10px] text-slate-400 font-bold uppercase">Total in history</p>
+                                        <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Anchors Recorded</p>
+                                        <p className="text-3xl font-black text-sv-text-primary">{anchors.length}</p>
+                                        <p className="text-[10px] text-sv-text-muted font-bold uppercase">Total in history</p>
                                     </div>
                                     <div className="space-y-1">
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Last Anchor</p>
-                                        <p className="text-3xl font-black text-slate-800">{anchors[0]?.createdAt ? new Date(anchors[0].createdAt).toLocaleTimeString() : '—'}</p>
-                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{anchors.length ? 'Most recent' : 'None yet'}</p>
+                                        <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Last Anchor</p>
+                                        <p className="text-3xl font-black text-sv-text-primary">{anchors[0]?.createdAt ? new Date(anchors[0].createdAt).toLocaleTimeString() : '—'}</p>
+                                        <p className="text-[10px] text-sv-text-muted font-bold uppercase tracking-widest">{anchors.length ? 'Most recent' : 'None yet'}</p>
                                     </div>
                                     <div className="space-y-1">
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Anchoring Schedule</p>
-                                        <p className="text-xl font-black text-slate-800">Adaptive</p>
-                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Every 100 entries or 5 min, plus manual</p>
+                                        <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Anchoring Schedule</p>
+                                        <p className="text-xl font-black text-sv-text-primary">Adaptive</p>
+                                        <p className="text-[10px] text-sv-text-muted font-bold uppercase tracking-widest">Every 100 entries or 5 min, plus manual</p>
                                     </div>
                                     <div className="space-y-1">
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">External Proof</p>
-                                        <p className="text-xl font-black text-slate-400">Not tracked</p>
-                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">No WORM integration yet</p>
+                                        <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">External Proof</p>
+                                        <p className="text-xl font-black text-sv-text-muted">Not tracked</p>
+                                        <p className="text-[10px] text-sv-text-muted font-bold uppercase tracking-widest">No WORM integration yet</p>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="space-y-4">
-                                <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Recent Anchor History</h3>
+                                <h3 className="text-xs font-black text-sv-text-muted uppercase tracking-widest ml-1">Recent Anchor History</h3>
                                 <div className="grid grid-cols-1 gap-3">
                                     {anchors.length > 0 ? anchors.slice(0, 5).map((item, i) => (
-                                        <div key={i} className="p-4 rounded-xl border border-slate-50 flex justify-between items-center bg-white shadow-sm hover:shadow-md transition-all">
+                                        <div key={i} className="p-4 rounded-xl border border-sv-border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 bg-sv-surface hover:bg-sv-surface-muted transition-all">
                                             <div className="flex items-center gap-4">
-                                                <div className="p-2 bg-slate-900 text-white rounded-lg text-xs"><FiActivity /></div>
+                                                <div className="p-2 bg-sv-primary/10 text-sv-primary rounded-lg text-xs"><FiActivity /></div>
                                                 <div>
-                                                    <p className="text-xs font-black text-slate-800">ANCHOR_{item._id.substring(item._id.length - 8).toUpperCase()}</p>
-                                                    <p className="text-[9px] font-mono text-slate-400">Root: {(item.merkleRoot || 'unknown').substring(0, 12)}</p>
+                                                    <p className="text-xs font-black text-sv-text-primary">ANCHOR_{item._id.substring(item._id.length - 8).toUpperCase()}</p>
+                                                    <p className="text-[9px] font-mono text-sv-text-muted">Root: {(item.merkleRoot || 'unknown').substring(0, 12)}</p>
                                                 </div>
                                             </div>
-                                            <div className="text-right">
-                                                <p className="text-[10px] font-black text-slate-800">{item.entryCount != null ? `${item.entryCount} Entries` : '—'}</p>
-                                                <p className="text-[8px] text-slate-400 uppercase font-black">Finalized {new Date(item.createdAt).toLocaleTimeString()}</p>
+                                            <div className="sm:text-right">
+                                                <p className="text-[10px] font-black text-sv-text-primary">{item.entryCount != null ? `${item.entryCount} Entries` : '—'}</p>
+                                                <p className="text-[8px] text-sv-text-muted uppercase font-black">Finalized {new Date(item.createdAt).toLocaleTimeString()}</p>
                                             </div>
                                         </div>
                                     )) : (
-                                        <div className="py-8 text-center text-slate-400 italic text-xs">No anchor history available.</div>
+                                        <div className="py-8 text-center text-sv-text-muted italic text-xs">No anchor history available.</div>
                                     )}
                                 </div>
                             </div>
@@ -560,7 +543,7 @@ export default function Governance() {
                     )}
 
                     {activeTab === 'registry' && (
-                        <div className="py-20 text-center text-slate-400 italic">
+                        <div className="py-20 text-center text-sv-text-muted italic">
                              Sovereign Registry Access Point (Restricted to Quorum-1 Admins)
                         </div>
                     )}
@@ -568,11 +551,11 @@ export default function Governance() {
             </div>
 
             {/* 🛡️ SECURITY ADVISORY */}
-            <div className="bg-blue-50 border border-blue-100 p-6 rounded-2xl flex items-start gap-4">
-                <FiAlertTriangle className="text-blue-500 text-xl mt-1 shrink-0" />
+            <div className="bg-sv-info-soft border border-sv-info/20 p-4 sm:p-6 rounded-2xl flex items-start gap-4">
+                <FiAlertTriangle className="text-sv-info text-xl mt-1 shrink-0" />
                 <div>
-                    <h5 className="font-black text-blue-900 text-sm uppercase">Governance Note</h5>
-                    <p className="text-blue-700 text-xs mt-1 leading-relaxed font-medium">
+                    <h5 className="font-black text-sv-info text-sm uppercase">Governance Note</h5>
+                    <p className="text-sv-text-secondary text-xs mt-1 leading-relaxed font-medium">
                         All administrative actions on this dashboard are monitored by the <strong>ForensicChainService</strong>. 
                         Critical registry mutations require dual-signature consensus and are subject to a mandatory time-lock cooldown period.
                     </p>

@@ -27,7 +27,7 @@ export const TreasuryMetrics: React.FC<TreasuryProps> = memo(({ data }) => (
         <div className="flex items-center justify-between mb-10">
             <h2 className="font-black text-heading uppercase tracking-[0.2em] flex items-center gap-4 text-xs">
                 <div className="p-2.5 bg-surface shadow-sm border border-subtle rounded-xl shrink-0 group-hover:scale-110 transition-transform">
-                    <FiDollarSign className="text-muted group-hover:text-emerald-400 transition-colors" />
+                    <FiDollarSign className="text-muted group-hover:text-sv-success transition-colors" />
                 </div>
                 Infrastructure Treasury Health (Live)
             </h2>
@@ -38,9 +38,9 @@ export const TreasuryMetrics: React.FC<TreasuryProps> = memo(({ data }) => (
             <div>
                 <p className="text-[10px] font-black text-muted uppercase tracking-[0.2em] mb-3">Liquidity Score</p>
                 <div className="flex items-center gap-4">
-                    <MetricValue value={data.liquidityScore} suffix="%" label="Liquidity Score" color={data.liquidityScore > 80 ? 'text-emerald-500' : 'text-amber-500'} />
+                    <MetricValue value={data.liquidityScore} suffix="%" label="Liquidity Score" color={data.liquidityScore > 80 ? 'text-sv-success' : 'text-sv-warning'} />
                     <div className="h-1.5 w-16 bg-surface rounded-full overflow-hidden shrink-0 border border-subtle">
-                        <div className={`h-full ${data.liquidityScore > 80 ? 'bg-emerald-500' : 'bg-amber-500'}`} style={{ width: `${data.liquidityScore}%` }} />
+                        <div className={`h-full ${data.liquidityScore > 80 ? 'bg-sv-success' : 'bg-sv-warning'}`} style={{ width: `${data.liquidityScore}%` }} />
                     </div>
                 </div>
             </div>
@@ -65,7 +65,7 @@ export const TreasuryMetrics: React.FC<TreasuryProps> = memo(({ data }) => (
                 <MetricValue
                     value={data.exposureRatio.toFixed(3)}
                     label="Exposure Ratio"
-                    color={data.exposureRatio > 1 ? 'text-red-500' : 'text-emerald-500'}
+                    color={data.exposureRatio > 1 ? 'text-sv-danger' : 'text-sv-success'}
                     trend={data.exposureRatio > 1 ? 'up' : 'down'}
                 />
             </div>
@@ -80,7 +80,7 @@ export const TreasuryMetrics: React.FC<TreasuryProps> = memo(({ data }) => (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mt-10 pt-10 border-t border-subtle">
             <div>
                 <p className="text-[10px] font-black text-muted uppercase tracking-[0.2em] mb-3">Platform Revenue</p>
-                <MetricValue value={formatCurrency(data.platformRevenue?.total ?? 0)} label="Platform Revenue" color="text-emerald-500" />
+                <MetricValue value={formatCurrency(data.platformRevenue?.total ?? 0)} label="Platform Revenue" color="text-sv-success" />
                 <div className="mt-3 space-y-1.5 text-[10px] font-bold text-muted">
                     <div className="flex justify-between gap-4"><span>Ads</span><span className="text-heading">{formatCurrency(data.platformRevenue?.adRevenue ?? 0)}</span></div>
                     <div className="flex justify-between gap-4"><span>Subscriptions</span><span className="text-heading">{formatCurrency(data.platformRevenue?.subscriptionRevenue ?? 0)}</span></div>
@@ -90,7 +90,7 @@ export const TreasuryMetrics: React.FC<TreasuryProps> = memo(({ data }) => (
 
             <div>
                 <p className="text-[10px] font-black text-muted uppercase tracking-[0.2em] mb-3">Refund Liability (Buyer/Guest)</p>
-                <MetricValue value={formatCurrency(data.totalRefundLiability ?? 0)} label="Refund Liability" color={data.totalRefundLiability > 0 ? 'text-amber-500' : 'text-muted'} />
+                <MetricValue value={formatCurrency(data.totalRefundLiability ?? 0)} label="Refund Liability" color={data.totalRefundLiability > 0 ? 'text-sv-warning' : 'text-muted'} />
             </div>
 
             <div>
@@ -98,7 +98,7 @@ export const TreasuryMetrics: React.FC<TreasuryProps> = memo(({ data }) => (
                 <MetricValue
                     value={formatCurrency(data.netSpendableBalance ?? 0)}
                     label="Net Spendable Balance"
-                    color={data.netSpendableBalance < 0 ? 'text-red-500' : 'text-emerald-500'}
+                    color={data.netSpendableBalance < 0 ? 'text-sv-danger' : 'text-sv-success'}
                 />
             </div>
         </div>

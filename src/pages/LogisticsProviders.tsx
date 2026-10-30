@@ -149,57 +149,57 @@ function LogisticsProvidersInner() {
 
   if (loading) {
     return (
-      <div className="p-6 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="p-8 flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sv-primary"></div>
       </div>
     );
   }
 
   if (loadError) {
     return (
-      <div className="p-8 rounded-2xl bg-red-50 border border-red-100 flex flex-col items-center text-center gap-3">
-        <FiAlertCircle className="text-red-600 text-2xl" />
-        <p className="text-xs text-red-700 font-bold uppercase tracking-tight">{loadError}</p>
-        <button onClick={fetchConfigs} className="text-xs font-black uppercase tracking-widest text-red-700 underline">Retry</button>
+      <div className="p-8 rounded-2xl bg-sv-danger-soft border border-sv-danger/30 flex flex-col items-center text-center gap-3">
+        <FiAlertCircle className="text-sv-danger text-2xl" />
+        <p className="text-xs text-sv-danger font-bold uppercase tracking-tight">{loadError}</p>
+        <button onClick={fetchConfigs} className="text-xs font-black uppercase tracking-widest text-sv-danger underline">Retry</button>
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-7xl mx-auto">
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-white tracking-tight uppercase">Logistics Providers</h1>
-          <p className="text-zinc-500 font-medium mt-1 uppercase text-xs tracking-[0.2em]">
+          <h1 className="text-2xl sm:text-3xl font-black text-sv-text-primary tracking-tight uppercase">Logistics Providers</h1>
+          <p className="text-sv-text-muted font-medium mt-1 uppercase text-xs tracking-[0.2em]">
             Courier accounts &amp; pricing — "Connected" means a real integration exists for this code today
           </p>
         </div>
         <button
           onClick={startCreate}
-          className="flex items-center gap-2 px-4 py-2.5 bg-sv-primary text-sv-text-inverse text-xs font-black uppercase tracking-widest rounded-xl hover:opacity-90 transition-all"
+          className="flex items-center gap-2 px-4 py-2.5 bg-sv-primary text-sv-text-inverse text-xs font-black uppercase tracking-widest rounded-xl hover:bg-sv-primary-hover transition-all"
         >
           <FiPlus /> Add Provider
         </button>
       </div>
 
       {showForm && (
-        <div className="mb-8 bg-sv-surface-elevated/50 rounded-2xl border border-sv-border p-6 space-y-4">
-          <h2 className="text-sm font-black text-white uppercase tracking-widest">{editingId ? 'Edit Provider' : 'New Provider'}</h2>
+        <div className="bg-sv-surface rounded-2xl border border-sv-border p-6 space-y-4 shadow-sm">
+          <h2 className="text-sm font-black text-sv-text-primary uppercase tracking-widest">{editingId ? 'Edit Provider' : 'New Provider'}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <input
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
               placeholder="e.g. GIG Logistics — Lagos"
-              className="h-11 px-4 rounded-xl border border-sv-border bg-sv-surface text-sm text-white placeholder:text-zinc-500"
+              className="h-11 px-4 rounded-xl border border-sv-border bg-sv-surface-muted text-sm text-sv-text-primary placeholder:text-sv-text-muted focus:outline-none focus:border-sv-primary transition-all"
             />
             <div>
               <input
                 value={form.providerCode}
                 onChange={(e) => setForm((f) => ({ ...f, providerCode: e.target.value.toUpperCase() }))}
                 placeholder="Provider code, e.g. GIG"
-                className="h-11 px-4 rounded-xl border border-sv-border bg-sv-surface text-sm text-white placeholder:text-zinc-500 w-full"
+                className="h-11 px-4 rounded-xl border border-sv-border bg-sv-surface-muted text-sm text-sv-text-primary placeholder:text-sv-text-muted focus:outline-none focus:border-sv-primary transition-all w-full"
               />
-              <p className="text-[10px] text-zinc-500 mt-1">
+              <p className="text-[10px] text-sv-text-muted mt-1">
                 Connected codes today: {implementedCodes.join(', ') || 'none'} — any other code saves as config only, not yet callable.
               </p>
             </div>
@@ -207,19 +207,19 @@ function LogisticsProvidersInner() {
               value={form.serviceAreaStates}
               onChange={(e) => setForm((f) => ({ ...f, serviceAreaStates: e.target.value }))}
               placeholder="Service area states, comma-separated (blank = nationwide)"
-              className="h-11 px-4 rounded-xl border border-sv-border bg-sv-surface text-sm text-white placeholder:text-zinc-500 sm:col-span-2"
+              className="h-11 px-4 rounded-xl border border-sv-border bg-sv-surface-muted text-sm text-sv-text-primary placeholder:text-sv-text-muted focus:outline-none focus:border-sv-primary transition-all sm:col-span-2"
             />
             <input
               type="password"
               value={form.apiKey}
               onChange={(e) => setForm((f) => ({ ...f, apiKey: e.target.value }))}
               placeholder={editingId ? 'Leave blank to keep current API key' : 'API key (optional — stored encrypted)'}
-              className="h-11 px-4 rounded-xl border border-sv-border bg-sv-surface text-sm text-white placeholder:text-zinc-500 sm:col-span-2"
+              className="h-11 px-4 rounded-xl border border-sv-border bg-sv-surface-muted text-sm text-sv-text-primary placeholder:text-sv-text-muted focus:outline-none focus:border-sv-primary transition-all sm:col-span-2"
             />
             <select
               value={form.pricingType}
               onChange={(e) => setForm((f) => ({ ...f, pricingType: e.target.value as 'FLAT' | 'PER_KG' }))}
-              className="h-11 px-4 rounded-xl border border-sv-border bg-sv-surface text-sm text-white"
+              className="h-11 px-4 rounded-xl border border-sv-border bg-sv-surface-muted text-sm text-sv-text-primary focus:outline-none focus:border-sv-primary transition-all"
             >
               <option value="FLAT">Flat fee</option>
               <option value="PER_KG">Per kg</option>
@@ -229,73 +229,73 @@ function LogisticsProvidersInner() {
                 type="number" min={0} value={form.baseFeeKobo}
                 onChange={(e) => setForm((f) => ({ ...f, baseFeeKobo: e.target.value }))}
                 placeholder="Base fee (₦)"
-                className="h-11 px-4 rounded-xl border border-sv-border bg-sv-surface text-sm text-white placeholder:text-zinc-500"
+                className="h-11 px-4 rounded-xl border border-sv-border bg-sv-surface-muted text-sm text-sv-text-primary placeholder:text-sv-text-muted focus:outline-none focus:border-sv-primary transition-all"
               />
             ) : (
               <input
                 type="number" min={0} value={form.perKgFeeKobo}
                 onChange={(e) => setForm((f) => ({ ...f, perKgFeeKobo: e.target.value }))}
                 placeholder="Fee per kg (₦)"
-                className="h-11 px-4 rounded-xl border border-sv-border bg-sv-surface text-sm text-white placeholder:text-zinc-500"
+                className="h-11 px-4 rounded-xl border border-sv-border bg-sv-surface-muted text-sm text-sv-text-primary placeholder:text-sv-text-muted focus:outline-none focus:border-sv-primary transition-all"
               />
             )}
           </div>
           {formError && <p className="text-xs text-sv-danger font-bold">{formError}</p>}
           <div className="flex gap-3">
-            <button onClick={submitForm} className="px-5 py-2.5 bg-sv-primary text-sv-text-inverse text-xs font-black uppercase tracking-widest rounded-xl">
+            <button onClick={submitForm} className="px-5 py-2.5 bg-sv-primary text-sv-text-inverse text-xs font-black uppercase tracking-widest rounded-xl hover:bg-sv-primary-hover transition-all">
               {editingId ? 'Save Changes' : 'Create Provider'}
             </button>
-            <button onClick={() => setShowForm(false)} className="px-5 py-2.5 text-xs font-black uppercase tracking-widest text-zinc-400">
+            <button onClick={() => setShowForm(false)} className="px-5 py-2.5 text-xs font-black uppercase tracking-widest text-sv-text-muted hover:text-sv-text-primary transition-all">
               Cancel
             </button>
           </div>
         </div>
       )}
 
-      <div className="bg-sv-surface-elevated/50 rounded-2xl border border-sv-border backdrop-blur-sm overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+      <div className="bg-sv-surface rounded-2xl border border-sv-border overflow-hidden shadow-sm">
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-sv-border">
+          <table className="w-full text-left border-collapse min-w-[700px]">
             <thead>
-              <tr className="border-b border-sv-border bg-sv-surface/5">
-                <th className="px-6 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Provider</th>
-                <th className="px-6 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Code</th>
-                <th className="px-6 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Coverage</th>
-                <th className="px-6 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Connection</th>
-                <th className="px-6 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Active</th>
-                <th className="px-6 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em] text-right">Action</th>
+              <tr className="border-b border-sv-border bg-sv-surface-muted/50">
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Provider</th>
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Code</th>
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Coverage</th>
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Connection</th>
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Active</th>
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em] text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-sv-border">
               {configs.map((config) => (
-                <tr key={config._id} className="hover:bg-sv-surface-muted transition-colors group">
-                  <td className="px-6 py-5">
+                <tr key={config._id} className="hover:bg-sv-surface-muted/60 transition-colors group">
+                  <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="p-2.5 bg-sv-surface-muted rounded-lg text-sv-text-muted border border-sv-border">
+                      <div className="p-2.5 bg-sv-surface-muted rounded-lg text-sv-text-muted border border-sv-border group-hover:text-sv-text-primary transition-colors">
                         <FiTruck size={14} />
                       </div>
                       <span className="font-black text-sv-text-primary text-sm">{config.name}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-5 text-xs font-bold text-sv-text-muted">{config.providerCode}</td>
-                  <td className="px-6 py-5 text-xs text-sv-text-muted">{config.serviceAreaStates.length ? config.serviceAreaStates.join(', ') : 'Nationwide'}</td>
-                  <td className="px-6 py-5">
+                  <td className="px-6 py-4 text-xs font-bold text-sv-text-muted">{config.providerCode}</td>
+                  <td className="px-6 py-4 text-xs text-sv-text-muted">{config.serviceAreaStates.length ? config.serviceAreaStates.join(', ') : 'Nationwide'}</td>
+                  <td className="px-6 py-4">
                     {config.isImplemented ? (
                       <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-sv-success"><FiCheckCircle /> Connected</span>
                     ) : (
-                      <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-zinc-500"><FiAlertCircle /> Not Implemented</span>
+                      <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-sv-text-muted"><FiAlertCircle /> Not Implemented</span>
                     )}
                   </td>
-                  <td className="px-6 py-5 text-xs font-bold">{config.isActive ? <span className="text-sv-success">Yes</span> : <span className="text-zinc-500">No</span>}</td>
-                  <td className="px-6 py-5 text-right">
+                  <td className="px-6 py-4 text-xs font-bold">{config.isActive ? <span className="text-sv-success">Yes</span> : <span className="text-sv-text-muted">No</span>}</td>
+                  <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-3">
-                      <button onClick={() => startEdit(config)} className="text-sv-text-muted hover:text-sv-text-primary"><FiEdit2 size={14} /></button>
-                      <button onClick={() => requestDelete(config._id)} className="text-sv-text-muted hover:text-sv-danger"><FiTrash2 size={14} /></button>
+                      <button onClick={() => startEdit(config)} className="text-sv-text-muted hover:text-sv-text-primary transition-colors"><FiEdit2 size={14} /></button>
+                      <button onClick={() => requestDelete(config._id)} className="text-sv-text-muted hover:text-sv-danger transition-colors"><FiTrash2 size={14} /></button>
                     </div>
                   </td>
                 </tr>
               ))}
               {configs.length === 0 && (
-                <tr><td colSpan={6} className="px-6 py-10 text-center text-xs text-zinc-500 uppercase tracking-widest">No providers configured yet</td></tr>
+                <tr><td colSpan={6} className="px-6 py-10 text-center text-xs text-sv-text-muted uppercase tracking-widest">No providers configured yet</td></tr>
               )}
             </tbody>
           </table>

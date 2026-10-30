@@ -44,37 +44,37 @@ export default function SecurityQuestionModal({ isOpen, onClose, onSubmit }: Pro
 
     return (
         <AnimatePresence>
-            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    className="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl"
+                    className="bg-sv-surface rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl border border-sv-border"
                 >
-                    <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-[#F5F5DC]/30">
-                        <div className="flex items-center gap-2 text-[#4A3728]">
-                            <FiHelpCircle className="text-xl text-[#D4AF37]" />
+                    <div className="px-6 py-4 border-b border-sv-border flex items-center justify-between bg-sv-surface-muted">
+                        <div className="flex items-center gap-2 text-sv-text-primary">
+                            <FiHelpCircle className="text-xl text-sv-primary" />
                             <h3 className="font-bold text-lg">Security Questions</h3>
                         </div>
-                        <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded-full transition-colors">
-                            <FiX className="text-gray-400" />
+                        <button onClick={onClose} className="p-1 hover:bg-sv-surface rounded-full transition-colors">
+                            <FiX className="text-sv-text-muted" />
                         </button>
                     </div>
 
-                    <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
-                        <p className="text-sm text-gray-500 bg-blue-50 p-3 rounded-lg border border-blue-100">
+                    <div className="p-4 sm:p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+                        <p className="text-sm text-sv-info bg-sv-info-soft p-3 rounded-xl border border-sv-info/20">
                             Please set 3 security questions. These will be used to recover your account if you lose your 2FA device.
                         </p>
 
                         {selections.map((item, index) => (
-                            <div key={index} className="space-y-3 p-4 border border-gray-100 rounded-xl bg-gray-50/50">
-                                <label className="block text-sm font-bold text-[#4A3728]">
+                            <div key={index} className="space-y-3 p-4 border border-sv-border rounded-xl bg-sv-surface-muted">
+                                <label className="block text-sm font-bold text-sv-text-primary">
                                     Question {index + 1}
                                 </label>
                                 <select 
                                     value={item.question}
                                     onChange={(e) => handleQuestionChange(index, e.target.value)}
-                                    className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#D4AF37]/20 outline-none text-sm"
+                                    className="w-full px-4 py-2 bg-sv-surface border border-sv-border rounded-xl text-sv-text-primary focus:ring-2 focus:ring-sv-primary/20 outline-none text-sm"
                                 >
                                     <option value="">Select a question...</option>
                                     {PREDEFINED_QUESTIONS.map(q => (
@@ -88,23 +88,23 @@ export default function SecurityQuestionModal({ isOpen, onClose, onSubmit }: Pro
                                     value={item.answer}
                                     onChange={(e) => handleAnswerChange(index, e.target.value)}
                                     placeholder="Your answer"
-                                    className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#D4AF37]/20 outline-none text-sm"
+                                    className="w-full px-4 py-2 bg-sv-surface border border-sv-border rounded-xl text-sv-text-primary focus:ring-2 focus:ring-sv-primary/20 outline-none text-sm"
                                 />
                             </div>
                         ))}
                     </div>
 
-                    <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
+                    <div className="px-6 py-4 bg-sv-surface-muted border-t border-sv-border flex justify-end gap-3">
                         <button 
                             onClick={onClose}
-                            className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800"
+                            className="px-4 py-2 text-sm font-medium text-sv-text-secondary hover:text-sv-text-primary transition-colors"
                         >
                             Cancel
                         </button>
                         <button 
                             onClick={() => onSubmit(selections)}
                             disabled={!isComplete}
-                            className="px-6 py-2 bg-[#D4AF37] text-white rounded-lg font-bold hover:bg-[#B3902E] transition-all disabled:opacity-50 text-sm shadow-sm"
+                            className="px-6 py-2 bg-sv-primary text-sv-text-inverse rounded-xl font-bold hover:bg-sv-primary-hover transition-all disabled:opacity-50 text-sm shadow-sm"
                         >
                             Complete Setup
                         </button>

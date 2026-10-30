@@ -151,7 +151,7 @@ export default function Sidebar({ isDesktopCollapsed, toggleDesktop, isMobileOpe
                             same red-pill pattern VendorLayout.tsx already
                             uses for the vendor sidebar's own badges. */}
                         {!!badge && badge > 0 && (
-                          <span className={`${isDesktopCollapsed ? 'absolute -top-1 -right-1' : 'ml-auto'} bg-red-500 text-white text-[9px] font-black min-w-[18px] h-[18px] flex items-center justify-center rounded-full px-1`}>
+                          <span className={`${isDesktopCollapsed ? 'absolute -top-1 -right-1' : 'ml-auto'} bg-sv-danger text-white text-[9px] font-black min-w-[18px] h-[18px] flex items-center justify-center rounded-full px-1`}>
                             {badge > 99 ? '99+' : badge}
                           </span>
                         )}

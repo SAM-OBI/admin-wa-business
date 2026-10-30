@@ -90,20 +90,20 @@ export default function WithdrawalSecurityFlags() {
 
   if (loading) {
     return (
-      <div className="p-6 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="p-4 sm:p-6 lg:p-8 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sv-primary"></div>
       </div>
     );
   }
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-sv-text-primary flex items-center gap-2">
             <FiAlertTriangle className="text-sv-warning" /> Withdrawal Security Flags
           </h1>
-          <p className="text-gray-500 text-sm mt-1">
+          <p className="text-sv-text-secondary text-sm mt-1">
             Withdrawal attempts blocked by a vendor's 24h post-PIN/password-change hold. The hold itself is automatic — this is where you reach out.
           </p>
         </div>
@@ -111,7 +111,7 @@ export default function WithdrawalSecurityFlags() {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-4 py-2 border border-sv-border rounded-lg focus:outline-none focus:ring-2 focus:ring-sv-primary bg-sv-surface text-sm"
+          className="px-4 py-2 border border-sv-border rounded-lg focus:outline-none focus:ring-2 focus:ring-sv-primary bg-sv-surface text-sv-text-primary text-sm"
         >
           <option value="">All Statuses</option>
           <option value="OPEN">Open</option>
@@ -122,8 +122,8 @@ export default function WithdrawalSecurityFlags() {
       </div>
 
       <div className="bg-sv-surface rounded-xl shadow-sm border border-sv-border overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-sv-border">
+          <table className="w-full text-left min-w-[750px]">
             <thead className="bg-sv-surface-muted border-b border-sv-border">
               <tr>
                 <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">Vendor</th>
@@ -174,7 +174,7 @@ export default function WithdrawalSecurityFlags() {
                           </a>
                         )}
                         {waHref && (
-                          <a href={waHref} target="_blank" rel="noopener noreferrer" title={`WhatsApp ${whatsappNumber}`} className="hover:text-green-600">
+                          <a href={waHref} target="_blank" rel="noopener noreferrer" title={`WhatsApp ${whatsappNumber}`} className="hover:text-sv-success">
                             <FiMessageCircle size={16} />
                           </a>
                         )}

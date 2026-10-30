@@ -18,10 +18,10 @@ export default function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="bg-sv-surface rounded-2xl shadow-xl w-full max-w-md p-6 relative overflow-hidden">
-        {/* Background Pattern — decorative, deliberately left as-is */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full -mr-16 -mt-16 opacity-50" />
-        <div className="absolute bottom-0 left-0 w-24 h-24 bg-purple-50 rounded-full -ml-12 -mb-12 opacity-50" />
+      <div className="bg-sv-surface border border-sv-border rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto p-6 relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute top-0 right-0 w-32 h-32 bg-sv-primary/10 rounded-full -mr-16 -mt-16 opacity-50 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-sv-tag/10 rounded-full -ml-12 -mb-12 opacity-50 pointer-events-none" />
 
         <div className="relative z-10 flex flex-col items-center text-center">
           <div className="w-16 h-16 bg-sv-accent-soft rounded-full flex items-center justify-center mb-6">

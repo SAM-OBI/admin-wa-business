@@ -14,7 +14,7 @@ interface MetricValueProps {
 }
 
 export const MetricValue: React.FC<MetricValueProps> = memo(({ 
-    value, prefix = '', suffix = '', label, trend, color = 'text-white' 
+    value, prefix = '', suffix = '', label, trend, color = 'text-sv-text-primary' 
 }) => {
     return (
         <div className="flex flex-col" aria-label={`${label}: ${prefix}${value}${suffix}`}>
@@ -23,7 +23,7 @@ export const MetricValue: React.FC<MetricValueProps> = memo(({
             </span>
             {trend && (
                 <span className={`text-[10px] font-black uppercase tracking-widest mt-1 ${
-                    trend === 'up' ? 'text-emerald-500' : trend === 'down' ? 'text-red-500' : 'text-zinc-500'
+                    trend === 'up' ? 'text-sv-success' : trend === 'down' ? 'text-sv-danger' : 'text-sv-text-muted'
                 }`}>
                     {trend === 'up' ? '↑' : trend === 'down' ? '↓' : '→'} Baseline
                 </span>

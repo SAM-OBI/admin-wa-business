@@ -70,19 +70,19 @@ export default function PlatformFeedback() {
     };
 
     return (
-        <div className="p-6">
-            <div className="flex justify-between items-center mb-6">
+        <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-sv-text-primary">App Feedback</h1>
-                    <p className="text-gray-500 text-sm">Review user and vendor feedback about the platform</p>
+                    <h1 className="text-2xl sm:text-3xl font-black text-sv-text-primary tracking-tight">App Feedback</h1>
+                    <p className="text-sv-text-muted text-sm mt-1">Review user and vendor feedback about the platform</p>
                 </div>
                 
-                <div className="flex items-center gap-2">
-                    <FiFilter className="text-gray-400" />
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <FiFilter className="text-sv-text-muted shrink-0" />
                     <select 
                         value={filterCategory}
                         onChange={(e) => setFilterCategory(e.target.value)}
-                        className="border border-sv-border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-sv-primary outline-none"
+                        className="w-full sm:w-auto border border-sv-border rounded-xl px-3.5 py-2 text-sm focus:ring-2 focus:ring-sv-primary outline-none bg-sv-surface text-sv-text-primary shadow-xs"
                     >
                         <option value="">All Categories</option>
                         <option value="general">General</option>
@@ -93,51 +93,51 @@ export default function PlatformFeedback() {
             </div>
 
             {loading ? (
-                 <div className="flex justify-center p-12">
-                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                 <div className="flex justify-center p-12 min-h-[300px] items-center">
+                     <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-sv-primary"></div>
                  </div>
             ) : (
                 <div className="grid grid-cols-1 gap-4">
                     {feedbacks.length === 0 ? (
-                        <div className="text-center py-12 bg-sv-surface rounded-xl border border-sv-border">
-                            <FiMessageSquare className="mx-auto text-4xl text-gray-300 mb-2" />
-                            <p className="text-gray-500">No feedback found</p>
+                        <div className="text-center py-16 bg-sv-surface rounded-2xl border border-sv-border shadow-xs">
+                            <FiMessageSquare className="mx-auto text-4xl text-sv-border mb-3" />
+                            <p className="text-sv-text-muted text-sm">No feedback found</p>
                         </div>
                     ) : (
                         feedbacks.map((item) => (
-                            <div key={item._id} className="bg-sv-surface rounded-xl p-5 border border-sv-border shadow-sm hover:shadow-md transition">
-                                <div className="flex justify-between items-start">
-                                    <div className="flex items-start gap-3">
-                                        <div className="p-2 bg-blue-50 rounded-lg text-blue-600 text-xl font-bold">
+                            <div key={item._id} className="bg-sv-surface rounded-2xl p-4 sm:p-5 border border-sv-border shadow-xs hover:shadow-md transition">
+                                <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+                                    <div className="flex items-start gap-3.5 flex-1 min-w-0">
+                                        <div className="p-2.5 bg-sv-primary/10 rounded-xl text-sv-primary text-xl font-bold border border-sv-primary/20 shrink-0">
                                             {item.rating}
                                         </div>
-                                        <div>
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <span className={`px-2 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider ${item.category === 'bug' ? 'bg-sv-danger-soft text-sv-danger' : 'bg-sv-surface-muted text-sv-text-secondary'}`}>
-                                                    {item.category.replace('_', ' ')}
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                                                <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${item.category === 'bug' ? 'bg-sv-danger-soft text-sv-danger border border-sv-danger/20' : 'bg-sv-surface-muted text-sv-text-secondary border border-sv-border'}`}>
+                                                    {item.category?.replace('_', ' ')}
                                                 </span>
-                                                <span className="text-xs text-gray-400 flex items-center gap-1">
+                                                <span className="text-xs text-sv-text-muted flex items-center gap-1">
                                                     <FiCalendar /> {new Date(item.createdAt).toLocaleDateString()}
                                                 </span>
                                             </div>
-                                            <p className="text-gray-800 font-medium whitespace-pre-wrap">{item.comment}</p>
+                                            <p className="text-sv-text-primary font-medium text-sm sm:text-base whitespace-pre-wrap leading-relaxed">{item.comment}</p>
                                             
-                                            <div className="flex items-center gap-2 mt-3 text-xs text-gray-500">
+                                            <div className="flex items-center gap-2 mt-3 text-xs text-sv-text-muted">
                                                 <FiUser /> 
-                                                <span className="font-semibold">{item.user?.name || 'Unknown User'}</span>
-                                                <span className="bg-gray-100 px-1.5 rounded text-gray-600 capitalize">({item.userType})</span>
+                                                <span className="font-semibold text-sv-text-secondary">{item.user?.name || 'Unknown User'}</span>
+                                                <span className="bg-sv-surface-muted px-2 py-0.5 rounded-full text-sv-text-secondary border border-sv-border capitalize">({item.userType})</span>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="flex flex-col items-end gap-2">
-                                        <span className={`px-2 py-1 rounded-full text-xs font-bold uppercase ${getStatusColor(item.status)}`}>
-                                            {item.status.replace('_', ' ')}
+                                    <div className="flex sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-sv-border">
+                                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${getStatusColor(item.status)}`}>
+                                            {item.status?.replace('_', ' ')}
                                         </span>
                                         <select 
                                             value={item.status}
                                             onChange={(e) => handleStatusUpdate(item._id, e.target.value)}
-                                            className="text-xs border border-gray-300 rounded px-2 py-1 outline-none cursor-pointer hover:border-blue-400"
+                                            className="text-xs border border-sv-border rounded-lg px-2.5 py-1.5 outline-none cursor-pointer bg-sv-surface text-sv-text-primary hover:border-sv-primary focus:ring-1 focus:ring-sv-primary"
                                         >
                                             <option value="new">New</option>
                                             <option value="read">Read</option>
@@ -152,20 +152,20 @@ export default function PlatformFeedback() {
                 </div>
             )}
             
-            {/* Pagination ... simplified for now */}
-             <div className="flex justify-center mt-6 gap-2">
+            {/* Pagination */}
+            <div className="flex items-center justify-center mt-6 gap-3">
                 <button 
                     disabled={page === 1}
                     onClick={() => setPage(p => Math.max(1, p - 1))}
-                    className="px-3 py-1 border rounded disabled:opacity-50"
+                    className="px-4 py-1.5 border border-sv-border rounded-xl text-sm font-semibold text-sv-text-primary disabled:opacity-50 hover:bg-sv-surface-muted transition-colors shadow-xs"
                 >
                     Prev
                 </button>
-                <span className="px-3 py-1 text-gray-500">Page {page} of {totalPages}</span>
+                <span className="px-2 text-sm text-sv-text-secondary">Page {page} of {totalPages}</span>
                 <button 
                     disabled={page === totalPages}
                     onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                    className="px-3 py-1 border rounded disabled:opacity-50"
+                    className="px-4 py-1.5 border border-sv-border rounded-xl text-sm font-semibold text-sv-text-primary disabled:opacity-50 hover:bg-sv-surface-muted transition-colors shadow-xs"
                 >
                     Next
                 </button>

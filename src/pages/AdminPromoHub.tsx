@@ -188,23 +188,23 @@ const AdminPromoHub: React.FC = () => {
         }
     };
     return (
-        <div className="space-y-6 animate-in fade-in duration-500">
+        <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-white/5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-sv-surface p-4 sm:p-6 rounded-2xl shadow-xs border border-sv-border">
                 <div>
-                    <h1 className="text-2xl font-black text-gray-900 dark:text-white flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-pink-50 dark:bg-pink-900/20 flex items-center justify-center text-pink-500">
+                    <h1 className="text-2xl sm:text-3xl font-black text-sv-text-primary flex items-center gap-3 tracking-tight">
+                        <div className="w-10 h-10 rounded-xl bg-sv-primary-soft flex items-center justify-center text-sv-primary border border-sv-border">
                             <FaTicketAlt size={20} />
                         </div>
                         Marketing Oversight Hub
                     </h1>
-                    <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Deterministic kill-switches and abuse monitoring.</p>
+                    <p className="text-sv-text-secondary mt-1 text-sm font-medium">Deterministic kill-switches and abuse monitoring.</p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                     {activeTab === 'referrals' && (
                         <button 
                             onClick={handleGenerateReferral}
-                            className="flex items-center gap-2 px-4 py-2 bg-sv-success text-sv-text-inverse rounded-xl font-bold text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95"
+                            className="flex items-center gap-2 px-4 py-2.5 bg-sv-success text-sv-text-inverse rounded-xl font-bold text-xs uppercase tracking-widest transition-all hover:opacity-90 active:scale-95 shadow-xs"
                         >
                             <FaPlus /> Generate
                         </button>
@@ -212,7 +212,7 @@ const AdminPromoHub: React.FC = () => {
                     <button 
                         onClick={fetchData}
                         disabled={loading}
-                        className="flex items-center gap-2 px-4 py-2 bg-gray-900 dark:bg-white text-white dark:text-black rounded-xl font-bold text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
+                        className="flex items-center gap-2 px-4 py-2.5 bg-sv-surface-muted text-sv-text-primary hover:bg-sv-border rounded-xl font-bold text-xs uppercase tracking-widest transition-all active:scale-95 border border-sv-border shadow-xs disabled:opacity-50"
                     >
                         <FaSync className={loading ? 'animate-spin' : ''} />
                         Refresh
@@ -221,68 +221,68 @@ const AdminPromoHub: React.FC = () => {
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-2 p-1 bg-gray-100 dark:bg-white/5 rounded-xl w-fit">
+            <div className="flex gap-1.5 sm:gap-2 p-1.5 bg-sv-surface-muted rounded-xl w-full sm:w-fit overflow-x-auto scrollbar-thin">
                 <button 
                     onClick={() => setActiveTab('discounts')}
-                    className={`px-4 py-2 rounded-lg font-bold text-[10px] uppercase tracking-widest transition-all ${activeTab === 'discounts' ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                    className={`px-3.5 sm:px-4 py-2 rounded-lg font-bold text-[10px] sm:text-xs uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'discounts' ? 'bg-sv-surface text-sv-text-primary shadow-xs border border-sv-border' : 'text-sv-text-muted hover:text-sv-text-primary'}`}
                 >
                     Discount Codes
                 </button>
                 <button 
                     onClick={() => setActiveTab('flash-sales')}
-                    className={`px-4 py-2 rounded-lg font-bold text-[10px] uppercase tracking-widest transition-all ${activeTab === 'flash-sales' ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                    className={`px-3.5 sm:px-4 py-2 rounded-lg font-bold text-[10px] sm:text-xs uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'flash-sales' ? 'bg-sv-surface text-sv-text-primary shadow-xs border border-sv-border' : 'text-sv-text-muted hover:text-sv-text-primary'}`}
                 >
                     Flash Sales
                 </button>
                 <button 
                     onClick={() => setActiveTab('referrals')}
-                    className={`px-4 py-2 rounded-lg font-bold text-[10px] uppercase tracking-widest transition-all ${activeTab === 'referrals' ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                    className={`px-3.5 sm:px-4 py-2 rounded-lg font-bold text-[10px] sm:text-xs uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'referrals' ? 'bg-sv-surface text-sv-text-primary shadow-xs border border-sv-border' : 'text-sv-text-muted hover:text-sv-text-primary'}`}
                 >
                     Store Referrals
                 </button>
             </div>
 
             {/* Table Area */}
-            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-white/5 overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
+            <div className="bg-sv-surface rounded-2xl shadow-xs border border-sv-border overflow-hidden">
+                <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-sv-border">
+                    <table className="w-full text-left border-collapse min-w-[650px]">
                         <thead>
-                            <tr className="bg-gray-50/50 dark:bg-black/20 border-b border-gray-100 dark:border-white/5">
-                                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Promotion</th>
-                                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Store</th>
-                                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Performance</th>
-                                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Risk</th>
-                                <th className="px-6 py-4 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Action</th>
+                            <tr className="bg-sv-surface-muted/60 border-b border-sv-border">
+                                <th className="px-4 sm:px-6 py-3.5 sm:py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Promotion</th>
+                                <th className="px-4 sm:px-6 py-3.5 sm:py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Store</th>
+                                <th className="px-4 sm:px-6 py-3.5 sm:py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Performance</th>
+                                <th className="px-4 sm:px-6 py-3.5 sm:py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Risk</th>
+                                <th className="px-4 sm:px-6 py-3.5 sm:py-4 text-right text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Action</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100 dark:divide-white/5">
+                        <tbody className="divide-y divide-sv-border">
                             {loading ? (
-                                <tr><td colSpan={5} className="py-10 text-center text-gray-400 text-xs font-bold uppercase tracking-widest animate-pulse">Scanning Platform...</td></tr>
+                                <tr><td colSpan={5} className="py-10 text-center text-sv-text-muted text-xs font-bold uppercase tracking-widest animate-pulse">Scanning Platform...</td></tr>
                             ) : activeTab === 'discounts' ? (
                                 discountCodes.map((item) => (
-                                    <tr key={item.id} className="group hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
-                                        <td className="px-6 py-4">
+                                    <tr key={item.id} className="group hover:bg-sv-surface-muted/50 transition-colors">
+                                        <td className="px-4 sm:px-6 py-3.5 sm:py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${item.isActive ? 'bg-green-50 text-green-500' : 'bg-red-50 text-red-500'}`}>
+                                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${item.isActive ? 'bg-sv-success-soft text-sv-success' : 'bg-sv-danger-soft text-sv-danger'}`}>
                                                     <FaTicketAlt size={14} />
                                                 </div>
                                                 <div>
-                                                    <p className="font-bold text-gray-900 dark:text-white text-sm">{item.code}</p>
-                                                    <p className="text-[9px] text-gray-400 font-bold uppercase">{item.type === 'percentage' ? `${item.value}% OFF` : `₦${item.value} OFF`}</p>
+                                                    <p className="font-bold text-sv-text-primary text-sm">{item.code}</p>
+                                                    <p className="text-[9px] text-sv-text-muted font-bold uppercase">{item.type === 'percentage' ? `${item.value}% OFF` : `₦${item.value} OFF`}</p>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 font-bold text-gray-600 dark:text-gray-400 text-xs">{(item.storeId as any)?.name || 'N/A'}</td>
-                                        <td className="px-6 py-4">
-                                            <p className="text-[11px] font-black text-gray-900 dark:text-white">{item.usageCount} Uses</p>
-                                            <div className="w-16 h-1 bg-gray-100 dark:bg-white/5 rounded-full mt-1.5 overflow-hidden">
+                                        <td className="px-4 sm:px-6 py-3.5 sm:py-4 font-bold text-sv-text-secondary text-xs">{(item.storeId as any)?.name || 'N/A'}</td>
+                                        <td className="px-4 sm:px-6 py-3.5 sm:py-4">
+                                            <p className="text-xs font-black text-sv-text-primary">{item.usageCount} Uses</p>
+                                            <div className="w-16 h-1.5 bg-sv-surface-muted border border-sv-border rounded-full mt-1.5 overflow-hidden">
                                                 <div 
-                                                    className="h-full bg-blue-500 rounded-full" 
+                                                    className="h-full bg-sv-primary rounded-full" 
                                                     style={{ width: `${Math.min((item.usageCount / (item.usageLimit || 100)) * 100, 100)}%` }}
                                                 />
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-4 sm:px-6 py-3.5 sm:py-4">
                                             {item.riskScore !== 'Low' ? (
                                                 <div className={`flex items-center gap-1.5 px-2 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border w-fit ${
                                                     item.riskScore === 'Critical' ? 'bg-sv-danger-soft text-sv-danger border-sv-danger/30' :
@@ -293,13 +293,13 @@ const AdminPromoHub: React.FC = () => {
                                                     {item.riskScore} Risk
                                                 </div>
                                             ) : (
-                                                <span className="text-[9px] font-black text-green-500 uppercase tracking-widest">Safe</span>
+                                                <span className="text-[9px] font-black text-sv-success uppercase tracking-widest">Safe</span>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4 text-right">
+                                        <td className="px-4 sm:px-6 py-3.5 sm:py-4 text-right">
                                             <button 
                                                 onClick={() => handleToggle('discount', item.id, item.isActive, item.code)}
-                                                className={`p-2 rounded-lg transition-all ${item.isActive ? 'text-green-500 hover:bg-green-50' : 'text-red-500 hover:bg-red-50'}`}
+                                                className={`p-2 rounded-lg transition-all ${item.isActive ? 'text-sv-success hover:bg-sv-success-soft' : 'text-sv-danger hover:bg-sv-danger-soft'}`}
                                             >
                                                 {item.isActive ? <FaToggleOn size={22} /> : <FaToggleOff size={22} />}
                                             </button>
@@ -308,41 +308,41 @@ const AdminPromoHub: React.FC = () => {
                                 ))
                             ) : activeTab === 'flash-sales' ? (
                                 flashSales.map((item) => (
-                                    <tr key={item.id} className="group hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
-                                        <td className="px-6 py-4">
+                                    <tr key={item.id} className="group hover:bg-sv-surface-muted/50 transition-colors">
+                                        <td className="px-4 sm:px-6 py-3.5 sm:py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${item.isActive ? 'bg-orange-50 text-orange-500' : 'bg-red-50 text-red-500'}`}>
+                                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${item.isActive ? 'bg-sv-warning-soft text-sv-warning' : 'bg-sv-danger-soft text-sv-danger'}`}>
                                                     <FaBolt size={14} />
                                                 </div>
                                                 <div>
-                                                    <p className="font-bold text-gray-900 dark:text-white text-sm truncate max-w-[150px]">{item.productName}</p>
-                                                    <p className="text-[9px] text-gray-400 font-bold uppercase">Flash Sale</p>
+                                                    <p className="font-bold text-sv-text-primary text-sm truncate max-w-[150px]">{item.productName}</p>
+                                                    <p className="text-[9px] text-sv-text-muted font-bold uppercase">Flash Sale</p>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 font-bold text-gray-600 dark:text-gray-400 text-xs">{item.storeName}</td>
-                                        <td className="px-6 py-4">
-                                            <p className="text-[11px] font-black text-gray-900 dark:text-white">{item.soldCount} / {item.maxQuantity} Sold</p>
-                                            <div className="w-16 h-1 bg-gray-100 dark:bg-white/5 rounded-full mt-1.5 overflow-hidden">
+                                        <td className="px-4 sm:px-6 py-3.5 sm:py-4 font-bold text-sv-text-secondary text-xs">{item.storeName}</td>
+                                        <td className="px-4 sm:px-6 py-3.5 sm:py-4">
+                                            <p className="text-xs font-black text-sv-text-primary">{item.soldCount} / {item.maxQuantity} Sold</p>
+                                            <div className="w-16 h-1.5 bg-sv-surface-muted border border-sv-border rounded-full mt-1.5 overflow-hidden">
                                                 <div 
-                                                    className="h-full bg-orange-500 rounded-full" 
+                                                    className="h-full bg-sv-warning rounded-full" 
                                                     style={{ width: `${(item.soldCount / item.maxQuantity) * 100}%` }}
                                                 />
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-4 sm:px-6 py-3.5 sm:py-4">
                                             {item.riskScore === 'Peak' ? (
                                                 <div className="flex items-center gap-1.5 px-2 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border border-sv-warning/30 bg-sv-warning-soft text-sv-warning w-fit">
                                                     Peak Use
                                                 </div>
                                             ) : (
-                                                <span className="text-[9px] font-black text-green-500 uppercase tracking-widest">Safe</span>
+                                                <span className="text-[9px] font-black text-sv-success uppercase tracking-widest">Safe</span>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4 text-right">
+                                        <td className="px-4 sm:px-6 py-3.5 sm:py-4 text-right">
                                             <button 
                                                 onClick={() => handleToggle('flash-sale', item.id, item.isActive, item.productName)}
-                                                className={`p-2 rounded-lg transition-all ${item.isActive ? 'text-green-500 hover:bg-green-50' : 'text-red-500 hover:bg-red-50'}`}
+                                                className={`p-2 rounded-lg transition-all ${item.isActive ? 'text-sv-success hover:bg-sv-success-soft' : 'text-sv-danger hover:bg-sv-danger-soft'}`}
                                             >
                                                 {item.isActive ? <FaToggleOn size={22} /> : <FaToggleOff size={22} />}
                                             </button>
@@ -351,35 +351,35 @@ const AdminPromoHub: React.FC = () => {
                                 ))
                             ) : (
                                 referrals.map((item) => (
-                                    <tr key={item._id} className="group hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
-                                        <td className="px-6 py-4">
+                                    <tr key={item._id} className="group hover:bg-sv-surface-muted/50 transition-colors">
+                                        <td className="px-4 sm:px-6 py-3.5 sm:py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${item.isActive ? 'bg-purple-50 text-purple-500' : 'bg-red-50 text-red-500'}`}>
+                                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${item.isActive ? 'bg-sv-primary-soft text-sv-primary' : 'bg-sv-danger-soft text-sv-danger'}`}>
                                                     <FaGift size={14} />
                                                 </div>
                                                 <div>
-                                                    <p className="font-bold text-gray-900 dark:text-white text-sm">{item.code}</p>
-                                                    <p className="text-[9px] text-gray-400 font-bold uppercase">1 Month Trial</p>
+                                                    <p className="font-bold text-sv-text-primary text-sm">{item.code}</p>
+                                                    <p className="text-[9px] text-sv-text-muted font-bold uppercase">1 Month Trial</p>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 font-bold text-gray-600 dark:text-gray-400 text-xs">Platform Wide</td>
-                                        <td className="px-6 py-4">
-                                            <p className="text-[11px] font-black text-gray-900 dark:text-white">{item.currentUses} / {item.maxUses} Uses</p>
-                                            <div className="w-16 h-1 bg-gray-100 dark:bg-white/5 rounded-full mt-1.5 overflow-hidden">
+                                        <td className="px-4 sm:px-6 py-3.5 sm:py-4 font-bold text-sv-text-secondary text-xs">Platform Wide</td>
+                                        <td className="px-4 sm:px-6 py-3.5 sm:py-4">
+                                            <p className="text-xs font-black text-sv-text-primary">{item.currentUses} / {item.maxUses} Uses</p>
+                                            <div className="w-16 h-1.5 bg-sv-surface-muted border border-sv-border rounded-full mt-1.5 overflow-hidden">
                                                 <div 
-                                                    className="h-full bg-purple-500 rounded-full" 
+                                                    className="h-full bg-sv-primary rounded-full" 
                                                     style={{ width: `${(item.currentUses / item.maxUses) * 100}%` }}
                                                 />
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <span className="text-[9px] font-black text-green-500 uppercase tracking-widest">Safe</span>
+                                        <td className="px-4 sm:px-6 py-3.5 sm:py-4">
+                                            <span className="text-[9px] font-black text-sv-success uppercase tracking-widest">Safe</span>
                                         </td>
-                                        <td className="px-6 py-4 text-right">
+                                        <td className="px-4 sm:px-6 py-3.5 sm:py-4 text-right">
                                             <button 
                                                 onClick={() => handleToggle('referral', item._id, item.isActive, item.code)}
-                                                className={`p-2 rounded-lg transition-all ${item.isActive ? 'text-green-500 hover:bg-green-50' : 'text-red-500 hover:bg-red-50'}`}
+                                                className={`p-2 rounded-lg transition-all ${item.isActive ? 'text-sv-success hover:bg-sv-success-soft' : 'text-sv-danger hover:bg-sv-danger-soft'}`}
                                             >
                                                 {item.isActive ? <FaToggleOn size={22} /> : <FaToggleOff size={22} />}
                                             </button>

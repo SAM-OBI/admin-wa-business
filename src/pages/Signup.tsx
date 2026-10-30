@@ -87,35 +87,35 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
+    <div className="min-h-screen bg-sv-bg flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans">
       <motion.div 
         animate={{ opacity: 1, y: 0 }}
         className="sm:mx-auto sm:w-full sm:max-w-md space-y-4"
       >
-        <h2 className="mt-6 text-center text-3xl font-black text-slate-900 tracking-tight">
+        <h2 className="mt-6 text-center text-3xl font-black text-sv-text-primary tracking-tight">
           Establish Identity
         </h2>
-        <p className="mt-2 text-center text-sm text-slate-500 font-medium">
+        <p className="mt-2 text-center text-sm text-sv-text-secondary font-medium">
           Create your administrative profile to access the secure vault
         </p>
 
         {/* 🛡️ [SOVEREIGN] Precise Error Notification */}
         {authError && (
-          <div className="p-4 rounded-xl bg-red-50 border border-red-100 flex flex-col space-y-2 animate-in fade-in slide-in-from-top-4 duration-300 mx-auto max-w-sm">
-            <div className="flex items-center space-x-2 text-red-700">
+          <div className="p-4 rounded-xl bg-sv-danger-soft border border-sv-danger/30 flex flex-col space-y-2 animate-in fade-in slide-in-from-top-4 duration-300 mx-auto max-w-sm">
+            <div className="flex items-center space-x-2 text-sv-danger">
               <FiShield size={14} />
               <span className="text-[10px] font-black uppercase tracking-wider">
                 {authError.code || 'Security Alert'}
               </span>
             </div>
-            <p className="text-xs font-medium text-slate-600">{authError.message}</p>
+            <p className="text-xs font-medium text-sv-text-secondary">{authError.message}</p>
             
             {authError.suggestedUrl && (
               <div className="pt-2">
                 <Link 
                   to={authError.suggestedUrl}
                   onClick={() => setAuthError(null)}
-                  className="text-[10px] font-black text-slate-900 uppercase hover:underline"
+                  className="text-[10px] font-black text-sv-primary uppercase hover:underline"
                 >
                   Authenticate Now →
                 </Link>
@@ -125,15 +125,15 @@ export default function Signup() {
         )}
       </motion.div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-xl p-4 sm:p-0">
-        <div className="bg-white py-10 px-8 shadow-2xl shadow-slate-200/60 rounded-[40px] border border-slate-100">
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-xl">
+        <div className="bg-sv-surface py-8 sm:py-10 px-6 sm:px-8 shadow-2xl rounded-3xl border border-sv-border">
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
             {/* Full Name */}
             <div className="space-y-2">
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest ml-1">Identity Name</label>
+              <label className="block text-[11px] font-bold text-sv-text-secondary uppercase tracking-widest ml-1">Identity Name</label>
               <div className="relative group">
-                <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
+                <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-sv-text-muted group-focus-within:text-sv-primary transition-colors" />
                 <input
                   type="text"
                   name="name"
@@ -148,9 +148,9 @@ export default function Signup() {
 
             {/* Email */}
             <div className="space-y-2">
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest ml-1">Service Email</label>
+              <label className="block text-[11px] font-bold text-sv-text-secondary uppercase tracking-widest ml-1">Service Email</label>
               <div className="relative group">
-                <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
+                <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-sv-text-muted group-focus-within:text-sv-primary transition-colors" />
                 <input
                   type="email"
                   name="email"
@@ -165,9 +165,9 @@ export default function Signup() {
 
             {/* Phone */}
             <div className="space-y-2">
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest ml-1">Secure Mobile</label>
+              <label className="block text-[11px] font-bold text-sv-text-secondary uppercase tracking-widest ml-1">Secure Mobile</label>
               <div className="relative group">
-                <FiPhone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
+                <FiPhone className="absolute left-4 top-1/2 -translate-y-1/2 text-sv-text-muted group-focus-within:text-sv-primary transition-colors" />
                 <input
                   type="tel"
                   name="phone"
@@ -182,9 +182,9 @@ export default function Signup() {
 
             {/* Invitation Token */}
             <div className="md:col-span-2 space-y-2">
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest ml-1">Administrative Invitation Token</label>
+              <label className="block text-[11px] font-bold text-sv-text-secondary uppercase tracking-widest ml-1">Administrative Invitation Token</label>
               <div className="relative group">
-                <FiShield className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
+                <FiShield className="absolute left-4 top-1/2 -translate-y-1/2 text-sv-text-muted group-focus-within:text-sv-primary transition-colors" />
                 <input
                   type="text"
                   name="inviteToken"
@@ -199,9 +199,9 @@ export default function Signup() {
 
             {/* Password */}
             <div className="space-y-2">
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest ml-1">Identity Secret</label>
+              <label className="block text-[11px] font-bold text-sv-text-secondary uppercase tracking-widest ml-1">Identity Secret</label>
               <div className="relative group">
-                <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
+                <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-sv-text-muted group-focus-within:text-sv-primary transition-colors" />
                 <input
                   type="password"
                   name="password"
@@ -216,9 +216,9 @@ export default function Signup() {
 
             {/* Confirm Password */}
             <div className="space-y-2">
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest ml-1">Confirm Secret</label>
+              <label className="block text-[11px] font-bold text-sv-text-secondary uppercase tracking-widest ml-1">Confirm Secret</label>
               <div className="relative group">
-                <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
+                <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-sv-text-muted group-focus-within:text-sv-primary transition-colors" />
                 <input
                   type="password"
                   name="confirmPassword"
@@ -248,10 +248,10 @@ export default function Signup() {
             </div>
           </form>
 
-          <div className="mt-8 text-center pt-8 border-t border-slate-50">
-            <p className="text-sm text-slate-500 font-medium">
+          <div className="mt-8 text-center pt-8 border-t border-sv-border">
+            <p className="text-sm text-sv-text-secondary font-medium">
               Already have an authorization?{' '}
-              <Link to="/login" className="text-slate-900 font-bold hover:underline">
+              <Link to="/login" className="text-sv-primary font-bold hover:underline">
                 Authenticate Now
               </Link>
             </p>

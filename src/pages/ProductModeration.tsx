@@ -101,7 +101,7 @@ export default function ProductModeration() {
       title: 'Disable Product',
       html: `
         <div class="text-left">
-          <p class="mb-4 text-sm text-gray-500">You are about to disable: <strong>${productName}</strong></p>
+          <p class="mb-4 text-sm text-sv-text-muted">You are about to disable: <strong>${productName}</strong></p>
           <select id="reason" class="swal2-input w-full mb-2">
             <option value="">Select Reason</option>
             <option value="Prohibited item">Prohibited item</option>
@@ -177,7 +177,7 @@ export default function ProductModeration() {
       title: 'Flag for Review',
       html: `
         <div class="text-left">
-          <p class="mb-4 text-sm text-gray-500">Flag: <strong>${productName}</strong></p>
+          <p class="mb-4 text-sm text-sv-text-muted">Flag: <strong>${productName}</strong></p>
           <select id="severity" class="swal2-input w-full mb-2">
             <option value="low">Low Priority</option>
             <option value="medium" selected>Medium Priority</option>
@@ -228,32 +228,32 @@ export default function ProductModeration() {
 
   if (loading && products.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-[400px] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-sv-primary"></div>
       </div>
     );
   }
 
   return (
-    <div className="p-6">
-      <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-sv-text-primary flex items-center gap-3">
-            <div className="p-2 bg-blue-50 text-blue-600 rounded-lg shadow-sm">
-                <FiPackage size={24} />
+          <h1 className="text-2xl sm:text-3xl font-black text-sv-text-primary flex items-center gap-3 tracking-tight">
+            <div className="p-2.5 bg-sv-primary/10 text-sv-primary rounded-xl shadow-xs border border-sv-primary/20 shrink-0">
+                <FiPackage size={22} />
             </div>
             Product Moderation
           </h1>
-          <p className="text-gray-500 text-sm mt-1">Platform-wide product oversight and lifecycle management</p>
+          <p className="text-sv-text-muted text-sm mt-1">Platform-wide product oversight and lifecycle management</p>
         </div>
         
-        <div className="flex bg-white p-1 rounded-xl border border-gray-100 shadow-sm">
+        <div className="flex bg-sv-surface p-1 rounded-xl border border-sv-border shadow-xs self-start sm:self-auto overflow-x-auto">
             {['all', 'active', 'disabled'].map(s => (
                 <button
                     key={s}
                     onClick={() => handleStatusFilter(s)}
-                    className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
-                        filters.status === s ? 'bg-sv-primary text-sv-text-inverse' : 'text-sv-text-muted hover:text-sv-text-secondary'
+                    className={`px-3.5 sm:px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
+                        filters.status === s ? 'bg-sv-primary text-sv-text-inverse shadow-xs' : 'text-sv-text-muted hover:text-sv-text-primary'
                     }`}
                 >
                     {s}
@@ -262,36 +262,36 @@ export default function ProductModeration() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {[
-            { label: 'Total Inventory', value: stats.total, color: 'text-gray-900', bg: 'bg-white' },
-            { label: 'Market Active', value: stats.active, color: 'text-green-600', bg: 'bg-green-50/30' },
-            { label: 'Policy Blocked', value: stats.disabled, color: 'text-red-600', bg: 'bg-red-50/30' },
-            { label: 'Under Review', value: stats.flagged, color: 'text-amber-600', bg: 'bg-amber-50/30' }
+            { label: 'Total Inventory', value: stats.total, color: 'text-sv-text-primary', bg: 'bg-sv-surface' },
+            { label: 'Market Active', value: stats.active, color: 'text-sv-success', bg: 'bg-sv-success-soft/30' },
+            { label: 'Policy Blocked', value: stats.disabled, color: 'text-sv-danger', bg: 'bg-sv-danger-soft/30' },
+            { label: 'Under Review', value: stats.flagged, color: 'text-sv-warning', bg: 'bg-sv-warning-soft/30' }
         ].map(card => (
-            <div key={card.label} className={`${card.bg} border border-gray-100 rounded-2xl p-6 shadow-sm`}>
-                <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">{card.label}</div>
-                <div className={`text-2xl font-black ${card.color}`}>{card.value.toLocaleString()}</div>
+            <div key={card.label} className={`${card.bg} border border-sv-border rounded-2xl p-4 sm:p-6 shadow-xs`}>
+                <div className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest mb-2">{card.label}</div>
+                <div className={`text-2xl sm:text-3xl font-black ${card.color}`}>{card.value.toLocaleString()}</div>
             </div>
         ))}
       </div>
 
-      <div className="bg-sv-surface rounded-2xl p-6 border border-sv-border shadow-sm mb-6">
+      <div className="bg-sv-surface rounded-2xl p-4 sm:p-6 border border-sv-border shadow-xs">
           <div className="relative">
-            <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+            <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-sv-text-muted" />
             <input
               type="text"
               value={filters.search}
               onChange={handleSearchChange}
               placeholder="Search by product name, vendor, or SKU..."
-              className="w-full pl-12 pr-4 py-3 bg-sv-surface-muted border border-sv-border rounded-xl focus:ring-2 focus:ring-sv-primary/20 outline-none text-sm font-medium transition-all"
+              className="w-full pl-12 pr-4 py-3 bg-sv-surface-muted border border-sv-border rounded-xl focus:ring-2 focus:ring-sv-primary/20 outline-none text-sm font-medium transition-all text-sv-text-primary placeholder:text-sv-text-muted"
             />
           </div>
       </div>
 
-      <div className="bg-sv-surface rounded-2xl border border-sv-border shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
+      <div className="bg-sv-surface rounded-2xl border border-sv-border shadow-xs overflow-hidden">
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-sv-border">
+          <table className="w-full text-left min-w-[750px]">
             <thead className="bg-sv-surface-muted border-b border-sv-border">
               <tr>
                 <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Product Reference</th>
@@ -307,24 +307,24 @@ export default function ProductModeration() {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-4">
                       {product.images?.[0] ? (
-                        <img src={product.images[0]} className="w-10 h-10 object-cover rounded-lg shadow-sm border border-sv-border" />
+                        <img src={product.images[0]} alt={product.name} className="w-10 h-10 object-cover rounded-lg shadow-xs border border-sv-border shrink-0" />
                       ) : (
-                        <div className="w-10 h-10 bg-sv-surface-muted rounded-lg flex items-center justify-center text-sv-text-muted"><FiPackage /></div>
+                        <div className="w-10 h-10 bg-sv-surface-muted rounded-lg flex items-center justify-center text-sv-text-muted border border-sv-border shrink-0"><FiPackage /></div>
                       )}
-                      <div>
-                        <div className="text-sm font-bold text-sv-text-primary">{product.name}</div>
-                        <div className="text-[10px] font-black text-blue-600 uppercase mt-0.5">{product.category?.name || 'Uncategorized'}</div>
+                      <div className="min-w-0">
+                        <div className="text-sm font-bold text-sv-text-primary truncate">{product.name}</div>
+                        <div className="text-[10px] font-black text-sv-primary uppercase mt-0.5">{product.category?.name || 'Uncategorized'}</div>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
-                      <FiHome className="text-sv-text-muted" size={12} />
+                      <FiHome className="text-sv-text-muted shrink-0" size={12} />
                       <span className="text-xs font-bold text-sv-text-secondary">{product.store.name}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-center">
-                    <span className={`text-xs font-black ${product.stock === 0 ? 'text-red-600' : 'text-gray-900'}`}>{product.stock}</span>
+                    <span className={`text-xs font-black ${product.stock === 0 ? 'text-sv-danger' : 'text-sv-text-primary'}`}>{product.stock}</span>
                   </td>
                   <td className="px-6 py-4">
                     {product.status === 'disabled' || !product.isActive ? (
@@ -337,7 +337,7 @@ export default function ProductModeration() {
                     <div className="flex items-center justify-end gap-2">
                         <button
                             onClick={() => handleFlagProduct(product._id, product.name)}
-                            className="p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors border border-transparent hover:border-amber-100"
+                            className="p-2 text-sv-warning hover:bg-sv-warning-soft/30 rounded-lg transition-colors border border-transparent hover:border-sv-warning/30"
                             title="Flag for Manual Review"
                         >
                             <FiFlag size={14} />
@@ -345,14 +345,14 @@ export default function ProductModeration() {
                         {product.status === 'disabled' || !product.isActive ? (
                             <button
                                 onClick={() => handleEnableProduct(product._id)}
-                                className="px-4 py-1.5 text-[9px] font-black uppercase bg-sv-success text-sv-text-inverse rounded-lg hover:opacity-90 transition-all"
+                                className="px-4 py-1.5 text-[9px] font-black uppercase bg-sv-success text-sv-text-inverse rounded-lg hover:opacity-90 transition-all shadow-xs"
                             >
                                 Restore
                             </button>
                         ) : (
                             <button
                                 onClick={() => handleDisableProduct(product._id, product.name)}
-                                className="px-4 py-1.5 text-[9px] font-black uppercase bg-sv-danger-soft text-sv-danger border border-sv-danger/30 rounded-lg hover:opacity-80 transition-all flex items-center gap-1.5"
+                                className="px-4 py-1.5 text-[9px] font-black uppercase bg-sv-danger-soft text-sv-danger border border-sv-danger/30 rounded-lg hover:opacity-80 transition-all flex items-center gap-1.5 shadow-xs"
                             >
                                 <FiSlash size={10} /> Deactivate
                             </button>
@@ -377,7 +377,7 @@ export default function ProductModeration() {
         </div>
 
         {pagination.pages > 1 && (
-          <div className="px-6 py-4 border-t border-sv-border flex items-center justify-between">
+          <div className="px-4 sm:px-6 py-4 border-t border-sv-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="text-[10px] font-black text-sv-text-muted uppercase">
               Page {pagination.page} of {pagination.pages}
             </div>
@@ -385,14 +385,14 @@ export default function ProductModeration() {
                 <button
                     onClick={() => setPagination({ ...pagination, page: pagination.page - 1 })}
                     disabled={pagination.page === 1}
-                    className="px-4 py-1.5 text-[9px] font-black uppercase bg-sv-surface-muted text-sv-text-secondary rounded-lg border border-sv-border disabled:opacity-50"
+                    className="px-4 py-1.5 text-[9px] font-black uppercase bg-sv-surface-muted text-sv-text-secondary rounded-lg border border-sv-border disabled:opacity-50 hover:bg-sv-surface"
                 >
                     Prev
                 </button>
                 <button
                     onClick={() => setPagination({ ...pagination, page: pagination.page + 1 })}
                     disabled={pagination.page === pagination.pages}
-                    className="px-4 py-1.5 text-[9px] font-black uppercase bg-sv-surface-muted text-sv-text-secondary rounded-lg border border-sv-border disabled:opacity-50"
+                    className="px-4 py-1.5 text-[9px] font-black uppercase bg-sv-surface-muted text-sv-text-secondary rounded-lg border border-sv-border disabled:opacity-50 hover:bg-sv-surface"
                 >
                     Next
                 </button>

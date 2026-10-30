@@ -58,78 +58,78 @@ export default function DirectTransferResolutionQueue() {
     if (loading && queue.length === 0) return <PageLoader />;
 
     return (
-        <div className="p-6 space-y-6">
+        <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
             <div>
-                <h1 className="text-2xl font-black text-gray-900 dark:text-white font-display uppercase tracking-tight">Direct Transfer Resolution Queue</h1>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                <h1 className="text-2xl sm:text-3xl font-black text-sv-text-primary tracking-tight">Direct Transfer Resolution Queue</h1>
+                <p className="text-sm text-sv-text-secondary mt-1 max-w-3xl">
                     Unfulfilled Direct Transfer orders under suspended vendors. Shopvia holds none of this money — contact the buyer directly to explain the situation.
                 </p>
             </div>
 
-            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-white/5 overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full">
-                        <thead className="bg-gray-50/50 dark:bg-black/20 border-b border-gray-100 dark:border-white/5">
+            <div className="bg-sv-surface rounded-2xl shadow-xs border border-sv-border overflow-hidden">
+                <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-sv-border">
+                    <table className="w-full min-w-[700px]">
+                        <thead className="bg-sv-surface-muted/60 border-b border-sv-border">
                             <tr>
-                                <th className="px-6 py-4 text-left text-[9px] font-black text-gray-400 uppercase tracking-widest">Order</th>
-                                <th className="px-6 py-4 text-left text-[9px] font-black text-gray-400 uppercase tracking-widest">Buyer</th>
-                                <th className="px-6 py-4 text-left text-[9px] font-black text-gray-400 uppercase tracking-widest">Amount Paid</th>
-                                <th className="px-6 py-4 text-left text-[9px] font-black text-gray-400 uppercase tracking-widest">Confirmations</th>
-                                <th className="px-6 py-4 text-left text-[9px] font-black text-gray-400 uppercase tracking-widest">Suspended Vendor</th>
-                                <th className="px-6 py-4 text-right text-[9px] font-black text-gray-400 uppercase tracking-widest">Placed</th>
+                                <th className="px-4 sm:px-6 py-3.5 sm:py-4 text-left text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Order</th>
+                                <th className="px-4 sm:px-6 py-3.5 sm:py-4 text-left text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Buyer</th>
+                                <th className="px-4 sm:px-6 py-3.5 sm:py-4 text-left text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Amount Paid</th>
+                                <th className="px-4 sm:px-6 py-3.5 sm:py-4 text-left text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Confirmations</th>
+                                <th className="px-4 sm:px-6 py-3.5 sm:py-4 text-left text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Suspended Vendor</th>
+                                <th className="px-4 sm:px-6 py-3.5 sm:py-4 text-right text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Placed</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100 dark:divide-white/5">
+                        <tbody className="divide-y divide-sv-border">
                             {queue.length === 0 ? (
-                                <tr><td colSpan={6} className="px-6 py-12 text-center text-xs text-gray-400 font-bold">
+                                <tr><td colSpan={6} className="px-6 py-12 text-center text-xs text-sv-text-muted font-bold">
                                     Nothing needs manual resolution right now.
                                 </td></tr>
                             ) : queue.map((row) => (
-                                <tr key={row.orderMongoId} className="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors align-top">
-                                    <td className="px-6 py-4">
-                                        <p className="font-mono font-bold text-gray-900 dark:text-white text-xs">#{row.orderId}</p>
-                                        <p className="text-[9px] text-gray-400 uppercase tracking-widest mt-1">{row.status}</p>
+                                <tr key={row.orderMongoId} className="hover:bg-sv-surface-muted/40 transition-colors align-top">
+                                    <td className="px-4 sm:px-6 py-3.5 sm:py-4">
+                                        <p className="font-mono font-bold text-sv-text-primary text-xs">#{row.orderId}</p>
+                                        <p className="text-[10px] text-sv-text-muted uppercase tracking-widest mt-1">{row.status}</p>
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <p className="font-bold text-gray-900 dark:text-white text-xs">{row.buyerName}</p>
+                                    <td className="px-4 sm:px-6 py-3.5 sm:py-4">
+                                        <p className="font-bold text-sv-text-primary text-xs">{row.buyerName}</p>
                                         {row.buyerEmail ? (
-                                            <a href={`mailto:${row.buyerEmail}`} className="text-[10px] text-primary hover:underline flex items-center gap-1 mt-1">
+                                            <a href={`mailto:${row.buyerEmail}`} className="text-[10px] text-sv-primary hover:underline flex items-center gap-1 mt-1 transition-colors">
                                                 <FaEnvelope size={9} /> {row.buyerEmail}
                                             </a>
                                         ) : (
-                                            <p className="text-[9px] text-gray-400 mt-1">No email on file</p>
+                                            <p className="text-[10px] text-sv-text-muted mt-1">No email on file</p>
                                         )}
                                         {row.buyerAddress?.address && (
-                                            <p className="text-[9px] text-gray-400 flex items-start gap-1 mt-1 max-w-[220px]">
+                                            <p className="text-[10px] text-sv-text-muted flex items-start gap-1 mt-1 max-w-[220px]">
                                                 <FaMapMarkerAlt size={9} className="mt-0.5 shrink-0" />
                                                 {[row.buyerAddress.address, row.buyerAddress.city, row.buyerAddress.state].filter(Boolean).join(', ')}
                                             </p>
                                         )}
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <span className="font-black text-gray-900 dark:text-white text-xs">₦{(row.amountPaidKobo / 100).toLocaleString()}</span>
+                                    <td className="px-4 sm:px-6 py-3.5 sm:py-4">
+                                        <span className="font-black text-sv-text-primary text-xs">₦{(row.amountPaidKobo / 100).toLocaleString()}</span>
                                     </td>
-                                    <td className="px-6 py-4 space-y-1">
-                                        <p className="text-[10px] font-bold flex items-center gap-1.5">
-                                            {row.vendorAcceptedTransfer ? <FaCheckCircle className="text-green-500" size={11} /> : <FaTimesCircle className="text-gray-300" size={11} />}
+                                    <td className="px-4 sm:px-6 py-3.5 sm:py-4 space-y-1">
+                                        <p className="text-[10px] font-bold flex items-center gap-1.5 text-sv-text-primary">
+                                            {row.vendorAcceptedTransfer ? <FaCheckCircle className="text-sv-success" size={11} /> : <FaTimesCircle className="text-sv-border" size={11} />}
                                             Vendor accepted transfer
                                         </p>
-                                        <p className="text-[10px] font-bold flex items-center gap-1.5">
-                                            {row.buyerConfirmedReceipt ? <FaCheckCircle className="text-green-500" size={11} /> : <FaTimesCircle className="text-gray-300" size={11} />}
+                                        <p className="text-[10px] font-bold flex items-center gap-1.5 text-sv-text-primary">
+                                            {row.buyerConfirmedReceipt ? <FaCheckCircle className="text-sv-success" size={11} /> : <FaTimesCircle className="text-sv-border" size={11} />}
                                             Buyer confirmed receipt
                                         </p>
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <p className="font-bold text-gray-900 dark:text-white text-xs">{row.vendorName}</p>
-                                        <p className="text-[9px] text-gray-400">{row.storeName} · {row.vendorEmail}</p>
+                                    <td className="px-4 sm:px-6 py-3.5 sm:py-4">
+                                        <p className="font-bold text-sv-text-primary text-xs">{row.vendorName}</p>
+                                        <p className="text-[10px] text-sv-text-muted">{row.storeName} · {row.vendorEmail}</p>
                                         {row.suspensionReason && (
-                                            <p className="text-[9px] text-sv-danger flex items-start gap-1 mt-1 max-w-[220px]">
+                                            <p className="text-[10px] text-sv-danger flex items-start gap-1 mt-1 max-w-[220px]">
                                                 <FaExclamationTriangle size={9} className="mt-0.5 shrink-0" /> {row.suspensionReason}
                                             </p>
                                         )}
                                     </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <p className="text-[10px] font-bold text-gray-500">{new Date(row.createdAt).toLocaleDateString()}</p>
+                                    <td className="px-4 sm:px-6 py-3.5 sm:py-4 text-right">
+                                        <p className="text-[10px] font-bold text-sv-text-muted">{new Date(row.createdAt).toLocaleDateString()}</p>
                                     </td>
                                 </tr>
                             ))}
@@ -138,19 +138,19 @@ export default function DirectTransferResolutionQueue() {
                 </div>
 
                 {totalPages > 1 && (
-                    <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100 dark:border-white/5">
+                    <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-t border-sv-border">
                         <button
                             onClick={() => setPage((p) => Math.max(1, p - 1))}
                             disabled={page <= 1}
-                            className="text-[10px] font-black uppercase tracking-widest text-gray-500 disabled:opacity-30"
+                            className="text-[10px] font-black uppercase tracking-widest text-sv-text-secondary hover:text-sv-text-primary disabled:opacity-30 transition-colors"
                         >
                             Previous
                         </button>
-                        <span className="text-[10px] font-bold text-gray-400">Page {page} of {totalPages}</span>
+                        <span className="text-[10px] font-bold text-sv-text-muted">Page {page} of {totalPages}</span>
                         <button
                             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                             disabled={page >= totalPages}
-                            className="text-[10px] font-black uppercase tracking-widest text-gray-500 disabled:opacity-30"
+                            className="text-[10px] font-black uppercase tracking-widest text-sv-text-secondary hover:text-sv-text-primary disabled:opacity-30 transition-colors"
                         >
                             Next
                         </button>

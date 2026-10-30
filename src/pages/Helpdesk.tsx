@@ -54,14 +54,14 @@ const PRIORITY_CONFIG: Record<TicketPriority, { label: string; color: string; do
   urgent: { label: 'Urgent',  color: 'bg-sv-danger-soft text-sv-danger border-sv-danger/30',    dot: 'bg-sv-danger'    },
   high:   { label: 'High',    color: 'bg-sv-warning-soft text-sv-warning border-sv-warning/30', dot: 'bg-sv-warning' },
   normal: { label: 'Normal',  color: 'bg-sv-info-soft text-sv-info border-sv-info/30', dot: 'bg-sv-info'   },
-  low:    { label: 'Low',     color: 'bg-slate-100 text-slate-600 border-slate-200', dot: 'bg-slate-400' },
+  low:    { label: 'Low',     color: 'bg-sv-surface-muted text-sv-text-secondary border-sv-border', dot: 'bg-sv-text-muted' },
 };
 
 const STATUS_CONFIG: Record<TicketStatus, { label: string; color: string }> = {
-  OPEN:        { label: 'Open',        color: 'bg-primary/10 text-primary border-primary/20' },
+  OPEN:        { label: 'Open',        color: 'bg-sv-primary/10 text-sv-primary border-sv-primary/20' },
   IN_PROGRESS: { label: 'In Progress', color: 'bg-sv-info-soft text-sv-info border-sv-info/30'   },
   PENDING:     { label: 'Pending',     color: 'bg-sv-warning-soft text-sv-warning border-sv-warning/30' },
-  RESOLVED:    { label: 'Resolved',    color: 'bg-secondary text-primary border-primary/20'  },
+  RESOLVED:    { label: 'Resolved',    color: 'bg-sv-success-soft text-sv-success border-sv-success/30'  },
   ESCALATED:   { label: 'Escalated',   color: 'bg-sv-danger-soft text-sv-danger border-sv-danger/30'       },
 };
 
@@ -115,24 +115,24 @@ export default function Helpdesk() {
   return (
     <div className="min-h-screen bg-sv-bg">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-900 border-b border-slate-200 dark:border-white/10 px-6 py-6">
+      <div className="bg-sv-surface border-b border-sv-border px-4 sm:px-6 py-6 shadow-xs">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-primary/10 text-primary rounded-[5px] flex items-center justify-center">
+            <div className="w-12 h-12 bg-sv-primary/10 text-sv-primary rounded-xl flex items-center justify-center border border-sv-primary/20 shrink-0">
               <FaHeadset size={22} />
             </div>
             <div>
-              <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-black text-sv-text-primary tracking-tight">
                 Helpdesk
               </h1>
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+              <p className="text-xs font-bold text-sv-text-muted uppercase tracking-widest mt-0.5">
                 Platform Support — Admin View
               </p>
             </div>
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-1 p-1 bg-slate-100 dark:bg-black/30 rounded-[5px] border border-slate-200 dark:border-white/10">
+          <div className="flex gap-1 p-1 bg-sv-surface-muted rounded-xl border border-sv-border self-start md:self-auto overflow-x-auto">
             {([
               { id: 'queue',  label: 'Ticket Queue',  icon: FaInbox   },
               { id: 'agents', label: 'Agents',         icon: FaUsers   },
@@ -140,10 +140,10 @@ export default function Helpdesk() {
               <button
                 key={id}
                 onClick={() => setActiveTab(id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-[4px] text-xs font-black uppercase tracking-widest transition-all ${
+                className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${
                   activeTab === id
-                    ? 'bg-white dark:bg-gray-800 text-primary shadow-sm'
-                    : 'text-slate-500 hover:text-slate-700 dark:hover:text-gray-300'
+                    ? 'bg-sv-surface text-sv-primary shadow-xs'
+                    : 'text-sv-text-muted hover:text-sv-text-primary'
                 }`}
               >
                 <Icon size={12} />
@@ -154,23 +154,23 @@ export default function Helpdesk() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
         {/* Stats Bar */}
         {stats && (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-6 sm:mb-8">
             {[
-              { label: 'Open',             value: stats.openTickets,           icon: FaTicketAlt,          color: 'text-primary'      },
-              { label: 'In Progress',      value: stats.inProgressTickets,     icon: FaClock,              color: 'text-blue-600'     },
-              { label: 'SLA Breached',     value: stats.slaBreachedTickets,    icon: FaExclamationTriangle,color: 'text-red-600'      },
-              { label: 'Resolved Today',   value: stats.resolvedToday,          icon: FaCheckCircle,        color: 'text-primary'      },
-              { label: 'Avg First Resp',   value: `${stats.avgFirstResponseMins}m`, icon: FaBell,          color: 'text-amber-600'    },
-              { label: 'Avg Resolution',   value: `${Math.floor(stats.avgResolutionMins / 60)}h`, icon: FaFire, color: 'text-purple-600' },
+              { label: 'Open',             value: stats.openTickets,           icon: FaTicketAlt,          color: 'text-sv-primary'      },
+              { label: 'In Progress',      value: stats.inProgressTickets,     icon: FaClock,              color: 'text-sv-info'     },
+              { label: 'SLA Breached',     value: stats.slaBreachedTickets,    icon: FaExclamationTriangle,color: 'text-sv-danger'      },
+              { label: 'Resolved Today',   value: stats.resolvedToday,          icon: FaCheckCircle,        color: 'text-sv-success'      },
+              { label: 'Avg First Resp',   value: `${stats.avgFirstResponseMins}m`, icon: FaBell,          color: 'text-sv-warning'    },
+              { label: 'Avg Resolution',   value: `${Math.floor(stats.avgResolutionMins / 60)}h`, icon: FaFire, color: 'text-sv-tag' },
             ].map(({ label, value, icon: Icon, color }) => (
-              <div key={label} className="bg-white dark:bg-gray-900 rounded-[5px] border border-slate-200 dark:border-white/10 p-4 flex items-center gap-3">
+              <div key={label} className="bg-sv-surface rounded-2xl border border-sv-border p-4 flex items-center gap-3 shadow-xs">
                 <Icon size={18} className={color} />
                 <div>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider leading-none mb-1">{label}</p>
-                  <p className="text-xl font-black text-slate-900 dark:text-white">{value}</p>
+                  <p className="text-[10px] font-bold text-sv-text-muted uppercase tracking-wider leading-none mb-1">{label}</p>
+                  <p className="text-xl font-black text-sv-text-primary">{value}</p>
                 </div>
               </div>
             ))}
@@ -182,11 +182,11 @@ export default function Helpdesk() {
           {activeTab === 'queue' && (
             <motion.div key="queue" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
               {/* Filters */}
-              <div className="flex flex-wrap gap-3 mb-6">
+              <div className="flex flex-wrap items-center gap-3 mb-6">
                 <select
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value as TicketStatus | 'ALL')}
-                  className="px-4 py-2 bg-white dark:bg-gray-900 border border-slate-200 dark:border-white/10 rounded-[5px] text-xs font-black uppercase tracking-widest text-slate-700 dark:text-gray-200"
+                  className="px-4 py-2 bg-sv-surface border border-sv-border rounded-xl text-xs font-bold uppercase tracking-wider text-sv-text-primary shadow-xs outline-none focus:ring-2 focus:ring-sv-primary/20"
                 >
                   <option value="ALL">All Status</option>
                   <option value="OPEN">Open</option>
@@ -199,7 +199,7 @@ export default function Helpdesk() {
                 <select
                   value={filterPriority}
                   onChange={(e) => setFilterPriority(e.target.value as TicketPriority | 'ALL')}
-                  className="px-4 py-2 bg-white dark:bg-gray-900 border border-slate-200 dark:border-white/10 rounded-[5px] text-xs font-black uppercase tracking-widest text-slate-700 dark:text-gray-200"
+                  className="px-4 py-2 bg-sv-surface border border-sv-border rounded-xl text-xs font-bold uppercase tracking-wider text-sv-text-primary shadow-xs outline-none focus:ring-2 focus:ring-sv-primary/20"
                 >
                   <option value="ALL">All Priority</option>
                   <option value="urgent">Urgent</option>
@@ -208,25 +208,25 @@ export default function Helpdesk() {
                   <option value="low">Low</option>
                 </select>
 
-                <span className="ml-auto text-xs font-black text-slate-400 uppercase tracking-widest self-center">
+                <span className="ml-auto text-xs font-bold text-sv-text-muted uppercase tracking-wider self-center">
                   {filteredTickets.length} ticket{filteredTickets.length !== 1 ? 's' : ''}
                 </span>
               </div>
 
               {/* Ticket Table */}
-              <div className="bg-white dark:bg-gray-900 rounded-[5px] border border-slate-200 dark:border-white/10 overflow-hidden">
+              <div className="bg-sv-surface rounded-2xl border border-sv-border overflow-hidden shadow-xs">
                 {loading ? (
                   <div className="p-12 text-center">
-                    <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-3" />
-                    <p className="text-xs font-black uppercase tracking-widest text-slate-400">Loading tickets...</p>
+                    <div className="w-8 h-8 border-2 border-sv-primary/20 border-t-sv-primary rounded-full animate-spin mx-auto mb-3" />
+                    <p className="text-xs font-bold uppercase tracking-widest text-sv-text-muted">Loading tickets...</p>
                   </div>
                 ) : filteredTickets.length === 0 ? (
-                  <div className="p-12 text-center">
-                    <FaCheckCircle size={40} className="text-slate-200 dark:text-gray-700 mx-auto mb-4" />
-                    <p className="text-sm font-black text-slate-400 uppercase tracking-widest">Queue empty</p>
+                  <div className="p-16 text-center">
+                    <FaCheckCircle size={40} className="text-sv-border mx-auto mb-4" />
+                    <p className="text-sm font-bold text-sv-text-muted uppercase tracking-widest">Queue empty</p>
                   </div>
                 ) : (
-                  <div className="divide-y divide-slate-100 dark:divide-white/5">
+                  <div className="divide-y divide-sv-border">
                     {filteredTickets.map((ticket) => {
                       const sla = getSLATimeLeft(ticket.firstResponseDeadline);
                       const priority = PRIORITY_CONFIG[ticket.priority];
@@ -237,36 +237,36 @@ export default function Helpdesk() {
                           key={ticket._id}
                           layout
                           onClick={() => setSelectedTicket(ticket)}
-                          className="w-full p-4 md:p-5 flex items-center gap-4 hover:bg-slate-50 dark:hover:bg-white/5 transition-all text-left group"
+                          className="w-full p-4 sm:p-5 flex items-center gap-4 hover:bg-sv-surface-muted transition-all text-left group"
                         >
                           {/* Priority dot */}
                           <FaCircle size={8} className={priority.dot} />
 
                           {/* Ticket info */}
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-3 mb-1">
-                              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest shrink-0">
+                            <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-1">
+                              <span className="text-[10px] font-bold text-sv-text-muted uppercase tracking-widest shrink-0">
                                 {ticket.ticketRef}
                               </span>
-                              <span className={`text-[9px] font-black px-2 py-0.5 rounded-[3px] border uppercase tracking-widest ${priority.color}`}>
+                              <span className={`text-[9px] font-black px-2 py-0.5 rounded-[4px] border uppercase tracking-widest ${priority.color}`}>
                                 {priority.label}
                               </span>
-                              <span className={`text-[9px] font-black px-2 py-0.5 rounded-[3px] border uppercase tracking-widest ${status.color}`}>
+                              <span className={`text-[9px] font-black px-2 py-0.5 rounded-[4px] border uppercase tracking-widest ${status.color}`}>
                                 {status.label}
                               </span>
                               {ticket.slaBreached && (
-                                <span className="text-[9px] font-black px-2 py-0.5 rounded-[3px] border uppercase tracking-widest bg-sv-danger-soft text-sv-danger border-sv-danger/30 flex items-center gap-1">
+                                <span className="text-[9px] font-black px-2 py-0.5 rounded-[4px] border uppercase tracking-widest bg-sv-danger-soft text-sv-danger border-sv-danger/30 flex items-center gap-1">
                                   <FaExclamationTriangle size={7} /> SLA Breached
                                 </span>
                               )}
                             </div>
-                            <p className="font-black text-slate-900 dark:text-white text-sm truncate">{ticket.subject}</p>
-                            <p className="text-xs text-slate-400 font-medium">{ticket.customerEmail}</p>
+                            <p className="font-black text-sv-text-primary text-sm truncate">{ticket.subject}</p>
+                            <p className="text-xs text-sv-text-muted font-medium truncate">{ticket.customerEmail}</p>
                           </div>
 
                           {/* SLA timer */}
-                          <div className={`text-right shrink-0 hidden md:block ${sla.isBreached ? 'text-red-600' : sla.isWarning ? 'text-amber-600' : 'text-slate-400'}`}>
-                            <p className="text-[9px] font-black uppercase tracking-widest mb-0.5">
+                          <div className={`text-right shrink-0 hidden md:block ${sla.isBreached ? 'text-sv-danger' : sla.isWarning ? 'text-sv-warning' : 'text-sv-text-muted'}`}>
+                            <p className="text-[9px] font-bold uppercase tracking-widest mb-0.5">
                               {sla.isBreached ? 'Breached' : 'SLA Left'}
                             </p>
                             <p className="font-black text-sm">{sla.label}</p>
@@ -274,11 +274,11 @@ export default function Helpdesk() {
 
                           {/* Queue */}
                           <div className="text-right shrink-0 hidden lg:block">
-                            <p className="text-[9px] font-black uppercase tracking-widest text-slate-300 mb-0.5">Queue</p>
-                            <p className="text-xs font-black text-slate-600 dark:text-gray-300 capitalize">{ticket.queueId}</p>
+                            <p className="text-[9px] font-bold uppercase tracking-widest text-sv-text-muted mb-0.5">Queue</p>
+                            <p className="text-xs font-bold text-sv-text-secondary capitalize">{ticket.queueId}</p>
                           </div>
 
-                          <FaChevronRight size={10} className="text-slate-300 group-hover:text-primary transition-colors shrink-0" />
+                          <FaChevronRight size={10} className="text-sv-text-muted group-hover:text-sv-primary transition-colors shrink-0" />
                         </motion.button>
                       );
                     })}

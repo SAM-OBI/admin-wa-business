@@ -50,87 +50,86 @@ export default function SupportInquiries() {
     );
 
     return (
-        <div className="p-6 max-w-7xl mx-auto space-y-6">
+        <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
             {/* Institutional Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-100 pb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-sv-border pb-6">
                 <div>
-                    <h1 className="text-2xl font-black text-gray-900 uppercase tracking-tighter">Support & Inquiries</h1>
-                    <p className="text-gray-500 text-sm font-medium">Institutional-grade oversight of public assistance requests</p>
+                    <h1 className="text-2xl sm:text-3xl font-black text-sv-text-primary tracking-tight">Support & Inquiries</h1>
+                    <p className="text-sv-text-muted text-sm font-medium mt-1">Institutional-grade oversight of public assistance requests</p>
                 </div>
                 
-                <div className="relative w-full md:w-64">
-                    <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <div className="relative w-full sm:w-72">
+                    <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sv-text-muted" />
                     <input 
                         type="text"
                         placeholder="Search by ID, Name or Email"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 bg-sv-surface-muted border border-sv-border rounded-[5px] text-sm focus:outline-none focus:border-sv-primary transition-all font-medium"
+                        className="w-full pl-10 pr-4 py-2 bg-sv-surface border border-sv-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sv-primary/20 focus:border-sv-primary transition-all font-medium text-sv-text-primary placeholder:text-sv-text-muted shadow-xs"
                     />
                 </div>
             </div>
 
             {loading ? (
-                 <div className="flex justify-center p-12">
-                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                 <div className="flex justify-center p-12 min-h-[300px] items-center">
+                     <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-sv-primary"></div>
                  </div>
             ) : error ? (
                 <ErrorState message={error} onRetry={fetchInquiries} />
             ) : (
                 <div className="space-y-4">
                     {filteredInquiries.length === 0 ? (
-                        <div className="text-center py-24 bg-sv-surface rounded-[5px] border border-sv-border">
-                            <FiMail className="mx-auto text-4xl text-gray-200 mb-2" />
-                            <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">No support inquiries found</p>
+                        <div className="text-center py-20 bg-sv-surface rounded-2xl border border-sv-border shadow-xs">
+                            <FiMail className="mx-auto text-4xl text-sv-border mb-3" />
+                            <p className="text-sv-text-muted font-bold uppercase tracking-widest text-xs">No support inquiries found</p>
                         </div>
                     ) : (
                         filteredInquiries.map((item) => (
-                            <div key={item._id} className="bg-sv-surface rounded-[5px] p-6 border border-sv-border shadow-sm hover:shadow-md transition-all group">
+                            <div key={item._id} className="bg-sv-surface rounded-2xl p-4 sm:p-6 border border-sv-border shadow-xs hover:shadow-md transition-all group">
                                 <div className="flex flex-col md:flex-row justify-between items-start gap-6">
-                                    <div className="flex-1 space-y-4 min-w-0">
-                                        <div className="flex items-center gap-3">
-                                            <span className="text-[10px] font-black uppercase tracking-widest bg-sv-surface-muted text-sv-text-secondary px-2 py-1 rounded">
+                                    <div className="flex-1 space-y-4 min-w-0 w-full">
+                                        <div className="flex flex-wrap items-center gap-2.5">
+                                            <span className="text-[10px] font-black uppercase tracking-widest bg-sv-surface-muted text-sv-text-secondary px-2.5 py-1 rounded-full border border-sv-border">
                                                 {item.forensicId}
                                             </span>
-                                            <span className={`px-2 py-1 rounded text-[10px] font-black uppercase tracking-widest ${getStatusColor(item.status)}`}>
+                                            <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${getStatusColor(item.status)}`}>
                                                 {item.status}
                                             </span>
-                                            <span className="text-xs text-gray-400 flex items-center gap-1 font-medium">
+                                            <span className="text-xs text-sv-text-muted flex items-center gap-1 font-medium">
                                                 <FiCalendar /> {new Date(item.createdAt).toLocaleString()}
                                             </span>
                                         </div>
 
-                                        <div className="space-y-1">
-                                            <h3 className="text-sm font-black text-gray-900 uppercase tracking-tighter">{item.subject}</h3>
-                                            <p className="text-xs text-gray-600 font-medium leading-relaxed whitespace-pre-wrap bg-gray-50/50 p-4 rounded-[5px] border border-gray-50 italic">
+                                        <div className="space-y-2">
+                                            <h3 className="text-sm font-black text-sv-text-primary uppercase tracking-tight">{item.subject}</h3>
+                                            <p className="text-xs sm:text-sm text-sv-text-secondary font-medium leading-relaxed whitespace-pre-wrap bg-sv-surface-muted p-4 rounded-xl border border-sv-border italic">
                                                 "{item.message}"
                                             </p>
                                         </div>
                                         
-                                        <div className="flex flex-wrap items-center gap-6 pt-2">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-8 h-8 rounded-[5px] bg-blue-50 flex items-center justify-center text-blue-600 font-black text-xs">
+                                        <div className="flex flex-wrap items-center gap-4 sm:gap-6 pt-2">
+                                            <div className="flex items-center gap-2.5">
+                                                <div className="w-8 h-8 rounded-xl bg-sv-primary/10 border border-sv-primary/20 flex items-center justify-center text-sv-primary font-black text-xs shrink-0">
                                                     {item.name.charAt(0).toUpperCase()}
                                                 </div>
-                                                <span className="text-xs font-black text-gray-900 uppercase tracking-tighter">{item.name}</span>
+                                                <span className="text-xs font-black text-sv-text-primary uppercase tracking-tight">{item.name}</span>
                                             </div>
 
                                             <a 
                                                 href={`mailto:${item.email}?subject=Re: [${item.forensicId}] ${item.subject}`}
-                                                className="flex items-center gap-2 text-xs font-black text-blue-600 hover:text-blue-700 transition-colors uppercase tracking-widest group/link"
+                                                className="flex items-center gap-2 text-xs font-bold text-sv-primary hover:text-sv-primary-hover transition-colors uppercase tracking-wider group/link truncate"
                                             >
-                                                <FiMail />
-                                                {item.email}
-                                                <FiExternalLink className="opacity-0 group-hover/link:opacity-100 transition-opacity" />
+                                                <FiMail className="shrink-0" />
+                                                <span className="truncate">{item.email}</span>
+                                                <FiExternalLink className="opacity-0 group-hover/link:opacity-100 transition-opacity shrink-0" />
                                             </a>
 
-                                            <div className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                                                <FiShield />
+                                            <div className="flex items-center gap-1.5 text-[10px] font-bold text-sv-text-muted uppercase tracking-wider">
+                                                <FiShield className="shrink-0" />
                                                 <span>IP: {item.metadata?.ip || 'N/A'}</span>
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
                         ))
@@ -140,21 +139,21 @@ export default function SupportInquiries() {
             
             {/* Institutional Pagination */}
             {totalPages > 1 && (
-                <div className="flex justify-center mt-12 gap-2">
+                <div className="flex items-center justify-center mt-8 gap-3">
                     <button
                         disabled={page === 1}
                         onClick={() => setPage(p => Math.max(1, p - 1))}
-                        className="px-4 py-2 border border-sv-border rounded-[5px] text-[10px] font-black uppercase tracking-widest disabled:opacity-30 hover:bg-sv-surface-muted transition-all"
+                        className="px-4 py-2 border border-sv-border rounded-xl text-xs font-bold uppercase tracking-wider disabled:opacity-30 hover:bg-sv-surface-muted text-sv-text-primary transition-all shadow-xs"
                     >
                         Prev
                     </button>
-                    <span className="px-6 py-2 bg-sv-surface border border-sv-border rounded-[5px] text-[10px] font-black uppercase tracking-widest text-sv-text-secondary">
+                    <span className="px-5 py-2 bg-sv-surface border border-sv-border rounded-xl text-xs font-bold uppercase tracking-wider text-sv-text-secondary shadow-xs">
                         Batch {page} of {totalPages}
                     </span>
                     <button
                         disabled={page === totalPages}
                         onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                        className="px-4 py-2 border border-sv-border rounded-[5px] text-[10px] font-black uppercase tracking-widest disabled:opacity-30 hover:bg-sv-surface-muted transition-all"
+                        className="px-4 py-2 border border-sv-border rounded-xl text-xs font-bold uppercase tracking-wider disabled:opacity-30 hover:bg-sv-surface-muted text-sv-text-primary transition-all shadow-xs"
                     >
                         Next
                     </button>

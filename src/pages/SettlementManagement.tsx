@@ -147,7 +147,7 @@ export default function SettlementManagement() {
       title: 'Force Release Settlement',
       html: `
         <p class="mb-4">Order: <strong>${orderIdDisplay}</strong></p>
-        <p class="text-[10px] text-gray-500 mb-4 bg-orange-50 p-2 rounded border border-orange-100">
+        <p class="text-[10px] text-sv-text-muted mb-4 bg-sv-warning-soft p-2 rounded border border-sv-warning/30">
            Institutional Guard: Action will be cryptographically signed and logged with justification.
         </p>
         <textarea id="reason" class="swal2-textarea w-full" placeholder="Internal justification (min 10 chars)..." rows="4" required></textarea>
@@ -176,7 +176,7 @@ export default function SettlementManagement() {
       title: 'Hold Settlement',
       html: `
         <p class="mb-4">Order: <strong>${orderIdDisplay}</strong></p>
-        <p class="text-sm text-orange-600 mb-4 font-bold">Locks funds in HELD state (SLA Suspended)</p>
+        <p class="text-sm text-sv-warning mb-4 font-bold">Locks funds in HELD state (SLA Suspended)</p>
         <textarea id="reason" class="swal2-textarea w-full" placeholder="Justification for hold..." rows="4" required></textarea>
       `,
       showCancelButton: true,
@@ -227,65 +227,65 @@ export default function SettlementManagement() {
 
   if (loading && !dashboard) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-[50vh] flex items-center justify-center p-4 sm:p-6">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-sv-primary"></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-sv-text-primary flex items-center gap-2">
-          <FiLock className="text-emerald-600" />
+        <h1 className="text-2xl sm:text-3xl font-black text-sv-text-primary flex items-center gap-2 tracking-tight">
+          <FiLock className="text-sv-primary" />
           Safe Settlement Oversight
         </h1>
-        <p className="text-gray-500 text-sm mt-1">Institutional mediator dashboard for buyer-protection protocols</p>
+        <p className="text-sv-text-secondary text-sm sm:text-base mt-1">Institutional mediator dashboard for buyer-protection protocols</p>
       </div>
 
       {/* Stats Cards */}
       {dashboard && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="bg-sv-surface rounded-2xl p-6 border border-sv-border shadow-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="bg-sv-surface rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-sv-border shadow-xs">
             <div className="flex items-center justify-between mb-2">
-              <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">In-Process</div>
-              <FiLock className="text-orange-500" size={18} />
+              <div className="text-xs font-bold text-sv-text-muted uppercase tracking-widest">In-Process</div>
+              <FiLock className="text-sv-warning" size={18} />
             </div>
-            <div className="text-2xl font-black text-gray-900">
+            <div className="text-xl sm:text-2xl font-black text-sv-text-primary">
               ₦{((dashboard.totalSettlementValue ?? dashboard.totalInProcess ?? 0) / 100).toLocaleString()}
             </div>
-            <p className="text-[10px] text-gray-400 font-medium mt-1">
+            <p className="text-[10px] text-sv-text-muted font-medium mt-1">
               {dashboard.pendingRelease} awaiting SLA maturity
             </p>
           </div>
 
-          <div className="bg-sv-surface rounded-2xl p-6 border border-sv-border shadow-sm">
+          <div className="bg-sv-surface rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-sv-border shadow-xs">
             <div className="flex items-center justify-between mb-2">
-              <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Released</div>
-              <FiCheckCircle className="text-green-500" size={18} />
+              <div className="text-xs font-bold text-sv-text-muted uppercase tracking-widest">Total Released</div>
+              <FiCheckCircle className="text-sv-success" size={18} />
             </div>
-            <div className="text-2xl font-black text-gray-900">
+            <div className="text-xl sm:text-2xl font-black text-sv-text-primary">
               ₦{((dashboard.totalSettlementReleased ?? dashboard.totalReleased ?? 0) / 100).toLocaleString()}
             </div>
           </div>
 
-          <div className="bg-sv-surface rounded-2xl p-6 border border-sv-border shadow-sm">
+          <div className="bg-sv-surface rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-sv-border shadow-xs">
             <div className="flex items-center justify-between mb-2">
-              <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Disputed</div>
-              <FiSlash className="text-red-500" size={18} />
+              <div className="text-xs font-bold text-sv-text-muted uppercase tracking-widest">Disputed</div>
+              <FiSlash className="text-sv-danger" size={18} />
             </div>
-            <div className="text-2xl font-black text-gray-900">
+            <div className="text-xl sm:text-2xl font-black text-sv-text-primary">
               ₦{((dashboard.totalSettlementDisputed ?? dashboard.totalDisputed ?? 0) / 100).toLocaleString()}
             </div>
           </div>
 
-          <div className="bg-sv-surface rounded-2xl p-6 border border-sv-border shadow-sm">
+          <div className="bg-sv-surface rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-sv-border shadow-xs">
             <div className="flex items-center justify-between mb-2">
-              <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">AUM (Volume)</div>
-              <FiTrendingUp className="text-blue-500" size={18} />
+              <div className="text-xs font-bold text-sv-text-muted uppercase tracking-widest">AUM (Volume)</div>
+              <FiTrendingUp className="text-sv-info" size={18} />
             </div>
-            <div className="text-2xl font-black text-gray-900">
+            <div className="text-xl sm:text-2xl font-black text-sv-text-primary">
               ₦{( ((dashboard.totalSettlementValue ?? dashboard.totalInProcess ?? 0) + (dashboard.totalSettlementReleased ?? dashboard.totalReleased ?? 0)) / 100 ).toLocaleString()}
             </div>
           </div>
@@ -293,34 +293,34 @@ export default function SettlementManagement() {
       )}
 
       {/* Tabs */}
-      <div className="bg-sv-surface rounded-2xl border border-sv-border shadow-sm overflow-hidden">
-        <div className="flex border-b border-gray-100">
+      <div className="bg-sv-surface rounded-xl sm:rounded-2xl border border-sv-border shadow-xs overflow-hidden">
+        <div className="flex border-b border-sv-border overflow-x-auto scrollbar-thin">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`px-6 py-4 font-bold text-xs uppercase tracking-widest transition-all ${
+            className={`px-4 sm:px-6 py-3.5 sm:py-4 font-bold text-xs uppercase tracking-widest whitespace-nowrap transition-all ${
               activeTab === 'overview'
-                ? 'border-b-2 border-blue-600 text-blue-600'
-                : 'text-gray-400 hover:text-gray-600'
+                ? 'border-b-2 border-sv-primary text-sv-primary'
+                : 'text-sv-text-muted hover:text-sv-text-primary'
             }`}
           >
             Overview
           </button>
           <button
             onClick={() => setActiveTab('vendors')}
-            className={`px-6 py-4 font-bold text-xs uppercase tracking-widest transition-all ${
+            className={`px-4 sm:px-6 py-3.5 sm:py-4 font-bold text-xs uppercase tracking-widest whitespace-nowrap transition-all ${
               activeTab === 'vendors'
-                ? 'border-b-2 border-blue-600 text-blue-600'
-                : 'text-gray-400 hover:text-gray-600'
+                ? 'border-b-2 border-sv-primary text-sv-primary'
+                : 'text-sv-text-muted hover:text-sv-text-primary'
             }`}
           >
             By Vendor
           </button>
           <button
             onClick={() => setActiveTab('transactions')}
-            className={`px-6 py-4 font-bold text-xs uppercase tracking-widest transition-all ${
+            className={`px-4 sm:px-6 py-3.5 sm:py-4 font-bold text-xs uppercase tracking-widest whitespace-nowrap transition-all ${
               activeTab === 'transactions'
-                ? 'border-b-2 border-blue-600 text-blue-600'
-                : 'text-gray-400 hover:text-gray-600'
+                ? 'border-b-2 border-sv-primary text-sv-primary'
+                : 'text-sv-text-muted hover:text-sv-text-primary'
             }`}
           >
             Transactions
@@ -328,22 +328,22 @@ export default function SettlementManagement() {
         </div>
 
         {/* Tab Content */}
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           {activeTab === 'overview' && dashboard && (
             <div className="space-y-6">
-              <h3 className="text-sm font-bold text-gray-800 uppercase tracking-widest flex items-center gap-2">
-                <span className="w-1 h-4 bg-blue-600 rounded-full"></span>
+              <h3 className="text-xs sm:text-sm font-bold text-sv-text-primary uppercase tracking-widest flex items-center gap-2">
+                <span className="w-1 h-4 bg-sv-primary rounded-full"></span>
                 Status Breakdown
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {dashboard.byStatus.map((status) => (
-                  <div key={status._id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
+                  <div key={status._id} className="flex items-center justify-between p-4 bg-sv-surface-muted/60 rounded-xl border border-sv-border">
                     <div>
-                      <div className="font-bold text-gray-800 capitalize text-sm">{status._id || 'Unknown'}</div>
-                      <div className="text-[10px] text-gray-400 font-bold uppercase">{status.count} orders</div>
+                      <div className="font-bold text-sv-text-primary capitalize text-sm">{status._id || 'Unknown'}</div>
+                      <div className="text-[10px] text-sv-text-muted font-bold uppercase">{status.count} orders</div>
                     </div>
                     <div className="text-right">
-                      <div className="font-black text-gray-900">₦{(status.amount / 100).toLocaleString()}</div>
+                      <div className="font-black text-sv-text-primary text-base">₦{(status.amount / 100).toLocaleString()}</div>
                     </div>
                   </div>
                 ))}
@@ -354,13 +354,13 @@ export default function SettlementManagement() {
           {activeTab === 'vendors' && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-bold text-gray-800 uppercase tracking-widest flex items-center gap-2">
-                  <span className="w-1 h-4 bg-blue-600 rounded-full"></span>
+                <h3 className="text-xs sm:text-sm font-bold text-sv-text-primary uppercase tracking-widest flex items-center gap-2">
+                  <span className="w-1 h-4 bg-sv-primary rounded-full"></span>
                   Settlement by Vendor
                 </h3>
               </div>
-              <div className="overflow-x-auto rounded-xl border border-sv-border">
-                <table className="w-full text-left border-collapse">
+              <div className="overflow-x-auto rounded-xl border border-sv-border scrollbar-thin scrollbar-thumb-sv-border">
+                <table className="w-full text-left border-collapse min-w-[500px]">
                   <thead className="bg-sv-surface-muted text-[10px] font-black uppercase text-sv-text-muted">
                     <tr>
                       <th className="px-4 py-3">Vendor</th>
@@ -371,17 +371,17 @@ export default function SettlementManagement() {
                   </thead>
                   <tbody className="divide-y divide-sv-border">
                     {vendors.map((vendor) => (
-                      <tr key={vendor.vendorId} className="hover:bg-sv-surface-muted transition-colors">
+                      <tr key={vendor.vendorId} className="hover:bg-sv-surface-muted/60 transition-colors">
                         <td className="px-4 py-3 text-sm">
                           <div>
                             <div className="font-bold text-sv-text-primary">{vendor.vendorName}</div>
                             <div className="text-[10px] text-sv-text-muted">{vendor.vendorEmail}</div>
                           </div>
                         </td>
-                        <td className="px-4 py-3 font-black text-orange-600 text-sm">
+                        <td className="px-4 py-3 font-black text-sv-warning text-sm">
                           ₦{(vendor.totalInProcess / 100).toLocaleString()}
                         </td>
-                        <td className="px-4 py-3 font-black text-green-600 text-sm">
+                        <td className="px-4 py-3 font-black text-sv-success text-sm">
                           ₦{(vendor.totalReleased / 100).toLocaleString()}
                         </td>
                         <td className="px-4 py-3 text-sm font-bold text-sv-text-secondary">
@@ -397,23 +397,21 @@ export default function SettlementManagement() {
 
           {activeTab === 'transactions' && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-bold text-gray-800 uppercase tracking-widest flex items-center gap-2">
-                  <span className="w-1 h-4 bg-blue-600 rounded-full"></span>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <h3 className="text-xs sm:text-sm font-bold text-sv-text-primary uppercase tracking-widest flex items-center gap-2">
+                  <span className="w-1 h-4 bg-sv-primary rounded-full"></span>
                   Audit-Grade Transactions
                 </h3>
-                <div className="flex gap-2">
-                  {/* 🛡️ [BATCH-11] Was missing 3 of the 6 real canonical
-                      settlementState values (RELEASE_PENDING/REFUND_PENDING/
-                      REFUNDED) — those transactions were always unfilterable. */}
+                <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                  {/* 🛡️ [BATCH-11] Expanded to real 6-value canonical enum */}
                   {['all', 'HELD', 'DISPUTED', 'RELEASE_PENDING', 'RELEASED', 'REFUND_PENDING', 'REFUNDED'].map((s) => (
                     <button
                       key={s}
                       onClick={() => setFilterStatus(s)}
-                      className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${
+                      className={`px-2.5 sm:px-3 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${
                         filterStatus === s
-                          ? 'bg-sv-primary text-sv-text-inverse'
-                          : 'bg-sv-surface-muted text-sv-text-muted hover:bg-sv-border'
+                          ? 'bg-sv-primary text-sv-text-inverse shadow-xs'
+                          : 'bg-sv-surface-muted text-sv-text-muted hover:text-sv-text-primary hover:bg-sv-border'
                       }`}
                     >
                       {s}
@@ -421,8 +419,8 @@ export default function SettlementManagement() {
                   ))}
                 </div>
               </div>
-              <div className="overflow-x-auto rounded-xl border border-sv-border">
-                <table className="w-full text-left border-collapse">
+              <div className="overflow-x-auto rounded-xl border border-sv-border scrollbar-thin scrollbar-thumb-sv-border">
+                <table className="w-full text-left border-collapse min-w-[650px]">
                   <thead className="bg-sv-surface-muted text-[10px] font-black uppercase text-sv-text-muted">
                     <tr>
                       <th className="px-4 py-3">Order ID</th>
@@ -434,7 +432,7 @@ export default function SettlementManagement() {
                   </thead>
                   <tbody className="divide-y divide-sv-border">
                     {transactions.map((tx) => (
-                      <tr key={tx._id} className="hover:bg-sv-surface-muted transition-colors">
+                      <tr key={tx._id} className="hover:bg-sv-surface-muted/60 transition-colors">
                         <td className="px-4 py-3 font-bold text-sv-text-primary text-xs">#{tx.orderId.slice(-8)}</td>
                         <td className="px-4 py-3">
                           <div className="text-xs font-medium text-sv-text-secondary">{tx.vendor.name}</div>
@@ -448,7 +446,7 @@ export default function SettlementManagement() {
                             tx.settlementState === 'RELEASED' ? 'bg-sv-success-soft text-sv-success' :
                             tx.settlementState === 'HELD' ? 'bg-sv-warning-soft text-sv-warning' :
                             tx.settlementState === 'RELEASE_PENDING' ? 'bg-sv-warning-soft text-sv-warning' :
-                            tx.settlementState === 'REFUND_PENDING' ? 'bg-sky-50 text-sky-600' :
+                            tx.settlementState === 'REFUND_PENDING' ? 'bg-sv-info-soft text-sv-info' :
                             tx.settlementState === 'REFUNDED' ? 'bg-sv-tag-soft text-sv-tag' :
                             'bg-sv-danger-soft text-sv-danger'
                           }`}>
@@ -490,7 +488,7 @@ export default function SettlementManagement() {
                     ))}
                     {transactions.length === 0 && (
                         <tr>
-                            <td colSpan={5} className="px-4 py-10 text-center text-gray-400 text-xs">No transactions found matching filters</td>
+                            <td colSpan={5} className="px-4 py-10 text-center text-sv-text-muted text-xs">No transactions found matching filters</td>
                         </tr>
                     )}
                   </tbody>

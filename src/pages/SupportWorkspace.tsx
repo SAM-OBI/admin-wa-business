@@ -62,15 +62,15 @@ const PRIORITY_CONFIG = {
   URGENT: { label: 'Urgent',  color: 'bg-sv-danger-soft text-sv-danger border-sv-danger/30',    dot: 'bg-sv-danger'    },
   HIGH:   { label: 'High',    color: 'bg-sv-warning-soft text-sv-warning border-sv-warning/30', dot: 'bg-sv-warning' },
   NORMAL: { label: 'Normal',  color: 'bg-sv-info-soft text-sv-info border-sv-info/30', dot: 'bg-sv-info'   },
-  LOW:    { label: 'Low',     color: 'bg-slate-100 text-slate-600 border-slate-200', dot: 'bg-slate-400' },
+  LOW:    { label: 'Low',     color: 'bg-sv-surface-muted text-sv-text-secondary border-sv-border', dot: 'bg-sv-text-muted' },
 };
 
 const STATUS_CONFIG = {
-  OPEN:             { label: 'Open',          color: 'bg-primary/10 text-primary border-primary/20' },
+  OPEN:             { label: 'Open',          color: 'bg-sv-primary/10 text-sv-primary border-sv-primary/20' },
   REPLY_PENDING:    { label: 'Reply Pending', color: 'bg-sv-warning-soft text-sv-warning border-sv-warning/30' },
   WORKFLOW_RUNNING: { label: 'Workflow',      color: 'bg-sv-info-soft text-sv-info border-sv-info/30'   },
   ESCALATED:        { label: 'Escalated',     color: 'bg-sv-danger-soft text-sv-danger border-sv-danger/30'       },
-  CLOSED:           { label: 'Closed',        color: 'bg-slate-100 text-slate-600 border-slate-200' },
+  CLOSED:           { label: 'Closed',        color: 'bg-sv-surface-muted text-sv-text-secondary border-sv-border' },
 };
 
 // --- Main Workspace ---
@@ -213,25 +213,25 @@ export default function SupportWorkspace() {
   return (
     <div className="min-h-screen bg-sv-bg">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-900 border-b border-slate-200 dark:border-white/10 px-6 py-6">
+      <div className="bg-sv-surface border-b border-sv-border px-4 sm:px-6 py-6 shadow-xs">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-primary/10 text-primary rounded-[5px] flex items-center justify-center">
+            <div className="w-12 h-12 bg-sv-primary/10 text-sv-primary rounded-xl flex items-center justify-center border border-sv-primary/20 shrink-0">
               <FaHeadset size={22} />
             </div>
             <div>
-              <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-black text-sv-text-primary tracking-tight">
                 Support Workspace
               </h1>
               <p 
-                className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 mt-1 cursor-pointer hover:text-slate-200"
+                className="text-xs font-bold text-sv-text-muted uppercase tracking-widest flex items-center gap-2 mt-1 cursor-pointer hover:text-sv-text-primary transition-colors"
                 onClick={() => setShowSyncQueue(!showSyncQueue)}
               >
                 Customer Operations Platform 
                 <span className={`w-2 h-2 rounded-full ${
-                  syncState === 'SYNCED' ? 'bg-green-500' : 
-                  syncState === 'SYNCING' ? 'bg-blue-500 animate-pulse' : 
-                  syncState === 'OFFLINE' ? 'bg-slate-400' : 'bg-red-500'
+                  syncState === 'SYNCED' ? 'bg-sv-success' : 
+                  syncState === 'SYNCING' ? 'bg-sv-primary animate-pulse' : 
+                  syncState === 'OFFLINE' ? 'bg-sv-text-muted' : 'bg-sv-danger'
                 }`} />
                 {syncState} {queue.length > 0 && `(${queue.length} PENDING)`}
               </p>
@@ -240,30 +240,30 @@ export default function SupportWorkspace() {
                 {showSyncQueue && (
                   <motion.div 
                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-20 left-6 w-96 bg-white dark:bg-gray-800 rounded-lg shadow-2xl border border-slate-200 dark:border-white/10 z-50 p-4"
+                    className="absolute top-20 left-4 sm:left-6 w-full max-w-sm bg-sv-surface rounded-2xl shadow-2xl border border-sv-border z-50 p-4"
                   >
                     <div className="flex justify-between items-center mb-4">
-                      <h3 className="font-black text-sm flex items-center gap-2"><FaSyncAlt /> Offline Sync Queue</h3>
-                      <span className="text-[10px] font-bold bg-slate-100 px-2 py-0.5 rounded">{queue.length} Items</span>
+                      <h3 className="font-black text-sm flex items-center gap-2 text-sv-text-primary"><FaSyncAlt /> Offline Sync Queue</h3>
+                      <span className="text-[10px] font-bold bg-sv-surface-muted px-2 py-0.5 rounded-full text-sv-text-primary border border-sv-border">{queue.length} Items</span>
                     </div>
                     
                     {queue.length === 0 ? (
-                      <p className="text-xs text-slate-500 text-center py-4">No pending operations.</p>
+                      <p className="text-xs text-sv-text-muted text-center py-4">No pending operations.</p>
                     ) : (
-                      <div className="space-y-3 max-h-64 overflow-y-auto">
+                      <div className="space-y-3 max-h-64 overflow-y-auto scrollbar-thin">
                         {queue.map((item, idx) => (
-                          <div key={item.id} className="bg-slate-50 dark:bg-black/20 p-3 rounded border border-slate-100 flex justify-between items-start">
+                          <div key={item.id} className="bg-sv-surface-muted p-3 rounded-xl border border-sv-border flex justify-between items-start">
                             <div>
-                              <p className="text-[10px] font-black uppercase text-primary mb-1">
+                              <p className="text-[10px] font-black uppercase text-sv-primary mb-1">
                                 #{idx + 1} {item.method} {new URL('http://mock' + item.url).pathname.split('/').pop()}
                               </p>
-                              <p className="text-xs text-slate-600 truncate max-w-[200px]">{JSON.stringify(item.payload)}</p>
+                              <p className="text-xs text-sv-text-secondary truncate max-w-[200px]">{JSON.stringify(item.payload)}</p>
                               <div className="flex gap-2 mt-2">
-                                <span className="text-[9px] font-bold bg-white border px-1 rounded">Policy: {item.conflictPolicy}</span>
-                                {item.retryCount > 0 && <span className="text-[9px] font-bold bg-sv-danger-soft text-sv-danger border border-sv-danger/30 px-1 rounded">Retries: {item.retryCount}</span>}
+                                <span className="text-[9px] font-bold bg-sv-surface border border-sv-border px-1.5 py-0.5 rounded text-sv-text-primary">Policy: {item.conflictPolicy}</span>
+                                {item.retryCount > 0 && <span className="text-[9px] font-bold bg-sv-danger-soft text-sv-danger border border-sv-danger/30 px-1.5 py-0.5 rounded">Retries: {item.retryCount}</span>}
                               </div>
                             </div>
-                            <button onClick={() => removeQueueItem(item.id)} className="text-slate-300 hover:text-red-500 transition-colors">
+                            <button onClick={() => removeQueueItem(item.id)} className="text-sv-text-muted hover:text-sv-danger transition-colors p-1">
                               <FaTrash size={12} />
                             </button>
                           </div>
@@ -276,7 +276,7 @@ export default function SupportWorkspace() {
             </div>
           </div>
           <div 
-            className="flex gap-1 p-1 bg-slate-100 dark:bg-black/30 rounded-[5px] border border-slate-200 dark:border-white/10"
+            className="flex gap-1 p-1 bg-sv-surface-muted rounded-xl border border-sv-border self-start md:self-auto overflow-x-auto"
             role="tablist"
             aria-label="Workspace Tabs"
           >
@@ -288,7 +288,7 @@ export default function SupportWorkspace() {
                 aria-controls={`tabpanel-${id}`}
                 id={`tab-${id}`}
                 onClick={() => setActiveTab(id as any)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-[4px] text-xs font-black uppercase tracking-widest transition-all focus:outline-none focus:ring-2 focus:ring-primary ${activeTab === id ? 'bg-white dark:bg-gray-800 text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all focus:outline-none focus:ring-2 focus:ring-sv-primary ${activeTab === id ? 'bg-sv-surface text-sv-primary shadow-xs' : 'text-sv-text-muted hover:text-sv-text-primary'}`}
               >
                 <Icon size={12} aria-hidden="true" /> {label}
               </button>
@@ -297,23 +297,23 @@ export default function SupportWorkspace() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
         {/* Analytics Bar */}
         {stats && activeTab === 'queue' && (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-6 sm:mb-8">
             {[
-              { label: 'Open', val: stats.openConversations, icon: FaTicketAlt, color: 'text-primary' },
-              { label: 'In Progress', val: stats.inProgress, icon: FaClock, color: 'text-blue-600' },
-              { label: 'SLA Breached', val: stats.slaBreached, icon: FaExclamationTriangle, color: 'text-red-600' },
-              { label: 'Resolved', val: stats.resolvedToday, icon: FaCheckCircle, color: 'text-green-600' },
-              { label: 'Avg 1st Reply', val: stats.avgFirstResponseText, icon: FaBell, color: 'text-amber-600' },
-              { label: 'Avg Resolution', val: stats.avgResolutionText, icon: FaFire, color: 'text-purple-600' }
+              { label: 'Open', val: stats.openConversations, icon: FaTicketAlt, color: 'text-sv-primary' },
+              { label: 'In Progress', val: stats.inProgress, icon: FaClock, color: 'text-sv-info' },
+              { label: 'SLA Breached', val: stats.slaBreached, icon: FaExclamationTriangle, color: 'text-sv-danger' },
+              { label: 'Resolved', val: stats.resolvedToday, icon: FaCheckCircle, color: 'text-sv-success' },
+              { label: 'Avg 1st Reply', val: stats.avgFirstResponseText, icon: FaBell, color: 'text-sv-warning' },
+              { label: 'Avg Resolution', val: stats.avgResolutionText, icon: FaFire, color: 'text-sv-tag' }
             ].map((s, i) => (
-              <div key={i} className="bg-white dark:bg-gray-900 rounded-[5px] border border-slate-200 dark:border-white/10 p-4 flex items-center gap-3">
+              <div key={i} className="bg-sv-surface rounded-2xl border border-sv-border p-4 flex items-center gap-3 shadow-xs">
                 <s.icon size={18} className={s.color} />
                 <div>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider leading-none mb-1">{s.label}</p>
-                  <p className="text-lg font-black text-slate-900 dark:text-white">{s.val}</p>
+                  <p className="text-[10px] font-bold text-sv-text-muted uppercase tracking-wider leading-none mb-1">{s.label}</p>
+                  <p className="text-lg font-black text-sv-text-primary">{s.val}</p>
                 </div>
               </div>
             ))}
@@ -323,8 +323,8 @@ export default function SupportWorkspace() {
         <AnimatePresence mode="wait">
           {activeTab === 'queue' && !selectedConvo && (
             <motion.div key="queue" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <div className="bg-white dark:bg-gray-900 rounded-[5px] border border-slate-200 dark:border-white/10 overflow-hidden">
-                <div className="divide-y divide-slate-100 dark:divide-white/5" role="list" aria-label="Conversation Queue">
+              <div className="bg-sv-surface rounded-2xl border border-sv-border overflow-hidden shadow-xs">
+                <div className="divide-y divide-sv-border" role="list" aria-label="Conversation Queue">
                   {filteredConversations.map(c => {
                     const priority = PRIORITY_CONFIG[c.priority];
                     const status = STATUS_CONFIG[c.status];
@@ -332,26 +332,26 @@ export default function SupportWorkspace() {
                       <button 
                         key={c.id} 
                         onClick={() => setSelectedConvo(c)} 
-                        className="w-full p-4 flex items-center gap-4 hover:bg-slate-50 transition-all text-left focus:outline-none focus:bg-slate-50"
+                        className="w-full p-4 flex items-center gap-4 hover:bg-sv-surface-muted transition-all text-left focus:outline-none focus:bg-sv-surface-muted"
                         role="listitem"
                         aria-label={`Open conversation: ${c.subject}`}
                       >
                         <FaCircle size={8} className={priority.dot} />
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-1">
-                            <span className={`text-[9px] font-black px-2 py-0.5 rounded-[3px] border uppercase ${priority.color}`}>{priority.label}</span>
-                            <span className={`text-[9px] font-black px-2 py-0.5 rounded-[3px] border uppercase ${status.color}`}>{status.label}</span>
-                            {c.slaWarning && !c.slaBreached && <span className="text-[9px] font-black text-amber-600 uppercase">SLA Warning: {c.slaRemainingText}</span>}
-                            {c.slaBreached && <span className="text-[9px] font-black text-red-600 uppercase flex items-center gap-1"><FaExclamationTriangle size={8} /> SLA Breached</span>}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-1">
+                            <span className={`text-[9px] font-black px-2 py-0.5 rounded-[4px] border uppercase ${priority.color}`}>{priority.label}</span>
+                            <span className={`text-[9px] font-black px-2 py-0.5 rounded-[4px] border uppercase ${status.color}`}>{status.label}</span>
+                            {c.slaWarning && !c.slaBreached && <span className="text-[9px] font-black text-sv-warning uppercase">SLA Warning: {c.slaRemainingText}</span>}
+                            {c.slaBreached && <span className="text-[9px] font-black text-sv-danger uppercase flex items-center gap-1"><FaExclamationTriangle size={8} /> SLA Breached</span>}
                           </div>
-                          <p className="font-black text-slate-900 dark:text-white text-sm truncate">{c.subject}</p>
-                          <p className="text-xs text-slate-400 font-medium">{c.customerName} • {c.customerEmail}</p>
+                          <p className="font-black text-sv-text-primary text-sm truncate">{c.subject}</p>
+                          <p className="text-xs text-sv-text-muted font-medium truncate">{c.customerName} • {c.customerEmail}</p>
                         </div>
                         <div className="text-right shrink-0 hidden lg:block">
-                          <p className="text-[9px] font-black uppercase text-slate-300 mb-0.5">Queue</p>
-                          <p className="text-xs font-black text-slate-600 dark:text-gray-300">{c.queueId}</p>
+                          <p className="text-[9px] font-black uppercase text-sv-text-muted mb-0.5">Queue</p>
+                          <p className="text-xs font-black text-sv-text-secondary">{c.queueId}</p>
                         </div>
-                        <FaChevronRight size={10} className="text-slate-300" />
+                        <FaChevronRight size={10} className="text-sv-text-muted shrink-0" />
                       </button>
                     );
                   })}
@@ -363,33 +363,33 @@ export default function SupportWorkspace() {
           {selectedConvo && (
             <motion.div key="convo" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Timeline (Left 2/3) */}
-              <div className="lg:col-span-2 bg-white dark:bg-gray-900 rounded-[5px] border border-slate-200 dark:border-white/10 overflow-hidden flex flex-col h-[700px]">
-                <div className="p-4 border-b flex justify-between items-center bg-slate-50">
+              <div className="lg:col-span-2 bg-sv-surface rounded-2xl border border-sv-border overflow-hidden flex flex-col h-[700px] shadow-xs">
+                <div className="p-4 border-b border-sv-border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-sv-surface-muted/60">
                   <div>
-                    <h2 className="font-black text-lg">{selectedConvo.subject}</h2>
-                    <p className="text-xs text-slate-500">{selectedConvo.customerName}</p>
+                    <h2 className="font-black text-base sm:text-lg text-sv-text-primary">{selectedConvo.subject}</h2>
+                    <p className="text-xs text-sv-text-muted">{selectedConvo.customerName}</p>
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3 self-end sm:self-auto">
                     {activeLease && activeLease.agentName !== currentUser && (
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-black uppercase text-amber-600 bg-amber-100 px-2 py-1 rounded">
+                        <span className="text-[10px] font-black uppercase text-sv-warning bg-sv-warning-soft px-2 py-1 rounded-full border border-sv-warning/20">
                           <FaLock className="inline mr-1" /> {activeLease.agentName} is reviewing
                         </span>
                         {isSupervisor && (
-                          <button onClick={forceTakeover} className="text-[10px] font-bold bg-sv-danger-soft text-sv-danger px-2 py-1 rounded hover:opacity-80">
+                          <button onClick={forceTakeover} className="text-[10px] font-bold bg-sv-danger-soft text-sv-danger px-2.5 py-1 rounded-full hover:opacity-80 border border-sv-danger/20">
                             Force Takeover
                           </button>
                         )}
                       </div>
                     )}
-                    <button onClick={() => setSelectedConvo(null)} className="text-xs font-bold bg-slate-200 px-3 py-1 rounded-[5px] hover:bg-slate-300">
+                    <button onClick={() => setSelectedConvo(null)} className="text-xs font-bold bg-sv-surface-muted border border-sv-border text-sv-text-primary px-3 py-1.5 rounded-xl hover:bg-sv-surface transition-colors">
                       Back to Inbox
                     </button>
                   </div>
                 </div>
                 
                 <div 
-                  className="flex-1 p-6 overflow-y-auto space-y-6 bg-slate-50 dark:bg-black/20"
+                  className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-6 bg-sv-surface-muted/30"
                   role="log"
                   aria-live="polite"
                   aria-label="Conversation Timeline"
@@ -397,34 +397,34 @@ export default function SupportWorkspace() {
                   {selectedConvo.timeline.map(event => (
                     <div key={event.id} className={`flex flex-col ${event.sender === 'CUSTOMER' ? 'items-start' : event.sender === 'AGENT' ? 'items-end' : 'items-center'}`}>
                       {event.type === 'SYSTEM_EVENT' ? (
-                        <div className="px-4 py-2 bg-slate-200 dark:bg-white/10 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-500">
+                        <div className="px-4 py-2 bg-sv-surface-muted border border-sv-border rounded-full text-[10px] font-black uppercase tracking-widest text-sv-text-muted">
                           🤖 {event.content}
                         </div>
                       ) : (
-                        <div className={`max-w-[80%] p-4 rounded-lg ${
-                          event.isPrivate ? 'bg-amber-100 text-amber-900 border border-amber-200' :
-                          event.sender === 'CUSTOMER' ? 'bg-white border text-slate-800' : 
-                          'bg-primary text-slate-900'
+                        <div className={`max-w-[85%] sm:max-w-[80%] p-4 rounded-2xl ${
+                          event.isPrivate ? 'bg-sv-warning-soft text-sv-warning border border-sv-warning/20' :
+                          event.sender === 'CUSTOMER' ? 'bg-sv-surface border border-sv-border text-sv-text-primary shadow-xs' : 
+                          'bg-sv-primary text-sv-text-inverse shadow-xs'
                         }`}>
-                          {event.isPrivate && <p className="text-[9px] font-black uppercase flex items-center gap-1 mb-1 opacity-70"><FaLock /> Internal Note</p>}
-                          <p className="text-sm font-medium">{event.content}</p>
-                          <span className="text-[9px] font-bold opacity-60 block mt-2">{new Date(event.timestamp).toLocaleTimeString()}</span>
+                          {event.isPrivate && <p className="text-[9px] font-black uppercase flex items-center gap-1 mb-1 opacity-80"><FaLock /> Internal Note</p>}
+                          <p className="text-sm font-medium leading-relaxed">{event.content}</p>
+                          <span className="text-[9px] font-bold opacity-70 block mt-2">{new Date(event.timestamp).toLocaleTimeString()}</span>
                         </div>
                       )}
                     </div>
                   ))}
                 </div>
 
-                <div className="p-4 bg-white border-t relative">
+                <div className="p-4 bg-sv-surface border-t border-sv-border relative">
                   {isTyping && isTyping.agentName !== currentUser && (
-                    <div className="absolute -top-6 left-4 text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-1">
+                    <div className="absolute -top-6 left-4 text-[10px] font-black uppercase tracking-widest text-sv-primary flex items-center gap-1">
                       <span className="flex gap-0.5"><span className="animate-bounce">.</span><span className="animate-bounce delay-75">.</span><span className="animate-bounce delay-150">.</span></span>
                       {isTyping.agentName} is typing
                     </div>
                   )}
                   
                   <textarea 
-                    className="w-full border border-sv-border rounded-[5px] p-3 text-sm focus:outline-none focus:border-primary disabled:bg-sv-surface-muted disabled:text-sv-text-muted"
+                    className="w-full border border-sv-border rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-sv-primary/20 focus:border-sv-primary disabled:bg-sv-surface-muted disabled:text-sv-text-muted bg-sv-surface text-sv-text-primary placeholder:text-sv-text-muted"
                     rows={3} 
                     placeholder="Type a reply or internal note..." 
                     disabled={activeLease?.agentName !== currentUser}
@@ -436,18 +436,18 @@ export default function SupportWorkspace() {
                       }
                     }}
                   />
-                  <div className="flex justify-between mt-3">
+                  <div className="flex justify-between items-center mt-3 gap-2">
                     <button 
                       onClick={() => handleSendReply(true)}
                       disabled={activeLease?.agentName !== currentUser}
-                      className="text-xs font-bold text-amber-600 bg-amber-50 px-4 py-2 rounded-[5px] flex items-center gap-2 hover:bg-amber-100 transition-colors disabled:opacity-50"
+                      className="text-xs font-bold text-sv-warning bg-sv-warning-soft px-4 py-2 rounded-xl flex items-center gap-2 hover:bg-sv-warning-soft/80 border border-sv-warning/20 transition-colors disabled:opacity-50"
                     >
                       <FaLock /> Add Internal Note
                     </button>
                     <button 
                       onClick={() => handleSendReply(false)}
                       disabled={activeLease?.agentName !== currentUser}
-                      className="text-xs font-bold text-slate-900 bg-primary px-6 py-2 rounded-[5px] hover:bg-primary-600 transition-colors disabled:opacity-50"
+                      className="text-xs font-bold text-sv-text-inverse bg-sv-primary px-6 py-2 rounded-xl hover:bg-sv-primary-hover transition-colors disabled:opacity-50 shadow-xs"
                     >
                       Send Reply
                     </button>
@@ -457,28 +457,28 @@ export default function SupportWorkspace() {
 
               {/* Rich Context (Right 1/3) */}
               <div className="space-y-6">
-                <div className="bg-white dark:bg-gray-900 rounded-[5px] border border-slate-200 p-5">
-                  <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-4">AI Classification</h3>
+                <div className="bg-sv-surface rounded-2xl border border-sv-border p-5 shadow-xs">
+                  <h3 className="text-xs font-black uppercase tracking-widest text-sv-text-muted mb-4">AI Classification</h3>
                   <div className="space-y-4">
                     <div>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase">Intent</p>
-                      <p className="font-black text-sm">{selectedConvo.classification.intent} <span className="text-green-500 text-xs">{(selectedConvo.classification.confidence * 100).toFixed(0)}%</span></p>
+                      <p className="text-[10px] font-bold text-sv-text-muted uppercase">Intent</p>
+                      <p className="font-black text-sm text-sv-text-primary">{selectedConvo.classification.intent} <span className="text-sv-success text-xs">{(selectedConvo.classification.confidence * 100).toFixed(0)}%</span></p>
                     </div>
                     <div>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase">Sentiment</p>
-                      <p className={`font-black text-sm ${selectedConvo.classification.sentiment === 'NEGATIVE' ? 'text-red-500' : 'text-slate-900'}`}>
+                      <p className="text-[10px] font-bold text-sv-text-muted uppercase">Sentiment</p>
+                      <p className={`font-black text-sm ${selectedConvo.classification.sentiment === 'NEGATIVE' ? 'text-sv-danger' : 'text-sv-text-primary'}`}>
                         {selectedConvo.classification.sentiment}
                       </p>
                     </div>
                     <div>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase">Risk Score</p>
-                      <div className="w-full bg-slate-100 rounded-full h-2 mt-1">
-                        <div className="bg-red-500 h-2 rounded-full" style={{ width: `${selectedConvo.classification.riskScore}%` }}></div>
+                      <p className="text-[10px] font-bold text-sv-text-muted uppercase">Risk Score</p>
+                      <div className="w-full bg-sv-surface-muted rounded-full h-2 mt-1 overflow-hidden border border-sv-border">
+                        <div className="bg-sv-danger h-2 rounded-full" style={{ width: `${selectedConvo.classification.riskScore}%` }}></div>
                       </div>
                     </div>
-                    <div className="p-3 bg-blue-50 border border-blue-100 rounded-[5px]">
-                      <p className="text-[9px] font-black uppercase text-blue-600 mb-1">Suggested Action</p>
-                      <button className="text-sm font-bold text-blue-800 hover:underline">{selectedConvo.classification.suggestedWorkflow}</button>
+                    <div className="p-3 bg-sv-primary/10 border border-sv-primary/20 rounded-xl">
+                      <p className="text-[9px] font-black uppercase text-sv-primary mb-1">Suggested Action</p>
+                      <button className="text-sm font-bold text-sv-primary hover:underline text-left">{selectedConvo.classification.suggestedWorkflow}</button>
                     </div>
                   </div>
                 </div>

@@ -28,23 +28,25 @@ import { FiAlertTriangle } from 'react-icons/fi';
  */
 export function CashApplicationWorkbench() {
   return (
-    <div className="w-full max-w-4xl mx-auto shadow-lg border border-slate-200 rounded-lg overflow-hidden">
-      <div className="bg-slate-50 border-b px-6 py-4">
-        <h2 className="text-xl font-semibold text-slate-800">Cash Application Workbench</h2>
-      </div>
+    <div className="p-4 sm:p-6 lg:p-8">
+      <div className="w-full max-w-4xl mx-auto shadow-sm border border-sv-border rounded-2xl bg-sv-surface overflow-hidden">
+        <div className="bg-sv-surface-muted border-b border-sv-border px-6 py-4">
+          <h2 className="text-xl font-semibold text-sv-text-primary">Cash Application Workbench</h2>
+        </div>
 
-      <div className="p-8 text-center space-y-4">
-        <FiAlertTriangle className="text-amber-500 mx-auto" size={32} />
-        <h3 className="font-semibold text-slate-800 text-lg">Not Yet Connected</h3>
-        <p className="text-sm text-slate-600 max-w-md mx-auto">
-          The AR (Accounts Receivable) and cash-application engine this page is meant to front exists in the
-          backend and is thoroughly tested, but nothing in the live order/payment flow currently creates the
-          records it needs (open items, invoices, receipts). There is nothing real to apply cash to yet.
-        </p>
-        <p className="text-xs text-slate-400 max-w-md mx-auto">
-          Connecting real orders to this engine is a larger platform decision, not something this page can
-          resolve on its own.
-        </p>
+        <div className="p-6 sm:p-8 text-center space-y-4">
+          <FiAlertTriangle className="text-sv-warning mx-auto" size={32} />
+          <h3 className="font-semibold text-sv-text-primary text-lg">Not Yet Connected</h3>
+          <p className="text-sm text-sv-text-secondary max-w-md mx-auto">
+            The AR (Accounts Receivable) and cash-application engine this page is meant to front exists in the
+            backend and is thoroughly tested, but nothing in the live order/payment flow currently creates the
+            records it needs (open items, invoices, receipts). There is nothing real to apply cash to yet.
+          </p>
+          <p className="text-xs text-sv-text-muted max-w-md mx-auto">
+            Connecting real orders to this engine is a larger platform decision, not something this page can
+            resolve on its own.
+          </p>
+        </div>
       </div>
     </div>
   );

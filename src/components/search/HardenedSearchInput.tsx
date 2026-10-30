@@ -88,7 +88,7 @@ export const HardenedSearchInput: React.FC<HardenedSearchInputProps> = ({
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.8 }}
                         >
-                            <FaShieldAlt className="text-emerald-500" size={16} />
+                            <FaShieldAlt className="text-sv-success" size={16} />
                         </motion.div>
                     ) : (
                         <motion.div
@@ -112,13 +112,13 @@ export const HardenedSearchInput: React.FC<HardenedSearchInputProps> = ({
                     "w-full pl-12 pr-10 py-3 bg-sv-surface border border-sv-border rounded-xl transition-all",
                     "focus:ring-2 focus:ring-sv-primary/20 focus:border-sv-primary outline-none font-medium",
                     "text-sv-text-primary placeholder:text-sv-text-muted",
-                    isHardened && "border-emerald-500/50 bg-emerald-50/10"
+                    isHardened && "border-sv-success/50 bg-sv-success-soft"
                 )}
             />
 
             <div className="absolute right-4 top-1/2 -translate-y-1/2">
                 {context === 'ADMIN' && (
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 opacity-50">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-sv-text-muted opacity-50">
                         Admin Secured
                     </span>
                 )}

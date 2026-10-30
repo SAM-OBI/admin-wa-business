@@ -106,21 +106,21 @@ export default function Complaints() {
 
   if (loading) {
     return (
-      <div className="p-6 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="p-4 sm:p-6 flex items-center justify-center min-h-[50vh]">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-sv-primary"></div>
       </div>
     );
   }
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-sv-text-primary">Complaints</h1>
-          <p className="text-gray-500 text-sm mt-1">Manage user issues and disputes</p>
+          <h1 className="text-2xl sm:text-3xl font-black text-sv-text-primary tracking-tight">Complaints</h1>
+          <p className="text-sv-text-secondary text-sm mt-1">Manage user issues and disputes</p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3">
           <HardenedSearchInput
             value={search}
             onChange={setSearch}
@@ -132,7 +132,7 @@ export default function Complaints() {
           <select
             value={filters.status}
             onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
-            className="px-4 py-2 border border-sv-border rounded-lg focus:outline-none focus:ring-2 focus:ring-sv-primary bg-sv-surface text-sm"
+            className="px-3.5 py-2 border border-sv-border rounded-xl focus:outline-none focus:ring-2 focus:ring-sv-primary/20 focus:border-sv-primary bg-sv-surface text-sv-text-primary text-xs font-bold shadow-xs"
           >
             <option value="">All Status</option>
             <option value="OPEN">Open</option>
@@ -144,7 +144,7 @@ export default function Complaints() {
           <select
             value={filters.priority}
             onChange={(e) => setFilters(prev => ({ ...prev, priority: e.target.value }))}
-            className="px-4 py-2 border border-sv-border rounded-lg focus:outline-none focus:ring-2 focus:ring-sv-primary bg-sv-surface text-sm"
+            className="px-3.5 py-2 border border-sv-border rounded-xl focus:outline-none focus:ring-2 focus:ring-sv-primary/20 focus:border-sv-primary bg-sv-surface text-sv-text-primary text-xs font-bold shadow-xs"
           >
             <option value="">All Priorities</option>
             <option value="high">High</option>
@@ -154,43 +154,42 @@ export default function Complaints() {
         </div>
       </div>
 
-      <div className="bg-sv-surface rounded-xl shadow-sm border border-sv-border overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead className="bg-sv-surface-muted border-b border-sv-border">
+      <div className="bg-sv-surface rounded-2xl shadow-xs border border-sv-border overflow-hidden">
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-sv-border">
+          <table className="w-full text-left min-w-[700px]">
+            <thead className="bg-sv-surface-muted/60 border-b border-sv-border">
               <tr>
-                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">Issue</th>
-                {/* 🛡️ [#8D] type was already sent by the backend but never surfaced in this list. */}
-                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">Type</th>
-                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">User</th>
-                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">Priority</th>
-                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider text-right">Actions</th>
+                <th className="px-4 sm:px-6 py-3.5 sm:py-4 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">Issue</th>
+                <th className="px-4 sm:px-6 py-3.5 sm:py-4 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">Type</th>
+                <th className="px-4 sm:px-6 py-3.5 sm:py-4 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">User</th>
+                <th className="px-4 sm:px-6 py-3.5 sm:py-4 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">Priority</th>
+                <th className="px-4 sm:px-6 py-3.5 sm:py-4 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider">Status</th>
+                <th className="px-4 sm:px-6 py-3.5 sm:py-4 text-xs font-semibold text-sv-text-secondary uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-sv-border">
               {complaints.map((complaint) => (
                 <tr
                   key={complaint._id}
-                  className="hover:bg-sv-surface-muted transition-colors cursor-pointer"
+                  className="hover:bg-sv-surface-muted/40 transition-colors cursor-pointer"
                   onClick={() => handleViewDetails(complaint._id)}
                 >
-                  <td className="px-6 py-4">
-                    <div className="font-medium text-sv-text-primary">{complaint.title}</div>
-                    <div className="text-sm text-sv-text-secondary line-clamp-1">{complaint.description}</div>
+                  <td className="px-4 sm:px-6 py-3.5 sm:py-4">
+                    <div className="font-medium text-sv-text-primary text-sm">{complaint.title}</div>
+                    <div className="text-xs text-sv-text-secondary line-clamp-1 mt-0.5">{complaint.description}</div>
                   </td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      complaint.type === 'direct_transfer_unacknowledged' ? 'bg-sv-tag-soft text-sv-tag' : 'bg-sv-surface-muted text-sv-text-secondary'
+                  <td className="px-4 sm:px-6 py-3.5 sm:py-4">
+                    <span className={`inline-flex px-2 py-0.5 text-xs font-semibold rounded-full ${
+                      complaint.type === 'direct_transfer_unacknowledged' ? 'bg-sv-tag-soft text-sv-tag' : 'bg-sv-surface-muted text-sv-text-secondary border border-sv-border'
                     }`}>
                       {(complaint.type || 'other').replace(/_/g, ' ')}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sv-text-secondary">
+                  <td className="px-4 sm:px-6 py-3.5 sm:py-4 text-sm text-sv-text-secondary">
                     {complaint.complainant?.name}
                   </td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                  <td className="px-4 sm:px-6 py-3.5 sm:py-4">
+                    <span className={`inline-flex px-2 py-0.5 text-xs font-semibold rounded-full ${
                       complaint.priority === 'high' ? 'bg-sv-danger-soft text-sv-danger' :
                       complaint.priority === 'medium' ? 'bg-sv-warning-soft text-sv-warning' :
                       'bg-sv-success-soft text-sv-success'
@@ -198,19 +197,22 @@ export default function Complaints() {
                       {complaint.priority}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-4 sm:px-6 py-3.5 sm:py-4">
                     <div className="flex items-center gap-2">
-                       {(complaint.status === 'OPEN' || complaint.status === 'INVESTIGATING') && <FiAlertCircle className="text-yellow-500" />}
-                       {complaint.status === 'RESOLVED' && <FiCheckCircle className="text-green-500" />}
-                       <span className="capitalize">{complaint.status}</span>
+                       {(complaint.status === 'OPEN' || complaint.status === 'INVESTIGATING') && <FiAlertCircle className="text-sv-warning" />}
+                       {complaint.status === 'RESOLVED' && <FiCheckCircle className="text-sv-success" />}
+                       <span className="capitalize text-xs font-medium text-sv-text-primary">{complaint.status}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-right">
+                  <td className="px-4 sm:px-6 py-3.5 sm:py-4 text-right">
                     {complaint.status !== 'RESOLVED' && complaint.status !== 'DISMISSED' && (
                       <button
-                        onClick={() => handleResolve(complaint._id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleResolve(complaint._id);
+                        }}
                         disabled={resolvingId === complaint._id}
-                        className="text-green-600 hover:text-green-800 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="text-sv-success hover:underline text-xs font-bold uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {resolvingId === complaint._id ? 'Resolving...' : 'Resolve'}
                       </button>
@@ -221,7 +223,7 @@ export default function Complaints() {
 
               {error && (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12">
+                  <td colSpan={6} className="px-4 sm:px-6 py-12">
                     <ErrorState message={error} onRetry={() => fetchComplaints(pagination.page)} />
                   </td>
                 </tr>
@@ -229,7 +231,7 @@ export default function Complaints() {
 
               {!error && complaints.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-sv-text-secondary">
+                  <td colSpan={6} className="px-4 sm:px-6 py-12 text-center text-sv-text-secondary">
                     No complaints found.
                   </td>
                 </tr>
@@ -239,25 +241,25 @@ export default function Complaints() {
         </div>
 
          {/* Pagination Footer */}
-        <div className="px-6 py-4 border-t border-sv-border flex items-center justify-between">
+        <div className="px-4 sm:px-6 py-3.5 sm:py-4 border-t border-sv-border flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="text-sm text-sv-text-secondary">
-            Showing <span className="font-medium">{complaints.length}</span> of <span className="font-medium">{pagination.total}</span> complaints
+            Showing <span className="font-semibold text-sv-text-primary">{complaints.length}</span> of <span className="font-semibold text-sv-text-primary">{pagination.total}</span> complaints
           </div>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => handlePageChange(pagination.page - 1)}
               disabled={pagination.page <= 1}
-              className="px-3 py-1 border border-sv-border rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-sv-surface-muted"
+              className="px-3 py-1.5 border border-sv-border rounded-lg text-xs font-bold uppercase tracking-wider disabled:opacity-40 disabled:cursor-not-allowed hover:bg-sv-surface-muted transition-colors text-sv-text-primary"
             >
               Previous
             </button>
-            <span className="px-3 py-1 text-sm text-sv-text-secondary">
+            <span className="px-2 text-xs font-medium text-sv-text-muted">
               Page {pagination.page} of {pagination.pages}
             </span>
             <button
               onClick={() => handlePageChange(pagination.page + 1)}
               disabled={pagination.page >= pagination.pages}
-              className="px-3 py-1 border border-sv-border rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-sv-surface-muted"
+              className="px-3 py-1.5 border border-sv-border rounded-lg text-xs font-bold uppercase tracking-wider disabled:opacity-40 disabled:cursor-not-allowed hover:bg-sv-surface-muted transition-colors text-sv-text-primary"
             >
               Next
             </button>

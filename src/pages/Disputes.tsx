@@ -144,33 +144,33 @@ export default function Disputes() {
   };
 
   return (
-    <div className="p-4 lg:p-6 bg-gray-50/50 min-h-screen">
-      <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6">
         <div>
-          <h1 className="text-2xl font-bold text-sv-text-primary flex items-center gap-3">
-            <div className="p-2 bg-purple-50 text-purple-600 rounded-xl shadow-sm border border-purple-100">
+          <h1 className="text-2xl sm:text-3xl font-black text-sv-text-primary flex items-center gap-3 tracking-tight">
+            <div className="p-2 sm:p-2.5 bg-sv-primary-soft text-sv-primary rounded-xl shadow-xs border border-sv-border">
               <FaGavel size={20} />
             </div>
             Dispute Tribunal
           </h1>
-          <p className="text-gray-500 mt-1 text-sm font-medium">Marketplace Mediation & Resolution</p>
+          <p className="text-sv-text-secondary mt-1 text-sm font-medium">Marketplace Mediation & Resolution</p>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full md:w-auto">
           <HardenedSearchInput
             value={searchTerm}
             onChange={setSearchTerm}
             placeholder="SEARCH CASES..."
-            className="w-64 scale-90"
+            className="w-full sm:w-64"
             context="ADMIN"
           />
-          <div className="flex items-center gap-2 bg-white p-1 rounded-xl border border-gray-100 shadow-sm overflow-x-auto">
+          <div className="flex items-center gap-1.5 bg-sv-surface p-1 rounded-xl border border-sv-border shadow-xs overflow-x-auto scrollbar-thin">
              {STATUS_FILTERS.map(({ key, label }) => (
                <button
                   key={key}
                   onClick={() => setFilter(key)}
-                  className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
-                    filter === key ? 'bg-purple-600 text-white shadow-lg shadow-purple-200' : 'text-gray-400 hover:text-gray-600'
+                  className={`px-3 sm:px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
+                    filter === key ? 'bg-sv-primary text-sv-text-inverse shadow-xs' : 'text-sv-text-muted hover:text-sv-text-primary'
                   }`}
                >
                  {label}
@@ -185,11 +185,11 @@ export default function Disputes() {
         <div className="xl:col-span-1 space-y-4">
           <AnimatePresence mode="popLayout">
             {loading ? (
-               <div className="flex justify-center p-10"><div className="animate-spin h-8 w-8 border-b-2 border-purple-600 rounded-full"></div></div>
+               <div className="flex justify-center p-10"><div className="animate-spin h-8 w-8 border-b-2 border-sv-primary rounded-full"></div></div>
             ) : disputes.length === 0 ? (
               <div className="text-center py-16 bg-sv-surface rounded-2xl border border-dashed border-sv-border">
-                <FaCheckCircle className="mx-auto text-green-500 mb-4" size={40} />
-                <p className="font-black text-gray-400 uppercase text-xs">No Disputes Found</p>
+                <FaCheckCircle className="mx-auto text-sv-success mb-4" size={40} />
+                <p className="font-black text-sv-text-muted uppercase text-xs">No Disputes Found</p>
               </div>
             ) : (
               disputes.map(dispute => (
@@ -197,15 +197,15 @@ export default function Disputes() {
                   key={dispute._id}
                   layout
                   onClick={() => setActiveDispute(dispute)}
-                  className={`p-5 rounded-2xl cursor-pointer transition-all border shadow-sm group ${
+                  className={`p-4 sm:p-5 rounded-2xl cursor-pointer transition-all border shadow-xs group ${
                     activeDispute?._id === dispute._id
-                      ? 'bg-purple-600 border-purple-600 shadow-xl shadow-purple-200 text-white'
-                      : 'bg-white border-gray-100 hover:border-purple-200'
+                      ? 'bg-sv-primary border-sv-primary shadow-md text-sv-text-inverse'
+                      : 'bg-sv-surface border-sv-border hover:border-sv-primary/50 text-sv-text-primary'
                   }`}
                 >
                   <div className="flex justify-between items-start mb-3">
                     <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase ${
-                        activeDispute?._id === dispute._id ? 'bg-white/20' : 'bg-purple-50 text-purple-600'
+                        activeDispute?._id === dispute._id ? 'bg-white/20 text-white' : 'bg-sv-primary-soft text-sv-primary'
                     }`}>
                         {dispute.status}
                     </span>
@@ -216,7 +216,7 @@ export default function Disputes() {
                   <h3 className="font-bold text-sm">Order #{dispute.order?.orderId?.slice(-8) || 'N/A'}</h3>
                   <p className="text-[10px] opacity-80 mt-1 font-bold uppercase tracking-tight">{dispute.reason}</p>
                   {dispute.evidence?.length > 0 && (
-                    <p className={`text-[9px] mt-2 flex items-center gap-1 font-bold uppercase ${activeDispute?._id === dispute._id ? 'text-white/70' : 'text-gray-400'}`}>
+                    <p className={`text-[9px] mt-2 flex items-center gap-1 font-bold uppercase ${activeDispute?._id === dispute._id ? 'text-white/80' : 'text-sv-text-muted'}`}>
                       <FaImage size={9} /> {dispute.evidence.length} evidence item{dispute.evidence.length === 1 ? '' : 's'}
                     </p>
                   )}
@@ -229,49 +229,49 @@ export default function Disputes() {
         {/* Details */}
         <div className="xl:col-span-2">
            {activeDispute ? (
-              <div className="bg-sv-surface rounded-2xl shadow-sm border border-sv-border p-6 flex flex-col h-[calc(100vh-250px)]">
-                  <div className="flex justify-between items-start mb-6 pb-6 border-b border-gray-100">
+              <div className="bg-sv-surface rounded-2xl shadow-xs border border-sv-border p-4 sm:p-6 flex flex-col min-h-[500px] xl:h-[calc(100vh-220px)]">
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6 pb-6 border-b border-sv-border">
                       <div>
-                          <h2 className="text-lg font-bold">Case File: #{activeDispute.order?.orderId?.slice(-8)}</h2>
-                          <p className="text-xs text-gray-500 font-bold uppercase mt-1">Reason: {activeDispute.reason}</p>
+                          <h2 className="text-lg font-bold text-sv-text-primary">Case File: #{activeDispute.order?.orderId?.slice(-8)}</h2>
+                          <p className="text-xs text-sv-text-muted font-bold uppercase mt-1">Reason: {activeDispute.reason}</p>
                       </div>
                       {/* 🛡️ [P0.8] All 4 reachable outcomes, not 2 */}
-                      <div className="flex flex-wrap justify-end gap-2 max-w-xs">
+                      <div className="flex flex-wrap gap-2">
                           <button
                             onClick={() => handleResolve(activeDispute._id, 'refund')}
                             disabled={resolving}
-                            className="bg-sv-danger-soft text-sv-danger hover:opacity-80 text-[10px] font-black uppercase px-4 py-2 rounded-lg transition disabled:opacity-50"
+                            className="bg-sv-danger-soft text-sv-danger hover:opacity-80 text-[10px] font-black uppercase px-3.5 py-2 rounded-lg transition disabled:opacity-50"
                           >
                             Refund Buyer
                           </button>
                           <button
                             onClick={() => handlePartialRefund(activeDispute._id)}
                             disabled={resolving}
-                            className="bg-sv-warning-soft text-sv-warning hover:opacity-80 text-[10px] font-black uppercase px-4 py-2 rounded-lg transition disabled:opacity-50"
+                            className="bg-sv-warning-soft text-sv-warning hover:opacity-80 text-[10px] font-black uppercase px-3.5 py-2 rounded-lg transition disabled:opacity-50"
                           >
                             Partial Refund
                           </button>
                           <button
                             onClick={() => handleResolve(activeDispute._id, 'release')}
                             disabled={resolving}
-                            className="bg-sv-success-soft text-sv-success hover:opacity-80 text-[10px] font-black uppercase px-4 py-2 rounded-lg transition disabled:opacity-50"
+                            className="bg-sv-success-soft text-sv-success hover:opacity-80 text-[10px] font-black uppercase px-3.5 py-2 rounded-lg transition disabled:opacity-50"
                           >
                             Release to Vendor
                           </button>
                           <button
                             onClick={() => handleResolve(activeDispute._id, 'dismissed')}
                             disabled={resolving}
-                            className="bg-sv-surface-muted text-sv-text-secondary hover:bg-sv-border text-[10px] font-black uppercase px-4 py-2 rounded-lg transition disabled:opacity-50"
+                            className="bg-sv-surface-muted text-sv-text-secondary hover:bg-sv-border text-[10px] font-black uppercase px-3.5 py-2 rounded-lg transition disabled:opacity-50"
                           >
                             Dismiss
                           </button>
                       </div>
                   </div>
 
-                  <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
-                     <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
-                        <p className="text-[10px] font-black text-gray-400 uppercase mb-2">Buyer's Description</p>
-                        <p className="text-sm text-gray-700 leading-relaxed">{activeDispute.description}</p>
+                  <div className="flex-1 overflow-y-auto space-y-4 pr-1 sm:pr-2 custom-scrollbar">
+                     <div className="p-4 bg-sv-surface-muted/60 rounded-xl border border-sv-border">
+                        <p className="text-[10px] font-black text-sv-text-muted uppercase mb-2">Buyer's Description</p>
+                        <p className="text-sm text-sv-text-primary leading-relaxed">{activeDispute.description}</p>
                      </div>
 
                      {activeDispute.messages.map((msg: any, i: number) => {
@@ -282,12 +282,12 @@ export default function Disputes() {
                             const proposal = (activeDispute.proposals || []).find((p: any) => p.proposalId === msg.proposalId);
                             if (!proposal) return null;
                             return (
-                                <div key={i} className="p-4 rounded-xl border border-indigo-200 bg-indigo-50 text-indigo-900">
-                                    <p className="font-black text-[10px] uppercase tracking-widest flex items-center gap-2 mb-2">
+                                <div key={i} className="p-4 rounded-xl border border-sv-primary/30 bg-sv-primary-soft/30 text-sv-text-primary">
+                                    <p className="font-black text-[10px] uppercase tracking-widest flex items-center gap-2 mb-2 text-sv-primary">
                                         <FaHandshake /> Proposal — {proposal.type.replace('_', ' ')}
                                     </p>
-                                    <p className="text-sm font-bold">₦{Number(proposal.amount).toLocaleString()}</p>
-                                    <div className="flex items-center gap-3 mt-2 text-[9px] font-black uppercase tracking-widest text-indigo-500">
+                                    <p className="text-sm font-bold text-sv-text-primary">₦{Number(proposal.amount).toLocaleString()}</p>
+                                    <div className="flex items-center gap-3 mt-2 text-[9px] font-black uppercase tracking-widest text-sv-primary/80">
                                         <span>Status: {proposal.status}</span>
                                         {proposal.status === 'PENDING' && (
                                             <span className="flex items-center gap-1"><FaClock size={9} /> Expires {formatRelativeTime(new Date(proposal.expiresAt))}</span>
@@ -304,18 +304,18 @@ export default function Disputes() {
                         if (msg.messageType === 'IMAGE' || msg.messageType === 'VIDEO') {
                             const found = (activeDispute.evidence || []).find((e: any) => e.evidenceId === msg.assetId);
                             return (
-                                <div key={i} className={`p-4 rounded-xl text-sm ${isMyMessage(msg) ? 'bg-purple-50 text-purple-900 ml-10' : 'bg-gray-100 mr-10'}`}>
-                                    <p className="font-bold text-[9px] uppercase opacity-50 mb-2">
+                                <div key={i} className={`p-4 rounded-xl text-sm border ${isMyMessage(msg) ? 'bg-sv-primary-soft/40 border-sv-primary/20 text-sv-text-primary ml-4 sm:ml-10' : 'bg-sv-surface-muted border-sv-border text-sv-text-primary mr-4 sm:mr-10'}`}>
+                                    <p className="font-bold text-[9px] uppercase text-sv-text-muted mb-2">
                                         {msg.senderModel || 'User'} • {formatRelativeTime(new Date(msg.timestamp))} ago
                                     </p>
                                     {found ? (
-                                        <a href={found.url} target="_blank" rel="noopener noreferrer" className="block aspect-video max-w-sm rounded-lg overflow-hidden border border-gray-200 mb-2">
+                                        <a href={found.url} target="_blank" rel="noopener noreferrer" className="block aspect-video max-w-sm rounded-lg overflow-hidden border border-sv-border mb-2">
                                             {msg.messageType === 'VIDEO'
                                                 ? <video src={found.url} className="w-full h-full object-cover" controls />
                                                 : <img src={found.url} alt="Evidence" className="w-full h-full object-cover" />}
                                         </a>
                                     ) : (
-                                        <div className="flex items-center gap-2 text-xs text-gray-400 mb-2">
+                                        <div className="flex items-center gap-2 text-xs text-sv-text-muted mb-2">
                                             {msg.messageType === 'VIDEO' ? <FaVideo /> : <FaImage />} Evidence unavailable
                                         </div>
                                     )}
@@ -327,7 +327,7 @@ export default function Disputes() {
                         if (msg.messageType === 'SYSTEM_EVENT') {
                             return (
                                 <div key={i} className="text-center">
-                                    <span className="inline-block px-4 py-1.5 bg-gray-100 rounded-full text-[9px] font-black uppercase tracking-widest text-gray-500">
+                                    <span className="inline-block px-4 py-1.5 bg-sv-surface-muted rounded-full text-[9px] font-black uppercase tracking-widest text-sv-text-muted border border-sv-border">
                                         {msg.message}
                                     </span>
                                 </div>
@@ -335,8 +335,8 @@ export default function Disputes() {
                         }
 
                         return (
-                            <div key={i} className={`p-4 rounded-xl text-sm ${isMyMessage(msg) ? 'bg-purple-50 text-purple-900 ml-10' : 'bg-gray-100 mr-10'}`}>
-                                <p className="font-bold text-[9px] uppercase opacity-50 mb-1">
+                            <div key={i} className={`p-4 rounded-xl text-sm border ${isMyMessage(msg) ? 'bg-sv-primary-soft/40 border-sv-primary/20 text-sv-text-primary ml-4 sm:ml-10' : 'bg-sv-surface-muted border-sv-border text-sv-text-primary mr-4 sm:mr-10'}`}>
+                                <p className="font-bold text-[9px] uppercase text-sv-text-muted mb-1">
                                    {msg.senderModel || 'User'} • {formatRelativeTime(new Date(msg.timestamp))} ago
                                 </p>
                                 <p className="text-sm">{msg.message}</p>
@@ -344,13 +344,7 @@ export default function Disputes() {
                         );
                      })}
 
-                     {/* 🛡️ [P0.8] Appeal visibility — admin needs to see a
-                         filed appeal to review it (PATCH /disputes/:id/appeal
-                         from the backend P0.6 contract); requestedBy is the
-                         real-appeal-exists guard, matching the buyer/vendor
-                         AppealPanel.tsx and the backend's own check — the
-                         nested appeal object otherwise always has a
-                         schema-defaulted status even when nothing was filed. */}
+                     {/* 🛡️ [P0.8] Appeal visibility */}
                      {activeDispute.appeal?.requestedBy && (
                         <AdminAppealReview
                             dispute={activeDispute}
@@ -362,29 +356,29 @@ export default function Disputes() {
                      )}
                   </div>
 
-                  <form onSubmit={handleSendMessage} className="mt-4 flex gap-3 pt-4 border-t border-gray-100">
+                  <form onSubmit={handleSendMessage} className="mt-4 flex gap-3 pt-4 border-t border-sv-border">
                       <input
                          value={message}
                          onChange={e => setMessage(e.target.value)}
                          placeholder="Enter adjudication note..."
-                         className="flex-1 bg-sv-surface-muted border border-sv-border rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-sv-primary transition-all"
+                         className="flex-1 bg-sv-surface-muted border border-sv-border rounded-xl px-4 py-2.5 text-sm text-sv-text-primary placeholder:text-sv-text-muted outline-none focus:ring-2 focus:ring-sv-primary transition-all"
                       />
                       <button
                          type="submit"
                          disabled={sending}
-                         className="bg-purple-600 text-white px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-purple-700 disabled:opacity-50 transition-all"
+                         className="bg-sv-primary text-sv-text-inverse px-5 sm:px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-sv-primary-hover disabled:opacity-50 transition-all shadow-xs"
                       >
                          Send
                       </button>
                   </form>
               </div>
            ) : (
-              <div className="h-full bg-white rounded-2xl border border-dashed flex flex-col items-center justify-center p-12 text-center">
-                  <div className="p-4 bg-gray-50 rounded-full text-gray-300 mb-4">
-                    <FaGavel size={40} />
+              <div className="h-full min-h-[350px] bg-sv-surface rounded-2xl border border-dashed border-sv-border flex flex-col items-center justify-center p-8 sm:p-12 text-center">
+                  <div className="p-4 bg-sv-surface-muted rounded-full text-sv-text-muted mb-4">
+                    <FaGavel size={36} />
                   </div>
-                  <h3 className="font-bold text-gray-400">Select a case for adjudication</h3>
-                  <p className="text-xs text-gray-400 mt-2">Active disputes waiting for mediator intervention will appear in the left column.</p>
+                  <h3 className="font-bold text-sv-text-primary">Select a case for adjudication</h3>
+                  <p className="text-xs text-sv-text-muted mt-2 max-w-sm">Active disputes waiting for mediator intervention will appear in the left column.</p>
               </div>
            )}
         </div>
@@ -431,13 +425,13 @@ function AdminAppealReview({ dispute, onUpdate }: { dispute: any; onUpdate: (upd
   };
 
   return (
-    <div className="p-4 rounded-xl border border-indigo-200 bg-indigo-50/50">
-      <p className="font-black text-[10px] uppercase tracking-widest text-indigo-700 flex items-center gap-2 mb-2">
+    <div className="p-4 rounded-xl border border-sv-border bg-sv-surface-muted/60">
+      <p className="font-black text-[10px] uppercase tracking-widest text-sv-primary flex items-center gap-2 mb-2">
         <FaGavel /> Appeal Filed — {appeal.status}
       </p>
-      <p className="text-sm text-gray-700">{appeal.reason}</p>
+      <p className="text-sm text-sv-text-primary">{appeal.reason}</p>
       {appeal.resolutionNotes && (
-        <p className="text-xs text-gray-500 mt-2 italic">Prior note: {appeal.resolutionNotes}</p>
+        <p className="text-xs text-sv-text-muted mt-2 italic">Prior note: {appeal.resolutionNotes}</p>
       )}
       {!isDecided && (
         <div className="flex gap-2 mt-3">

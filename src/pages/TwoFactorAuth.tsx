@@ -41,27 +41,27 @@ export default function TwoFactorAuth() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
+        <div className="min-h-screen bg-sv-bg flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                 <h2 className="mt-6 text-center text-3xl font-black text-slate-900 tracking-tight uppercase">
+                 <h2 className="mt-6 text-center text-3xl font-black text-sv-text-primary tracking-tight uppercase">
                     MFA Required
                  </h2>
-                 <p className="mt-2 text-center text-sm text-slate-500 font-medium">
+                 <p className="mt-2 text-center text-sm text-sv-text-secondary font-medium">
                     Enter the code from your hardware or software authenticator
                  </p>
             </div>
 
-            <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md p-4 sm:p-0">
-                <div className="bg-white py-12 px-10 shadow-2xl shadow-slate-200/60 rounded-[40px] border border-slate-100">
+            <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+                <div className="bg-sv-surface py-8 sm:py-12 px-6 sm:px-10 shadow-2xl rounded-3xl border border-sv-border">
                     <div className="text-center mb-10">
-                        <div className="inline-flex items-center justify-center w-20 h-20 rounded-[28px] bg-slate-50 border border-slate-100 mb-6 text-slate-900 shadow-sm">
+                        <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-sv-surface-muted border border-sv-border mb-6 text-sv-primary shadow-sm">
                             <FiShield size={36} />
                         </div>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-8">
                         <div className="space-y-4 text-center">
-                            <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">
+                            <label className="block text-[11px] font-bold text-sv-text-muted uppercase tracking-[0.2em]">
                                 Security Authorization Code
                             </label>
                             <input
@@ -69,7 +69,7 @@ export default function TwoFactorAuth() {
                                 value={code}
                                 onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                                 required
-                                className="block w-full px-4 py-6 bg-sv-surface-muted border-2 border-transparent focus:bg-sv-surface focus:border-sv-primary rounded-2xl focus:ring-8 focus:ring-sv-primary/10 transition-all outline-none text-sv-text-primary text-center text-5xl font-black tracking-[0.5em] placeholder-slate-200"
+                                className="block w-full px-4 py-6 bg-sv-surface-muted border-2 border-transparent focus:bg-sv-surface focus:border-sv-primary rounded-2xl focus:ring-8 focus:ring-sv-primary/10 transition-all outline-none text-sv-text-primary text-center text-5xl font-black tracking-[0.5em] placeholder-sv-text-muted/40"
                                 placeholder="000000"
                                 maxLength={6}
                                 autoFocus
@@ -92,16 +92,16 @@ export default function TwoFactorAuth() {
                             </button>
 
                             <div className="flex items-center justify-center pt-2">
-                                <Link to="/login" className="text-xs font-bold text-slate-400 uppercase tracking-widest hover:text-slate-900 transition-colors inline-flex items-center gap-2">
+                                <Link to="/login" className="text-xs font-bold text-sv-text-muted uppercase tracking-widest hover:text-sv-text-primary transition-colors inline-flex items-center gap-2">
                                     <FiArrowLeft /> Back to Login
                                 </Link>
                             </div>
                         </div>
                     </form>
 
-                    <div className="mt-10 p-5 bg-amber-50/50 rounded-2xl border border-amber-100/50">
-                        <p className="text-[10px] text-amber-700 font-bold uppercase tracking-wider text-center leading-relaxed">
-                            If you've lost access to your authenticator, please initiate <Link to="/forgot-password" title="Access Recovery" className="underline decoration-amber-500/30 hover:decoration-amber-500 underline-offset-4 decoration-2">Access Recovery</Link>
+                    <div className="mt-10 p-5 bg-sv-warning-soft rounded-2xl border border-sv-warning/20">
+                        <p className="text-[10px] text-sv-warning font-bold uppercase tracking-wider text-center leading-relaxed">
+                            If you've lost access to your authenticator, please initiate <Link to="/forgot-password" title="Access Recovery" className="underline decoration-sv-warning/30 hover:decoration-sv-warning underline-offset-4 decoration-2">Access Recovery</Link>
                         </p>
                     </div>
                 </div>

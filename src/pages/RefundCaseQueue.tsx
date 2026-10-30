@@ -103,18 +103,18 @@ export default function RefundCaseQueue() {
     if (loading && cases.length === 0) return <PageLoader />;
 
     return (
-        <div className="p-6 space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-black text-gray-900 dark:text-white font-display uppercase tracking-tight">Refund Case Queue</h1>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    <h1 className="text-2xl sm:text-3xl font-black text-sv-text-primary tracking-tight">Refund Case Queue</h1>
+                    <p className="text-sm text-sv-text-secondary mt-1 max-w-2xl">
                         Buyer-initiated cancellations and refund requests awaiting review. Approving starts the real gateway refund; nothing here settles automatically.
                     </p>
                 </div>
                 <select
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
-                    className="px-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 text-xs font-black uppercase tracking-widest rounded-xl focus:outline-none focus:border-primary cursor-pointer"
+                    className="px-3.5 sm:px-4 py-2 bg-sv-surface border border-sv-border text-sv-text-primary text-xs font-black uppercase tracking-widest rounded-xl focus:outline-none focus:border-sv-primary cursor-pointer shadow-xs"
                 >
                     <option value="OPEN">Open (needs review)</option>
                     <option value="APPROVED">Approved</option>
@@ -125,85 +125,85 @@ export default function RefundCaseQueue() {
                 </select>
             </div>
 
-            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-white/5 overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full">
-                        <thead className="bg-gray-50/50 dark:bg-black/20 border-b border-gray-100 dark:border-white/5">
+            <div className="bg-sv-surface rounded-2xl shadow-xs border border-sv-border overflow-hidden">
+                <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-sv-border">
+                    <table className="w-full min-w-[700px]">
+                        <thead className="bg-sv-surface-muted/60 border-b border-sv-border">
                             <tr>
-                                <th className="px-6 py-4 text-left text-[9px] font-black text-gray-400 uppercase tracking-widest">Order</th>
-                                <th className="px-6 py-4 text-left text-[9px] font-black text-gray-400 uppercase tracking-widest">Store / Vendor</th>
-                                <th className="px-6 py-4 text-left text-[9px] font-black text-gray-400 uppercase tracking-widest">Reason</th>
-                                <th className="px-6 py-4 text-left text-[9px] font-black text-gray-400 uppercase tracking-widest">Amount</th>
-                                <th className="px-6 py-4 text-left text-[9px] font-black text-gray-400 uppercase tracking-widest">Waiting</th>
+                                <th className="px-4 sm:px-6 py-3.5 sm:py-4 text-left text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Order</th>
+                                <th className="px-4 sm:px-6 py-3.5 sm:py-4 text-left text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Store / Vendor</th>
+                                <th className="px-4 sm:px-6 py-3.5 sm:py-4 text-left text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Reason</th>
+                                <th className="px-4 sm:px-6 py-3.5 sm:py-4 text-left text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Amount</th>
+                                <th className="px-4 sm:px-6 py-3.5 sm:py-4 text-left text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Waiting</th>
                                 {status === 'OPEN' && (
-                                    <th className="px-6 py-4 text-right text-[9px] font-black text-gray-400 uppercase tracking-widest">Decision</th>
+                                    <th className="px-4 sm:px-6 py-3.5 sm:py-4 text-right text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Decision</th>
                                 )}
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100 dark:divide-white/5">
+                        <tbody className="divide-y divide-sv-border">
                             {cases.length === 0 ? (
-                                <tr><td colSpan={6} className="px-6 py-12 text-center text-xs text-gray-400 font-bold">
+                                <tr><td colSpan={6} className="px-6 py-12 text-center text-xs text-sv-text-muted font-bold">
                                     Nothing in this state right now.
                                 </td></tr>
                             ) : cases.map((c) => (
-                                <tr key={c._id} className={`hover:bg-gray-50 dark:hover:bg-white/5 transition-colors align-top ${c.flaggedForAbuseReview ? 'bg-amber-50/60 dark:bg-amber-900/10' : ''}`}>
-                                    <td className="px-6 py-4">
-                                        <p className="font-mono font-bold text-gray-900 dark:text-white text-xs">#{c.order?.orderId || c.order?._id?.slice(-6).toUpperCase()}</p>
-                                        <p className="text-[9px] text-gray-400 uppercase tracking-widest mt-1">{c.order?.paymentInfo?.method || 'nomba'}</p>
-                                        <span className={`inline-flex items-center gap-1 mt-1.5 px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${c.initiatedBy === 'VENDOR' ? 'bg-orange-50 text-orange-600 dark:bg-orange-900/20' : 'bg-blue-50 text-blue-600 dark:bg-blue-900/20'}`}>
+                                <tr key={c._id} className={`hover:bg-sv-surface-muted/40 transition-colors align-top ${c.flaggedForAbuseReview ? 'bg-sv-warning-soft/20' : ''}`}>
+                                    <td className="px-4 sm:px-6 py-3.5 sm:py-4">
+                                        <p className="font-mono font-bold text-sv-text-primary text-xs">#{c.order?.orderId || c.order?._id?.slice(-6).toUpperCase()}</p>
+                                        <p className="text-[10px] text-sv-text-muted uppercase tracking-widest mt-1">{c.order?.paymentInfo?.method || 'nomba'}</p>
+                                        <span className={`inline-flex items-center gap-1 mt-1.5 px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${c.initiatedBy === 'VENDOR' ? 'bg-sv-warning-soft text-sv-warning' : 'bg-sv-primary-soft text-sv-primary'}`}>
                                             {c.initiatedBy === 'VENDOR' ? <FaStore size={8} /> : <FaUser size={8} />}
                                             {c.initiatedBy === 'VENDOR' ? 'Vendor-cancelled' : 'Buyer-initiated'}
                                         </span>
                                         {c.flaggedForAbuseReview && (
-                                            <p className="flex items-center gap-1 mt-1.5 text-[9px] font-bold text-amber-600">
+                                            <p className="flex items-center gap-1 mt-1.5 text-[9px] font-bold text-sv-warning">
                                                 <FaExclamationTriangle size={9} /> {c.flagReason || 'Flagged for review'}
                                             </p>
                                         )}
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <p className="font-bold text-gray-900 dark:text-white text-xs">{c.order?.store?.name || 'Unknown store'}</p>
-                                        <p className="text-[9px] text-gray-400">{c.vendor?.name} · {c.vendor?.email}</p>
+                                    <td className="px-4 sm:px-6 py-3.5 sm:py-4">
+                                        <p className="font-bold text-sv-text-primary text-xs">{c.order?.store?.name || 'Unknown store'}</p>
+                                        <p className="text-[10px] text-sv-text-muted">{c.vendor?.name} · {c.vendor?.email}</p>
                                     </td>
-                                    <td className="px-6 py-4 max-w-[260px]">
-                                        <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">
+                                    <td className="px-4 sm:px-6 py-3.5 sm:py-4 max-w-[260px]">
+                                        <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">
                                             {c.vendorReasonCode ? VENDOR_REASON_LABELS[c.vendorReasonCode] : c.reasonCode}
                                         </p>
-                                        <p className="text-xs text-gray-700 dark:text-gray-300 mt-0.5">{c.description}</p>
+                                        <p className="text-xs text-sv-text-secondary mt-0.5">{c.description}</p>
                                         {c.order?.cancellationReason && (
-                                            <p className="text-[10px] text-red-500/80 mt-1 italic font-medium leading-relaxed">
+                                            <p className="text-[10px] text-sv-danger mt-1 italic font-medium leading-relaxed">
                                                 Reason: "{c.order.cancellationReason}"
                                             </p>
                                         )}
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <span className="font-black text-gray-900 dark:text-white text-xs">₦{(c.refundAmount / 100).toLocaleString()}</span>
+                                    <td className="px-4 sm:px-6 py-3.5 sm:py-4">
+                                        <span className="font-black text-sv-text-primary text-xs">₦{(c.refundAmount / 100).toLocaleString()}</span>
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <p className="text-[10px] font-bold text-gray-500 flex items-center gap-1.5">
+                                    <td className="px-4 sm:px-6 py-3.5 sm:py-4">
+                                        <p className="text-[10px] font-bold text-sv-text-muted flex items-center gap-1.5">
                                             <FaClock size={10} /> {new Date(c.createdAt).toLocaleDateString()}
                                         </p>
                                     </td>
                                     {status === 'OPEN' && (
-                                        <td className="px-6 py-4 text-right">
+                                        <td className="px-4 sm:px-6 py-3.5 sm:py-4 text-right">
                                             <div className="flex flex-col items-end gap-2">
                                                 <input
                                                     value={notes[c._id] || ''}
                                                     onChange={(e) => setNotes((prev) => ({ ...prev, [c._id]: e.target.value }))}
                                                     placeholder="Resolution note (optional)"
-                                                    className="w-48 px-2.5 py-1.5 bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 text-xs rounded-lg focus:outline-none focus:border-primary"
+                                                    className="w-48 px-3 py-1.5 bg-sv-surface-muted border border-sv-border text-sv-text-primary placeholder:text-sv-text-muted text-xs rounded-lg focus:outline-none focus:border-sv-primary"
                                                 />
                                                 <div className="flex gap-2">
                                                     <button
                                                         onClick={() => requestResolve(c._id, 'REJECTED')}
                                                         disabled={actioningId === c._id}
-                                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest bg-red-50 text-red-600 border border-red-200 disabled:opacity-40 hover:bg-red-100 transition-all"
+                                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest bg-sv-danger-soft text-sv-danger disabled:opacity-40 hover:opacity-80 transition-all"
                                                     >
                                                         <FaTimesCircle size={11} /> Reject
                                                     </button>
                                                     <button
                                                         onClick={() => requestResolve(c._id, 'APPROVED')}
                                                         disabled={actioningId === c._id}
-                                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest bg-green-50 text-green-700 border border-green-200 disabled:opacity-40 hover:bg-green-100 transition-all"
+                                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest bg-sv-success-soft text-sv-success disabled:opacity-40 hover:opacity-80 transition-all"
                                                     >
                                                         <FaCheckCircle size={11} /> Approve
                                                     </button>
@@ -217,9 +217,9 @@ export default function RefundCaseQueue() {
                     </table>
                 </div>
 
-                <div className="px-6 py-4 border-t border-gray-100 dark:border-white/5">
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                        Showing <span className="text-gray-700 dark:text-gray-200">{cases.length}</span> of <span className="text-gray-700 dark:text-gray-200">{total}</span>
+                <div className="px-4 sm:px-6 py-3.5 sm:py-4 border-t border-sv-border">
+                    <p className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">
+                        Showing <span className="text-sv-text-primary font-bold">{cases.length}</span> of <span className="text-sv-text-primary font-bold">{total}</span>
                     </p>
                 </div>
             </div>

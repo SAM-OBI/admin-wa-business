@@ -196,9 +196,9 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-sv-text-primary">Settings</h1>
+        <h1 className="text-2xl sm:text-3xl font-black text-sv-text-primary tracking-tight">Settings</h1>
         <p className="text-sv-text-secondary text-sm mt-1">Manage your account preferences</p>
       </div>
 
@@ -222,7 +222,7 @@ export default function SettingsPage() {
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-2 border border-sv-border rounded-lg focus:outline-none focus:ring-2 focus:ring-sv-primary"
+                  className="w-full px-4 py-2 border border-sv-border bg-sv-surface text-sv-text-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-sv-primary"
                   required
                 />
               </div>
@@ -233,7 +233,7 @@ export default function SettingsPage() {
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-2 border border-sv-border rounded-lg focus:outline-none focus:ring-2 focus:ring-sv-primary"
+                  className="w-full px-4 py-2 border border-sv-border bg-sv-surface text-sv-text-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-sv-primary"
                   required
                 />
               </div>
@@ -247,7 +247,7 @@ export default function SettingsPage() {
                       type="password"
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className="w-full px-4 py-2 border border-sv-border rounded-lg focus:outline-none focus:ring-2 focus:ring-sv-primary"
+                      className="w-full px-4 py-2 border border-sv-border bg-sv-surface text-sv-text-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-sv-primary"
                       placeholder="Leave blank to keep current"
                     />
                   </div>
@@ -258,7 +258,7 @@ export default function SettingsPage() {
                       type="password"
                       value={formData.confirmPassword}
                       onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                      className="w-full px-4 py-2 border border-sv-border rounded-lg focus:outline-none focus:ring-2 focus:ring-sv-primary"
+                      className="w-full px-4 py-2 border border-sv-border bg-sv-surface text-sv-text-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-sv-primary"
                       placeholder="Confirm new password"
                     />
                   </div>
@@ -311,7 +311,7 @@ export default function SettingsPage() {
                              placeholder="Account password"
                              value={disablePassword}
                              onChange={(e) => setDisablePassword(e.target.value)}
-                             className="w-full px-3 py-2 border border-sv-border rounded-lg"
+                             className="w-full px-3 py-2 border border-sv-border rounded-lg bg-sv-surface text-sv-text-primary"
                            />
                            <div className="flex gap-2">
                              <input
@@ -319,7 +319,7 @@ export default function SettingsPage() {
                                placeholder="000 000"
                                value={totpCode}
                                onChange={(e) => setTotpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                               className="flex-1 px-3 py-2 border border-sv-border rounded-lg text-center tracking-widest font-mono"
+                               className="flex-1 px-3 py-2 border border-sv-border rounded-lg text-center tracking-widest font-mono bg-sv-surface text-sv-text-primary"
                                maxLength={6}
                              />
                              <button
@@ -374,7 +374,7 @@ export default function SettingsPage() {
                                    placeholder="000 000"
                                    value={totpCode}
                                    onChange={(e) => setTotpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                                   className="flex-1 px-3 py-2 border border-sv-border rounded-lg text-center tracking-widest font-mono focus:ring-2 focus:ring-sv-primary outline-none"
+                                   className="flex-1 px-3 py-2 border border-sv-border rounded-lg text-center tracking-widest font-mono focus:ring-2 focus:ring-sv-primary outline-none bg-sv-surface text-sv-text-primary"
                                    maxLength={6}
                                  />
                                  <button

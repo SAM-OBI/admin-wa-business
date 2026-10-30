@@ -59,10 +59,10 @@ export function ReconciliationWorkbench() {
   const pendingProjections = data?.pendingProjections || [];
 
   return (
-    <div className="w-full max-w-6xl mx-auto space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-6xl mx-auto">
       {/* Source of Truth Hierarchy & Warning */}
-      <div className="bg-sv-warning-soft border-l-4 border-sv-warning p-4 rounded-md shadow-sm">
-        <div className="flex justify-between items-start gap-4">
+      <div className="bg-sv-warning-soft border-l-4 border-sv-warning p-4 rounded-xl shadow-sm">
+        <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
           <div>
             <h3 className="text-sv-warning font-bold">⚠️ Diagnostic View Only</h3>
             <p className="text-sv-warning text-sm mt-1">
@@ -74,7 +74,7 @@ export function ReconciliationWorkbench() {
               </p>
             )}
           </div>
-          <div className="text-right text-xs text-sv-warning bg-sv-warning-soft p-2 rounded shrink-0">
+          <div className="text-left sm:text-right text-xs text-sv-warning bg-sv-warning-soft p-3 rounded-lg border border-sv-warning/20 shrink-0">
             <p className="font-bold">Source of Truth Hierarchy:</p>
             <ol className="list-decimal list-inside text-left mt-1">
               <li>Ledger (Authoritative)</li>
@@ -85,20 +85,20 @@ export function ReconciliationWorkbench() {
         </div>
       </div>
 
-      <div className="shadow-lg border border-sv-border rounded-lg overflow-hidden">
-        <div className="bg-sv-surface-muted border-b border-sv-border px-6 py-4 flex flex-row space-x-4 items-center">
+      <div className="bg-sv-surface shadow-sm border border-sv-border rounded-2xl overflow-hidden">
+        <div className="bg-sv-surface-muted border-b border-sv-border px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <h2 className="text-xl font-semibold text-sv-text-primary">Reconciliation Workbench</h2>
-          <div className="flex space-x-2">
-            <button className={`px-3 py-1.5 rounded text-xs font-semibold border ${activeTab === 'ESCROW' ? 'bg-sv-primary text-sv-text-inverse border-sv-primary' : 'bg-sv-surface text-sv-text-secondary border-sv-border'}`} onClick={() => setActiveTab('ESCROW')}>
+          <div className="flex flex-wrap gap-2">
+            <button className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${activeTab === 'ESCROW' ? 'bg-sv-primary text-sv-text-inverse border-sv-primary' : 'bg-sv-surface text-sv-text-secondary border-sv-border'}`} onClick={() => setActiveTab('ESCROW')}>
               Escrow Integrity {escrowDrift.length > 0 && `(${escrowDrift.length})`}
             </button>
-            <button className={`px-3 py-1.5 rounded text-xs font-semibold border ${activeTab === 'LEDGER' ? 'bg-sv-primary text-sv-text-inverse border-sv-primary' : 'bg-sv-surface text-sv-text-secondary border-sv-border'}`} onClick={() => setActiveTab('LEDGER')}>
+            <button className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${activeTab === 'LEDGER' ? 'bg-sv-primary text-sv-text-inverse border-sv-primary' : 'bg-sv-surface text-sv-text-secondary border-sv-border'}`} onClick={() => setActiveTab('LEDGER')}>
               Ledger Drift {ledgerDrift.length > 0 && `(${ledgerDrift.length})`}
             </button>
           </div>
         </div>
 
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           {loading ? (
             <div className="flex justify-center py-16">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sv-primary"></div>
@@ -108,12 +108,12 @@ export function ReconciliationWorkbench() {
           ) : activeTab === 'ESCROW' ? (
             <div className="space-y-4">
               {escrowDrift.length === 0 ? (
-                <div className="p-8 text-center text-slate-500">
-                  <span className="inline-block mb-2 text-xs border border-slate-300 px-2 py-1 rounded text-slate-500">Healthy</span>
+                <div className="p-8 text-center text-sv-text-muted">
+                  <span className="inline-block mb-2 text-xs border border-sv-success/30 bg-sv-success-soft text-sv-success px-2.5 py-1 rounded-full font-bold">Healthy</span>
                   <p className="text-sm mt-2">Order totals match escrow held across all {(data?.escrowIntegrity || []).length} stores checked.</p>
                 </div>
               ) : escrowDrift.map((entry) => (
-                <div key={entry._id} className="flex justify-between items-center p-4 bg-sv-danger-soft border border-sv-danger/30 rounded-md">
+                <div key={entry._id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 p-4 bg-sv-danger-soft border border-sv-danger/30 rounded-xl">
                   <div>
                     <h4 className="font-semibold text-sv-danger">Escrow Drift Detected</h4>
                     <p className="text-sm text-sv-danger font-mono mt-1">Store: {entry._id}</p>
@@ -121,7 +121,7 @@ export function ReconciliationWorkbench() {
                       Order Total: {naira(entry.totalPricing)} · Escrow Held: {naira(entry.totalEscrow)}
                     </p>
                   </div>
-                  <div className="text-right">
+                  <div className="sm:text-right">
                     <p className="text-sv-danger font-bold">Drift: {entry.variance > 0 ? '+' : ''}{naira(entry.variance)}</p>
                   </div>
                 </div>
@@ -130,12 +130,12 @@ export function ReconciliationWorkbench() {
           ) : (
             <div className="space-y-4">
               {ledgerDrift.length === 0 ? (
-                <div className="p-8 text-center text-slate-500">
-                  <span className="inline-block mb-2 text-xs border border-slate-300 px-2 py-1 rounded text-slate-500">Healthy</span>
+                <div className="p-8 text-center text-sv-text-muted">
+                  <span className="inline-block mb-2 text-xs border border-sv-success/30 bg-sv-success-soft text-sv-success px-2.5 py-1 rounded-full font-bold">Healthy</span>
                   <p className="text-sm mt-2">Store.availableBalance matches the canonical ledger sum for every store checked.</p>
                 </div>
               ) : ledgerDrift.map((entry) => (
-                <div key={entry.storeId} className="flex justify-between items-center p-4 bg-sv-danger-soft border border-sv-danger/30 rounded-md">
+                <div key={entry.storeId} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 p-4 bg-sv-danger-soft border border-sv-danger/30 rounded-xl">
                   <div>
                     <h4 className="font-semibold text-sv-danger">Ledger Drift Detected</h4>
                     <p className="text-sm text-sv-danger font-mono mt-1">{entry.storeName}</p>

@@ -81,49 +81,49 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
+    <div className="min-h-screen bg-sv-bg flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-black text-slate-900 tracking-tight">
+        <h2 className="mt-6 text-center text-3xl font-black text-sv-text-primary tracking-tight">
           {verifiedToken ? 'Secure New Password' : 'Access Recovery'}
         </h2>
-        <p className="mt-2 text-center text-sm text-slate-500 font-medium">
+        <p className="mt-2 text-center text-sm text-sv-text-secondary font-medium">
           {verifiedToken 
             ? 'Establish a new high-entropy password for your account' 
             : 'Enter your administrative email to initiate recovery'}
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md p-4 sm:p-0">
-        <div className="bg-white py-10 px-8 shadow-2xl shadow-slate-200/60 rounded-[32px] border border-slate-100">
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-sv-surface py-8 sm:py-10 px-6 sm:px-8 shadow-2xl rounded-3xl border border-sv-border">
           
           {verifiedToken ? (
             /* Phase 3: New Password Form */
             <form className="space-y-6" onSubmit={handleResetPassword}>
               <div>
-                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2">New Access Secret</label>
+                <label className="block text-[11px] font-bold text-sv-text-secondary uppercase tracking-widest mb-2">New Access Secret</label>
                 <div className="relative">
-                    <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-sv-text-muted" />
                     <input
                         type="password"
                         required
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
-                        className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-sv-surface-muted bg-sv-surface-muted focus:bg-sv-surface focus:border-sv-primary focus:ring-4 focus:ring-sv-primary/10 transition-all outline-none font-medium"
+                        className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-sv-surface-muted bg-sv-surface-muted focus:bg-sv-surface focus:border-sv-primary focus:ring-4 focus:ring-sv-primary/10 transition-all outline-none font-medium text-sv-text-primary"
                         placeholder="••••••••"
                     />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2">Confirm Secret</label>
+                <label className="block text-[11px] font-bold text-sv-text-secondary uppercase tracking-widest mb-2">Confirm Secret</label>
                 <div className="relative">
-                    <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-sv-text-muted" />
                     <input
                         type="password"
                         required
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-sv-surface-muted bg-sv-surface-muted focus:bg-sv-surface focus:border-sv-primary focus:ring-4 focus:ring-sv-primary/10 transition-all outline-none font-medium"
+                        className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-sv-surface-muted bg-sv-surface-muted focus:bg-sv-surface focus:border-sv-primary focus:ring-4 focus:ring-sv-primary/10 transition-all outline-none font-medium text-sv-text-primary"
                         placeholder="••••••••"
                     />
                 </div>
@@ -139,17 +139,17 @@ const ForgotPassword = () => {
           ) : status === 'success' ? (
             /* Phase 2: Sent Fallback (legacy or no account found) */
             <div className="text-center space-y-6 py-4">
-              <div className="w-20 h-20 bg-emerald-50 rounded-[24px] flex items-center justify-center mx-auto text-emerald-500 border border-emerald-100">
+              <div className="w-20 h-20 bg-sv-success-soft rounded-2xl flex items-center justify-center mx-auto text-sv-success border border-sv-success/20">
                 <FiMail size={32} />
               </div>
               <div className="space-y-2">
-                <h3 className="text-lg font-bold text-slate-900">Request Dispatched</h3>
-                <p className="text-sm text-slate-500 leading-relaxed font-medium">
+                <h3 className="text-lg font-bold text-sv-text-primary">Request Dispatched</h3>
+                <p className="text-sm text-sv-text-secondary leading-relaxed font-medium">
                   If your email is registered in our secure vault, instructions and a verification code have been dispatched.
                 </p>
               </div>
-              <div className="pt-4 border-t border-slate-50">
-                <Link to="/" className="text-xs font-bold text-slate-400 uppercase tracking-widest hover:text-slate-900 transition-colors inline-flex items-center gap-2">
+              <div className="pt-4 border-t border-sv-border">
+                <Link to="/" className="text-xs font-bold text-sv-text-muted uppercase tracking-widest hover:text-sv-text-primary transition-colors inline-flex items-center gap-2">
                   <FiArrowLeft /> Return to Authentication
                 </Link>
               </div>
@@ -158,9 +158,9 @@ const ForgotPassword = () => {
             /* Phase 1: Email Request */
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
-                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2">Service Email</label>
+                <label className="block text-[11px] font-bold text-sv-text-secondary uppercase tracking-widest mb-2">Service Email</label>
                 <div className="relative group">
-                  <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-slate-900" />
+                  <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-sv-text-muted transition-colors group-focus-within:text-sv-primary" />
                   <input
                     type="email"
                     required
@@ -181,7 +181,7 @@ const ForgotPassword = () => {
               </button>
 
               <div className="flex items-center justify-center pt-2">
-                 <Link to="/" className="text-xs font-bold text-slate-400 uppercase tracking-widest hover:text-slate-900 transition-colors inline-flex items-center gap-2">
+                 <Link to="/" className="text-xs font-bold text-sv-text-muted uppercase tracking-widest hover:text-sv-text-primary transition-colors inline-flex items-center gap-2">
                     <FiArrowLeft /> Back to Login
                  </Link>
               </div>

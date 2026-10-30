@@ -145,20 +145,20 @@ export default function AccountConsolidations() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-            <FiGitPullRequest className="text-blue-600" />
+          <h1 className="text-2xl sm:text-3xl font-black text-sv-text-primary flex items-center gap-2.5 tracking-tight">
+            <FiGitPullRequest className="text-sv-primary" />
             Account Consolidations
           </h1>
-          <p className="text-gray-500 text-sm mt-1">Institutional merging of duplicate vendor identities.</p>
+          <p className="text-sv-text-muted text-sm mt-1">Institutional merging of duplicate vendor identities.</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
             <select 
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
-                className="bg-sv-surface border border-sv-border rounded-xl px-4 py-2 text-sm font-bold outline-none focus:ring-2 focus:ring-sv-primary/20"
+                className="w-full sm:w-auto bg-sv-surface border border-sv-border rounded-xl px-4 py-2 text-sm font-bold text-sv-text-primary outline-none focus:ring-2 focus:ring-sv-primary/20 shadow-xs"
             >
                 <option value="ALL">All Status</option>
                 <option value="REQUESTED">Requested</option>
@@ -168,16 +168,17 @@ export default function AccountConsolidations() {
             </select>
             <button 
                 onClick={fetchRequests}
-                className="p-2 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
+                className="p-2.5 bg-sv-surface border border-sv-border rounded-xl hover:bg-sv-surface-muted transition-colors text-sv-text-secondary shadow-xs"
+                title="Refresh"
             >
                 <FiRefreshCw className={loading ? 'animate-spin' : ''} />
             </button>
         </div>
       </div>
 
-      <div className="bg-sv-surface border border-sv-border rounded-[32px] overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+      <div className="bg-sv-surface border border-sv-border rounded-2xl overflow-hidden shadow-xs">
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-sv-border">
+          <table className="w-full text-left border-collapse min-w-[750px]">
             <thead className="bg-sv-surface-muted border-b border-sv-border">
               <tr>
                 <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-widest">Request Details</th>
@@ -204,7 +205,7 @@ export default function AccountConsolidations() {
                     <div className="flex flex-col">
                       <span className="text-sm font-black text-sv-text-primary">{req.sourceUserId?.name}</span>
                       <span className="text-xs text-sv-text-secondary">{req.sourceUserId?.email}</span>
-                      <span className="text-[10px] font-bold text-red-500 mt-1 uppercase">Source (To be closed)</span>
+                      <span className="text-[10px] font-bold text-sv-danger mt-1 uppercase">Source (To be closed)</span>
                     </div>
                   </td>
                   <td className="px-6 py-6 text-center">
@@ -214,7 +215,7 @@ export default function AccountConsolidations() {
                     <div className="flex flex-col">
                       <span className="text-sm font-black text-sv-text-primary">{req.targetUserId?.name}</span>
                       <span className="text-xs text-sv-text-secondary">{req.targetUserId?.email}</span>
-                      <span className="text-[10px] font-bold text-green-600 mt-1 uppercase">Target (Survivor)</span>
+                      <span className="text-[10px] font-bold text-sv-success mt-1 uppercase">Target (Survivor)</span>
                     </div>
                   </td>
                   <td className="px-6 py-6">
@@ -228,7 +229,7 @@ export default function AccountConsolidations() {
                             <button
                                 onClick={() => handleApprove(req._id)}
                                 disabled={!!processingId}
-                                className="flex items-center gap-1.5 px-3 py-1.5 bg-sv-primary text-sv-text-inverse rounded-lg text-xs font-bold hover:bg-sv-primary-hover transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="flex items-center gap-1.5 px-3 py-1.5 bg-sv-primary text-sv-text-inverse rounded-xl text-xs font-bold hover:bg-sv-primary-hover transition disabled:opacity-50 disabled:cursor-not-allowed shadow-xs"
                             >
                                 <FiCheckCircle size={14} /> {processingId === req._id ? 'Approving...' : 'Approve'}
                             </button>
@@ -237,7 +238,7 @@ export default function AccountConsolidations() {
                             <button
                                 onClick={() => handleExecute(req._id)}
                                 disabled={!!processingId}
-                                className="flex items-center gap-1.5 px-3 py-1.5 bg-sv-success text-sv-text-inverse rounded-lg text-xs font-bold hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="flex items-center gap-1.5 px-3 py-1.5 bg-sv-success text-sv-text-inverse rounded-xl text-xs font-bold hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-xs"
                             >
                                 <FiShield size={14} /> {processingId === req._id ? 'Executing...' : 'Execute Merge'}
                             </button>
@@ -245,7 +246,7 @@ export default function AccountConsolidations() {
                         {(req.status === 'COMPLETED' || req.status === 'FAILED') && (
                             <button 
                                 onClick={() => Swal.fire('Execution Forensic', `Checksum: ${req.executionChecksum || 'N/A'}\nExecuted At: ${req.executedAt ? new Date(req.executedAt).toLocaleString() : 'N/A'}`, 'info')}
-                                className="p-2 border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50"
+                                className="p-2 border border-sv-border rounded-xl text-sv-text-muted hover:bg-sv-surface-muted transition-colors"
                                 title="View Forensic Data"
                             >
                                 <FiFileText size={16} />
@@ -268,30 +269,30 @@ export default function AccountConsolidations() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-sv-info-soft border border-sv-info/30 p-6 rounded-[32px] space-y-4">
+          <div className="bg-sv-info-soft border border-sv-info/30 p-6 rounded-2xl space-y-4 shadow-xs">
               <div className="flex items-center gap-3 text-sv-info">
-                  <FiShield className="text-xl" />
+                  <FiShield className="text-xl shrink-0" />
                   <h3 className="font-black text-sm uppercase tracking-widest">Dual-Control Policy</h3>
               </div>
-              <p className="text-xs text-sv-info leading-relaxed opacity-80">
+              <p className="text-xs text-sv-info leading-relaxed opacity-90">
                   High-value accounts require multiple administrator approvals. The executor cannot be the same person who requested the consolidation.
               </p>
           </div>
-          <div className="bg-sv-success-soft border border-sv-success/30 p-6 rounded-[32px] space-y-4">
+          <div className="bg-sv-success-soft border border-sv-success/30 p-6 rounded-2xl space-y-4 shadow-xs">
               <div className="flex items-center gap-3 text-sv-success">
-                  <FiCheckCircle className="text-xl" />
+                  <FiCheckCircle className="text-xl shrink-0" />
                   <h3 className="font-black text-sm uppercase tracking-widest">Transactional Safety</h3>
               </div>
-              <p className="text-xs text-sv-success leading-relaxed opacity-80">
+              <p className="text-xs text-sv-success leading-relaxed opacity-90">
                   All merges use <strong>SNAPSHOT</strong> isolation with distributed locks. Balances are migrated via append-only ledger entries with zero-drift verification.
               </p>
           </div>
-          <div className="bg-sv-warning-soft border border-sv-warning/30 p-6 rounded-[32px] space-y-4">
+          <div className="bg-sv-warning-soft border border-sv-warning/30 p-6 rounded-2xl space-y-4 shadow-xs">
               <div className="flex items-center gap-3 text-sv-warning">
-                  <FiXCircle className="text-xl" />
+                  <FiXCircle className="text-xl shrink-0" />
                   <h3 className="font-black text-sm uppercase tracking-widest">Irreversibility</h3>
               </div>
-              <p className="text-xs text-sv-warning leading-relaxed opacity-80">
+              <p className="text-xs text-sv-warning leading-relaxed opacity-90">
                   Once a consolidation is executed, PII is scrubbed from the source account and it is permanently deactivated. Recovery is only possible via forensic backups.
               </p>
           </div>

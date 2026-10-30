@@ -167,7 +167,7 @@ export default function SecurityDashboard() {
     const { isConfirmed } = await (window as any).Swal.fire({
       title: `Re-scope ${invite.email}`,
       html: `
-        <p style="font-size:12px;color:#64748b;margin-bottom:8px;">Leave all unchecked for unrestricted access.</p>
+        <p style="font-size:12px;color:var(--sv-text-muted);margin-bottom:8px;">Leave all unchecked for unrestricted access.</p>
         <div style="text-align:left;">${checkboxesHtml}</div>
       `,
       showCancelButton: true,
@@ -290,24 +290,24 @@ export default function SecurityDashboard() {
   };
 
   const SkeletonCard = () => (
-    <div className="bg-sv-surface rounded-2xl shadow-sm border border-sv-border p-6 animate-pulse">
+    <div className="bg-sv-surface rounded-2xl shadow-xs border border-sv-border p-6 animate-pulse">
       <div className="flex justify-between items-center">
         <div className="space-y-3 flex-1">
-          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-          <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+          <div className="h-4 bg-sv-surface-muted rounded-lg w-1/2"></div>
+          <div className="h-8 bg-sv-surface-muted rounded-lg w-1/3"></div>
         </div>
-        <div className="h-12 w-12 bg-gray-200 rounded-full"></div>
+        <div className="h-12 w-12 bg-sv-surface-muted rounded-full"></div>
       </div>
     </div>
   );
 
   if (loading && !stats && !metrics) {
     return (
-      <div className="space-y-6 p-6">
+      <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-sv-text-primary">Security Operations Center</h1>
+          <h1 className="text-2xl sm:text-3xl font-black text-sv-text-primary tracking-tight">Security Operations Center</h1>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {[1, 2, 3, 4].map(i => <SkeletonCard key={i} />)}
         </div>
       </div>
@@ -323,67 +323,67 @@ export default function SecurityDashboard() {
   };
 
   const kpiCards = [
-    { title: 'Failed Logins (24h)', value: stats?.kpis.failedLogins24h || 0, icon: FiActivity, color: 'text-blue-600', bg: 'bg-blue-50' },
-    { title: 'RBAC Mismatches', value: metrics?.rbac.mismatches || 0, icon: FiLock, color: 'text-red-600', bg: 'bg-red-50' },
-    { title: 'Argon2 Migrated', value: metrics?.argon2.migrated || 0, icon: FiCheckCircle, color: 'text-green-600', bg: 'bg-green-50' },
-    { title: 'Legal Holds Active', value: stats?.kpis.activeLegalHolds || 0, icon: FiShield, color: 'text-purple-600', bg: 'bg-purple-50' },
+    { title: 'Failed Logins (24h)', value: stats?.kpis.failedLogins24h || 0, icon: FiActivity, color: 'text-sv-info', bg: 'bg-sv-info-soft border border-sv-info/30' },
+    { title: 'RBAC Mismatches', value: metrics?.rbac.mismatches || 0, icon: FiLock, color: 'text-sv-danger', bg: 'bg-sv-danger-soft border border-sv-danger/30' },
+    { title: 'Argon2 Migrated', value: metrics?.argon2.migrated || 0, icon: FiCheckCircle, color: 'text-sv-success', bg: 'bg-sv-success-soft border border-sv-success/30' },
+    { title: 'Legal Holds Active', value: stats?.kpis.activeLegalHolds || 0, icon: FiShield, color: 'text-sv-tag', bg: 'bg-sv-tag-soft border border-sv-tag/30' },
   ];
 
 
   return (
-    <div className="space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
       {criticalAlert && (
-        <div className="bg-red-50 border-l-4 border-red-600 p-4 rounded-r-lg flex items-center justify-between animate-pulse">
+        <div className="bg-sv-danger-soft/30 border-l-4 border-sv-danger p-4 rounded-r-xl flex items-center justify-between animate-pulse shadow-xs">
           <div className="flex items-center gap-3">
-            <FiShield className="text-red-600 text-xl" />
-            <span className="text-red-800 font-semibold">{criticalAlert}</span>
+            <FiShield className="text-sv-danger text-xl shrink-0" />
+            <span className="text-sv-danger font-bold text-sm">{criticalAlert}</span>
           </div>
-          <button onClick={() => setCriticalAlert(null)} className="text-red-600 hover:text-red-800 font-bold">×</button>
+          <button onClick={() => setCriticalAlert(null)} className="text-sv-danger hover:opacity-75 font-bold text-lg leading-none">×</button>
         </div>
       )}
 
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-sv-text-primary flex items-center gap-2">
-            <FiShield className="text-primary" /> Security Operations Center
+          <h1 className="text-2xl sm:text-3xl font-black text-sv-text-primary flex items-center gap-2.5 tracking-tight">
+            <FiShield className="text-sv-primary" /> Security Operations Center
           </h1>
-          <p className="text-gray-600 mt-1 text-sm flex items-center gap-2">
-            Real-time monitoring & threat detection
-            <span className="text-xs bg-sv-success-soft text-sv-success px-2 py-1 rounded-full font-medium">Last Sync: {getTimeSinceSync()}</span>
-            {retryCount > 0 && <span className="text-xs bg-sv-warning-soft text-sv-warning px-2 py-1 rounded-full font-medium">Reconnecting... ({retryCount})</span>}
+          <p className="text-sv-text-muted mt-1 text-sm flex flex-wrap items-center gap-2">
+            <span>Real-time monitoring & threat detection</span>
+            <span className="text-xs bg-sv-success-soft text-sv-success px-2.5 py-0.5 rounded-full font-bold">Last Sync: {getTimeSinceSync()}</span>
+            {retryCount > 0 && <span className="text-xs bg-sv-warning-soft text-sv-warning px-2.5 py-0.5 rounded-full font-bold">Reconnecting... ({retryCount})</span>}
           </p>
         </div>
         <div className="flex items-center gap-4">
-          <button onClick={fetchData} className="px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition text-sm font-medium flex items-center gap-2">
+          <button onClick={fetchData} className="px-4 py-2 bg-sv-surface border border-sv-border rounded-xl hover:bg-sv-surface-muted transition text-sm font-semibold text-sv-text-primary flex items-center gap-2 shadow-xs">
             <FiActivity /> Refresh Stream
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {kpiCards.map((card) => (
-          <div key={card.title} className="bg-sv-surface rounded-2xl shadow-sm border border-sv-border p-6 flex items-center gap-4">
-            <div className={`${card.bg} p-3 rounded-xl ${card.color}`}><card.icon size={24} /></div>
-            <div>
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">{card.title}</p>
-              <h3 className="text-2xl font-black text-gray-800 mt-1">{card.value}</h3>
+          <div key={card.title} className="bg-sv-surface rounded-2xl shadow-xs border border-sv-border p-4 sm:p-6 flex items-center gap-4">
+            <div className={`${card.bg} p-3 rounded-xl ${card.color} shrink-0`}><card.icon size={24} /></div>
+            <div className="min-w-0">
+              <p className="text-[10px] font-bold text-sv-text-muted uppercase tracking-widest truncate">{card.title}</p>
+              <h3 className="text-2xl sm:text-3xl font-black text-sv-text-primary mt-1">{card.value}</h3>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="bg-sv-surface rounded-2xl shadow-sm border border-sv-border p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="font-bold text-gray-800 flex items-center gap-2"><FiLock className="text-primary" /> Argon2 Migration Progress</h3>
-          <span className={`text-xs font-bold px-2 py-1 rounded ${metrics?.argon2.status === 'ACTIVE' ? 'bg-sv-success-soft text-sv-success' : 'bg-sv-surface-muted text-sv-text-secondary'}`}>{metrics?.argon2.status || 'IDLE'}</span>
+      <div className="bg-sv-surface rounded-2xl shadow-xs border border-sv-border p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+          <h3 className="font-bold text-sv-text-primary flex items-center gap-2"><FiLock className="text-sv-primary" /> Argon2 Migration Progress</h3>
+          <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider self-start sm:self-auto ${metrics?.argon2.status === 'ACTIVE' ? 'bg-sv-success-soft text-sv-success border border-sv-success/30' : 'bg-sv-surface-muted text-sv-text-secondary border border-sv-border'}`}>{metrics?.argon2.status || 'IDLE'}</span>
         </div>
         <div className="relative pt-1">
           <div className="flex mb-2 items-center justify-between">
-            <div><span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-primary bg-primary/10">{Math.round((metrics?.argon2.migrated / (metrics?.argon2.total || 1)) * 100)}% Complete</span></div>
-            <div className="text-right"><span className="text-xs font-semibold inline-block text-primary">{metrics?.argon2.p95}ms Latency (p95)</span></div>
+            <div><span className="text-[10px] font-bold inline-block py-1 px-2.5 uppercase tracking-wider rounded-full text-sv-primary bg-sv-primary/10 border border-sv-primary/20">{Math.round((metrics?.argon2.migrated / (metrics?.argon2.total || 1)) * 100)}% Complete</span></div>
+            <div className="text-right"><span className="text-xs font-semibold inline-block text-sv-primary">{metrics?.argon2.p95}ms Latency (p95)</span></div>
           </div>
-          <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-100">
-            <div style={{ width: `${(metrics?.argon2.migrated / (metrics?.argon2.total || 1)) * 100}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary transition-all duration-500"></div>
+          <div className="overflow-hidden h-2.5 mb-4 text-xs flex rounded-full bg-sv-surface-muted border border-sv-border">
+            <div style={{ width: `${(metrics?.argon2.migrated / (metrics?.argon2.total || 1)) * 100}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-sv-primary transition-all duration-500 rounded-full"></div>
           </div>
         </div>
       </div>
@@ -405,9 +405,9 @@ export default function SecurityDashboard() {
               </div>
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-sv-border">
               {activeTab === 'alerts' ? (
-                <table className="w-full">
+                <table className="w-full min-w-[650px]">
                   <thead className="bg-sv-surface-muted text-[10px] font-black uppercase text-sv-text-muted">
                     <tr><th className="px-6 py-4 text-left">Level</th><th className="px-6 py-4 text-left">Event</th><th className="px-6 py-4 text-left">Entity</th><th className="px-6 py-4 text-left">Time</th></tr>
                   </thead>
@@ -423,17 +423,17 @@ export default function SecurityDashboard() {
                   </tbody>
                 </table>
               ) : activeTab === 'fraud' ? (
-                <table className="w-full">
+                <table className="w-full min-w-[650px]">
                   <thead className="bg-sv-surface-muted text-[10px] font-black uppercase text-sv-text-muted">
                     <tr><th className="px-6 py-4 text-left">Severity</th><th className="px-6 py-4 text-left">Incident</th><th className="px-6 py-4 text-left">Risk</th><th className="px-6 py-4 text-left">Action</th></tr>
                   </thead>
                   <tbody className="divide-y divide-sv-border">
                     {fraudIncidents.map((incident) => (
-                      <tr key={incident._id} className="hover:bg-red-50/30">
+                      <tr key={incident._id} className="hover:bg-sv-danger-soft/30">
                         <td className="px-6 py-4"><span className={`text-[10px] font-black uppercase px-2 py-1 rounded ${getSeverityColor(incident.severity.toLowerCase())}`}>{incident.severity}</span></td>
                         <td className="px-6 py-4"><p className="text-sm font-bold">{incident.incidentType}</p></td>
                         <td className="px-6 py-4 text-sm font-black">{incident.riskScore}</td>
-                        <td className="px-6 py-4"><button onClick={() => setSelectedIncident(incident)} className="bg-sv-primary text-sv-text-inverse text-[10px] px-3 py-1.5 rounded-lg hover:bg-sv-primary-hover">Investigate</button></td>
+                        <td className="px-6 py-4"><button onClick={() => setSelectedIncident(incident)} className="bg-sv-primary text-sv-text-inverse text-[10px] px-3 py-1.5 rounded-lg hover:bg-sv-primary-hover font-bold">Investigate</button></td>
                       </tr>
                     ))}
                   </tbody>
@@ -441,16 +441,16 @@ export default function SecurityDashboard() {
               ) : activeTab === 'forensics' ? (
                 <ForensicAuditPanel />
               ) : activeTab === 'intelligence' ? (
-                <div className="p-6"><AutonomousAIControl /></div>
+                <div className="p-4 sm:p-6"><AutonomousAIControl /></div>
               ) : activeTab === 'decisions' ? (
-                <table className="w-full">
+                <table className="w-full min-w-[650px]">
                   <thead className="bg-sv-surface-muted text-[10px] font-black uppercase text-sv-text-muted">
                     <tr><th className="px-6 py-4 text-left">Result</th><th className="px-6 py-4 text-left">Actor</th><th className="px-6 py-4 text-left">Action</th><th className="px-6 py-4 text-left">Time</th></tr>
                   </thead>
                   <tbody className="divide-y divide-sv-border">
                     {governanceData.decisions.map((decision: any, i: number) => (
                       <tr key={i} className="hover:bg-sv-surface-muted">
-                        <td className="px-6 py-4"><span className={`text-[9px] font-black px-2 py-1 rounded ${decision.severity === 'critical' ? 'bg-red-600' : 'bg-green-500'} text-white`}>{decision.metadata?.details?.result}</span></td>
+                        <td className="px-6 py-4"><span className={`text-[9px] font-black px-2 py-1 rounded ${decision.severity === 'critical' ? 'bg-sv-danger' : 'bg-sv-success'} text-white`}>{decision.metadata?.details?.result}</span></td>
                         <td className="px-6 py-4 text-xs font-bold">{decision.metadata?.details?.actor}</td>
                         <td className="px-6 py-4 text-[10px]">{decision.metadata?.details?.action}</td>
                         <td className="px-6 py-4 text-[10px]">{new Date(decision.createdAt).toLocaleString()}</td>
@@ -460,19 +460,19 @@ export default function SecurityDashboard() {
                 </table>
               ) : activeTab === 'invites' ? (
                 <div className="p-6 space-y-6">
-                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
-                    <h4 className="text-sm font-black uppercase mb-4">Provision New Administrator</h4>
+                  <div className="bg-sv-surface-muted p-6 rounded-2xl border border-sv-border">
+                    <h4 className="text-sm font-black uppercase mb-4 text-sv-text-primary">Provision New Administrator</h4>
                     {generatedToken ? (
-                      <div className="bg-slate-900 text-white p-4 rounded-xl space-y-3">
-                        <p className="text-[10px] font-black uppercase text-slate-400">One-Time Token Visibility</p>
-                        <code className="block bg-black/30 p-3 rounded-lg text-xs break-all border border-white/10">{generatedToken}</code>
-                        <button onClick={() => setGeneratedToken(null)} className="w-full py-2 bg-white text-slate-900 rounded-lg text-[10px] font-black uppercase">I have secured the token</button>
+                      <div className="bg-sv-surface-elevated text-sv-text-primary p-4 rounded-xl space-y-3 border border-sv-border">
+                        <p className="text-[10px] font-black uppercase text-sv-text-muted">One-Time Token Visibility</p>
+                        <code className="block bg-sv-surface p-3 rounded-lg text-xs break-all border border-sv-border font-mono text-sv-text-primary">{generatedToken}</code>
+                        <button onClick={() => setGeneratedToken(null)} className="w-full py-2 bg-sv-primary text-sv-text-inverse hover:bg-sv-primary-hover rounded-lg text-[10px] font-black uppercase transition-colors">I have secured the token</button>
                       </div>
                     ) : (
                       <form className="space-y-4" onSubmit={handleIssueInvite}>
                         <div className="flex gap-4 items-end">
-                          <div className="flex-1"><label className="text-[10px] font-bold text-sv-text-secondary uppercase">Email</label><input type="email" id="inviteEmail" className="w-full px-4 py-2 rounded-xl border border-sv-border outline-none text-sm focus:ring-2 focus:ring-sv-primary/20 focus:border-sv-primary" /></div>
-                          <div><label className="text-[10px] font-bold text-sv-text-secondary uppercase">Capabilities</label><select id="inviteCapability" className="px-4 py-2 rounded-xl border border-sv-border text-sm focus:ring-2 focus:ring-sv-primary/20 focus:border-sv-primary"><option value="FULL">Full (CRITICAL)</option><option value="SECURITY">Security (HIGH)</option><option value="FINANCE">Finance (CRITICAL)</option></select></div>
+                          <div className="flex-1"><label className="text-[10px] font-bold text-sv-text-secondary uppercase">Email</label><input type="email" id="inviteEmail" className="w-full px-4 py-2 rounded-xl border border-sv-border bg-sv-surface text-sv-text-primary outline-none text-sm focus:ring-2 focus:ring-sv-primary/20 focus:border-sv-primary" /></div>
+                          <div><label className="text-[10px] font-bold text-sv-text-secondary uppercase">Capabilities</label><select id="inviteCapability" className="px-4 py-2 rounded-xl border border-sv-border bg-sv-surface text-sv-text-primary text-sm focus:ring-2 focus:ring-sv-primary/20 focus:border-sv-primary"><option value="FULL">Full (CRITICAL)</option><option value="SECURITY">Security (HIGH)</option><option value="FINANCE">Finance (CRITICAL)</option></select></div>
                           <button className="bg-sv-primary text-sv-text-inverse px-6 py-2 rounded-xl font-bold hover:bg-sv-primary-hover">Issue</button>
                         </div>
                         {/* 🛡️ [ADMIN-STAFF-SCOPING-1] Leave every box unchecked for a
@@ -483,8 +483,8 @@ export default function SecurityDashboard() {
                           <label className="text-[10px] font-bold text-sv-text-secondary uppercase block mb-2">Dashboard Sections (leave all unchecked = unrestricted)</label>
                           <div className="flex flex-wrap gap-3">
                             {ADMIN_SECTIONS.map((section) => (
-                              <label key={section} className="flex items-center gap-1.5 text-xs font-semibold text-sv-text-secondary cursor-pointer bg-white px-3 py-1.5 rounded-lg border border-sv-border">
-                                <input type="checkbox" id={`inviteSection-${section}`} className="w-3.5 h-3.5" />
+                              <label key={section} className="flex items-center gap-1.5 text-xs font-semibold text-sv-text-secondary cursor-pointer bg-sv-surface px-3 py-1.5 rounded-lg border border-sv-border">
+                                <input type="checkbox" id={`inviteSection-${section}`} className="w-3.5 h-3.5 accent-sv-primary" />
                                 {section}
                               </label>
                             ))}
@@ -493,46 +493,49 @@ export default function SecurityDashboard() {
                       </form>
                     )}
                   </div>
-                  <table className="w-full">
-                    <thead className="bg-sv-surface-muted text-[10px] font-black uppercase text-sv-text-muted">
-                      <tr><th className="px-6 py-4 text-left">Status</th><th className="px-6 py-4 text-left">Recipient</th><th className="px-6 py-4 text-left">Sections</th><th className="px-6 py-4 text-left">Expires</th><th className="px-6 py-4 text-left">Action</th></tr>
-                    </thead>
-                    <tbody className="divide-y divide-sv-border">
-                      {governanceData.invites.map((invite: any, i: number) => {
-                        const sections: string[] = invite.assignedCapabilities?.allowedSections || [];
-                        return (
-                        <tr key={i} className="hover:bg-sv-surface-muted">
-                          <td className="px-6 py-4"><span className={`text-[9px] font-black px-2 py-1 rounded ${invite.status === 'PENDING' ? 'bg-yellow-500' : 'bg-green-500'} text-white`}>{invite.status}</span></td>
-                          <td className="px-6 py-4 text-xs font-bold">{invite.email}</td>
-                          <td className="px-6 py-4 text-[10px] text-sv-text-secondary">{sections.length === 0 ? 'Unrestricted' : sections.join(', ')}</td>
-                          <td className="px-6 py-4 text-xs">{new Date(invite.expiresAt).toLocaleString()}</td>
-                          <td className="px-6 py-4 flex gap-3">
-                            {invite.status === 'PENDING' && (
-                              <button
-                                onClick={() => handleRevokeInvite(invite)}
-                                disabled={revokingInviteId === invite._id}
-                                className="text-red-600 text-[10px] font-black uppercase disabled:opacity-50 disabled:cursor-not-allowed"
-                              >
-                                {revokingInviteId === invite._id ? 'Revoking...' : 'Revoke'}
-                              </button>
-                            )}
-                            {invite.status === 'REDEEMED' && invite.redeemedBy && (
-                              <button
-                                onClick={() => handleEditSections(invite)}
-                                className="text-sv-primary text-[10px] font-black uppercase"
-                              >
-                                Edit Sections
-                              </button>
-                            )}
-                          </td>
-                        </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+                  <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-sv-border">
+                    <table className="w-full min-w-[650px]">
+                      <thead className="bg-sv-surface-muted text-[10px] font-black uppercase text-sv-text-muted">
+                        <tr><th className="px-6 py-4 text-left">Status</th><th className="px-6 py-4 text-left">Recipient</th><th className="px-6 py-4 text-left">Sections</th><th className="px-6 py-4 text-left">Expires</th><th className="px-6 py-4 text-left">Action</th></tr>
+                      </thead>
+                      <tbody className="divide-y divide-sv-border">
+                        {governanceData.invites.map((invite: any, i: number) => {
+                          const sections: string[] = invite.assignedCapabilities?.allowedSections || [];
+                          return (
+                          <tr key={i} className="hover:bg-sv-surface-muted">
+                            <td className="px-6 py-4"><span className={`text-[9px] font-black px-2 py-1 rounded ${invite.status === 'PENDING' ? 'bg-sv-warning text-sv-text-inverse' : 'bg-sv-success text-sv-text-inverse'}`}>{invite.status}</span></td>
+                            <td className="px-6 py-4 text-xs font-bold text-sv-text-primary">{invite.email}</td>
+                            <td className="px-6 py-4 text-[10px] text-sv-text-secondary">{sections.length === 0 ? 'Unrestricted' : sections.join(', ')}</td>
+                            <td className="px-6 py-4 text-xs text-sv-text-muted">{new Date(invite.expiresAt).toLocaleString()}</td>
+                            <td className="px-6 py-4 flex gap-3">
+                              {invite.status === 'PENDING' && (
+                                <button
+                                  onClick={() => handleRevokeInvite(invite)}
+                                  disabled={revokingInviteId === invite._id}
+                                  className="text-sv-danger text-[10px] font-black uppercase disabled:opacity-50 disabled:cursor-not-allowed hover:underline"
+                                >
+                                  {revokingInviteId === invite._id ? 'Revoking...' : 'Revoke'}
+                                </button>
+                              )}
+                              {invite.status === 'REDEEMED' && invite.redeemedBy && (
+                                <button
+                                  onClick={() => handleEditSections(invite)}
+                                  className="text-sv-primary text-[10px] font-black uppercase hover:underline"
+                                >
+                                  Edit Sections
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               ) : (
-                <table className="w-full">
+                <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-sv-border">
+                  <table className="w-full min-w-[650px]">
                   <thead className="bg-sv-surface-muted text-[10px] font-black uppercase text-sv-text-muted">
                     <tr><th className="px-6 py-4 text-left">Severity</th><th className="px-6 py-4 text-left">Type</th><th className="px-6 py-4 text-left">Message</th><th className="px-6 py-4 text-left">Time</th></tr>
                   </thead>
@@ -547,26 +550,27 @@ export default function SecurityDashboard() {
                     ))}
                   </tbody>
                 </table>
-              )}
-            </div>
+              </div>
+            )}
+          </div>
           </div>
         </div>
 
         <div className="space-y-6">
           <div className="bg-sv-surface rounded-2xl shadow-sm border border-sv-border p-6">
-            <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2"><FiShield className="text-green-500" /> Compliance Status</h3>
-            <div className="space-y-4 text-sm text-gray-600">
-              <div className="flex justify-between"><span>NDPR Data Anonymizer</span><span className="text-green-600 font-bold">Active</span></div>
-              <div className="flex justify-between"><span>Sovereign Telemetry</span><span className="text-green-600 font-bold">Synced</span></div>
-              <div className="flex justify-between"><span>Legal Hold Registry</span><span className="text-green-600 font-bold">Synced</span></div>
-              <div className="flex justify-between"><span>Encryption Layer</span><span className="text-green-600 font-bold">256-bit</span></div>
+            <h3 className="font-bold text-sv-text-primary mb-4 flex items-center gap-2"><FiShield className="text-sv-success" /> Compliance Status</h3>
+            <div className="space-y-4 text-sm text-sv-text-secondary">
+              <div className="flex justify-between"><span>NDPR Data Anonymizer</span><span className="text-sv-success font-bold">Active</span></div>
+              <div className="flex justify-between"><span>Sovereign Telemetry</span><span className="text-sv-success font-bold">Synced</span></div>
+              <div className="flex justify-between"><span>Legal Hold Registry</span><span className="text-sv-success font-bold">Synced</span></div>
+              <div className="flex justify-between"><span>Encryption Layer</span><span className="text-sv-success font-bold">256-bit</span></div>
               {/* 🛡️ [FIX] Was a hardcoded "98/100" score with a hardcoded
                   98%-filled bar — no backend endpoint computes an aggregate
                   security score anywhere in this codebase. Removed rather
                   than inventing a fake number; a real score needs a defined
                   methodology (which signals, what weighting) before it can
                   be shown, which is a separate decision, not a display fix. */}
-              <div className="pt-4 border-t"><p className="text-[10px] font-black uppercase text-gray-400 mb-2">Security Score</p><p className="text-xs text-gray-400 font-medium">Not computed — no scoring methodology defined yet</p></div>
+              <div className="pt-4 border-t border-sv-border"><p className="text-[10px] font-black uppercase text-sv-text-muted mb-2">Security Score</p><p className="text-xs text-sv-text-muted font-medium">Not computed — no scoring methodology defined yet</p></div>
             </div>
           </div>
           {/* 🛡️ [FIX] Was a fabricated "Chaos Engine runs daily... Last Test:
@@ -577,22 +581,22 @@ export default function SecurityDashboard() {
               check. Replaced with an honest description of what actually
               exists today. */}
           <div className="bg-sv-surface rounded-2xl p-6 shadow-sm border border-sv-border">
-            <h3 className="font-bold text-lg mb-2 text-gray-800">Automated Resilience</h3>
-            <p className="text-xs text-gray-500 mb-4">A chaos test suite exists in the codebase but is not yet wired to run on a schedule or report its results here.</p>
-            <div className="flex items-center gap-3 bg-gray-50 rounded-xl p-3 border border-gray-100"><FiActivity className="text-gray-400" /><div className="text-[10px] font-black uppercase text-gray-500">Not connected to live telemetry</div></div>
+            <h3 className="font-bold text-lg mb-2 text-sv-text-primary">Automated Resilience</h3>
+            <p className="text-xs text-sv-text-secondary mb-4">A chaos test suite exists in the codebase but is not yet wired to run on a schedule or report its results here.</p>
+            <div className="flex items-center gap-3 bg-sv-surface-muted rounded-xl p-3 border border-sv-border"><FiActivity className="text-sv-text-muted" /><div className="text-[10px] font-black uppercase text-sv-text-muted">Not connected to live telemetry</div></div>
           </div>
 
-          <div className={`rounded-2xl p-6 border transition-all ${govMode !== 'NORMAL' ? 'bg-red-50 border-red-200' : 'bg-slate-50 border-slate-200'}`}>
-            <h3 className={`font-black text-xs uppercase mb-4 flex items-center gap-2 ${govMode !== 'NORMAL' ? 'text-red-700' : 'text-slate-500'}`}>
+          <div className={`rounded-2xl p-6 border transition-all ${govMode !== 'NORMAL' ? 'bg-sv-danger-soft border-sv-danger/30' : 'bg-sv-surface-muted border-sv-border'}`}>
+            <h3 className={`font-black text-xs uppercase mb-4 flex items-center gap-2 ${govMode !== 'NORMAL' ? 'text-sv-danger' : 'text-sv-text-muted'}`}>
               <FiLock /> Sovereign Governance
             </h3>
             <div className="space-y-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase text-slate-400">Governance Mode</label>
+                <label className="text-[10px] font-black uppercase text-sv-text-muted">Governance Mode</label>
                 <select 
                   value={govMode} 
                   onChange={(e) => transitionGovernance(e.target.value as any)}
-                  className={`w-full px-3 py-2 rounded-xl text-xs font-bold border outline-none ${govMode !== 'NORMAL' ? 'bg-white border-red-200 text-red-700' : 'bg-white border-slate-200 text-slate-900'}`}
+                  className={`w-full px-3 py-2 rounded-xl text-xs font-bold border outline-none ${govMode !== 'NORMAL' ? 'bg-sv-surface border-sv-danger text-sv-danger' : 'bg-sv-surface border-sv-border text-sv-text-primary'}`}
                 >
                   <option value="NORMAL">Standard Operations</option>
                   <option value="ELEVATED_THREAT">Elevated Threat (Active Monitoring)</option>
@@ -602,7 +606,7 @@ export default function SecurityDashboard() {
                   <option value="RECOVERY">Recovery Protocol (Restricted)</option>
                 </select>
               </div>
-              <p className="text-[10px] text-slate-400 font-medium leading-relaxed">
+              <p className="text-[10px] text-sv-text-muted font-medium leading-relaxed">
                 {govMode === 'FULL_CONTAINMENT' 
                   ? 'CRITICAL: Platform is in full containment. All non-recovery mutations are frozen. Quorum required for exit.' 
                   : govMode === 'RECOVERY'

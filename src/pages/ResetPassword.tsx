@@ -51,22 +51,22 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
+    <div className="min-h-screen bg-sv-bg flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="sm:mx-auto sm:w-full sm:max-w-md"
       >
-        <h2 className="mt-6 text-center text-3xl font-black text-slate-900 tracking-tight">
+        <h2 className="mt-6 text-center text-3xl font-black text-sv-text-primary tracking-tight">
           Define New Secret
         </h2>
-        <p className="mt-2 text-center text-sm text-slate-500 font-medium">
+        <p className="mt-2 text-center text-sm text-sv-text-secondary font-medium">
           Securely update your administrative credentials
         </p>
       </motion.div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md p-4 sm:p-0">
-        <div className="bg-white py-12 px-10 shadow-2xl shadow-slate-200/60 rounded-[40px] border border-slate-100 relative overflow-hidden">
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-sv-surface py-8 sm:py-12 px-6 sm:px-10 shadow-2xl rounded-3xl border border-sv-border relative overflow-hidden">
           
           <AnimatePresence mode="wait">
             {status === 'success' ? (
@@ -76,11 +76,11 @@ const ResetPassword = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 className="text-center py-8"
               >
-                <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-emerald-50 text-emerald-500 mb-6">
+                <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-sv-success-soft text-sv-success border border-sv-success/20 mb-6">
                   <FiCheckCircle size={40} />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">Success Verified</h3>
-                <p className="text-slate-500 text-sm font-medium">
+                <h3 className="text-xl font-bold text-sv-text-primary mb-2">Success Verified</h3>
+                <p className="text-sv-text-secondary text-sm font-medium">
                   Your identity secret has been successfully re-established. 
                   Redirecting to authentication in 3 seconds...
                 </p>
@@ -94,9 +94,9 @@ const ResetPassword = () => {
                 onSubmit={handleSubmit}
               >
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">New Identity Secret</label>
+                  <label className="block text-[11px] font-bold text-sv-text-secondary uppercase tracking-widest mb-2 ml-1">New Identity Secret</label>
                   <div className="relative group">
-                    <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
+                    <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-sv-text-muted group-focus-within:text-sv-primary transition-colors" />
                     <input
                       type="password"
                       required
@@ -110,9 +110,9 @@ const ResetPassword = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">Confirm Identity Secret</label>
+                  <label className="block text-[11px] font-bold text-sv-text-secondary uppercase tracking-widest mb-2 ml-1">Confirm Identity Secret</label>
                   <div className="relative group">
-                    <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors" />
+                    <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-sv-text-muted group-focus-within:text-sv-primary transition-colors" />
                     <input
                       type="password"
                       required
@@ -141,8 +141,8 @@ const ResetPassword = () => {
                   </button>
                 </div>
 
-                <div className="text-center pt-6 border-t border-slate-50">
-                    <Link to="/login" className="text-xs font-bold text-slate-400 uppercase tracking-widest hover:text-slate-900 transition-colors inline-flex items-center gap-2">
+                <div className="text-center pt-6 border-t border-sv-border">
+                    <Link to="/login" className="text-xs font-bold text-sv-text-muted uppercase tracking-widest hover:text-sv-text-primary transition-colors inline-flex items-center gap-2">
                         <FiArrowLeft /> Return to Authentication
                     </Link>
                 </div>
@@ -151,7 +151,7 @@ const ResetPassword = () => {
           </AnimatePresence>
 
           {/* Secure Badge */}
-          <div className="absolute top-4 right-4 text-slate-50 opacity-10 pointer-events-none">
+          <div className="absolute top-4 right-4 text-sv-surface-muted opacity-10 pointer-events-none">
             <FiShield size={120} />
           </div>
         </div>

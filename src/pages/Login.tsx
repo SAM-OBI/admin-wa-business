@@ -152,11 +152,11 @@ export default function Login() {
         )}
 
         <div className="mb-6">
-           <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mb-4 text-primary">
+           <div className="w-10 h-10 bg-sv-primary/10 rounded-xl flex items-center justify-center mb-4 text-sv-primary">
               <FaShieldAlt size={20} />
            </div>
-           <h2 className="text-xl font-display font-medium text-gray-900 mb-1 tracking-tight">Admin Console</h2>
-           <p className="text-gray-500 text-xs uppercase tracking-widest font-bold">Identity Verification Required</p>
+           <h2 className="text-xl font-display font-medium text-sv-text-primary mb-1 tracking-tight">Admin Console</h2>
+           <p className="text-sv-text-muted text-xs uppercase tracking-widest font-bold">Identity Verification Required</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -167,7 +167,7 @@ export default function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-3 py-2.5 rounded-lg border border-sv-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition bg-sv-surface-muted focus:bg-sv-surface text-sm text-sv-text-primary"
+              className="w-full px-3 py-2.5 rounded-lg border border-sv-border focus:border-sv-primary focus:ring-1 focus:ring-sv-primary outline-none transition bg-sv-surface-muted focus:bg-sv-surface text-sm text-sv-text-primary"
               placeholder="admin@shopvia.com"
             />
           </div>
@@ -175,7 +175,7 @@ export default function Login() {
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <label className="block text-[11px] font-bold text-sv-text-secondary uppercase tracking-wider">Access Secret</label>
-              <Link to="/forgot-password" title="Recovery" className="text-[10px] font-bold text-primary uppercase tracking-tight hover:underline">
+              <Link to="/forgot-password" title="Recovery" className="text-[10px] font-bold text-sv-primary uppercase tracking-tight hover:underline">
                 Recovery
               </Link>
             </div>
@@ -184,11 +184,10 @@ export default function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-3 py-2.5 rounded-lg border border-sv-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition bg-sv-surface-muted focus:bg-sv-surface text-sm text-sv-text-primary"
+              className="w-full px-3 py-2.5 rounded-lg border border-sv-border focus:border-sv-primary focus:ring-1 focus:ring-sv-primary outline-none transition bg-sv-surface-muted focus:bg-sv-surface text-sm text-sv-text-primary"
               placeholder="••••••••"
             />
           </div>
-
 
           <button
             type="submit"
@@ -199,8 +198,8 @@ export default function Login() {
           </button>
         </form>
 
-        <div className="mt-8 pt-6 border-t border-slate-100 flex items-center gap-2 text-[10px] text-slate-400 font-medium">
-           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+        <div className="mt-8 pt-6 border-t border-sv-border flex items-center gap-2 text-[10px] text-sv-text-muted font-medium">
+           <span className="w-1.5 h-1.5 rounded-full bg-sv-success" />
            <span>System Online: Node_ShopVia_Alpha</span>
         </div>
       </motion.div>

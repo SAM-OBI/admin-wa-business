@@ -28,7 +28,7 @@ export default function Layout() {
         <Header 
           toggleMobileSidebar={() => setIsMobileOpen(!isMobileOpen)} 
         />
-        <main className="flex-1 overflow-auto bg-sv-bg p-4 lg:p-10 scroll-smooth scrollbar-thin scrollbar-thumb-sv-border scrollbar-track-transparent">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-sv-bg scroll-smooth scrollbar-thin scrollbar-thumb-sv-border scrollbar-track-transparent">
           <Outlet />
         </main>
       </div>

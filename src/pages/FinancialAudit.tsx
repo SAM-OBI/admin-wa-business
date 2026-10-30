@@ -168,19 +168,19 @@ const FinancialAudit: React.FC = () => {
     if (loading && !overview) return <PageLoader />;
 
     return (
-        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Header with Connectivity Status */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-white/5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-sv-surface p-4 sm:p-6 rounded-2xl shadow-sm border border-sv-border">
                 <div>
-                    <h1 className="text-2xl font-black text-gray-900 dark:text-white flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                    <h1 className="text-xl sm:text-2xl font-black text-sv-text-primary flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-sv-accent-soft flex items-center justify-center text-sv-primary shrink-0">
                             <FaShieldAlt size={20} />
                         </div>
-                        Financial Operations <span className="text-primary/50 text-sm ml-2">v17.0</span>
+                        <span className="truncate">Financial Operations</span> <span className="text-sv-primary/60 text-xs sm:text-sm font-bold">v17.0</span>
                     </h1>
-                    <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm font-medium">Real-time interpreted liquidity and governance console.</p>
+                    <p className="text-sv-text-secondary mt-1 text-xs sm:text-sm font-medium">Real-time interpreted liquidity and governance console.</p>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 self-end sm:self-auto">
                     <ResilientSocketWatcher
                         onPulse={handleTreasuryPulse}
                         fallbackAction={treasuryFallback}
@@ -188,7 +188,7 @@ const FinancialAudit: React.FC = () => {
                     <select 
                         value={currency}
                         onChange={(e) => setCurrency(e.target.value)}
-                        className="bg-sv-surface-muted border-none rounded-xl px-4 py-2 font-black text-[10px] uppercase tracking-widest text-sv-text-primary focus:ring-1 focus:ring-primary/50 cursor-pointer"
+                        className="bg-sv-surface-muted border border-sv-border/60 rounded-xl px-3 sm:px-4 py-2 font-black text-[10px] uppercase tracking-widest text-sv-text-primary focus:ring-1 focus:ring-sv-primary/50 cursor-pointer"
                     >
                         <option value="NGN">NGN (₦)</option>
                         <option value="USD">USD ($)</option>
@@ -202,7 +202,7 @@ const FinancialAudit: React.FC = () => {
                     {health && <TreasuryPulseChart health={health} />}
                     
                     {/* Reconciliation Board */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                         {(() => {
                             // 🛡️ [FIX] This board read escrowIntegrity[0] (an
                             // arbitrary single store, not a platform total
@@ -229,58 +229,58 @@ const FinancialAudit: React.FC = () => {
 
                             return (
                                 <>
-                                    <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-100 dark:border-white/5 shadow-sm">
-                                        <div className="flex items-center justify-between mb-6">
-                                            <h3 className="text-lg font-black text-gray-900 dark:text-white">Settlement Integrity</h3>
-                                            <span className="text-[9px] font-black text-blue-500 uppercase tracking-widest bg-blue-50 px-2 py-1 rounded-md">V2 Safe Settlement</span>
+                                    <div className="bg-sv-surface p-4 sm:p-6 rounded-2xl border border-sv-border shadow-sm">
+                                        <div className="flex items-center justify-between mb-4 sm:mb-6">
+                                            <h3 className="text-base sm:text-lg font-black text-sv-text-primary">Settlement Integrity</h3>
+                                            <span className="text-[9px] font-black text-sv-info uppercase tracking-widest bg-sv-info-soft px-2.5 py-1 rounded-md border border-sv-info/30">V2 Safe Settlement</span>
                                         </div>
                                         <div className="space-y-3">
-                                            <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-black/20 rounded-xl">
-                                                <span className="text-[11px] font-bold text-gray-500">Platform Totals ({escrowEntries.length} stores)</span>
-                                                <span className="font-black text-gray-900 dark:text-white text-sm">₦{(totalPricing / 100).toLocaleString()}</span>
+                                            <div className="flex justify-between items-center p-3 bg-sv-surface-muted rounded-xl">
+                                                <span className="text-[11px] font-bold text-sv-text-secondary">Platform Totals ({escrowEntries.length} stores)</span>
+                                                <span className="font-black text-sv-text-primary text-sm">₦{(totalPricing / 100).toLocaleString()}</span>
                                             </div>
-                                            <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-black/20 rounded-xl">
-                                                <span className="text-[11px] font-bold text-gray-500">Held in Vault</span>
-                                                <span className="font-black text-gray-900 dark:text-white text-sm">₦{(totalEscrow / 100).toLocaleString()}</span>
+                                            <div className="flex justify-between items-center p-3 bg-sv-surface-muted rounded-xl">
+                                                <span className="text-[11px] font-bold text-sv-text-secondary">Held in Vault</span>
+                                                <span className="font-black text-sv-text-primary text-sm">₦{(totalEscrow / 100).toLocaleString()}</span>
                                             </div>
-                                            <div className={`flex justify-between items-center p-4 rounded-xl border ${Math.abs(escrowVariance) > 1000 ? 'border-red-200 bg-red-50' : 'border-green-200 bg-green-50'}`}>
+                                            <div className={`flex justify-between items-center p-4 rounded-xl border ${Math.abs(escrowVariance) > 1000 ? 'border-sv-danger/40 bg-sv-danger-soft' : 'border-sv-success/40 bg-sv-success-soft'}`}>
                                                 <div>
-                                                    <p className="text-[9px] font-black uppercase tracking-widest text-gray-500">Variance</p>
-                                                    <p className={`text-xl font-black ${Math.abs(escrowVariance) > 1000 ? 'text-red-500' : 'text-green-500'}`}>
+                                                    <p className="text-[9px] font-black uppercase tracking-widest text-sv-text-secondary">Variance</p>
+                                                    <p className={`text-lg sm:text-xl font-black ${Math.abs(escrowVariance) > 1000 ? 'text-sv-danger' : 'text-sv-success'}`}>
                                                         ₦{(escrowVariance / 100).toLocaleString()}
                                                     </p>
                                                 </div>
                                                 {Math.abs(escrowVariance) > 1000 && (
-                                                    <FaExclamationTriangle className="text-red-500" size={20} />
+                                                    <FaExclamationTriangle className="text-sv-danger" size={20} />
                                                 )}
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-100 dark:border-white/5 shadow-sm">
-                                        <div className="flex items-center justify-between mb-6">
-                                            <h3 className="text-lg font-black text-gray-900 dark:text-white">Ledger Consistency</h3>
-                                            <span className="text-[9px] font-black text-purple-500 uppercase tracking-widest bg-purple-50 px-2 py-1 rounded-md">{ledgerDrift.length} store{ledgerDrift.length === 1 ? '' : 's'} drifted</span>
+                                    <div className="bg-sv-surface p-4 sm:p-6 rounded-2xl border border-sv-border shadow-sm">
+                                        <div className="flex items-center justify-between mb-4 sm:mb-6">
+                                            <h3 className="text-base sm:text-lg font-black text-sv-text-primary">Ledger Consistency</h3>
+                                            <span className="text-[9px] font-black text-sv-tag uppercase tracking-widest bg-sv-tag-soft px-2.5 py-1 rounded-md border border-sv-tag/30">{ledgerDrift.length} store{ledgerDrift.length === 1 ? '' : 's'} drifted</span>
                                         </div>
                                         <div className="space-y-3">
-                                            <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-black/20 rounded-xl">
-                                                <span className="text-[11px] font-bold text-gray-500">Expected (Canonical Ledger)</span>
-                                                <span className="font-black text-gray-900 dark:text-white text-sm">{currency === 'NGN' ? '₦' : '$'}{(totalExpected / 100).toLocaleString()}</span>
+                                            <div className="flex justify-between items-center p-3 bg-sv-surface-muted rounded-xl">
+                                                <span className="text-[11px] font-bold text-sv-text-secondary">Expected (Canonical Ledger)</span>
+                                                <span className="font-black text-sv-text-primary text-sm">{currency === 'NGN' ? '₦' : '$'}{(totalExpected / 100).toLocaleString()}</span>
                                             </div>
-                                            <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-black/20 rounded-xl">
-                                                <span className="text-[11px] font-bold text-gray-500">Actual (Store Balance)</span>
-                                                <span className="font-black text-gray-900 dark:text-white text-sm">{currency === 'NGN' ? '₦' : '$'}{(totalActual / 100).toLocaleString()}</span>
+                                            <div className="flex justify-between items-center p-3 bg-sv-surface-muted rounded-xl">
+                                                <span className="text-[11px] font-bold text-sv-text-secondary">Actual (Store Balance)</span>
+                                                <span className="font-black text-sv-text-primary text-sm">{currency === 'NGN' ? '₦' : '$'}{(totalActual / 100).toLocaleString()}</span>
                                             </div>
-                                            <div className={`flex justify-between items-center p-4 rounded-xl border ${Math.abs(totalLedgerVariance) > 1000 ? 'border-red-200 bg-red-50' : 'border-green-200 bg-green-50'}`}>
+                                            <div className={`flex justify-between items-center p-4 rounded-xl border ${Math.abs(totalLedgerVariance) > 1000 ? 'border-sv-danger/40 bg-sv-danger-soft' : 'border-sv-success/40 bg-sv-success-soft'}`}>
                                                 <div>
-                                                    <p className="text-[9px] font-black uppercase tracking-widest text-gray-500">Balance Drift</p>
-                                                    <p className={`text-xl font-black ${Math.abs(totalLedgerVariance) > 1000 ? 'text-red-500' : 'text-green-500'}`}>
+                                                    <p className="text-[9px] font-black uppercase tracking-widest text-sv-text-secondary">Balance Drift</p>
+                                                    <p className={`text-lg sm:text-xl font-black ${Math.abs(totalLedgerVariance) > 1000 ? 'text-sv-danger' : 'text-sv-success'}`}>
                                                         {currency === 'NGN' ? '₦' : '$'}{(totalLedgerVariance / 100).toLocaleString()}
                                                     </p>
                                                 </div>
                                             </div>
                                             {pendingProjections.length > 0 && (
-                                                <p className="text-[10px] text-gray-400 font-medium pt-1">
+                                                <p className="text-[10px] text-sv-text-muted font-medium pt-1">
                                                     {pendingProjections.length} more store{pendingProjections.length === 1 ? '' : 's'} showing expected replication lag (~60s), not counted as drift.
                                                 </p>
                                             )}
@@ -296,22 +296,22 @@ const FinancialAudit: React.FC = () => {
                 <div className="space-y-6">
                     <MultiSigInbox requests={multiSigRequests} onApprove={handleApprove} />
                     
-                    <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-white/5">
-                        <p className="text-gray-400 text-[9px] font-black uppercase tracking-widest mb-4">Platform Balances</p>
+                    <div className="bg-sv-surface p-4 sm:p-6 rounded-2xl shadow-sm border border-sv-border">
+                        <p className="text-sv-text-muted text-[9px] font-black uppercase tracking-widest mb-4">Platform Balances</p>
                         <div className="space-y-4">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <div className="p-1.5 bg-green-50 text-green-500 rounded-lg"><FaWallet size={12} /></div>
-                                    <span className="text-xs font-bold text-gray-500 uppercase tracking-tighter">Available</span>
+                                    <div className="p-1.5 bg-sv-success-soft text-sv-success rounded-lg"><FaWallet size={12} /></div>
+                                    <span className="text-xs font-bold text-sv-text-secondary uppercase tracking-tight">Available</span>
                                 </div>
-                                <span className="font-black text-sm">₦{(overview?.systemBalances.totalAvailable || 0).toLocaleString()}</span>
+                                <span className="font-black text-sm text-sv-text-primary">₦{(overview?.systemBalances.totalAvailable || 0).toLocaleString()}</span>
                             </div>
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <div className="p-1.5 bg-blue-50 text-blue-500 rounded-lg"><FaHistory size={12} /></div>
-                                    <span className="text-xs font-bold text-gray-500 uppercase tracking-tighter text-blue-600">Settlement</span>
+                                    <div className="p-1.5 bg-sv-info-soft text-sv-info rounded-lg"><FaHistory size={12} /></div>
+                                    <span className="text-xs font-bold text-sv-text-secondary uppercase tracking-tight">Settlement</span>
                                 </div>
-                                <span className="font-black text-sm">₦{(overview?.systemBalances.totalSettlementValue ?? overview?.systemBalances.totalEscrow ?? 0).toLocaleString()}</span>
+                                <span className="font-black text-sm text-sv-text-primary">₦{(overview?.systemBalances.totalSettlementValue ?? overview?.systemBalances.totalEscrow ?? 0).toLocaleString()}</span>
                             </div>
                         </div>
                     </div>
@@ -319,42 +319,42 @@ const FinancialAudit: React.FC = () => {
             </div>
 
             {/* Withdrawal Feed */}
-            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-white/5 overflow-hidden">
-                <div className="p-6 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
-                    <h3 className="text-lg font-black text-gray-900 dark:text-white font-display uppercase tracking-widest">Forensic Withdrawal Feed</h3>
+            <div className="bg-sv-surface rounded-2xl shadow-sm border border-sv-border overflow-hidden">
+                <div className="p-4 sm:p-6 border-b border-sv-border flex items-center justify-between">
+                    <h3 className="text-base sm:text-lg font-black text-sv-text-primary uppercase tracking-widest">Forensic Withdrawal Feed</h3>
                     <div className="flex items-center gap-2">
-                        <span className="text-[9px] font-black uppercase tracking-widest text-green-500 flex items-center gap-1.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                        <span className="text-[9px] font-black uppercase tracking-widest text-sv-success flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-sv-success animate-pulse"></span>
                             Live Feed
                         </span>
                     </div>
                 </div>
 
-                <div className="overflow-x-auto">
-                    <table className="w-full">
-                        <thead className="bg-gray-50/50 dark:bg-black/20 border-b border-gray-100 dark:border-white/5">
+                <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-sv-border scrollbar-track-transparent">
+                    <table className="w-full min-w-[600px]">
+                        <thead className="bg-sv-surface-muted border-b border-sv-border">
                             <tr>
-                                <th className="px-6 py-4 text-left text-[9px] font-black text-gray-400 uppercase tracking-widest">Vendor</th>
-                                <th className="px-6 py-4 text-left text-[9px] font-black text-gray-400 uppercase tracking-widest">Amount</th>
-                                <th className="px-6 py-4 text-left text-[9px] font-black text-gray-400 uppercase tracking-widest">Status</th>
-                                <th className="px-6 py-4 text-right text-[9px] font-black text-gray-400 uppercase tracking-widest">Date</th>
+                                <th className="px-4 sm:px-6 py-3.5 text-left text-[9px] font-black text-sv-text-muted uppercase tracking-widest whitespace-nowrap">Vendor</th>
+                                <th className="px-4 sm:px-6 py-3.5 text-left text-[9px] font-black text-sv-text-muted uppercase tracking-widest whitespace-nowrap">Amount</th>
+                                <th className="px-4 sm:px-6 py-3.5 text-left text-[9px] font-black text-sv-text-muted uppercase tracking-widest whitespace-nowrap">Status</th>
+                                <th className="px-4 sm:px-6 py-3.5 text-right text-[9px] font-black text-sv-text-muted uppercase tracking-widest whitespace-nowrap">Date</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100 dark:divide-white/5">
+                        <tbody className="divide-y divide-sv-border">
                             {withdrawals.slice(0, 10).map((log: WithdrawalLog, idx: number) => (
-                                <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group">
-                                    <td className="px-6 py-4">
-                                        <p className="font-bold text-gray-900 dark:text-white text-xs">{log.userName}</p>
-                                        <p className="text-[9px] text-gray-400 truncate max-w-[120px]">{log.userEmail}</p>
+                                <tr key={idx} className="hover:bg-sv-surface-muted/60 transition-colors group">
+                                    <td className="px-4 sm:px-6 py-3.5 whitespace-nowrap">
+                                        <p className="font-bold text-sv-text-primary text-xs">{log.userName}</p>
+                                        <p className="text-[9px] text-sv-text-muted truncate max-w-[120px]">{log.userEmail}</p>
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <span className="font-black text-gray-900 dark:text-white text-xs flex items-center gap-1.5">
-                                            <FaArrowDown className="text-red-500 text-[8px]" />
+                                    <td className="px-4 sm:px-6 py-3.5 whitespace-nowrap">
+                                        <span className="font-black text-sv-text-primary text-xs flex items-center gap-1.5">
+                                            <FaArrowDown className="text-sv-danger text-[8px]" />
                                             ₦{log.amount.toLocaleString()}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <span className={`px-2 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border ${
+                                    <td className="px-4 sm:px-6 py-3.5 whitespace-nowrap">
+                                        <span className={`px-2.5 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border ${
                                             log.status === 'completed' 
                                             ? 'bg-sv-success-soft text-sv-success border-sv-success/30'
                                             : 'bg-sv-warning-soft text-sv-warning border-sv-warning/30'
@@ -362,8 +362,8 @@ const FinancialAudit: React.FC = () => {
                                             {log.status}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <p className="text-[10px] font-bold text-gray-500">{new Date(log.createdAt).toLocaleDateString()}</p>
+                                    <td className="px-4 sm:px-6 py-3.5 text-right whitespace-nowrap">
+                                        <p className="text-[10px] font-bold text-sv-text-secondary">{new Date(log.createdAt).toLocaleDateString()}</p>
                                     </td>
                                 </tr>
                             ))}
@@ -372,16 +372,14 @@ const FinancialAudit: React.FC = () => {
                 </div>
             </div>
 
-            {/* 🛡️ [NOMBA-RECONCILE-1] Finance Integrity Incidents — every
-                ShopVia-vs-Nomba and ShopVia-vs-ShopVia mismatch the
-                reconciliation sweeps have raised, across every money flow. */}
-            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-white/5 overflow-hidden">
-                <div className="p-6 border-b border-gray-100 dark:border-white/5 flex items-center justify-between flex-wrap gap-3">
-                    <h3 className="text-lg font-black text-gray-900 dark:text-white font-display uppercase tracking-widest">Finance Integrity Incidents</h3>
+            {/* 🛡️ [NOMBA-RECONCILE-1] Finance Integrity Incidents */}
+            <div className="bg-sv-surface rounded-2xl shadow-sm border border-sv-border overflow-hidden">
+                <div className="p-4 sm:p-6 border-b border-sv-border flex items-center justify-between flex-wrap gap-3">
+                    <h3 className="text-base sm:text-lg font-black text-sv-text-primary uppercase tracking-widest">Finance Integrity Incidents</h3>
                     <select
                         value={incidentStatusFilter}
                         onChange={(e) => setIncidentStatusFilter(e.target.value)}
-                        className="bg-sv-surface-muted border-none rounded-xl px-4 py-2 font-black text-[10px] uppercase tracking-widest text-sv-text-primary focus:ring-1 focus:ring-primary/50 cursor-pointer"
+                        className="bg-sv-surface-muted border border-sv-border/60 rounded-xl px-3 sm:px-4 py-2 font-black text-[10px] uppercase tracking-widest text-sv-text-primary focus:ring-1 focus:ring-sv-primary/50 cursor-pointer"
                     >
                         <option value="PENDING">Pending</option>
                         <option value="IN_PROGRESS">In Progress</option>
@@ -390,31 +388,31 @@ const FinancialAudit: React.FC = () => {
                     </select>
                 </div>
 
-                <div className="overflow-x-auto">
-                    <table className="w-full">
-                        <thead className="bg-gray-50/50 dark:bg-black/20 border-b border-gray-100 dark:border-white/5">
+                <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-sv-border scrollbar-track-transparent">
+                    <table className="w-full min-w-[700px]">
+                        <thead className="bg-sv-surface-muted border-b border-sv-border">
                             <tr>
-                                <th className="px-6 py-4 text-left text-[9px] font-black text-gray-400 uppercase tracking-widest">Type / Flow</th>
-                                <th className="px-6 py-4 text-left text-[9px] font-black text-gray-400 uppercase tracking-widest">Severity</th>
-                                <th className="px-6 py-4 text-left text-[9px] font-black text-gray-400 uppercase tracking-widest">Identity</th>
-                                <th className="px-6 py-4 text-left text-[9px] font-black text-gray-400 uppercase tracking-widest">Amount</th>
-                                <th className="px-6 py-4 text-left text-[9px] font-black text-gray-400 uppercase tracking-widest">Reference</th>
-                                <th className="px-6 py-4 text-right text-[9px] font-black text-gray-400 uppercase tracking-widest">Detected</th>
+                                <th className="px-4 sm:px-6 py-3.5 text-left text-[9px] font-black text-sv-text-muted uppercase tracking-widest whitespace-nowrap">Type / Flow</th>
+                                <th className="px-4 sm:px-6 py-3.5 text-left text-[9px] font-black text-sv-text-muted uppercase tracking-widest whitespace-nowrap">Severity</th>
+                                <th className="px-4 sm:px-6 py-3.5 text-left text-[9px] font-black text-sv-text-muted uppercase tracking-widest whitespace-nowrap">Identity</th>
+                                <th className="px-4 sm:px-6 py-3.5 text-left text-[9px] font-black text-sv-text-muted uppercase tracking-widest whitespace-nowrap">Amount</th>
+                                <th className="px-4 sm:px-6 py-3.5 text-left text-[9px] font-black text-sv-text-muted uppercase tracking-widest whitespace-nowrap">Reference</th>
+                                <th className="px-4 sm:px-6 py-3.5 text-right text-[9px] font-black text-sv-text-muted uppercase tracking-widest whitespace-nowrap">Detected</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100 dark:divide-white/5">
+                        <tbody className="divide-y divide-sv-border">
                             {incidents.length === 0 ? (
-                                <tr><td colSpan={6} className="px-6 py-10 text-center text-xs text-gray-400 font-bold">No incidents for this filter.</td></tr>
+                                <tr><td colSpan={6} className="px-4 sm:px-6 py-10 text-center text-xs text-sv-text-muted font-bold">No incidents for this filter.</td></tr>
                             ) : incidents.map((incident) => (
-                                <tr key={incident._id} className="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
-                                    <td className="px-6 py-4">
-                                        <p className="font-bold text-gray-900 dark:text-white text-xs">{incident.type}</p>
+                                <tr key={incident._id} className="hover:bg-sv-surface-muted/60 transition-colors">
+                                    <td className="px-4 sm:px-6 py-3.5 whitespace-nowrap">
+                                        <p className="font-bold text-sv-text-primary text-xs">{incident.type}</p>
                                         {incident.metadata?.flow && (
-                                            <p className="text-[9px] text-gray-400 uppercase tracking-widest">{incident.metadata.flow}</p>
+                                            <p className="text-[9px] text-sv-text-muted uppercase tracking-widest">{incident.metadata.flow}</p>
                                         )}
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <span className={`px-2 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border ${
+                                    <td className="px-4 sm:px-6 py-3.5 whitespace-nowrap">
+                                        <span className={`px-2.5 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border ${
                                             incident.severity === 'CRITICAL'
                                                 ? 'bg-sv-danger-soft text-sv-danger border-sv-danger/30'
                                                 : incident.severity === 'HIGH'
@@ -424,27 +422,27 @@ const FinancialAudit: React.FC = () => {
                                             {incident.severity}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <p className="font-bold text-gray-900 dark:text-white text-xs">
+                                    <td className="px-4 sm:px-6 py-3.5 whitespace-nowrap">
+                                        <p className="font-bold text-sv-text-primary text-xs">
                                             {typeof incident.userId === 'object' ? (incident.userId?.name || incident.userId?.email) : '—'}
                                         </p>
-                                        <p className="text-[9px] text-gray-400">
+                                        <p className="text-[9px] text-sv-text-muted">
                                             {typeof incident.storeId === 'object' ? incident.storeId?.name : '—'}
                                         </p>
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <span className="font-black text-gray-900 dark:text-white text-xs">
+                                    <td className="px-4 sm:px-6 py-3.5 whitespace-nowrap">
+                                        <span className="font-black text-sv-text-primary text-xs">
                                             {typeof incident.delta === 'number' ? `₦${(Math.abs(incident.delta) / 100).toLocaleString()}` : '—'}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <p className="font-mono text-[10px] text-gray-500 truncate max-w-[160px]">{incident.causationId || incident.incidentId.slice(0, 12)}</p>
+                                    <td className="px-4 sm:px-6 py-3.5 whitespace-nowrap">
+                                        <p className="font-mono text-[10px] text-sv-text-secondary truncate max-w-[160px]">{incident.causationId || incident.incidentId.slice(0, 12)}</p>
                                         {incident.metadata?.nombaRawStatus && (
-                                            <p className="text-[9px] text-gray-400">ShopVia: {incident.metadata.shopviaStatus} / Nomba: {incident.metadata.nombaRawStatus}</p>
+                                            <p className="text-[9px] text-sv-text-muted">ShopVia: {incident.metadata.shopviaStatus} / Nomba: {incident.metadata.nombaRawStatus}</p>
                                         )}
                                     </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <p className="text-[10px] font-bold text-gray-500">{new Date(incident.detectedAt).toLocaleString()}</p>
+                                    <td className="px-4 sm:px-6 py-3.5 text-right whitespace-nowrap">
+                                        <p className="text-[10px] font-bold text-sv-text-secondary">{new Date(incident.detectedAt).toLocaleString()}</p>
                                     </td>
                                 </tr>
                             ))}

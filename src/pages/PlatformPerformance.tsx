@@ -57,10 +57,10 @@ export default function PlatformPerformance() {
 
   const getSourceDetails = (source: string) => {
     switch (source) {
-      case 'pulse': return { icon: FiActivity, color: 'text-rose-500', bg: 'bg-rose-500/10' };
-      case 'blog': return { icon: FiFeather, color: 'text-blue-500', bg: 'bg-blue-500/10' };
-      case 'discover': return { icon: FiGlobe, color: 'text-amber-500', bg: 'bg-amber-500/10' };
-      default: return { icon: FiTrendingUp, color: 'text-zinc-500', bg: 'bg-zinc-500/10' };
+      case 'pulse': return { icon: FiActivity, color: 'text-sv-danger', bg: 'bg-sv-danger-soft' };
+      case 'blog': return { icon: FiFeather, color: 'text-sv-info', bg: 'bg-sv-info-soft' };
+      case 'discover': return { icon: FiGlobe, color: 'text-sv-warning', bg: 'bg-sv-warning-soft' };
+      default: return { icon: FiTrendingUp, color: 'text-sv-text-muted', bg: 'bg-sv-surface-muted' };
     }
   };
 
@@ -118,21 +118,21 @@ export default function PlatformPerformance() {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 w-full max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-white uppercase tracking-tight flex items-center gap-3">
-            <FiTrendingUp className="text-emerald-500" /> Platform Performance
+          <h1 className="text-2xl sm:text-3xl font-black text-sv-text-primary uppercase tracking-tight flex items-center gap-3">
+            <FiTrendingUp className="text-sv-success" /> Platform Performance
           </h1>
-          <p className="text-xs text-zinc-500 font-bold uppercase tracking-[0.2em] mt-1.5">Platform-Wide Attribution & ROI Telemetry</p>
+          <p className="text-xs text-sv-text-muted font-bold uppercase tracking-[0.2em] mt-1.5">Platform-Wide Attribution & ROI Telemetry</p>
         </div>
         
         <div className="flex items-center gap-3">
             <select 
                 value={dateRange}
                 onChange={(e) => setDateRange(e.target.value)}
-                className="bg-black border border-white/10 text-white text-xs font-bold uppercase tracking-widest rounded-xl px-4 py-3 focus:border-sv-primary transition-all outline-none"
+                className="bg-sv-surface-muted border border-sv-border text-sv-text-secondary text-xs font-bold uppercase tracking-widest rounded-xl px-4 py-2.5 focus:border-sv-primary transition-all outline-none cursor-pointer"
             >
                 <option value="all-time">All Time</option>
                 <option value="30d">Last 30 Days</option>
@@ -142,7 +142,7 @@ export default function PlatformPerformance() {
             <button
                 onClick={handleExport}
                 disabled={stats.length === 0 && topContent.length === 0}
-                className="bg-sv-primary text-sv-text-inverse px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-sv-primary-hover transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-sv-primary text-sv-text-inverse px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-sv-primary-hover transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 <FiDownload /> Export
             </button>
@@ -151,32 +151,32 @@ export default function PlatformPerformance() {
 
       {/* Global Totals */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-zinc-900/50 p-6 rounded-3xl border border-zinc-800/40 relative overflow-hidden group hover:border-emerald-500/30 transition-colors">
-              <div className="absolute -top-10 -right-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all"></div>
-              <p className="text-[10px] text-zinc-400 font-black uppercase tracking-[0.2em] mb-2 flex items-center gap-2">
-                  <FiDollarSign className="text-emerald-500" /> Total ROI Value
+          <div className="bg-sv-surface p-6 rounded-2xl border border-sv-border shadow-sm relative overflow-hidden group hover:border-sv-success/30 transition-colors">
+              <div className="absolute -top-10 -right-10 w-32 h-32 bg-sv-success-soft rounded-full blur-3xl group-hover:bg-sv-success/20 transition-all"></div>
+              <p className="text-[10px] text-sv-text-muted font-black uppercase tracking-[0.2em] mb-2 flex items-center gap-2">
+                  <FiDollarSign className="text-sv-success" /> Total ROI Value
               </p>
-              <h2 className="text-4xl font-black tracking-tight flex items-baseline gap-1">
-                  <span className="text-xl text-zinc-500">₦</span>{(aggregateTotals.value / 100).toLocaleString('en-NG', { minimumFractionDigits: 2 })}
+              <h2 className="text-3xl sm:text-4xl font-black text-sv-text-primary tracking-tight flex items-baseline gap-1">
+                  <span className="text-xl text-sv-text-muted">₦</span>{(aggregateTotals.value / 100).toLocaleString('en-NG', { minimumFractionDigits: 2 })}
               </h2>
           </div>
           
-          <div className="bg-zinc-900/50 p-6 rounded-3xl border border-zinc-800/40 relative overflow-hidden group hover:border-blue-500/30 transition-colors">
-              <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl group-hover:bg-blue-500/20 transition-all"></div>
-              <p className="text-[10px] text-zinc-400 font-black uppercase tracking-[0.2em] mb-2">Platform Clicks</p>
-              <h2 className="text-4xl font-black tracking-tight">{aggregateTotals.clicks.toLocaleString()}</h2>
+          <div className="bg-sv-surface p-6 rounded-2xl border border-sv-border shadow-sm relative overflow-hidden group hover:border-sv-info/30 transition-colors">
+              <div className="absolute -top-10 -right-10 w-32 h-32 bg-sv-info-soft rounded-full blur-3xl group-hover:bg-sv-info/20 transition-all"></div>
+              <p className="text-[10px] text-sv-text-muted font-black uppercase tracking-[0.2em] mb-2">Platform Clicks</p>
+              <h2 className="text-3xl sm:text-4xl font-black text-sv-text-primary tracking-tight">{aggregateTotals.clicks.toLocaleString()}</h2>
           </div>
           
-          <div className="bg-zinc-900/50 p-6 rounded-3xl border border-zinc-800/40 relative overflow-hidden group hover:border-purple-500/30 transition-colors">
-              <div className="absolute -top-10 -right-10 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl group-hover:bg-purple-500/20 transition-all"></div>
-              <p className="text-[10px] text-zinc-400 font-black uppercase tracking-[0.2em] mb-2">Checkout Conversions</p>
-              <h2 className="text-4xl font-black tracking-tight">{aggregateTotals.conversions.toLocaleString()}</h2>
+          <div className="bg-sv-surface p-6 rounded-2xl border border-sv-border shadow-sm relative overflow-hidden group hover:border-sv-tag/30 transition-colors">
+              <div className="absolute -top-10 -right-10 w-32 h-32 bg-sv-tag-soft rounded-full blur-3xl group-hover:bg-sv-tag/20 transition-all"></div>
+              <p className="text-[10px] text-sv-text-muted font-black uppercase tracking-[0.2em] mb-2">Checkout Conversions</p>
+              <h2 className="text-3xl sm:text-4xl font-black text-sv-text-primary tracking-tight">{aggregateTotals.conversions.toLocaleString()}</h2>
           </div>
       </div>
 
       {/* Source Breakdown (The Matrix) */}
       <div>
-          <h3 className="text-xs font-black text-white uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+          <h3 className="text-xs font-black text-sv-text-primary uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
               <FiFilter /> Attribution Matrix
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -185,31 +185,31 @@ export default function PlatformPerformance() {
                   const details = getSourceDetails(sourceId);
                   
                   return (
-                      <div key={sourceId} className="bg-black border border-white/5 rounded-[32px] p-6 flex flex-col hover:border-white/10 transition-all">
-                          <div className="flex items-center justify-between mb-8">
+                      <div key={sourceId} className="bg-sv-surface border border-sv-border rounded-2xl p-6 flex flex-col shadow-sm hover:border-sv-primary/30 transition-all">
+                          <div className="flex items-center justify-between mb-6">
                               <div className={`p-3 rounded-2xl ${details.bg}`}>
                                   <details.icon className={`text-xl ${details.color}`} />
                               </div>
                               <div className="text-right">
-                                  <span className="text-[9px] font-black uppercase tracking-widest text-zinc-500 block mb-1">Source</span>
-                                  <span className="font-bold uppercase tracking-widest text-sm text-white">{sourceId}</span>
+                                  <span className="text-[9px] font-black uppercase tracking-widest text-sv-text-muted block mb-1">Source</span>
+                                  <span className="font-bold uppercase tracking-widest text-sm text-sv-text-primary">{sourceId}</span>
                               </div>
                           </div>
                           
                           <div className="space-y-4 flex-1">
-                              <div className="flex justify-between items-end border-b border-white/5 pb-4">
-                                  <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Gen. Value</span>
-                                  <span className="font-black text-lg">₦{(stat.totalValue / 100).toLocaleString('en-NG')}</span>
+                              <div className="flex justify-between items-end border-b border-sv-border pb-3">
+                                  <span className="text-[10px] font-bold uppercase tracking-widest text-sv-text-muted">Gen. Value</span>
+                                  <span className="font-black text-lg text-sv-text-primary">₦{(stat.totalValue / 100).toLocaleString('en-NG')}</span>
                               </div>
-                              <div className="flex justify-between items-end border-b border-white/5 pb-4">
-                                  <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Clicks</span>
-                                  <span className="font-black text-md text-zinc-300">{stat.totalClicks.toLocaleString()}</span>
+                              <div className="flex justify-between items-end border-b border-sv-border pb-3">
+                                  <span className="text-[10px] font-bold uppercase tracking-widest text-sv-text-muted">Clicks</span>
+                                  <span className="font-black text-md text-sv-text-secondary">{stat.totalClicks.toLocaleString()}</span>
                               </div>
-                              <div className="flex justify-between items-end pb-2">
-                                  <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Wins</span>
+                              <div className="flex justify-between items-end pb-1">
+                                  <span className="text-[10px] font-bold uppercase tracking-widest text-sv-text-muted">Wins</span>
                                   <div className="text-right">
-                                      <span className="font-black text-md text-emerald-400 block">{stat.totalConversions.toLocaleString()}</span>
-                                      <span className="text-[9px] font-bold text-emerald-500/70">{calculateConversionRate(stat.totalClicks, stat.totalConversions)}% CVR</span>
+                                      <span className="font-black text-md text-sv-success block">{stat.totalConversions.toLocaleString()}</span>
+                                      <span className="text-[9px] font-bold text-sv-success">{calculateConversionRate(stat.totalClicks, stat.totalConversions)}% CVR</span>
                                   </div>
                               </div>
                           </div>
@@ -220,53 +220,53 @@ export default function PlatformPerformance() {
       </div>
 
       {/* Leaderboard */}
-      <div className="bg-zinc-900/50 border border-white/5 rounded-[32px] p-8 overflow-hidden">
-          <div className="mb-8 flex items-center justify-between">
+      <div className="bg-sv-surface border border-sv-border rounded-2xl p-6 shadow-sm overflow-hidden">
+          <div className="mb-6 flex items-center justify-between">
               <div>
-                  <h3 className="text-xs font-black text-white uppercase tracking-[0.2em]">Viral Content Leaderboard</h3>
-                  <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-2">Ranked by Financial Impact</p>
+                  <h3 className="text-xs font-black text-sv-text-primary uppercase tracking-[0.2em]">Viral Content Leaderboard</h3>
+                  <p className="text-[10px] text-sv-text-muted font-bold uppercase tracking-widest mt-1">Ranked by Financial Impact</p>
               </div>
           </div>
           
-          <div className="overflow-x-auto">
-              <table className="w-full text-left">
+          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-sv-border">
+              <table className="w-full text-left min-w-[700px]">
                   <thead>
-                      <tr className="border-b border-white/10 text-[9px] font-black uppercase tracking-[0.2em] text-zinc-500">
-                          <th className="pb-4 pl-4 pr-6 w-12">Rank</th>
-                          <th className="pb-4 px-6 relative w-24">Source</th>
-                          <th className="pb-4 px-6">Entity Ref</th>
-                          <th className="pb-4 px-6 text-right">Clicks</th>
-                          <th className="pb-4 px-6 text-right">Wins</th>
-                          <th className="pb-4 pl-6 pr-4 text-right">Value (₦)</th>
+                      <tr className="border-b border-sv-border text-[9px] font-black uppercase tracking-[0.2em] text-sv-text-muted bg-sv-surface-muted/50">
+                          <th className="py-4 pl-4 pr-6 w-12">Rank</th>
+                          <th className="py-4 px-6 relative w-24">Source</th>
+                          <th className="py-4 px-6">Entity Ref</th>
+                          <th className="py-4 px-6 text-right">Clicks</th>
+                          <th className="py-4 px-6 text-right">Wins</th>
+                          <th className="py-4 pl-6 pr-4 text-right">Value (₦)</th>
                       </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-sv-border">
                       {topContent.map((content, idx) => {
                           const details = getSourceDetails(content._id.source);
                           return (
-                              <tr key={`${content._id.source}-${content._id.contentId}`} className="group hover:bg-white/5 transition-colors border-b border-white/5 last:border-0">
+                              <tr key={`${content._id.source}-${content._id.contentId}`} className="group hover:bg-sv-surface-muted/60 transition-colors">
                                   <td className="py-4 pl-4 pr-6">
-                                      <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black ${idx < 3 ? 'bg-amber-500 text-black' : 'bg-zinc-800 text-zinc-400'}`}>
+                                      <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black ${idx < 3 ? 'bg-sv-warning text-sv-text-inverse' : 'bg-sv-surface-muted text-sv-text-muted'}`}>
                                           {idx + 1}
                                       </span>
                                   </td>
                                   <td className="py-4 px-6">
                                       <div className="flex items-center gap-2">
                                           <details.icon className={`${details.color}`} />
-                                          <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-300">{content._id.source}</span>
+                                          <span className="text-[10px] font-bold uppercase tracking-widest text-sv-text-secondary">{content._id.source}</span>
                                       </div>
                                   </td>
                                   <td className="py-4 px-6">
-                                      <span className="text-[11px] font-mono tracking-wider text-zinc-400 group-hover:text-white transition-colors">{content._id.contentId.slice(-8)}</span>
+                                      <span className="text-[11px] font-mono tracking-wider text-sv-text-muted group-hover:text-sv-text-primary transition-colors">{content._id.contentId.slice(-8)}</span>
                                   </td>
                                   <td className="py-4 px-6 text-right">
-                                      <span className="text-xs font-medium text-zinc-400">{content.totalClicks.toLocaleString()}</span>
+                                      <span className="text-xs font-medium text-sv-text-muted">{content.totalClicks.toLocaleString()}</span>
                                   </td>
                                   <td className="py-4 px-6 text-right">
-                                      <span className="text-xs font-bold text-emerald-400">{content.totalConversions.toLocaleString()}</span>
+                                      <span className="text-xs font-bold text-sv-success">{content.totalConversions.toLocaleString()}</span>
                                   </td>
                                   <td className="py-4 pl-6 pr-4 text-right">
-                                      <span className="text-sm font-black text-white">{(content.totalValue / 100).toLocaleString('en-NG')}</span>
+                                      <span className="text-sm font-black text-sv-text-primary">{(content.totalValue / 100).toLocaleString('en-NG')}</span>
                                   </td>
                               </tr>
                           );
@@ -275,7 +275,7 @@ export default function PlatformPerformance() {
                       {topContent.length === 0 && (
                           <tr>
                               <td colSpan={6} className="py-12 text-center">
-                                  <p className="text-zinc-500 font-medium text-sm">No attribution data collected yet.</p>
+                                  <p className="text-sv-text-muted font-medium text-sm">No attribution data collected yet.</p>
                               </td>
                           </tr>
                       )}

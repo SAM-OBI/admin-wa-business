@@ -107,34 +107,34 @@ export default function Subscriptions() {
   const formatDate = (date?: string) => date ? new Date(date).toLocaleDateString() : '—';
 
   return (
-    <div className="w-full max-w-7xl mx-auto">
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-white tracking-tight uppercase">Subscriptions & Billing</h1>
-          <p className="text-zinc-500 font-medium mt-1 uppercase text-xs tracking-[0.2em]">Institutional Financial Governance</p>
+          <h1 className="text-2xl sm:text-3xl font-black text-sv-text-primary tracking-tight uppercase">Subscriptions & Billing</h1>
+          <p className="text-sv-text-muted font-medium mt-1 uppercase text-xs tracking-[0.2em]">Institutional Financial Governance</p>
         </div>
       </div>
 
       {/* KPI Metrics Dashboard */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {metrics.map((metric, idx) => (
-          <div key={idx} className="bg-zinc-900/50 p-5 rounded-2xl border border-zinc-800/40 backdrop-blur-sm relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-4 opacity-10 text-white transform group-hover:scale-110 transition-transform duration-500">
+          <div key={idx} className="bg-sv-surface p-5 rounded-2xl border border-sv-border shadow-sm relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-4 opacity-10 text-sv-text-primary transform group-hover:scale-110 transition-transform duration-500">
               {metric.icon}
             </div>
-            <div className="text-zinc-500 text-[10px] font-black uppercase tracking-widest mb-2">{metric.title}</div>
-            <div className="text-3xl font-black text-white tracking-tight mb-2">{metric.value}</div>
+            <div className="text-sv-text-muted text-[10px] font-black uppercase tracking-widest mb-2">{metric.title}</div>
+            <div className="text-2xl sm:text-3xl font-black text-sv-text-primary tracking-tight mb-2">{metric.value}</div>
           </div>
         ))}
       </div>
 
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-6">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
+          <div className="grid grid-cols-2 sm:flex gap-2 w-full sm:w-auto">
             <select
               value={filters.plan}
               onChange={(e) => setFilters(prev => ({ ...prev, plan: e.target.value }))}
-              className="px-4 py-2 bg-sv-surface-elevated/50 border border-sv-border text-sv-text-muted text-xs font-black uppercase tracking-widest rounded-xl focus:outline-none focus:border-sv-primary transition-all cursor-pointer"
+              className="flex-1 min-w-0 px-3 sm:px-4 py-2 bg-sv-surface-muted border border-sv-border text-sv-text-secondary text-xs font-black uppercase tracking-widest rounded-xl focus:outline-none focus:border-sv-primary transition-all cursor-pointer"
             >
               <option value="">All Plans</option>
               <option value="free">Free</option>
@@ -145,10 +145,10 @@ export default function Subscriptions() {
               <option value="business">Business</option>
             </select>
 
-             <select
+            <select
               value={filters.status}
               onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
-              className="px-4 py-2 bg-sv-surface-elevated/50 border border-sv-border text-sv-text-muted text-xs font-black uppercase tracking-widest rounded-xl focus:outline-none focus:border-sv-primary transition-all cursor-pointer"
+              className="flex-1 min-w-0 px-3 sm:px-4 py-2 bg-sv-surface-muted border border-sv-border text-sv-text-secondary text-xs font-black uppercase tracking-widest rounded-xl focus:outline-none focus:border-sv-primary transition-all cursor-pointer"
             >
               <option value="">All Statuses</option>
               <option value="ACTIVE">Active</option>
@@ -171,34 +171,34 @@ export default function Subscriptions() {
         </div>
       </div>
 
-      <div className="bg-sv-surface-elevated/50 rounded-2xl border border-sv-border backdrop-blur-sm overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+      <div className="bg-sv-surface rounded-2xl border border-sv-border overflow-hidden shadow-sm">
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-sv-border">
+          <table className="w-full text-left border-collapse min-w-[700px]">
             <thead>
-              <tr className="border-b border-sv-border bg-sv-surface/5">
-                <th className="px-8 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Vendor Entity</th>
-                <th className="px-8 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Subscription Plan</th>
-                <th className="px-8 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Billing Status</th>
-                <th className="px-8 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Lifecycle Timestamps</th>
-                <th className="px-8 py-5 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em] text-right">Actions</th>
+              <tr className="border-b border-sv-border bg-sv-surface-muted/50">
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Vendor Entity</th>
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Subscription Plan</th>
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Billing Status</th>
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em]">Lifecycle Timestamps</th>
+                <th className="px-6 py-4 text-[10px] font-black text-sv-text-muted uppercase tracking-[0.2em] text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-sv-border">
                 {loading ? (
                   <tr>
-                    <td colSpan={5} className="px-8 py-24 text-center">
+                    <td colSpan={5} className="px-6 py-16 text-center">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sv-primary mx-auto"></div>
                     </td>
                   </tr>
                 ) : error ? (
                   <tr>
-                    <td colSpan={5} className="px-8 py-16">
+                    <td colSpan={5} className="px-6 py-16">
                       <ErrorState message={error} onRetry={() => fetchSubscriptions(pagination.page)} />
                     </td>
                   </tr>
                 ) : subscriptions.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-8 py-24 text-center">
+                    <td colSpan={5} className="px-6 py-16 text-center">
                       <div className="flex flex-col items-center gap-4">
                         <FiShield className="text-sv-text-muted w-12 h-12" />
                         <p className="text-sv-text-muted text-[10px] font-black uppercase tracking-[0.3em] italic">No vendor subscriptions matching these filters.</p>
@@ -206,30 +206,30 @@ export default function Subscriptions() {
                     </td>
                   </tr>
                 ) : subscriptions.map((sub) => (
-                  <tr key={sub._id} className="hover:bg-sv-surface-muted/50 transition-colors">
-                    <td className="px-8 py-5">
-                      <div className="text-sm font-bold text-white">{sub.name}</div>
+                  <tr key={sub._id} className="hover:bg-sv-surface-muted/60 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="text-sm font-bold text-sv-text-primary">{sub.name}</div>
                       <div className="text-xs text-sv-text-muted">{sub.email}</div>
                     </td>
-                    <td className="px-8 py-5">
-                      <span className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-sv-surface-muted text-sv-text-primary">
+                    <td className="px-6 py-4">
+                      <span className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-sv-surface-muted text-sv-text-primary border border-sv-border">
                         {sub.plan || 'free'}
                       </span>
                       {sub.manualOverridePlan && (
-                        <span className="ml-2 px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                        <span className="ml-2 px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-sv-warning-soft text-sv-warning border border-sv-warning/30">
                           Override
                         </span>
                       )}
                     </td>
-                    <td className="px-8 py-5">
+                    <td className="px-6 py-4">
                       <span className="text-xs font-bold text-sv-text-secondary uppercase tracking-widest">{sub.status || '—'}</span>
                     </td>
-                    <td className="px-8 py-5 text-xs text-sv-text-muted">
+                    <td className="px-6 py-4 text-xs text-sv-text-muted">
                       {sub.trialEndsAt && <div>Trial ends: {formatDate(sub.trialEndsAt)}</div>}
                       {sub.subscriptionEndsAt && <div>Renews/expires: {formatDate(sub.subscriptionEndsAt)}</div>}
                       {!sub.trialEndsAt && !sub.subscriptionEndsAt && '—'}
                     </td>
-                    <td className="px-8 py-5 text-right">
+                    <td className="px-6 py-4 text-right">
                       <Link
                         to={`/dashboard/vendors/${sub._id}`}
                         className="text-[10px] font-black uppercase tracking-widest text-sv-primary hover:underline"
@@ -244,7 +244,7 @@ export default function Subscriptions() {
         </div>
 
         {/* Global Pagination Hub */}
-        <div className="px-8 py-6 border-t border-sv-border bg-sv-surface/5 flex items-center justify-between">
+        <div className="px-6 py-4 border-t border-sv-border bg-sv-surface-muted/30 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest">
             Registry Index <span className="text-sv-text-primary mx-1">{subscriptions.length}</span> of <span className="text-sv-text-primary mx-1">{pagination.total}</span> Entities
           </div>
@@ -252,7 +252,7 @@ export default function Subscriptions() {
             <button
               onClick={() => handlePageChange(pagination.page - 1)}
               disabled={pagination.page <= 1}
-              className="p-2 border border-sv-border rounded-lg text-sv-text-primary disabled:opacity-20 disabled:cursor-not-allowed hover:bg-sv-surface-muted transition-all"
+              className="p-2 border border-sv-border rounded-lg text-sv-text-primary disabled:opacity-20 disabled:cursor-not-allowed hover:bg-sv-surface-muted transition-all text-xs font-bold"
             >
               PREV
             </button>
@@ -262,7 +262,7 @@ export default function Subscriptions() {
             <button
               onClick={() => handlePageChange(pagination.page + 1)}
               disabled={pagination.page >= pagination.pages}
-              className="p-2 border border-sv-border rounded-lg text-sv-text-primary disabled:opacity-20 disabled:cursor-not-allowed hover:bg-sv-surface-muted transition-all"
+              className="p-2 border border-sv-border rounded-lg text-sv-text-primary disabled:opacity-20 disabled:cursor-not-allowed hover:bg-sv-surface-muted transition-all text-xs font-bold"
             >
               NEXT
             </button>

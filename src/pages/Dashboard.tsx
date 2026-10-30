@@ -107,12 +107,12 @@ export default function Dashboard() {
 
   const getActivityIcon = (type: string) => {
     switch (type) {
-      case 'user': return <FiUserPlus className="text-blue-400" />;
-      case 'vendor': return <FiShoppingBag className="text-emerald-400" />;
-      case 'product': return <FiPackage className="text-purple-400" />;
-      case 'order': return <FiShoppingCart className="text-orange-400" />;
-      case 'complaint': return <FiMessageSquare className="text-red-400" />;
-      default: return <FiCheckCircle className="text-zinc-500" />;
+      case 'user': return <FiUserPlus className="text-sv-primary" />;
+      case 'vendor': return <FiShoppingBag className="text-sv-success" />;
+      case 'product': return <FiPackage className="text-sv-tag" />;
+      case 'order': return <FiShoppingCart className="text-sv-warning" />;
+      case 'complaint': return <FiMessageSquare className="text-sv-danger" />;
+      default: return <FiCheckCircle className="text-sv-text-muted" />;
     }
   };
 
@@ -131,28 +131,28 @@ export default function Dashboard() {
   if (loading) return <PageLoader />;
 
   const statCards = [
-    { title: 'Registered Users', value: viewModel?.stats.totalUsers || 0, icon: FiUsers, color: 'bg-blue-500/10 text-blue-400 border-blue-500/20', link: '/dashboard/users' },
-    { title: 'Active Vendors', value: viewModel?.stats.totalVendors || 0, icon: FiShoppingBag, color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20', link: '/dashboard/vendors' },
-    { title: 'Global Catalog', value: viewModel?.stats.totalProducts || 0, icon: FiPackage, color: 'bg-purple-500/10 text-purple-400 border-purple-500/20', link: '/dashboard/products' },
-    { title: 'Total Volume', value: viewModel?.stats.totalOrders || 0, icon: FiTrendingUp, color: 'bg-orange-500/10 text-orange-400 border-orange-500/20', link: '/dashboard/orders' },
+    { title: 'Registered Users', value: viewModel?.stats.totalUsers || 0, icon: FiUsers, color: 'bg-sv-info-soft text-sv-info border-sv-info/30', link: '/dashboard/users' },
+    { title: 'Active Vendors', value: viewModel?.stats.totalVendors || 0, icon: FiShoppingBag, color: 'bg-sv-success-soft text-sv-success border-sv-success/30', link: '/dashboard/vendors' },
+    { title: 'Global Catalog', value: viewModel?.stats.totalProducts || 0, icon: FiPackage, color: 'bg-sv-tag-soft text-sv-tag border-sv-tag/30', link: '/dashboard/products' },
+    { title: 'Total Volume', value: viewModel?.stats.totalOrders || 0, icon: FiTrendingUp, color: 'bg-sv-warning-soft text-sv-warning border-sv-warning/30', link: '/dashboard/orders' },
   ];
 
   // eslint-disable-next-line react-hooks/purity
   const timeSinceUpdate = viewModel?.lastUpdated ? Math.round((Date.now() - new Date(viewModel.lastUpdated).getTime()) / 60000) : 0;
 
   return (
-    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700 w-full max-w-7xl mx-auto bg-background text-body">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto bg-sv-bg text-sv-text-primary">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-heading uppercase tracking-tight">Governance Hub</h1>
-          <p className="text-xs text-muted font-bold uppercase tracking-[0.2em] mt-1.5">Real-time infrastructure & financial telemetry</p>
+          <h1 className="text-2xl sm:text-3xl font-black text-sv-text-primary uppercase tracking-tight">Governance Hub</h1>
+          <p className="text-xs text-sv-text-muted font-bold uppercase tracking-[0.2em] mt-1.5">Real-time infrastructure & financial telemetry</p>
         </div>
-        <div className="flex items-center gap-4 bg-surface px-4 py-2 rounded-xl border border-subtle">
+        <div className="flex items-center gap-4 bg-sv-surface px-4 py-2 rounded-xl border border-sv-border shadow-sm">
            <button
              onClick={handleRefresh}
              disabled={refreshing}
-             className="text-[10px] font-black text-muted uppercase tracking-widest flex items-center gap-2 hover:text-heading transition-colors mr-2"
+             className="text-[10px] font-black text-sv-text-muted uppercase tracking-widest flex items-center gap-2 hover:text-sv-text-primary transition-colors mr-2"
            >
              <FiRefreshCw className={refreshing ? 'animate-spin' : ''} />
              {timeSinceUpdate === 0 ? 'Just now' : `${timeSinceUpdate} min ago`}
@@ -163,19 +163,19 @@ export default function Dashboard() {
              <StatusBadge status="SUCCESS" label="System Online" />
            )}
            <div className="relative flex items-center justify-center">
-              <span className={`w-2 h-2 rounded-full animate-ping absolute ${hasAnyFetchError ? 'bg-red-500' : 'bg-emerald-500'}`} />
-              <span className={`w-2 h-2 rounded-full relative ${hasAnyFetchError ? 'bg-red-500' : 'bg-emerald-500'}`} />
+              <span className={`w-2 h-2 rounded-full animate-ping absolute ${hasAnyFetchError ? 'bg-sv-danger' : 'bg-sv-success'}`} />
+              <span className={`w-2 h-2 rounded-full relative ${hasAnyFetchError ? 'bg-sv-danger' : 'bg-sv-success'}`} />
            </div>
         </div>
       </div>
 
       {hasAnyFetchError && (
-        <div className="p-5 rounded-2xl border border-red-500/20 bg-red-500/5 flex items-center gap-5">
-          <div className="p-3 bg-red-500/10 rounded-xl shrink-0">
-            <FiAlertTriangle size={20} className="text-red-500" />
+        <div className="p-5 rounded-2xl border border-sv-danger/20 bg-sv-danger-soft flex items-center gap-5">
+          <div className="p-3 bg-sv-danger/10 rounded-xl shrink-0">
+            <FiAlertTriangle size={20} className="text-sv-danger" />
           </div>
           <div className="flex-1">
-            <h3 className="font-black text-sm uppercase tracking-[0.1em] text-red-500">Some dashboard data failed to load</h3>
+            <h3 className="font-black text-sm uppercase tracking-[0.1em] text-sv-danger">Some dashboard data failed to load</h3>
             <p className="text-[10px] font-bold uppercase text-muted mt-1">
               {statsErrorDetail?.message || 'One or more requests to the admin API failed. Figures below may be incomplete or stale.'}
             </p>
@@ -195,9 +195,9 @@ export default function Dashboard() {
             <div className="space-y-6">
               {treasury.status !== 'NORMAL' && (
                 <div className={`p-5 rounded-2xl border flex items-center gap-6 shadow-[0_0_30px_rgba(239,68,68,0.1)] ${
-                  treasury.status === 'EMERGENCY' ? 'bg-red-600 text-white border-red-700' :
-                  treasury.status === 'CRITICAL' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
-                  'bg-orange-500/10 text-orange-500 border-orange-500/20'
+                  treasury.status === 'EMERGENCY' ? 'bg-sv-danger text-white border-sv-danger' :
+                  treasury.status === 'CRITICAL' ? 'bg-sv-danger-soft text-sv-danger border-sv-danger/20' :
+                  'bg-sv-warning-soft text-sv-warning border-sv-warning/20'
                 }`}>
                   <div className="p-3 bg-white/10 rounded-xl">
                     <FiAlertTriangle size={24} />
@@ -250,10 +250,10 @@ export default function Dashboard() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
-            { title: 'Total Revenue', value: viewModel?.stats.revenue.breakdown?.month?.total ?? viewModel?.stats.revenue.month ?? 0, icon: FiDollarSign, color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
-            { title: 'Buyer Protection Fees', value: viewModel?.stats.revenue.breakdown?.month?.buyerFee ?? 0, icon: FiShield, color: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
-            { title: 'Ads Revenue', value: viewModel?.stats.revenue.breakdown?.month?.ads ?? 0, icon: FiTarget, color: 'bg-purple-500/10 text-purple-400 border-purple-500/20' },
-            { title: 'Subscription Revenue', value: viewModel?.stats.revenue.breakdown?.month?.subscription ?? 0, icon: FiCreditCard, color: 'bg-amber-500/10 text-amber-400 border-amber-500/20' },
+            { title: 'Total Revenue', value: viewModel?.stats.revenue.breakdown?.month?.total ?? viewModel?.stats.revenue.month ?? 0, icon: FiDollarSign, color: 'bg-sv-success-soft text-sv-success border-sv-success/20' },
+            { title: 'Buyer Protection Fees', value: viewModel?.stats.revenue.breakdown?.month?.buyerFee ?? 0, icon: FiShield, color: 'bg-sv-info-soft text-sv-info border-sv-info/20' },
+            { title: 'Ads Revenue', value: viewModel?.stats.revenue.breakdown?.month?.ads ?? 0, icon: FiTarget, color: 'bg-sv-tag-soft text-sv-tag border-sv-tag/20' },
+            { title: 'Subscription Revenue', value: viewModel?.stats.revenue.breakdown?.month?.subscription ?? 0, icon: FiCreditCard, color: 'bg-sv-warning-soft text-sv-warning border-sv-warning/20' },
           ].map((stat) => (
             <div key={stat.title} className="bg-surface rounded-2xl border border-subtle p-6 shadow-sm">
               <div className="flex items-center justify-between">
@@ -299,25 +299,21 @@ export default function Dashboard() {
                 { label: 'Review Disputes', link: '/dashboard/disputes', count: viewModel?.stats.openDisputes, color: 'red' as const },
                 { label: 'Security Domain', link: '/dashboard/security', color: 'blue' as const }
               ].map((action, i) => {
-                // 🛡️ [FIX] Tailwind's build-time scanner can't see class names assembled via
-                // template-literal interpolation (`bg-${action.color}-500/5`) — those utilities
-                // were never generated, so these cards had no border/hover styling in production.
-                // Static, fully-literal class strings per color instead.
                 const styles = {
                   amber: {
-                    card: 'bg-amber-500/5 border-amber-500/10 hover:bg-amber-500/10 hover:border-amber-500/20',
-                    text: 'text-amber-500',
-                    badge: 'bg-amber-500'
+                    card: 'bg-sv-warning-soft border-sv-warning/10 hover:border-sv-warning/30',
+                    text: 'text-sv-warning',
+                    badge: 'bg-sv-warning'
                   },
                   red: {
-                    card: 'bg-red-500/5 border-red-500/10 hover:bg-red-500/10 hover:border-red-500/20',
-                    text: 'text-red-500',
-                    badge: 'bg-red-500'
+                    card: 'bg-sv-danger-soft border-sv-danger/10 hover:border-sv-danger/30',
+                    text: 'text-sv-danger',
+                    badge: 'bg-sv-danger'
                   },
                   blue: {
-                    card: 'bg-blue-500/5 border-blue-500/10 hover:bg-blue-500/10 hover:border-blue-500/20',
-                    text: 'text-blue-500',
-                    badge: 'bg-blue-500'
+                    card: 'bg-sv-info-soft border-sv-info/10 hover:border-sv-info/30',
+                    text: 'text-sv-info',
+                    badge: 'bg-sv-info'
                   }
                 }[action.color];
                 return (
@@ -344,14 +340,14 @@ export default function Dashboard() {
             {(viewModel?.stats.activeCourtCases || 0) > 0 && (
                <Link
                   to="/dashboard/court-cases"
-                  className="mt-6 block p-5 rounded-xl border border-red-500/20 bg-red-500/5 hover:bg-red-500/10 transition-all shadow-sm group"
+                  className="mt-6 block p-5 rounded-xl border border-sv-danger/20 bg-sv-danger-soft hover:opacity-90 transition-all shadow-sm group"
                >
                   <div className="flex items-start gap-5">
-                    <div className="p-2.5 bg-red-500 rounded-xl shadow-lg shadow-red-500/20 group-hover:rotate-3 transition-transform text-black flex items-center justify-center">
+                    <div className="p-2.5 bg-sv-danger rounded-xl shadow-lg shadow-sv-danger/20 group-hover:rotate-3 transition-transform text-white flex items-center justify-center">
                       <FiAlertTriangle size={18} />
                     </div>
                     <div>
-                      <h4 className="text-[10px] font-black text-red-500 uppercase tracking-widest">Active Litigation</h4>
+                      <h4 className="text-[10px] font-black text-sv-danger uppercase tracking-widest">Active Litigation</h4>
                       <p className="text-[10px] font-bold text-muted uppercase mt-1.5 opacity-70">
                         {viewModel?.stats.activeCourtCases} CASES IN ARBITRATION
                       </p>

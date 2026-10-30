@@ -42,33 +42,33 @@ export const GlobalSearchOverlay: React.FC<GlobalSearchOverlayProps> = ({ isOpen
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] flex items-start justify-center pt-24 px-4 bg-black/80 backdrop-blur-xl"
+          className="fixed inset-0 z-[100] flex items-start justify-center pt-8 sm:pt-20 px-3 sm:px-4 bg-black/70 backdrop-blur-md"
           onClick={handleClose}
         >
           <motion.div
             initial={{ opacity: 0, y: -20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            className="w-full max-w-3xl bg-[#192720] border border-[#26362F] rounded-3xl shadow-[0_32px_128px_rgba(0,0,0,0.8)] overflow-hidden"
+            className="w-full max-w-3xl max-h-[85vh] flex flex-col bg-sv-surface-elevated border border-sv-border rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Governance Header */}
-            <div className="p-6 border-b border-[#26362F] bg-gradient-to-r from-blue-900/10 to-transparent">
-              <div className="flex items-center justify-between mb-6">
+            <div className="p-4 sm:p-6 border-b border-sv-border bg-sv-surface-muted/40 shrink-0">
+              <div className="flex items-center justify-between mb-4 sm:mb-6">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-[#55B98A] rounded-lg text-[#0D1512]">
+                  <div className="p-2 bg-sv-primary rounded-xl text-sv-text-inverse">
                     <FaShieldAlt size={18} />
                   </div>
                   <div>
-                    <h3 className="text-sm font-black text-[#F3F7F5] uppercase tracking-widest">Institutional Oversight</h3>
-                    <p className="text-[10px] text-[#7F9188] font-bold uppercase tracking-tighter mt-0.5">Sovereign Registry Discovery</p>
+                    <h3 className="text-sm font-black text-sv-text-primary uppercase tracking-widest">Institutional Oversight</h3>
+                    <p className="text-[10px] text-sv-text-muted font-bold uppercase tracking-wider mt-0.5">Sovereign Registry Discovery</p>
                   </div>
                 </div>
                 <button
                   onClick={handleClose}
-                  className="p-2 hover:bg-[#26362F] rounded-full transition-colors text-[#7F9188] hover:text-[#F3F7F5]"
+                  className="p-2 hover:bg-sv-surface-muted rounded-xl transition-colors text-sv-text-muted hover:text-sv-text-primary"
                 >
-                  <FaTimes size={20} />
+                  <FaTimes size={18} />
                 </button>
               </div>
 
@@ -76,20 +76,20 @@ export const GlobalSearchOverlay: React.FC<GlobalSearchOverlayProps> = ({ isOpen
                 value={query}
                 onChange={setQuery}
                 placeholder="SEARCH REGISTRY (ID, EMAIL, NAME)..."
-                className="scale-105 origin-left"
+                className="w-full"
                 context="ADMIN"
               />
 
-              <div className="flex gap-2 mt-8 overflow-x-auto pb-2 scrollbar-hide">
+              <div className="flex gap-2 mt-4 sm:mt-6 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-sv-border">
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as any)}
                     className={cn(
-                      "flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shrink-0",
+                      "flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shrink-0",
                       activeTab === tab.id
-                        ? "bg-[#55B98A] text-[#0D1512]"
-                        : "text-[#7F9188] hover:text-[#F3F7F5] hover:bg-[#26362F]"
+                        ? "bg-sv-primary text-sv-text-inverse shadow-xs"
+                        : "text-sv-text-secondary hover:text-sv-text-primary hover:bg-sv-surface"
                     )}
                   >
                     <tab.icon size={12} />
@@ -100,36 +100,36 @@ export const GlobalSearchOverlay: React.FC<GlobalSearchOverlayProps> = ({ isOpen
             </div>
 
             {/* Discovery Results */}
-            <div className="max-h-[60vh] overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-white/10">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 scrollbar-thin scrollbar-thumb-sv-border">
               {query.length > 0 ? (
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 px-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#6FA9DF] animate-pulse" />
-                    <span className="text-[10px] font-black text-[#6FA9DF] uppercase tracking-widest">Registry Query in Progress...</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-sv-primary animate-pulse" />
+                    <span className="text-[10px] font-black text-sv-primary uppercase tracking-widest">Registry Query in Progress...</span>
                   </div>
                   {[1, 2, 3].map((i) => (
-                    <div key={i} className="p-4 bg-white/5 border border-white/5 rounded-2xl animate-pulse">
-                      <div className="h-4 w-1/3 bg-white/10 rounded mb-2" />
-                      <div className="h-3 w-2/3 bg-white/5 rounded" />
+                    <div key={i} className="p-4 bg-sv-surface border border-sv-border rounded-xl animate-pulse">
+                      <div className="h-4 w-1/3 bg-sv-surface-muted rounded mb-2" />
+                      <div className="h-3 w-2/3 bg-sv-surface-muted/60 rounded" />
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="py-20 text-center">
-                  <FaHistory className="mx-auto text-[#26362F] mb-4" size={40} />
-                  <p className="text-[#7F9188] text-[10px] font-black uppercase tracking-[0.3em]">Awaiting Authorization Query</p>
-                  <p className="text-[9px] text-[#4A5A52] mt-2 font-bold uppercase tracking-tighter">Enter criteria to scan the sovereign registry</p>
+                <div className="py-14 sm:py-20 text-center">
+                  <FaHistory className="mx-auto text-sv-border mb-4" size={36} />
+                  <p className="text-sv-text-muted text-[10px] font-black uppercase tracking-[0.25em]">Awaiting Authorization Query</p>
+                  <p className="text-[10px] text-sv-text-muted/60 mt-1.5 font-bold uppercase tracking-tight">Enter criteria to scan the sovereign registry</p>
                 </div>
               )}
             </div>
 
             {/* Security Footer */}
-            <div className="p-4 border-t border-[#26362F] bg-[#0D1512] flex items-center justify-between">
+            <div className="p-3.5 sm:p-4 border-t border-sv-border bg-sv-surface-muted/30 flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-2">
-                    <FaShieldAlt className="text-[#6FA9DF] opacity-50" size={12} />
-                    <span className="text-[9px] font-black text-[#7F9188] uppercase tracking-widest">Sovereign Discovery OS v104.3</span>
+                    <FaShieldAlt className="text-sv-primary opacity-60" size={12} />
+                    <span className="text-[9px] font-black text-sv-text-muted uppercase tracking-widest">Sovereign Discovery OS v104.3</span>
                 </div>
-                <div className="text-[9px] font-bold text-[#4A5A52] uppercase italic">Protected by Institutional WAF</div>
+                <div className="text-[9px] font-bold text-sv-text-muted/60 uppercase">Protected by Institutional WAF</div>
             </div>
           </motion.div>
         </motion.div>
